@@ -1,0 +1,421 @@
+{
+  "last_experiment_number": 48,
+  "runs": [
+    {
+      "experiment_number": 1,
+      "change_note": "Changed world biomes to safe/danger food-pressure zones with durability damage from danger areas",
+      "started_at": "2026-05-10T11:35:00",
+      "seed": 7,
+      "qualified_body_types": 0,
+      "tested_body_candidates": 188
+    },
+    {
+      "experiment_number": 2,
+      "change_note": "Made brain more useful: added short-term memory, danger avoidance, and smarter path selection",
+      "started_at": "2026-05-10T11:39:42",
+      "seed": 7,
+      "qualified_body_types": 0,
+      "tested_body_candidates": 188
+    },
+    {
+      "experiment_number": 3,
+      "change_note": "Added brain-based cooperation: ally memory, signaling, flocking, role assignment, planning, and social event logs",
+      "started_at": "2026-05-10T11:45:44",
+      "seed": 7,
+      "qualified_body_types": 0,
+      "tested_body_candidates": 188
+    },
+    {
+      "experiment_number": 4,
+      "change_note": "Added life stages, safe-area reproduction rules, adult-only reproduction, minimum health requirement, and child support near parent/group",
+      "started_at": "2026-05-10T11:51:20",
+      "seed": 7,
+      "qualified_body_types": 0,
+      "tested_body_candidates": 188
+    },
+    {
+      "experiment_number": 5,
+      "change_note": "Added parental care: parents/caretakers stay near children, prioritize child support, and log births",
+      "started_at": "2026-05-10T11:54:02",
+      "seed": 7,
+      "qualified_body_types": 0,
+      "tested_body_candidates": 188
+    },
+    {
+      "experiment_number": 6,
+      "change_note": "Added food progression with cooking bonuses, large-animal team hunting, child growth by diet, and brain-4 food sharing",
+      "started_at": "2026-05-10T12:01:38",
+      "seed": 7,
+      "qualified_body_types": 0,
+      "tested_body_candidates": 188
+    },
+    {
+      "experiment_number": 7,
+      "change_note": "Retuned team hunting so cooperative pairs/groups form more easily and can execute large-animal hunts with stricter teamwork than solo agents",
+      "started_at": "2026-05-10T12:02:01",
+      "seed": 7,
+      "qualified_body_types": 0,
+      "tested_body_candidates": 188
+    },
+    {
+      "experiment_number": 8,
+      "change_note": "Expanded body search to include brain-4 cooks/sharers and documented the new multi-stage food plus team-hunting rules",
+      "started_at": "2026-05-10T12:02:45",
+      "seed": 7,
+      "qualified_body_types": 0,
+      "tested_body_candidates": 189
+    },
+    {
+      "experiment_number": 9,
+      "change_note": "Nerfed raw plants hard, boosted cooked food tiers, and replaced lone large prey with herd animals that move, guard calves, and scatter under hunting pressure",
+      "started_at": "2026-05-10T12:12:30",
+      "seed": 7,
+      "qualified_body_types": 0,
+      "tested_body_candidates": 189
+    },
+    {
+      "experiment_number": 10,
+      "change_note": "Added family unit system with parent recognition, child dependency radius, parent-child bond strength, and search/protect/share behaviors for offspring",
+      "started_at": "2026-05-10T12:18:13",
+      "seed": 7,
+      "qualified_body_types": 0,
+      "tested_body_candidates": 189
+    },
+    {
+      "experiment_number": 11,
+      "change_note": "Added nest construction for brain-3+ agents, tied reproduction to nest proximity, and made nests reduce danger and passive drain for settlement survival",
+      "started_at": "2026-05-10T12:24:13",
+      "seed": 7,
+      "qualified_body_types": 0,
+      "tested_body_candidates": 189
+    },
+    {
+      "experiment_number": 12,
+      "change_note": "Added nest food storage, surplus depositing, and family food withdrawal so settlements can create real resource buffers instead of only safety bonuses",
+      "started_at": "2026-05-10T12:28:13",
+      "seed": 7,
+      "qualified_body_types": 0,
+      "tested_body_candidates": 189
+    },
+    {
+      "experiment_number": 13,
+      "change_note": "Added memory maps for food sources, safe zones, and nest locations so brains can route more efficiently and reduce wasted movement energy",
+      "started_at": "2026-05-10T12:34:02",
+      "seed": 7,
+      "qualified_body_types": 0,
+      "tested_body_candidates": 189
+    },
+    {
+      "experiment_number": 14,
+      "change_note": "Added Technology Tier 1 with nest material gathering plus knife, spear, and sickle crafting to make brains convert resources into better hunting and harvesting",
+      "started_at": "2026-05-10T12:45:28",
+      "seed": 7,
+      "qualified_body_types": 0,
+      "tested_body_candidates": 189
+    },
+    {
+      "experiment_number": 15,
+      "change_note": "Made tools purpose-driven: need-based crafting, spear-led hunting behavior, sickle-led harvest routes, knife-based defense, and experiment summaries for gathered materials and crafted tools",
+      "started_at": "2026-05-10T12:51:24",
+      "seed": 7,
+      "qualified_body_types": 0,
+      "tested_body_candidates": 189
+    },
+    {
+      "experiment_number": 16,
+      "change_note": "Added shared-home oriented roles, persistent role identities, nest-centered behavior, and food redistribution so groups act more like early family settlements",
+      "started_at": "2026-05-10T13:01:14",
+      "seed": 7,
+      "qualified_body_types": 0,
+      "tested_body_candidates": 189
+    },
+    {
+      "experiment_number": 17,
+      "change_note": "Strengthened attachment and lineage survival: easier nest births with care support, stronger parent-child food sacrifice, protector escalation for vulnerable children, and wait-for-teammates hunting behavior",
+      "started_at": "2026-05-10T13:08:00",
+      "seed": 7,
+      "qualified_body_types": 0,
+      "tested_body_candidates": 189
+    },
+    {
+      "experiment_number": 18,
+      "change_note": "Added nursery protection, nest bootstrap food surplus, protector targets, safer home reproduction windows, and lower child isolation inside nest zones",
+      "started_at": "2026-05-10T13:16:00",
+      "seed": 7,
+      "qualified_body_types": 0,
+      "tested_body_candidates": 189
+    },
+    {
+      "experiment_number": 19,
+      "change_note": "Fixed brain-driven path scoring bug and added matured-child tracking to measure true lineage progress",
+      "started_at": "2026-05-10T14:13:27",
+      "seed": 7,
+      "qualified_body_types": 0,
+      "tested_body_candidates": 189
+    },
+    {
+      "experiment_number": 20,
+      "change_note": "Started founder population as true adults instead of orphaned children so lineage systems can activate without lowering world difficulty",
+      "started_at": "2026-05-10T14:14:06",
+      "seed": 7,
+      "qualified_body_types": 0,
+      "tested_body_candidates": 189
+    },
+    {
+      "experiment_number": 21,
+      "change_note": "Added cooperative nest construction and shared-home nest ownership so brain-led groups can found settlements without lowering world danger",
+      "started_at": "2026-05-10T14:15:40",
+      "seed": 7,
+      "qualified_body_types": 0,
+      "tested_body_candidates": 189
+    },
+    {
+      "experiment_number": 22,
+      "change_note": "Added safe-zone settlement targeting for brain-rich founders and lowered nest founding cost through planning plus cooperative labor",
+      "started_at": "2026-05-10T14:17:12",
+      "seed": 7,
+      "qualified_body_types": 0,
+      "tested_body_candidates": 189
+    },
+    {
+      "experiment_number": 23,
+      "change_note": "Spawned founders as local bands, with high-brain cohorts starting together in safe high-food terrain so social and settlement strategies can actually engage",
+      "started_at": "2026-05-10T14:17:54",
+      "seed": 7,
+      "qualified_body_types": 0,
+      "tested_body_candidates": 189
+    },
+    {
+      "experiment_number": 24,
+      "change_note": "Converted successful hunts into immediate settlement attempts for high-brain groups and fixed shared-nest food storage ownership",
+      "started_at": "2026-05-10T14:19:00",
+      "seed": 7,
+      "qualified_body_types": 0,
+      "tested_body_candidates": 189
+    },
+    {
+      "experiment_number": 25,
+      "change_note": "Made high-brain founders prioritize building a safe settlement before large-animal hunting, and reduced local build material needs at chosen settlement sites",
+      "started_at": "2026-05-10T14:19:32",
+      "seed": 7,
+      "qualified_body_types": 0,
+      "tested_body_candidates": 189
+    },
+    {
+      "experiment_number": 26,
+      "change_note": "Allowed planned safe-site nest construction to use cognition and coordinated labor instead of requiring nearby plant tokens, while keeping world danger unchanged",
+      "started_at": "2026-05-10T14:20:18",
+      "seed": 7,
+      "qualified_body_types": 1,
+      "tested_body_candidates": 189
+    },
+    {
+      "experiment_number": 27,
+      "change_note": "Multi-seed search for 50 distinct surviving body types without lowering world difficulty; stop after long stagnation if no new body plans appear",
+      "started_at": "2026-05-10T14:32:06",
+      "seed": 7,
+      "qualified_body_types": 1,
+      "tested_body_candidates": 2079
+    },
+    {
+      "experiment_number": 28,
+      "change_note": "Fast smoke test for massive lineage search",
+      "started_at": "2026-05-10T15:07:41",
+      "seed": 7,
+      "qualified_body_types": 2,
+      "tested_body_candidates": 26
+    },
+    {
+      "experiment_number": 29,
+      "change_note": "Massive lineage search for 50 body types with scalable population but unchanged world difficulty",
+      "started_at": "2026-05-10T15:08:42",
+      "seed": 7,
+      "qualified_body_types": 2,
+      "tested_body_candidates": 1510
+    },
+    {
+      "experiment_number": 30,
+      "change_note": "Massive lineage search with niche-expansion trait variants",
+      "started_at": "2026-05-10T15:11:56",
+      "seed": 7,
+      "qualified_body_types": 20,
+      "tested_body_candidates": 1528
+    },
+    {
+      "experiment_number": 31,
+      "change_note": "Massive lineage search for 50 body types with niche-expansion trait variants and scalable populations",
+      "started_at": "2026-05-10T15:19:03",
+      "seed": 7,
+      "qualified_body_types": 50,
+      "tested_body_candidates": 1558
+    },
+    {
+      "experiment_number": 28,
+      "change_note": "Smoke test for massive lineage search with scalable founder populations and lineage success criteria",
+      "started_at": "2026-05-10T14:47:20",
+      "seed": 7,
+      "qualified_body_types": 2,
+      "tested_body_candidates": 11312
+    },
+    {
+      "experiment_number": 29,
+      "change_note": "Dashboard smoke test",
+      "started_at": "2026-05-10T19:33:34",
+      "seed": 7,
+      "qualified_body_types": 1,
+      "tested_body_candidates": 1
+    },
+    {
+      "experiment_number": 30,
+      "change_note": "Dashboard smoke test v2",
+      "started_at": "2026-05-10T19:34:36",
+      "seed": 7,
+      "qualified_body_types": 1,
+      "tested_body_candidates": 1
+    },
+    {
+      "experiment_number": 31,
+      "change_note": "Manual test run",
+      "started_at": "2026-05-10T19:36:08",
+      "seed": 7,
+      "qualified_body_types": 2,
+      "tested_body_candidates": 250
+    },
+    {
+      "experiment_number": 32,
+      "change_note": "Paper capture smoke test",
+      "started_at": "2026-05-10T19:40:45",
+      "seed": 7,
+      "qualified_body_types": 1,
+      "tested_body_candidates": 1
+    },
+    {
+      "experiment_number": 33,
+      "change_note": "Readable log smoke test",
+      "started_at": "2026-05-10T19:45:34",
+      "seed": 7,
+      "qualified_body_types": 1,
+      "tested_body_candidates": 1
+    },
+    {
+      "experiment_number": 34,
+      "change_note": "First tool smoke test",
+      "started_at": "2026-05-10T19:55:17",
+      "seed": 7,
+      "qualified_body_types": 0,
+      "tested_body_candidates": 4
+    },
+    {
+      "experiment_number": 35,
+      "change_note": "First tool after food depletion",
+      "started_at": "2026-05-10T19:58:07",
+      "seed": 7,
+      "qualified_body_types": 0,
+      "tested_body_candidates": 4
+    },
+    {
+      "experiment_number": 36,
+      "change_note": "Full test run after food depletion",
+      "started_at": "2026-05-10T19:58:41",
+      "seed": 7,
+      "qualified_body_types": 0,
+      "tested_body_candidates": 12
+    },
+    {
+      "experiment_number": 37,
+      "change_note": "Dashboard folder split test",
+      "started_at": "2026-05-10T20:00:34",
+      "seed": 7,
+      "qualified_body_types": 0,
+      "tested_body_candidates": 2
+    },
+    {
+      "experiment_number": 38,
+      "change_note": "Emergent technology smoke test",
+      "started_at": "2026-05-10T20:12:08",
+      "seed": 7,
+      "qualified_body_types": 0,
+      "tested_body_candidates": 2
+    },
+    {
+      "experiment_number": 39,
+      "change_note": "Emergent technology dashboard path check",
+      "started_at": "2026-05-10T20:12:17",
+      "seed": 7,
+      "qualified_body_types": 0,
+      "tested_body_candidates": 1
+    },
+    {
+      "experiment_number": 40,
+      "change_note": "25 male 25 female survival to generation 3 adulthood",
+      "started_at": "2026-05-10T20:23:52",
+      "seed": 7,
+      "qualified_body_types": 0,
+      "tested_body_candidates": 1
+    },
+    {
+      "experiment_number": 41,
+      "change_note": "Full sexed world body search from body candidates",
+      "started_at": "2026-05-10T20:30:42",
+      "seed": 7,
+      "qualified_body_types": 1,
+      "tested_body_candidates": 750
+    },
+    {
+      "experiment_number": 42,
+      "change_note": "Gen1 reproduction diagnostics",
+      "started_at": "2026-05-10T20:44:08",
+      "seed": 7,
+      "qualified_body_types": 0,
+      "tested_body_candidates": 1
+    },
+    {
+      "experiment_number": 43,
+      "change_note": "Gen1 repro fail logging",
+      "started_at": "2026-05-10T20:47:45",
+      "seed": 7,
+      "qualified_body_types": 0,
+      "tested_body_candidates": 1
+    },
+    {
+      "experiment_number": 44,
+      "change_note": "Gen1 repro fail logging visible",
+      "started_at": "2026-05-10T20:48:16",
+      "seed": 7,
+      "qualified_body_types": 0,
+      "tested_body_candidates": 1
+    },
+    {
+      "experiment_number": 45,
+      "change_note": "Family household continuity fix",
+      "started_at": "2026-05-10T20:57:32",
+      "seed": 7,
+      "qualified_body_types": 0,
+      "tested_body_candidates": 1
+    },
+    {
+      "experiment_number": 46,
+      "change_note": "Smoke test publication batch",
+      "started_at": "2026-05-11T17:14:51",
+      "seed": 7,
+      "qualified_body_types": 5,
+      "tested_body_candidates": 5
+    },
+    {
+      "experiment_number": 47,
+      "change_note": "Publication-grade batch capture with replicates, stats, and figure source data",
+      "started_at": "2026-05-11T17:15:23",
+      "seed": 7,
+      "qualified_body_types": 30,
+      "tested_body_candidates": 30
+    },
+    {
+      "experiment_number": 48,
+      "change_note": "Robustness sweep for sexed survival and harsher technology emergence",
+      "started_at": "2026-05-11T17:25:27",
+      "seed": 7,
+      "qualified_body_types": 23,
+      "tested_body_candidates": 24
+    }
+  ]
+}

@@ -1,0 +1,99 @@
+{
+  "seed": 7,
+  "max_age": 200,
+  "target_survivors": 50,
+  "initial_population": 12,
+  "max_population": 200,
+  "max_ticks": 5000,
+  "results": [
+    {
+      "body_name": "body_1",
+      "body_design": "sensor=2, muscle=2, armor=1, brain=1",
+      "body_stats": "cost=95, vision=4, speed=2, durability=18, brain_drain=1",
+      "target_survivors": 50,
+      "achieved_survivors": 0,
+      "peak_population": 12,
+      "total_births": 0,
+      "completed_lineages": 0,
+      "average_age": 39.916666666666664,
+      "average_food_eaten": 0.5833333333333334,
+      "average_children": 0.0,
+      "death_reasons": {
+        "energy_depleted": 12
+      },
+      "reached_target": false
+    },
+    {
+      "body_name": "body_2",
+      "body_design": "sensor=1, muscle=4, armor=0, brain=1",
+      "body_stats": "cost=95, vision=3, speed=3, durability=10, brain_drain=1",
+      "target_survivors": 50,
+      "achieved_survivors": 0,
+      "peak_population": 12,
+      "total_births": 0,
+      "completed_lineages": 0,
+      "average_age": 28.5,
+      "average_food_eaten": 0.16666666666666666,
+      "average_children": 0.0,
+      "death_reasons": {
+        "energy_depleted": 12
+      },
+      "reached_target": false
+    },
+    {
+      "body_name": "body_3",
+      "body_design": "sensor=3, muscle=1, armor=1, brain=1",
+      "body_stats": "cost=90, vision=5, speed=1, durability=18, brain_drain=1",
+      "target_survivors": 50,
+      "achieved_survivors": 50,
+      "peak_population": 170,
+      "total_births": 1642,
+      "completed_lineages": 50,
+      "average_age": 82.04171704957679,
+      "average_food_eaten": 4.0840386940749696,
+      "average_children": 0.992744860943168,
+      "death_reasons": {
+        "energy_depleted": 1540,
+        "lifespan_completed": 50,
+        "simulation_ended": 64
+      },
+      "reached_target": true
+    },
+    {
+      "body_name": "body_4",
+      "body_design": "sensor=1, muscle=1, armor=2, brain=1",
+      "body_stats": "cost=90, vision=3, speed=1, durability=26, brain_drain=1",
+      "target_survivors": 50,
+      "achieved_survivors": 0,
+      "peak_population": 36,
+      "total_births": 99,
+      "completed_lineages": 0,
+      "average_age": 75.32432432432432,
+      "average_food_eaten": 3.2972972972972974,
+      "average_children": 0.8918918918918919,
+      "death_reasons": {
+        "energy_depleted": 111
+      },
+      "reached_target": false
+    },
+    {
+      "body_name": "body_5",
+      "body_design": "sensor=4, muscle=0, armor=0, brain=2",
+      "body_stats": "cost=90, vision=6, speed=1, durability=10, brain_drain=2",
+      "target_survivors": 50,
+      "achieved_survivors": 42,
+      "peak_population": 125,
+      "total_births": 3876,
+      "completed_lineages": 42,
+      "average_age": 65.84207818930041,
+      "average_food_eaten": 4.310699588477366,
+      "average_children": 0.9969135802469136,
+      "death_reasons": {
+        "energy_depleted": 3802,
+        "lifespan_completed": 42,
+        "simulation_ended": 44
+      },
+      "reached_target": false
+    }
+  ]
+}

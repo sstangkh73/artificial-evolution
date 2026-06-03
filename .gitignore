@@ -1,0 +1,42 @@
+# Python caches and local environments
+__pycache__/
+*.py[cod]
+*.pyo
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.venv/
+venv/
+env/
+
+# Local secrets and machine state
+.env
+.env.*
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Temporary probes and generated scratch files
+tmp_*
+bundled_python_test.txt
+lifespayback_*
+
+# Generated simulation and experiment outputs
+data/dashboards/
+data/research_runs/
+data/publication_packages/
+data/hypothesis_diagnostics/
+data/experiments/
+
+# Rendered document page previews; source PDFs/DOCX files remain trackable
+phase1_report/rendered*/
+
+# Large binary/game-mod artifacts that exceed normal GitHub repository limits
+*.dmp
+*.win
+*.zip
+bodysmith_*
+utmt_cli/
+utmt_*.csx
+utmt_release.json

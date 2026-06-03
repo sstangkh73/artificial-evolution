@@ -1,0 +1,57 @@
+{
+  "experiment_number": 37,
+  "change_note": "Dashboard folder split test",
+  "started_at": "2026-05-10T20:00:34",
+  "start_seed": 7,
+  "seed_count": 2,
+  "body_index": 8,
+  "body_design": "sensor=0, muscle=0, armor=1, brain=3, profile=social_planner",
+  "body_stats": "cost=95, sensor_vision=2, brain_limit=10, effective_vision=2, speed=1, durability=18, brain_drain=3, metabolism=1.06, memory=1.08, social=2.13, diet=omnivore_bias, life_history=care_investor",
+  "max_ticks": 100,
+  "environment": {
+    "max_food": 120,
+    "base_food_spawn_per_tick": 5,
+    "max_large_animals": 36,
+    "large_animal_spawn_per_tick": 3,
+    "food_spawn_multiplier": 0.9,
+    "nest_support_food_chance": 0.1,
+    "nest_support_spawn_chance": 0.08,
+    "safe_area_stone_chance": 0.03,
+    "frontier_stone_bonus": 0.18,
+    "frontier_band": 6
+  },
+  "successful_tool_emergence_runs": 2,
+  "mean_first_tool_tick": 1.5,
+  "min_first_tool_tick": 1,
+  "max_first_tool_tick": 2,
+  "records": [
+    {
+      "seed": 7,
+      "body_index": 8,
+      "body_name": "body_8",
+      "body_design": "sensor=0, muscle=0, armor=1, brain=3, profile=social_planner",
+      "first_tool_tick": 2,
+      "first_tool_day": 0,
+      "first_tool_name": "knife",
+      "total_births": 11,
+      "matured_children": 7,
+      "peak_population": 23,
+      "stored_food_total": 4,
+      "reached_target": false
+    },
+    {
+      "seed": 8,
+      "body_index": 8,
+      "body_name": "body_8",
+      "body_design": "sensor=0, muscle=0, armor=1, brain=3, profile=social_planner",
+      "first_tool_tick": 1,
+      "first_tool_day": 0,
+      "first_tool_name": "knife",
+      "total_births": 9,
+      "matured_children": 7,
+      "peak_population": 20,
+      "stored_food_total": 24,
+      "reached_target": false
+    }
+  ]
+}

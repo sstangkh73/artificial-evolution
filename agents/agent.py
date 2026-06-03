@@ -1,0 +1,1820 @@
+from __future__ import annotations
+
+from dataclasses import dataclass, field
+from random import Random
+
+from agents.body import BodyPlan, inherit_body_plan
+from world.environment import (
+    CHILD_GROWTH,
+    FOOD_RAW_MEAT,
+    FOOD_RAW_PLANT,
+    MATERIAL_ASH,
+    MATERIAL_CLAY,
+    MATERIAL_FIBER,
+    MATERIAL_LEAF,
+    MATERIAL_SAND,
+    MATERIAL_SOIL,
+    MATERIAL_STONE,
+    MATERIAL_WOOD,
+)
+
+MAX_AGE = 200
+INITIAL_ENERGY = 140
+REPRODUCTION_THRESHOLD = 150
+REPRODUCTION_COST = 60
+ADULT_AGE = 61
+MINIMUM_REPRODUCTION_HEALTH = 18
+CHILD_MAX_AGE = 30
+JUVENILE_MAX_AGE = 60
+OLD_AGE = 161
+SAFE_RADIUS = 3
+NEST_BUILD_THRESHOLD = 165
+NEST_BUILD_COST = 35
+NEST_RESOURCE_REQUIREMENT = 3
+STORAGE_SURPLUS_THRESHOLD = 24
+PERSONAL_ENERGY_STORAGE_MARGIN = 18
+HOUSEHOLD_STORAGE_SHARE = 0.35
+LOW_BUFFER_STORAGE_SHARE = 0.55
+CHILD_NEST_WITHDRAWAL = 12
+LINEAGE_REPRODUCTION_BONUS = 25
+MIN_CARE_TEAM_FOR_BIRTH = 1
+BREEDER_NEST_FOOD_RESERVE = 10
+GENERAL_NEST_FOOD_RESERVE = 20
+CRITICAL_ADULT_WITHDRAW_ENERGY = 28
+BIRTH_NEST_FOOD_COST = 8
+
+
+@dataclass
+class Agent:
+    agent_id: int
+    body: BodyPlan
+    x: int
+    y: int
+    energy: int = INITIAL_ENERGY
+    age: int = 0
+    durability: int = field(init=False)
+    alive: bool = True
+    food_eaten: int = 0
+    children_count: int = 0
+    distance_traveled: int = 0
+    death_reason: str | None = None
+    completed_lifespan: bool = False
+    remembered_danger: list[tuple[int, int]] = field(default_factory=list)
+    remembered_food: list[tuple[int, int]] = field(default_factory=list)
+    remembered_food_sources: list[tuple[int, int]] = field(default_factory=list)
+    remembered_safe_zones: list[tuple[int, int]] = field(default_factory=list)
+    remembered_nest_locations: list[tuple[int, int]] = field(default_factory=list)
+    friend_ids: set[int] = field(default_factory=set)
+    preferred_role: str = "wanderer"
+    current_role: str = "solo"
+    group_id: int | None = None
+    group_target: tuple[int, int] | None = None
+    group_center: tuple[float, float] | None = None
+    shared_home_owner_id: int | None = None
+    protect_target_id: int | None = None
+    protect_target_kind: str | None = None
+    sex: str = "female"
+    generation: int = 0
+    parent_id: int | None = None
+    other_parent_id: int | None = None
+    lineage_id: str | None = None
+    children_ids: list[int] = field(default_factory=list)
+    bond_strength: dict[int, float] = field(default_factory=dict)
+    last_known_family_positions: dict[int, tuple[int, int]] = field(default_factory=dict)
+    nearby_support: bool = False
+    near_parent: bool = False
+    near_nest: bool = False
+    nest_position: tuple[int, int] | None = None
+    is_safe_area: bool = False
+    care_target: tuple[int, int] | None = None
+    settlement_target: tuple[int, int] | None = None
+    local_group_members: list["Agent"] = field(default_factory=list, repr=False)
+    recent_events: list[str] = field(default_factory=list, repr=False)
+    growth_progress: int = 0
+    child_stress: int = 0
+    meals_by_type: dict[str, int] = field(default_factory=dict)
+    stored_food_contributions: int = 0
+    equipped_object_id: int | None = None
+    gathered_materials: dict[str, int] = field(default_factory=dict)
+    technology_constructions: dict[str, int] = field(default_factory=dict)
+    technology_uses: dict[str, int] = field(default_factory=dict)
+    matured_offspring_count: int = 0
+    reproduction_partner_id: int | None = None
+    reproduction_cooldown: int = 0
+    reproduction_debug: dict[str, object] = field(default_factory=dict, repr=False)
+
+    def __post_init__(self) -> None:
+        self.durability = self.body.durability
+        self.preferred_role = self._infer_preferred_role()
+
+    def tick(self, env, rng: Random) -> bool:
+        if not self.alive or self.completed_lifespan:
+            return False
+
+        self._last_env = env
+        self.age += 1
+        if self.reproduction_cooldown > 0:
+            self.reproduction_cooldown -= 1
+        self.energy -= self._base_energy_drain()
+        self.energy -= self._brain_energy_drain()
+        self._withdraw_nest_food_if_needed(env)
+
+        if not self._resolve_life_state():
+            return False
+
+        self._try_build_nest(env)
+        self._gather_materials_for_nest(env, rng)
+        self._tend_food_patch(env, rng)
+        self._maintain_hearth(env)
+        self._experiment_with_objects(env, rng)
+
+        hunted = self._try_hunt_large_animal(env, rng)
+        if hunted:
+            visible_food = None
+        else:
+            visible_food = env.find_nearest_food(
+                self.x,
+                self.y,
+                self._effective_vision(env.is_night),
+            )
+
+        if visible_food is None:
+            self._wander(env, rng)
+        else:
+            self._remember_food(visible_food[0], visible_food[1])
+            self._move_toward(env, visible_food[0], visible_food[1])
+
+        resource = env.consume_food(self.x, self.y)
+        if resource is not None:
+            restored_energy = self._process_food_resource(env, resource)
+            self.energy += restored_energy
+            self.food_eaten += 1
+            self._remember_food(self.x, self.y)
+
+        self._apply_environmental_danger(env, rng)
+
+        if not self._resolve_life_state():
+            return False
+
+        if self.age >= MAX_AGE:
+            self.completed_lifespan = True
+            self.alive = False
+            self.death_reason = "lifespan_completed"
+            return False
+
+        return self.can_reproduce()
+
+    def can_reproduce(self) -> bool:
+        if self.sex != "female":
+            self.reproduction_partner_id = None
+            self.reproduction_debug = {
+                "eligible": False,
+                "reason": "not_female",
+                "near_nest": self.near_nest,
+                "mate": False,
+                "nest_food": 0,
+                "energy": self.energy,
+                "threshold": None,
+            }
+            return False
+        support_count = sum(
+            1
+            for member in self.local_group_members
+            if abs(member.x - self.x) + abs(member.y - self.y) <= SAFE_RADIUS
+            and member.current_stage in {"adult", "juvenile"}
+        )
+        local_child_load = sum(
+            1
+            for member in self.local_group_members
+            if member.current_stage == "child"
+            and abs(member.x - self.x) + abs(member.y - self.y) <= SAFE_RADIUS + 1
+        )
+        mate = self._find_reproduction_partner()
+        self.reproduction_partner_id = mate.agent_id if mate is not None else None
+        reproduction_threshold = REPRODUCTION_THRESHOLD - int(self.body.reproduction_drive * 20)
+        nest_food_storage = 0
+        owner_id = self._nest_owner_id()
+        if owner_id is not None:
+            nest_food_storage = self._last_env.get_nest_food_storage(owner_id) if hasattr(self, "_last_env") else 0
+        if self.near_nest and support_count >= MIN_CARE_TEAM_FOR_BIRTH:
+            reproduction_threshold = max(
+                100,
+                reproduction_threshold - LINEAGE_REPRODUCTION_BONUS - int(self.body.parenting_instinct * 8),
+            )
+        nest_food_requirement = BREEDER_NEST_FOOD_RESERVE + (local_child_load * 6)
+        conditions = {
+            "adult_age": self.age >= ADULT_AGE,
+            "adult_stage": self.current_stage == "adult",
+            "energy_ok": self.energy >= reproduction_threshold,
+            "durability_ok": self.durability >= MINIMUM_REPRODUCTION_HEALTH,
+            "near_nest": self.near_nest,
+            "nest_food_ok": nest_food_storage >= nest_food_requirement,
+            "mate_ok": mate is not None,
+            "cooldown_ok": self.reproduction_cooldown <= 0,
+        }
+        if all(conditions.values()):
+            reason = "ready"
+            reason_list = ["ready"]
+            eligible = True
+        else:
+            reason_list: list[str] = []
+            if not conditions["adult_age"] or not conditions["adult_stage"]:
+                reason_list.append("not_adult")
+            if not conditions["energy_ok"]:
+                reason_list.append("low_energy")
+            if not conditions["near_nest"]:
+                reason_list.append("not_near_nest")
+            if not conditions["nest_food_ok"]:
+                reason_list.append("nest_food_low")
+            if not conditions["mate_ok"]:
+                reason_list.append("no_mate")
+            if not conditions["durability_ok"]:
+                reason_list.append("low_durability")
+            if not conditions["cooldown_ok"]:
+                reason_list.append("cooldown")
+            reason = "|".join(reason_list) if reason_list else "blocked_other"
+            eligible = False
+
+        self.reproduction_debug = {
+            "eligible": eligible,
+            "reason": reason,
+            "reasons": reason_list,
+            "near_nest": self.near_nest,
+            "mate": mate is not None,
+            "nest_food": nest_food_storage,
+            "nest_food_requirement": nest_food_requirement,
+            "energy": self.energy,
+            "threshold": reproduction_threshold,
+            "support_count": support_count,
+            "local_child_load": local_child_load,
+            "cooldown": self.reproduction_cooldown,
+        }
+        return eligible
+
+    @property
+    def current_stage(self) -> str:
+        if self.age <= CHILD_MAX_AGE:
+            return "child"
+        if self.age <= JUVENILE_MAX_AGE:
+            return "juvenile"
+        if self.age < OLD_AGE:
+            return "adult"
+        return "old"
+
+    def can_cooperate(self) -> bool:
+        return self.body.cognition_score >= 2.2 and self.body.cooperation_drive >= 0.35
+
+    def reset_social_state(self) -> None:
+        self.group_id = None
+        self.group_target = None
+        self.group_center = None
+        self.shared_home_owner_id = None
+        self.protect_target_id = None
+        self.protect_target_kind = None
+        self.reproduction_partner_id = None
+        self.nearby_support = False
+        self.near_parent = False
+        self.near_nest = False
+        self.nest_position = None
+        self.is_safe_area = False
+        self.care_target = None
+        self.settlement_target = None
+        self.local_group_members = []
+        if self.can_cooperate():
+            self.current_role = self.preferred_role
+        else:
+            self.current_role = "solo"
+
+    def join_group(
+        self,
+        group_id: int,
+        role: str,
+        members: list["Agent"],
+    ) -> None:
+        self.group_id = group_id
+        self.current_role = role
+        self.local_group_members = [member for member in members if member.agent_id != self.agent_id]
+        self.friend_ids.update(member.agent_id for member in members if member.agent_id != self.agent_id)
+        self.group_center = (
+            sum(member.x for member in members) / len(members),
+            sum(member.y for member in members) / len(members),
+        )
+        shared_food = self._collect_shared_memory(members, "remembered_food")
+        shared_danger = self._collect_shared_memory(members, "remembered_danger")
+        shared_food_sources = self._collect_shared_memory(members, "remembered_food_sources")
+        shared_safe_zones = self._collect_shared_memory(members, "remembered_safe_zones")
+        shared_nests = self._collect_shared_memory(members, "remembered_nest_locations")
+        self.remembered_food = shared_food[: max(1, self._memory_capacity() // 2)]
+        self.remembered_danger = shared_danger[: self._memory_capacity()]
+        self.remembered_food_sources = shared_food_sources[: self._strategic_memory_capacity()]
+        self.remembered_safe_zones = shared_safe_zones[: self._strategic_memory_capacity()]
+        self.remembered_nest_locations = shared_nests[: self._strategic_memory_capacity()]
+        self.shared_home_owner_id = self._resolve_shared_home_owner(members)
+        self.group_target = (
+            shared_food_sources[0]
+            if shared_food_sources
+            else shared_food[0] if shared_food else None
+        )
+
+    def _collect_shared_memory(
+        self,
+        members: list["Agent"],
+        attribute_name: str,
+    ) -> list[tuple[int, int]]:
+        seen: list[tuple[int, int]] = []
+        for member in members:
+            for position in getattr(member, attribute_name):
+                if position not in seen:
+                    seen.append(position)
+        return seen
+
+    def _resolve_shared_home_owner(self, members: list["Agent"]) -> int | None:
+        home_votes: list[int] = []
+        for member in members:
+            if member.parent_id is not None and member.current_stage == "child":
+                home_votes.append(member.parent_id)
+            elif member.nest_position is not None:
+                home_votes.append(member.agent_id)
+            elif member.parent_id is not None:
+                home_votes.append(member.parent_id)
+        if not home_votes:
+            return None
+        counts: dict[int, int] = {}
+        for owner_id in home_votes:
+            counts[owner_id] = counts.get(owner_id, 0) + 1
+        return sorted(counts.items(), key=lambda item: (-item[1], item[0]))[0][0]
+
+    def _find_reproduction_partner(self) -> "Agent" | None:
+        candidates = [
+            member
+            for member in self.local_group_members
+            if member.sex == "male"
+            and member.current_stage == "adult"
+            and member.energy >= max(40, REPRODUCTION_COST // 2)
+            and member.durability >= MINIMUM_REPRODUCTION_HEALTH
+            and abs(member.x - self.x) + abs(member.y - self.y) <= SAFE_RADIUS
+        ]
+        if not candidates:
+            return None
+        candidates.sort(
+            key=lambda member: (
+                abs(member.x - self.x) + abs(member.y - self.y),
+                -member.energy,
+                member.agent_id,
+            )
+        )
+        return candidates[0]
+
+    def spawn_child(self, child_id: int, rng: Random, env, mate: "Agent" | None = None) -> Agent:
+        child_body = inherit_body_plan(self.body, mate.body if mate is not None else self.body, rng)
+        self.children_count += 1
+        self.children_ids.append(child_id)
+        self.current_role = "caretaker"
+        self.bond_strength[child_id] = max(self.bond_strength.get(child_id, 0.0), 8.0)
+        if mate is not None:
+            mate.bond_strength[child_id] = max(mate.bond_strength.get(child_id, 0.0), 6.0)
+        child_x, child_y = self._find_spawn_position(env, rng)
+        home_owner_id = self._nest_owner_id()
+        child_sex = self._choose_child_sex(rng, mate)
+        remembered_nests: list[tuple[int, int]] = []
+        if self.nest_position is not None:
+            remembered_nests.append(self.nest_position)
+        return Agent(
+            agent_id=child_id,
+            body=child_body,
+            x=child_x,
+            y=child_y,
+            energy=INITIAL_ENERGY,
+            sex=child_sex,
+            generation=self.generation + 1,
+            parent_id=self.agent_id,
+            other_parent_id=mate.agent_id if mate is not None else None,
+            lineage_id=self.lineage_id,
+            shared_home_owner_id=home_owner_id,
+            remembered_nest_locations=remembered_nests,
+            bond_strength={
+                self.agent_id: 8.0,
+                **({mate.agent_id: 6.0} if mate is not None else {}),
+            },
+        )
+
+    def prepare_reproduction(self, env, mate: "Agent" | None, litter_size: int) -> None:
+        total_cost = REPRODUCTION_COST + max(0, litter_size - 1) * 18
+        self.energy -= total_cost
+        self.current_role = "caretaker"
+        self.reproduction_cooldown = max(10, 20 + (litter_size * 6) - int(self.body.parenting_instinct * 8))
+        owner_id = self._nest_owner_id()
+        if owner_id is not None:
+            env.withdraw_food_from_nest(owner_id, BIRTH_NEST_FOOD_COST * litter_size)
+        if mate is not None:
+            mate.energy -= max(12, (REPRODUCTION_COST // 2) + max(0, litter_size - 1) * 8)
+            mate.current_role = "protector" if mate.current_role == "solo" else mate.current_role
+            mate.reproduction_cooldown = max(mate.reproduction_cooldown, 10 + (litter_size * 4))
+
+    def decide_litter_size(self, env, mate: "Agent" | None, rng: Random) -> int:
+        litter_size = 1
+        owner_id = self._nest_owner_id()
+        nest_food_storage = env.get_nest_food_storage(owner_id) if owner_id is not None else 0
+        support_count = sum(
+            1
+            for member in self.local_group_members
+            if member.current_stage in {"adult", "juvenile"}
+            and abs(member.x - self.x) + abs(member.y - self.y) <= SAFE_RADIUS
+        )
+        if (
+            self.body.reproduction_investment >= 0.82
+            and nest_food_storage >= 18
+            and support_count >= 2
+            and self.energy >= REPRODUCTION_THRESHOLD + 22
+        ):
+            litter_size += 1
+        if (
+            self.body.reproduction_drive >= 0.66
+            and nest_food_storage >= 28
+            and mate is not None
+            and self.energy >= REPRODUCTION_THRESHOLD + 34
+            and rng.random() < 0.45
+        ):
+            litter_size += 1
+        return min(3, litter_size)
+
+    def _choose_child_sex(self, rng: Random, mate: "Agent" | None) -> str:
+        female_count = 0
+        male_count = 0
+        sampled_agents = [self, *self.local_group_members]
+        if mate is not None and mate not in sampled_agents:
+            sampled_agents.append(mate)
+        for agent in sampled_agents:
+            if agent.current_stage not in {"adult", "juvenile"}:
+                continue
+            if agent.sex == "female":
+                female_count += 1
+            else:
+                male_count += 1
+        if female_count <= max(1, male_count - 1):
+            return "female"
+        if male_count < max(1, female_count - 1):
+            return "male"
+        return "female" if rng.random() < 0.5 else "male"
+
+    def _find_spawn_position(self, env, rng: Random) -> tuple[int, int]:
+        offsets = [(1, 0), (-1, 0), (0, 1), (0, -1)]
+        rng.shuffle(offsets)
+
+        for dx, dy in offsets:
+            spawn_x = max(0, min(env.width - 1, self.x + dx))
+            spawn_y = max(0, min(env.height - 1, self.y + dy))
+            if env.is_walkable(spawn_x, spawn_y):
+                return spawn_x, spawn_y
+
+        return self.x, self.y
+
+    def _effective_vision(self, is_night: bool) -> int:
+        stage_adjusted_vision = self._stage_adjusted_vision()
+        if not is_night:
+            return stage_adjusted_vision
+        return max(1, stage_adjusted_vision // 2)
+
+    def _wander(self, env, rng: Random) -> None:
+        if self.body.cognition_score < 1.2:
+            directions = [(1, 0), (-1, 0), (0, 1), (0, -1)]
+            rng.shuffle(directions)
+            for dx, dy in directions:
+                if self._move(env, dx, dy):
+                    return
+            return
+
+        preferred_target = self._preferred_movement_target()
+        best_step = self._choose_best_step(env, rng, target=preferred_target)
+        if best_step is not None and self._move(env, best_step[0], best_step[1]):
+            return
+
+        directions = [(1, 0), (-1, 0), (0, 1), (0, -1)]
+        rng.shuffle(directions)
+        for dx, dy in directions:
+            if self._move(env, dx, dy):
+                return
+
+    def _move_toward(self, env, target_x: int, target_y: int) -> None:
+        target = (target_x, target_y)
+
+        if self.body.cognition_score >= 1.4:
+            best_step = self._choose_best_step(env, Random(self.agent_id + self.age), target=target)
+            if best_step is not None and self._move(env, best_step[0], best_step[1]):
+                return
+
+        steps: list[tuple[int, int]] = []
+        dx = 0
+        dy = 0
+
+        if target_x > self.x:
+            dx = 1
+        elif target_x < self.x:
+            dx = -1
+
+        if target_y > self.y:
+            dy = 1
+        elif target_y < self.y:
+            dy = -1
+
+        if self.body.decision_quality >= 3 and abs(target_x - self.x) >= abs(target_y - self.y):
+            steps = [(dx, 0), (0, dy)]
+        elif self.body.decision_quality >= 3:
+            steps = [(0, dy), (dx, 0)]
+        else:
+            steps = [(dx, dy), (dx, 0), (0, dy)]
+
+        for step_dx, step_dy in steps:
+            if self._move(env, step_dx, step_dy):
+                return
+
+        self._wander(env, Random(self.agent_id + self.age))
+
+    def _choose_best_step(
+        self,
+        env,
+        rng: Random,
+        target: tuple[int, int] | None,
+    ) -> tuple[int, int] | None:
+        candidates = [(1, 0), (-1, 0), (0, 1), (0, -1)]
+        scored_steps: list[tuple[float, tuple[int, int]]] = []
+
+        for dx, dy in candidates:
+            move_distance = self._movement_speed()
+            proposed_x = max(0, min(env.width - 1, self.x + (dx * move_distance)))
+            proposed_y = max(0, min(env.height - 1, self.y + (dy * move_distance)))
+            if not env.is_walkable(proposed_x, proposed_y):
+                continue
+
+            score = 0.0
+            danger_level = env.get_danger_level(proposed_x, proposed_y)
+            score -= danger_level * (1.8 + (self.body.danger_avoidance * 2.6))
+
+            if (proposed_x, proposed_y) in self.remembered_danger:
+                score -= 2.0 + self.body.cognition_score
+
+            if (proposed_x, proposed_y) in self.remembered_food:
+                score += 1.2 + self.body.gather_drive
+
+            if (proposed_x, proposed_y) in self.remembered_food_sources:
+                score += 1.8 + self.body.gather_drive
+
+            if (proposed_x, proposed_y) in self.remembered_safe_zones:
+                score += 1.0 + self.body.danger_avoidance
+
+            if (proposed_x, proposed_y) in self.remembered_nest_locations:
+                score += 1.2 + self.body.social_score
+
+            if target is not None:
+                current_distance = abs(target[0] - self.x) + abs(target[1] - self.y)
+                new_distance = abs(target[0] - proposed_x) + abs(target[1] - proposed_y)
+                score += (current_distance - new_distance) * (1.0 + (self.body.planning_focus * 1.4))
+                if self.body.memory_score >= 0.7:
+                    score += 0.35
+
+            if self.energy < 60:
+                score -= danger_level * 1.5
+                if env.is_safe_area(proposed_x, proposed_y):
+                    score += 1.2 + self.body.danger_avoidance
+
+            if self.nest_position is not None:
+                current_nest_distance = abs(self.nest_position[0] - self.x) + abs(self.nest_position[1] - self.y)
+                new_nest_distance = abs(self.nest_position[0] - proposed_x) + abs(self.nest_position[1] - proposed_y)
+                score += (current_nest_distance - new_nest_distance) * 0.4
+
+            if self.group_center is not None and self.current_role in {"follower", "guardian"}:
+                current_group_distance = abs(self.group_center[0] - self.x) + abs(self.group_center[1] - self.y)
+                new_group_distance = abs(self.group_center[0] - proposed_x) + abs(self.group_center[1] - proposed_y)
+                score += (current_group_distance - new_group_distance) * 0.8
+
+            if self.current_role == "planner":
+                score -= danger_level * 1.4
+            elif self.current_role == "scout":
+                if target is not None:
+                    score += 0.8
+            elif self.current_role == "guardian":
+                score -= danger_level * 1.0
+            elif self.current_role == "forager":
+                if target is not None:
+                    score += 1.2
+            elif self.current_role == "gatherer":
+                if (proposed_x, proposed_y) in self.remembered_food_sources:
+                    score += 1.6
+            elif self.current_role == "hunter":
+                if self.group_target is not None:
+                    score += 1.0
+            elif self.current_role == "protector":
+                if self.near_nest or env.is_safe_area(proposed_x, proposed_y):
+                    score += 1.1
+            elif self.current_role == "experimenter":
+                if self.nest_position is not None:
+                    score += 1.0
+
+            if self.current_stage == "child":
+                if self.nearby_support:
+                    score += 0.8
+                elif self.parent_id is not None:
+                    score -= 0.6
+                score -= self.child_stress * 0.15
+                if env.is_safe_area(proposed_x, proposed_y):
+                    score += 1.0
+            if self._best_object_score(env, "cut", "plant") >= 8.0 and (proposed_x, proposed_y) in self.remembered_food_sources:
+                score += 1.6
+            if self._best_object_score(env, "pierce", "prey") >= 9.0 and self.group_target is not None:
+                score += 1.0
+            if self._best_object_score(env, "hit", "defense") >= 7.0 and self.current_role in {"parent", "caretaker", "protector"}:
+                score += 0.6
+            if self.care_target is not None and target == self.care_target:
+                score += 2.0
+            if target is not None and self.current_role in {"parent", "caretaker", "protector"}:
+                score += 1.4
+            if self.current_role in {"caretaker", "protector"} and self.nest_position is not None:
+                home_distance = abs(self.nest_position[0] - proposed_x) + abs(self.nest_position[1] - proposed_y)
+                if home_distance <= SAFE_RADIUS + 1:
+                    score += 1.0
+            if self.current_role == "protector" and self.protect_target_kind == "child" and target == self.care_target:
+                score += 2.2
+            if self.current_role == "protector" and self.protect_target_kind == "nest" and self.nest_position is not None:
+                home_distance = abs(self.nest_position[0] - proposed_x) + abs(self.nest_position[1] - proposed_y)
+                if home_distance <= 2:
+                    score += 1.4
+            if self.body.planning_focus >= 0.7 and target is not None:
+                score += 0.4
+            if self.body.memory_score >= 0.7 and self._is_memory_guided_target(target):
+                score += 0.8
+
+            score += rng.random() * max(0.1, 1.0 - (self.body.planning_focus * 0.7))
+            score += self.body.exploration_drive * 0.35
+            scored_steps.append((score, (dx, dy)))
+
+        if not scored_steps:
+            return None
+
+        scored_steps.sort(key=lambda item: item[0], reverse=True)
+        return scored_steps[0][1]
+
+    def _move(self, env, dx: int, dy: int) -> bool:
+        if dx == 0 and dy == 0:
+            return False
+
+        move_distance = self._movement_speed()
+        proposed_x = max(0, min(env.width - 1, self.x + (dx * move_distance)))
+        proposed_y = max(0, min(env.height - 1, self.y + (dy * move_distance)))
+
+        if not env.is_walkable(proposed_x, proposed_y):
+            return False
+
+        traveled = abs(proposed_x - self.x) + abs(proposed_y - self.y)
+        self.x = proposed_x
+        self.y = proposed_y
+        self.distance_traveled += traveled
+        movement_penalty = max(1, traveled)
+        if self.current_stage == "child" and not self.nearby_support:
+            movement_penalty += 1
+        self.energy -= movement_penalty
+        return True
+
+    def _try_hunt_large_animal(self, env, rng: Random) -> bool:
+        if self.body.cognition_score >= 4.2 and self.nest_position is None and self.is_safe_area:
+            return False
+        vision = self._effective_vision(env.is_night)
+        pierce_score = self._best_object_score(env, "pierce", "prey")
+        if pierce_score >= 9.0:
+            vision += 1
+        animal = env.find_nearest_large_animal(self.x, self.y, vision)
+        if animal is None:
+            return False
+
+        if self.group_id is None or len(self.local_group_members) < 1:
+            if abs(animal.x - self.x) + abs(animal.y - self.y) <= max(1, self.body.speed):
+                hunt_bonus = self.get_hunt_power_bonus(env)
+                self.energy -= max(1, 2 - hunt_bonus)
+                injury_risk = 0.38 - (self.body.aggression * 0.08) - min(0.14, pierce_score * 0.012)
+                if rng.random() < max(0.05, injury_risk):
+                    self.durability -= 1
+                    self._remember_danger(self.x, self.y)
+                self.recent_events.append(
+                    f"failed solo hunt -> agent={self.agent_id} animal={animal.animal_id} "
+                    f"reason=alone"
+                )
+            return False
+
+        hunt_team = [self]
+        for member in self.local_group_members:
+            if abs(member.x - animal.x) + abs(member.y - animal.y) <= max(4, vision):
+                hunt_team.append(member)
+        if len(hunt_team) < 2:
+            if self.group_center is not None:
+                self.group_target = (round(self.group_center[0]), round(self.group_center[1]))
+            elif self.local_group_members:
+                nearest_teammate = min(
+                    self.local_group_members,
+                    key=lambda member: abs(member.x - self.x) + abs(member.y - self.y),
+                )
+                self.group_target = (nearest_teammate.x, nearest_teammate.y)
+            else:
+                self.group_target = (animal.x, animal.y)
+            return False
+
+        engage_range = max(1, self.body.speed + (1 if pierce_score >= 9.0 else 0))
+        if abs(animal.x - self.x) + abs(animal.y - self.y) > engage_range:
+            self.group_target = (animal.x, animal.y)
+            return False
+
+        outcome = env.attempt_hunt(animal.animal_id, hunt_team, rng)
+        if not outcome["success"]:
+            penalty = 2 if outcome["reason"] == "group_power_too_low" else 1
+            for member in hunt_team:
+                member_bonus = member.get_hunt_power_bonus(env)
+                member.energy -= max(1, penalty - member_bonus)
+                member_pierce = member._best_object_score(env, "pierce", "prey")
+                injury_risk = 0.25 - min(0.10, member_pierce * 0.01)
+                if outcome["reason"] != "group_power_too_low" and rng.random() < max(0.05, injury_risk):
+                    member.durability -= 1
+            self.recent_events.append(
+                f"hunt failed -> leader={self.agent_id} team={[member.agent_id for member in hunt_team]} "
+                f"animal={animal.animal_id} reason={outcome['reason']}"
+            )
+            return True
+
+        harvested_energy = int(outcome["raw_meat_energy"]) + sum(
+            member._apply_object_action(env, "cut", "prey", base_outcome=4.0)
+            for member in hunt_team
+        )
+        share_per_member = max(1, harvested_energy // len(hunt_team))
+        for member in hunt_team:
+            restored_energy = member._consume_processed_food(
+                env,
+                FOOD_RAW_MEAT,
+                share_per_member,
+            )
+            member.energy += restored_energy
+            member.food_eaten += 1
+            member.successful_hunt()
+            member._apply_object_action(env, "pierce", "prey", base_outcome=2.0)
+            if member.body.cognition_score >= 4.2 and member.is_safe_area:
+                member.settlement_target = (member.x, member.y)
+                member._try_build_nest(env)
+        self.recent_events.append(
+            f"hunt success -> leader={self.agent_id} team={[member.agent_id for member in hunt_team]} "
+            f"animal={animal.animal_id} herd={outcome['herd_id']} guards={outcome['guard_count']} "
+            f"calves={outcome['calf_count']} power={outcome['group_power']} defense={outcome['animal_defense']}"
+        )
+        return True
+
+    def _apply_environmental_danger(self, env, rng: Random) -> None:
+        danger_level = env.get_danger_level(self.x, self.y)
+        if self.near_nest:
+            danger_level = max(0.0, danger_level - 0.18)
+        if self._best_object_score(env, "pierce", "defense") >= 8.0 and self.near_nest:
+            danger_level = max(0.0, danger_level - 0.08)
+        if danger_level <= 0:
+            return
+
+        avoidance_bonus = (
+            (self.body.decision_quality - 1) * 0.06
+            + (self.body.speed - 1) * 0.12
+            + (self.body.danger_avoidance * 0.22)
+        )
+        if rng.random() > max(0.0, danger_level - avoidance_bonus):
+            return
+
+        raw_damage = 1
+        if danger_level >= 0.45:
+            raw_damage = 2
+
+        mitigated_damage = max(0, raw_damage - self.body.armor_units)
+        if self._best_object_score(env, "hit", "defense") >= 7.0 and self.current_role in {"parent", "caretaker"}:
+            mitigated_damage = max(0, mitigated_damage - 1)
+        if mitigated_damage == 0 and danger_level >= 0.45:
+            mitigated_damage = 1 if rng.random() < 0.25 else 0
+
+        self.durability -= mitigated_damage
+        if mitigated_damage > 0:
+            self._remember_danger(self.x, self.y)
+
+    def _remember_danger(self, x: int, y: int) -> None:
+        memory_limit = self._memory_capacity()
+        if memory_limit <= 0:
+            return
+        position = (x, y)
+        if position in self.remembered_danger:
+            self.remembered_danger.remove(position)
+        self.remembered_danger.append(position)
+        if len(self.remembered_danger) > memory_limit:
+            self.remembered_danger.pop(0)
+
+    def _remember_food(self, x: int, y: int) -> None:
+        memory_limit = max(1, self._memory_capacity() // 2)
+        position = (x, y)
+        if position in self.remembered_food:
+            self.remembered_food.remove(position)
+        self.remembered_food.append(position)
+        if len(self.remembered_food) > memory_limit:
+            self.remembered_food.pop(0)
+        self._remember_food_source(x, y)
+
+    def _remember_food_source(self, x: int, y: int) -> None:
+        self._remember_position(
+            self.remembered_food_sources,
+            (x, y),
+            self._strategic_memory_capacity(),
+        )
+
+    def _remember_safe_zone(self, x: int, y: int) -> None:
+        self._remember_position(
+            self.remembered_safe_zones,
+            (x, y),
+            self._strategic_memory_capacity(),
+        )
+
+    def _remember_nest(self, x: int, y: int) -> None:
+        self._remember_position(
+            self.remembered_nest_locations,
+            (x, y),
+            self._strategic_memory_capacity(),
+        )
+
+    def _remember_position(
+        self,
+        memory: list[tuple[int, int]],
+        position: tuple[int, int],
+        limit: int,
+    ) -> None:
+        if limit <= 0:
+            return
+        if position in memory:
+            memory.remove(position)
+        memory.append(position)
+        if len(memory) > limit:
+            memory.pop(0)
+
+    def _memory_capacity(self) -> int:
+        return max(1, int(round((self.body.brain_units * 2) + (self.body.memory_score * 6))))
+
+    def _strategic_memory_capacity(self) -> int:
+        return max(1, int(round((self.body.brain_units * 2) + (self.body.memory_retention * 5))))
+
+    def _process_food_resource(self, env, resource) -> int:
+        return self._consume_processed_food(env, resource.kind, resource.energy)
+
+    def _consume_processed_food(self, env, food_kind: str, base_energy: int) -> int:
+        cooked_kind = food_kind
+        restored_energy = base_energy
+        if self.body.cooking_skill >= 0.5:
+            if food_kind == FOOD_RAW_PLANT:
+                cooked_kind = "cooked_plant"
+                restored_energy = self._cooked_energy(food_kind, base_energy)
+                self.recent_events.append(
+                    f"cooking -> agent={self.agent_id} kind=plant skill={self.body.cooking_skill:.2f} energy={restored_energy}"
+                )
+            elif food_kind == FOOD_RAW_MEAT:
+                cooked_kind = "cooked_meat"
+                restored_energy = self._cooked_energy(food_kind, base_energy)
+                self.recent_events.append(
+                    f"cooking -> agent={self.agent_id} kind=meat skill={self.body.cooking_skill:.2f} energy={restored_energy}"
+                )
+
+        if food_kind == FOOD_RAW_PLANT:
+            restored_energy += self._apply_object_action(env, "cut", "plant", base_outcome=4.0)
+
+        if food_kind == FOOD_RAW_MEAT:
+            restored_energy += self._apply_object_action(env, "cut", "prey", base_outcome=4.0)
+
+        if self._hearth_support_level() >= 0.35:
+            restored_energy += 2
+
+        self.meals_by_type[cooked_kind] = self.meals_by_type.get(cooked_kind, 0) + 1
+        self.growth_progress += CHILD_GROWTH.get(cooked_kind, 1)
+        if self._hearth_support_level() >= 0.35:
+            self.growth_progress += 1
+
+        if self.body.social_score >= 1.7:
+            self._share_food_support(restored_energy)
+        self._store_surplus_food(env, restored_energy)
+        return restored_energy
+
+    def _cooked_energy(self, food_kind: str, raw_energy: int) -> int:
+        hearth_bonus = 1.0 + (self._hearth_support_level() * 0.2)
+        if food_kind == FOOD_RAW_PLANT:
+            base_energy = max(10, int(round(14 * self.body.plant_efficiency)))
+            base_energy += int(round(self.body.cooking_skill * 2))
+            return int(round(base_energy * hearth_bonus))
+
+        if food_kind == FOOD_RAW_MEAT:
+            base_energy = max(18, int(round(24 * self.body.meat_efficiency)))
+            base_energy += int(round(self.body.cooking_skill * 4))
+            return int(round(base_energy * hearth_bonus))
+
+        bonus = 1.2 + (self.body.cooking_skill * 0.25)
+        return int(round(raw_energy * bonus * hearth_bonus))
+
+    def _share_food_support(self, restored_energy: int) -> None:
+        if not self.local_group_members:
+            return
+
+        receivers = [
+            member
+            for member in self.local_group_members
+            if abs(member.x - self.x) + abs(member.y - self.y) <= 2
+            and (
+                member.agent_id in self.children_ids
+                or member.current_stage == "child"
+                or member.energy < restored_energy
+            )
+        ]
+        if not receivers:
+            return
+
+        receivers.sort(
+            key=lambda member: (
+                member.agent_id not in self.children_ids,
+                member.current_stage != "child",
+                abs(member.x - self.x) + abs(member.y - self.y),
+            )
+        )
+
+        share_energy = max(4, restored_energy // 5)
+        for member in receivers[:2]:
+            bonded_share = share_energy
+            if member.agent_id in self.children_ids:
+                bonded_share = max(bonded_share, restored_energy // 3)
+            if self.energy <= bonded_share + 8:
+                break
+            self.energy -= bonded_share
+            member.energy += bonded_share
+            member.growth_progress += 1 if member.current_stage != "child" else 2
+            self._increase_bond(member.agent_id, 1.4)
+            member._increase_bond(self.agent_id, 1.0)
+            self.recent_events.append(
+                f"food shared -> giver={self.agent_id} receiver={member.agent_id} amount={bonded_share}"
+            )
+        if self.current_role in {"hunter", "gatherer"} and self.near_nest and self.energy > 120:
+            self._redistribute_food_to_group()
+
+    def successful_hunt(self) -> None:
+        self.meals_by_type["hunt_share"] = self.meals_by_type.get("hunt_share", 0) + 1
+        self.current_role = "hunter"
+
+    def _redistribute_food_to_group(self) -> None:
+        if not self.local_group_members:
+            return
+        receivers = [
+            member
+            for member in self.local_group_members
+            if abs(member.x - self.x) + abs(member.y - self.y) <= 3
+            and member.energy < self.energy
+        ]
+        receivers.sort(key=lambda member: (member.current_stage != "child", member.energy))
+        for member in receivers[:3]:
+            transfer = min(8, max(0, self.energy - member.energy))
+            if transfer < 4:
+                continue
+            self.energy -= transfer
+            member.energy += transfer
+            self.recent_events.append(
+                f"food redistributed -> giver={self.agent_id} receiver={member.agent_id} amount={transfer} role={self.current_role}"
+            )
+
+    def get_hunt_power_bonus(self, env) -> int:
+        pierce_score = self._best_object_score(env, "pierce", "prey")
+        hit_score = self._best_object_score(env, "hit", "prey")
+        return int((max(pierce_score, hit_score * 0.7)) // 6)
+
+    def _best_available_object(self, env, action: str, context: str):
+        candidates = []
+        if self.equipped_object_id is not None:
+            equipped = env.get_object(self.equipped_object_id)
+            if equipped is not None and equipped.durability > 0:
+                candidates.append(equipped)
+        owner_id = self._nest_owner_id()
+        if owner_id is not None and self.near_nest:
+            candidates.extend(env.get_nest_objects(owner_id))
+        if not candidates:
+            return None
+        return max(
+            candidates,
+            key=lambda physical_object: env.score_object_for_action(physical_object, action, context),
+        )
+
+    def _best_object_score(self, env, action: str, context: str) -> float:
+        physical_object = self._best_available_object(env, action, context)
+        if physical_object is None:
+            return 0.0
+        if self.near_nest:
+            self.equipped_object_id = physical_object.object_id
+        return env.score_object_for_action(physical_object, action, context)
+
+    def _apply_object_action(
+        self,
+        env,
+        action: str,
+        context: str,
+        base_outcome: float,
+    ) -> int:
+        physical_object = self._best_available_object(env, action, context)
+        if physical_object is None:
+            return 0
+        score = env.score_object_for_action(physical_object, action, context)
+        if score <= 0:
+            return 0
+        if self.near_nest:
+            self.equipped_object_id = physical_object.object_id
+        bonus = int(score // 3)
+        outcome_score = base_outcome + bonus
+        env.record_object_use(
+            physical_object.object_id,
+            self.agent_id,
+            outcome_score=outcome_score,
+            action=action,
+            context=context,
+        )
+        self.technology_uses[physical_object.classification or "unclassified_object"] = (
+            self.technology_uses.get(physical_object.classification or "unclassified_object", 0) + 1
+        )
+        self.recent_events.append(
+            f"object_used -> agent={self.agent_id} object={physical_object.object_id} "
+            f"action={action} context={context} outcome={outcome_score:.1f}"
+        )
+        return max(0, bonus)
+
+    def _base_energy_drain(self) -> int:
+        drain = max(1, int(round(self.body.metabolism_rate)))
+        if self.near_nest:
+            drain = max(0, drain - 1)
+        if self.near_nest and self._hearth_support_level() >= 0.35:
+            drain = max(0, drain - 1)
+        if self.current_stage == "child":
+            if self.near_nest:
+                drain = max(0, drain - 1)
+            if self._hearth_support_level() >= 0.35:
+                drain = max(0, drain - 1)
+            if self.growth_progress >= 8:
+                drain = max(0, drain - 1)
+            if self.near_parent:
+                drain = max(0, drain - 1)
+            if self.nearby_support:
+                return drain
+            return drain + 1
+        if self.current_stage == "juvenile":
+            if self.growth_progress >= 12:
+                drain = max(1, drain)
+            return drain + 1
+        if self.current_stage == "old":
+            return drain + 1
+        return drain
+
+    def _brain_energy_drain(self) -> int:
+        drain = self.body.passive_energy_drain
+        if self.near_nest:
+            drain = max(0, drain - 1)
+        if self.near_nest and self._hearth_support_level() >= 0.35:
+            drain = max(0, drain - 1)
+        if self.current_stage == "child":
+            if self.near_nest:
+                drain = max(0, drain - 1)
+            if self.near_parent:
+                return max(0, drain // 2)
+            if self.nearby_support:
+                return max(0, drain - 1)
+        if self.current_stage == "old":
+            return drain + 1
+        return drain
+
+    def _movement_speed(self) -> int:
+        speed = self.body.speed
+        if self.current_stage == "child":
+            speed = max(1, speed - 1)
+            if not self.nearby_support:
+                speed = 1
+        elif self.current_stage == "juvenile":
+            speed = max(1, speed)
+        elif self.current_stage == "old":
+            speed = max(1, speed - 1)
+        return speed
+
+    def _stage_adjusted_vision(self) -> int:
+        vision = self.body.effective_vision
+        if self.current_stage == "child":
+            if self.growth_progress >= 6:
+                return max(1, vision)
+            return max(1, vision - 1)
+        if self.current_stage == "old":
+            return max(1, vision - 1)
+        return vision
+
+    def set_survival_context(self, env, agents: list["Agent"]) -> None:
+        agent_lookup = {agent.agent_id: agent for agent in agents}
+        self.is_safe_area = env.is_safe_area(self.x, self.y)
+        if self.is_safe_area and self.body.memory_score >= 0.7:
+            self._remember_safe_zone(self.x, self.y)
+        self.nest_position = self._resolve_nest_position(env, agent_lookup)
+        if self.nest_position is not None and self.body.memory_score >= 0.7:
+            self._remember_nest(self.nest_position[0], self.nest_position[1])
+        self.near_nest = (
+            self.nest_position is not None
+            and abs(self.nest_position[0] - self.x) + abs(self.nest_position[1] - self.y) <= 4
+        )
+        if self.near_nest and self.preferred_role == "wanderer":
+            self.current_role = "gatherer" if self.body.gather_drive >= 1.6 else self.current_role
+        self.care_target = None
+        self.settlement_target = None
+        if self.current_stage != "child":
+            self.nearby_support = False
+            self.near_parent = False
+            if self.body.cognition_score >= 4.2 and self.nest_position is None:
+                if self.is_safe_area and env.nearby_food_count(self.x, self.y, radius=3) >= 2:
+                    self.settlement_target = (self.x, self.y)
+                else:
+                    self.settlement_target = env.find_nearest_safe_area(self.x, self.y, vision_range=12)
+            self._assign_care_target(agents, agent_lookup)
+            return
+
+        parent = agent_lookup.get(self.parent_id) if self.parent_id is not None else None
+        self.near_parent = bool(
+            parent is not None
+            and abs(parent.x - self.x) + abs(parent.y - self.y) <= SAFE_RADIUS
+        )
+        support_candidates = [
+            other
+            for other in agents
+            if other.agent_id != self.agent_id
+            and abs(other.x - self.x) + abs(other.y - self.y) <= SAFE_RADIUS
+            and (
+                other.agent_id == self.parent_id
+                or other.group_id == self.group_id
+                or other.agent_id in self.friend_ids
+            )
+        ]
+        self.nearby_support = bool(support_candidates)
+        if self.near_parent:
+            self.child_stress = max(0, self.child_stress - 2)
+            self._increase_bond(self.parent_id, 0.4)
+            if parent is not None:
+                parent._increase_bond(self.agent_id, 0.4)
+                parent.last_known_family_positions[self.agent_id] = (self.x, self.y)
+                if parent.current_role not in {"hunter", "planner"}:
+                    parent.current_role = "caretaker"
+        else:
+            self.child_stress += 1
+        if self.near_nest:
+            self.child_stress = max(0, self.child_stress - 1)
+            self.nearby_support = True
+            if self.parent_id is not None:
+                owner_id = self.parent_id
+                env.register_protected_child(owner_id, self.agent_id)
+        if support_candidates:
+            support_candidates.sort(
+                key=lambda other: abs(other.x - self.x) + abs(other.y - self.y)
+            )
+            nearest = support_candidates[0]
+            self.group_target = (nearest.x, nearest.y)
+        elif self.parent_id is not None:
+            if parent is not None:
+                self.group_target = (parent.x, parent.y)
+            elif self.parent_id in self.last_known_family_positions:
+                self.group_target = self.last_known_family_positions[self.parent_id]
+
+    def _assign_care_target(self, agents: list["Agent"], agent_lookup: dict[int, "Agent"]) -> None:
+        if self.current_stage not in {"adult", "juvenile"}:
+            return
+
+        vulnerable_children = [
+            other
+            for other in agents
+            if other.current_stage == "child"
+            and other.agent_id != self.agent_id
+            and (
+                other.parent_id == self.agent_id
+                or other.parent_id in self.friend_ids
+                or (self.group_id is not None and other.group_id == self.group_id)
+            )
+        ]
+        for child in vulnerable_children:
+            self.last_known_family_positions[child.agent_id] = (child.x, child.y)
+            self._increase_bond(child.agent_id, 0.2)
+
+        if vulnerable_children:
+            vulnerable_children.sort(
+                key=lambda child: (
+                    child.parent_id != self.agent_id,
+                    child.nearby_support,
+                    child.durability > 6,
+                    abs(child.x - self.x) + abs(child.y - self.y),
+                )
+            )
+            target_child = vulnerable_children[0]
+            self.care_target = (target_child.x, target_child.y)
+            if target_child.parent_id == self.agent_id:
+                self.current_role = "caretaker"
+                self.protect_target_id = target_child.agent_id
+                self.protect_target_kind = "child"
+                if not target_child.nearby_support:
+                    self.recent_events.append(
+                        f"search_for_child -> parent={self.agent_id} child={target_child.agent_id}"
+                    )
+                if target_child.durability <= 6:
+                    self.current_role = "protector"
+                    self.recent_events.append(
+                        f"protect_child -> parent={self.agent_id} child={target_child.agent_id}"
+                    )
+            elif self.current_role in {"guardian", "follower", "independent"}:
+                self.current_role = "caretaker"
+            return
+
+        missing_children = [
+            child_id
+            for child_id in self.children_ids
+            if child_id not in agent_lookup and child_id in self.last_known_family_positions
+        ]
+        if missing_children:
+            child_id = missing_children[0]
+            self.care_target = self.last_known_family_positions[child_id]
+            self.current_role = "caretaker"
+            self.protect_target_id = child_id
+            self.protect_target_kind = "missing_child"
+            self._decrease_bond(child_id, 0.4)
+            self.recent_events.append(
+                f"search_for_child -> parent={self.agent_id} child={child_id} last_known={self.care_target}"
+            )
+            return
+
+        if self.nest_position is not None and self.current_role == "protector":
+            self.protect_target_kind = "nest"
+            self.care_target = self.nest_position
+
+    def _preferred_movement_target(self) -> tuple[int, int] | None:
+        if self.current_stage == "child" and self.group_target is not None:
+            return self.group_target
+        if self.care_target is not None:
+            return self.care_target
+        if self.settlement_target is not None and self.nest_position is None:
+            return self.settlement_target
+        if self.current_role in {"experimenter", "protector"} and self.nest_position is not None:
+            return self.nest_position
+        if self._best_object_score(self._last_env, "pierce", "prey") >= 9.0 and self.group_target is not None:
+            return self.group_target
+        if self.energy < 45:
+            remembered_food = self._best_remembered_target(self.remembered_food_sources)
+            if remembered_food is not None:
+                return remembered_food
+        if self.current_stage == "child" and self.parent_id is not None:
+            return (
+                self.group_target
+                or self.nest_position
+                or self._best_remembered_target(self.remembered_safe_zones)
+            )
+        if self.child_stress >= 2:
+            return self.nest_position or self._best_remembered_target(self.remembered_safe_zones)
+        if self.group_target is not None:
+            return self.group_target
+        if self._best_object_score(self._last_env, "cut", "plant") >= 8.0:
+            remembered_food = self._best_remembered_target(self.remembered_food_sources)
+            if remembered_food is not None:
+                return remembered_food
+        if self.current_stage in {"adult", "juvenile"} and self.body.memory_score >= 0.9 and not self.near_nest:
+            remembered_nest = self._best_remembered_target(self.remembered_nest_locations)
+            if remembered_nest is not None:
+                return remembered_nest
+        remembered_food = self._best_remembered_target(self.remembered_food_sources)
+        if remembered_food is not None:
+            return remembered_food
+        remembered_safe = self._best_remembered_target(self.remembered_safe_zones)
+        if remembered_safe is not None and (self.energy < 70 or self.current_stage == "old"):
+            return remembered_safe
+        return self.nest_position
+
+    def _best_remembered_target(
+        self,
+        memories: list[tuple[int, int]],
+    ) -> tuple[int, int] | None:
+        if not memories:
+            return None
+        ranked = sorted(
+            memories,
+            key=lambda position: abs(position[0] - self.x) + abs(position[1] - self.y),
+        )
+        return ranked[0]
+
+    def _is_memory_guided_target(self, target: tuple[int, int] | None) -> bool:
+        if target is None:
+            return False
+        return (
+            target in self.remembered_food_sources
+            or target in self.remembered_safe_zones
+            or target in self.remembered_nest_locations
+        )
+
+    def _infer_preferred_role(self) -> str:
+        if self.body.crafting_skill >= 1.6 and self.body.parenting_instinct >= 0.7:
+            return "experimenter"
+        if self.body.hunt_drive >= 1.2 and self.body.aggression >= 0.6:
+            return "hunter"
+        if self.body.parenting_instinct >= 0.8 or self.body.reproduction_investment >= 0.8:
+            return "caretaker"
+        if self.body.cooperation_drive >= 0.7 and self.body.armor_units >= 1:
+            return "protector"
+        if self.body.gather_drive >= 1.6:
+            return "gatherer"
+        if self.body.brain_units >= 3 and self.body.sensor_units >= 2:
+            return "experimenter"
+        if self.body.armor_units >= 2:
+            return "protector"
+        if self.body.muscle_units >= 2:
+            return "hunter"
+        if self.body.sensor_units >= 2 or self.body.brain_units >= 2:
+            return "gatherer"
+        return "wanderer"
+
+    def pop_recent_events(self) -> list[str]:
+        events = list(self.recent_events)
+        self.recent_events.clear()
+        return events
+
+    def _increase_bond(self, other_id: int | None, amount: float) -> None:
+        if other_id is None:
+            return
+        self.bond_strength[other_id] = min(10.0, self.bond_strength.get(other_id, 0.0) + amount)
+
+    def _decrease_bond(self, other_id: int | None, amount: float) -> None:
+        if other_id is None:
+            return
+        self.bond_strength[other_id] = max(0.0, self.bond_strength.get(other_id, 0.0) - amount)
+
+    def _candidate_household_owners(self) -> list[int]:
+        owners: list[int] = []
+        for owner_id in (
+            self.shared_home_owner_id,
+            self.parent_id,
+            self.other_parent_id,
+            self.agent_id,
+        ):
+            if owner_id is None or owner_id in owners:
+                continue
+            owners.append(owner_id)
+        return owners
+
+    def _resolve_family_home_owner(self, env) -> int | None:
+        best_owner_id: int | None = None
+        best_score: tuple[int, int] | None = None
+        for owner_id in self._candidate_household_owners():
+            nest = env.find_nest(owner_id)
+            if nest is None:
+                continue
+            distance = abs(nest.x - self.x) + abs(nest.y - self.y)
+            within_radius = 1 if distance <= nest.safe_radius + 1 else 0
+            score = (within_radius, nest.food_storage)
+            if best_score is None or score > best_score:
+                best_owner_id = owner_id
+                best_score = score
+        return best_owner_id
+
+    def _resolve_nest_position(self, env, agent_lookup: dict[int, "Agent"]) -> tuple[int, int] | None:
+        nest = env.find_nest(self.agent_id)
+        if nest is not None:
+            return (nest.x, nest.y)
+
+        family_owner_id = self._resolve_family_home_owner(env)
+        if family_owner_id is not None:
+            family_nest = env.find_nest(family_owner_id)
+            if family_nest is not None:
+                self.shared_home_owner_id = family_owner_id
+                return (family_nest.x, family_nest.y)
+
+        if self.shared_home_owner_id is not None:
+            shared_nest = env.find_nest(self.shared_home_owner_id)
+            if shared_nest is not None:
+                return (shared_nest.x, shared_nest.y)
+
+        if self.parent_id is not None:
+            parent_nest = env.find_nest(self.parent_id)
+            if parent_nest is not None:
+                return (parent_nest.x, parent_nest.y)
+            parent = agent_lookup.get(self.parent_id)
+            if parent is not None and parent.nest_position is not None:
+                return parent.nest_position
+
+        return None
+
+    def _nest_owner_id(self) -> int | None:
+        if self.nest_position is None:
+            return None
+        if hasattr(self, "_last_env"):
+            family_owner_id = self._resolve_family_home_owner(self._last_env)
+            if family_owner_id is not None:
+                family_nest = self._last_env.find_nest(family_owner_id)
+                if family_nest is not None and (family_nest.x, family_nest.y) == self.nest_position:
+                    self.shared_home_owner_id = family_owner_id
+                    return family_owner_id
+        if self.current_stage == "child" and self.parent_id is not None:
+            return self.parent_id
+        if self.shared_home_owner_id is not None:
+            return self.shared_home_owner_id
+        if self.parent_id is not None and self.nest_position in self.remembered_nest_locations:
+            return self.parent_id
+        if self.other_parent_id is not None and self.nest_position in self.remembered_nest_locations:
+            return self.other_parent_id
+        if self.nest_position is not None:
+            return self.agent_id
+        return self.parent_id
+
+    def _join_existing_nest(self, env) -> bool:
+        preferred_owner_ids: set[int] = set()
+        if self.shared_home_owner_id is not None:
+            preferred_owner_ids.add(self.shared_home_owner_id)
+        if self.parent_id is not None:
+            preferred_owner_ids.add(self.parent_id)
+        if self.other_parent_id is not None:
+            preferred_owner_ids.add(self.other_parent_id)
+        preferred_owner_ids.update(member.agent_id for member in self.local_group_members if member.nest_position is not None)
+        nearby_owner_id = env.find_nearby_active_nest_owner(
+            self.x,
+            self.y,
+            radius=6,
+            preferred_owner_ids=preferred_owner_ids,
+        )
+        if nearby_owner_id is None:
+            return False
+        nest = env.find_nest(nearby_owner_id)
+        if nest is None:
+            return False
+        self.shared_home_owner_id = nearby_owner_id
+        self.nest_position = (nest.x, nest.y)
+        self.near_nest = abs(nest.x - self.x) + abs(nest.y - self.y) <= nest.safe_radius
+        self._remember_nest(nest.x, nest.y)
+        return True
+
+    def _try_build_nest(self, env) -> None:
+        if self.body.cognition_score < 4.2 or self.body.parenting_instinct < 0.55:
+            return
+        if self.current_stage != "adult":
+            return
+        if env.find_nest(self.agent_id) is not None:
+            return
+        if self._join_existing_nest(env):
+            return
+        if not self.is_safe_area:
+            return
+        support_builders = sum(
+            1
+            for member in self.local_group_members
+            if member.current_stage == "adult"
+            and member.body.cooperation_drive >= 0.45
+            and abs(member.x - self.x) + abs(member.y - self.y) <= SAFE_RADIUS
+        )
+        settlement_bonus = 0
+        if self.settlement_target is not None and self.settlement_target == (self.x, self.y):
+            settlement_bonus += 12
+        if self.is_safe_area:
+            settlement_bonus += 10
+        if env.nearby_food_count(self.x, self.y, radius=3) >= 3:
+            settlement_bonus += 8
+        effective_threshold = max(126, NEST_BUILD_THRESHOLD - settlement_bonus - (support_builders * 16))
+        effective_cost = max(16, NEST_BUILD_COST - (support_builders * 5) - (settlement_bonus // 6))
+        resource_requirement = max(1, NEST_RESOURCE_REQUIREMENT - min(1, support_builders))
+        planned_site = (
+            self.settlement_target is not None
+            and self.settlement_target == (self.x, self.y)
+            and self.is_safe_area
+        )
+        if planned_site:
+            resource_requirement = 0
+        if self.energy <= effective_threshold:
+            return
+        if resource_requirement > 0 and env.nearby_food_count(self.x, self.y, radius=2) < resource_requirement:
+            return
+
+        consumed = 0
+        if resource_requirement > 0:
+            consumed = env.consume_building_resources(
+                self.x,
+                self.y,
+                radius=2,
+                required=resource_requirement,
+            )
+            if consumed < resource_requirement:
+                return
+
+        nest = env.build_nest(self.agent_id, self.x, self.y)
+        if nest is None:
+            return
+
+        self.energy -= effective_cost
+        self.nest_position = (nest.x, nest.y)
+        self.near_nest = True
+        self.recent_events.append(
+            f"build_nest -> agent={self.agent_id} position={self.nest_position} "
+            f"resources={consumed} supporters={support_builders} threshold={effective_threshold}"
+        )
+
+    def _gather_materials_for_nest(self, env, rng: Random) -> None:
+        if self.body.crafting_skill < 1.3:
+            return
+        if self.current_stage not in {"adult", "juvenile"}:
+            return
+        if not self.near_nest:
+            return
+        if self.energy < 50:
+            return
+
+        owner_id = self._nest_owner_id()
+        if owner_id is None:
+            return
+
+        gathered = env.forage_materials(self.x, self.y, rng, self.body.cognition_score)
+        if not gathered:
+            return
+        stored = env.store_materials_in_nest(owner_id, gathered)
+        if not stored:
+            return
+
+        self.energy -= 1
+        for material, amount in stored.items():
+            self.gathered_materials[material] = self.gathered_materials.get(material, 0) + amount
+        material_text = ", ".join(f"{key}={value}" for key, value in sorted(stored.items()))
+        self.recent_events.append(
+            f"collect_raw_objects -> agent={self.agent_id} nest={owner_id} {material_text}"
+        )
+
+    def _maintain_hearth(self, env) -> None:
+        if self.current_stage != "adult":
+            return
+        if not self.near_nest:
+            return
+        if self.energy < 65:
+            return
+        if self.body.cognition_score < 3.0:
+            return
+
+        owner_id = self._nest_owner_id()
+        if owner_id is None:
+            return
+        outcome = env.maintain_nest_hearth(owner_id, self.body.cognition_score)
+        if not outcome.get("success"):
+            return
+        self.energy -= 2
+        self.recent_events.append(
+            f"tend_hearth -> agent={self.agent_id} nest={owner_id} "
+            f"wood={int(outcome.get('wood_used', 0))} leaf={int(outcome.get('leaf_used', 0))} "
+            f"intensity={outcome.get('intensity', 0):.2f}"
+        )
+
+    def _tend_food_patch(self, env, rng: Random) -> None:
+        if self.current_stage != "adult":
+            return
+        if not self.near_nest:
+            return
+        if self.energy < 85:
+            return
+        if self.body.cognition_score < 3.0 or self.body.plant_efficiency < 1.0:
+            return
+        if self.current_role not in {"planner", "gatherer", "caretaker"}:
+            return
+
+        owner_id = self._nest_owner_id()
+        if owner_id is None:
+            return
+        nest_food_storage = env.get_nest_food_storage(owner_id)
+        if nest_food_storage > 42 and rng.random() < 0.6:
+            return
+        outcome = env.tend_food_patch(owner_id, rng)
+        if not outcome.get("success"):
+            return
+        self.energy -= 2
+        self.recent_events.append(
+            f"tend_food_patch -> agent={self.agent_id} nest={owner_id} "
+            f"x={outcome.get('x')} y={outcome.get('y')} boost={outcome.get('boost')}"
+        )
+
+    def _experiment_with_objects(self, env, rng: Random) -> None:
+        if self.body.crafting_skill < 1.4:
+            return
+        if self.current_stage != "adult":
+            return
+        if not self.near_nest:
+            return
+        if self.energy < 110:
+            return
+        if self.current_role not in {"planner", "experimenter"}:
+            return
+
+        owner_id = self._nest_owner_id()
+        if owner_id is None:
+            return
+        nest_food_storage = env.get_nest_food_storage(owner_id)
+        if nest_food_storage < 26:
+            return
+        if env.get_nest_hearth_intensity(owner_id) < 0.25:
+            return
+
+        available_materials = env.get_nest_materials(owner_id)
+        experiment_mix = self._choose_experiment_mix(available_materials)
+        if not experiment_mix:
+            return
+        if not env.consume_nest_materials(owner_id, experiment_mix):
+            return
+
+        physical_object = env.create_experimental_object(
+            experiment_mix,
+            rng,
+            creator_agent_id=self.agent_id,
+            creator_lineage_id=self.lineage_id,
+        )
+        stored_ids = env.store_objects_in_nest(owner_id, [physical_object.object_id])
+        if not stored_ids:
+            return
+
+        self.equipped_object_id = physical_object.object_id
+        self.energy -= max(8, sum(experiment_mix.values()) * 4)
+        signature = self._classify_object_shape(physical_object)
+        self.technology_constructions[signature] = self.technology_constructions.get(signature, 0) + 1
+        material_text = ", ".join(f"{material}={amount}" for material, amount in sorted(experiment_mix.items()))
+        self.recent_events.append(
+            f"experiment_object -> agent={self.agent_id} nest={owner_id} object={physical_object.object_id} "
+            f"signature={signature} materials={material_text} "
+            f"props=mass:{physical_object.mass},sharp:{physical_object.sharpness},hard:{physical_object.hardness},"
+            f"length:{physical_object.length},flex:{physical_object.flexibility}"
+        )
+
+    def _choose_experiment_mix(self, available_materials: dict[str, int]) -> dict[str, int]:
+        mix: dict[str, int] = {}
+        if available_materials.get(MATERIAL_STONE, 0) > 0:
+            mix[MATERIAL_STONE] = 1
+        if available_materials.get(MATERIAL_CLAY, 0) > 0 and self.body.crafting_skill >= 1.45:
+            mix[MATERIAL_CLAY] = 1
+        elif available_materials.get(MATERIAL_SOIL, 0) > 0 and self.body.crafting_skill >= 1.35 and len(mix) < 2:
+            mix[MATERIAL_SOIL] = 1
+        if available_materials.get(MATERIAL_SAND, 0) > 0 and self.body.crafting_skill >= 1.35 and len(mix) < 2:
+            mix[MATERIAL_SAND] = 1
+        if available_materials.get(MATERIAL_WOOD, 0) > 0 and (self.body.hunt_drive >= self.body.gather_drive or not mix):
+            mix[MATERIAL_WOOD] = min(2, available_materials[MATERIAL_WOOD])
+        if available_materials.get(MATERIAL_LEAF, 0) > 0 and self.body.crafting_skill >= 1.5:
+            mix[MATERIAL_LEAF] = 1
+        if available_materials.get(MATERIAL_ASH, 0) > 0 and self.body.memory_score >= 0.9 and len(mix) < 3:
+            mix[MATERIAL_ASH] = 1
+        if available_materials.get(MATERIAL_FIBER, 0) > 0 and (self.body.parenting_instinct >= 0.6 or len(mix) < 2):
+            mix[MATERIAL_FIBER] = 1
+        if not mix:
+            return {}
+        if sum(mix.values()) < 2:
+            for material in (
+                MATERIAL_WOOD,
+                MATERIAL_STONE,
+                MATERIAL_CLAY,
+                MATERIAL_SOIL,
+                MATERIAL_SAND,
+                MATERIAL_LEAF,
+                MATERIAL_ASH,
+                MATERIAL_FIBER,
+            ):
+                if available_materials.get(material, 0) > mix.get(material, 0):
+                    mix[material] = mix.get(material, 0) + 1
+                    break
+        return mix if sum(mix.values()) >= 2 else {}
+
+    def _classify_object_shape(self, physical_object) -> str:
+        if physical_object.state_label == "fired_hard":
+            return "fired_compact_form"
+        if physical_object.state_label == "thermal_fractured":
+            return "fractured_stone_form"
+        if physical_object.state_label == "charred":
+            return "charred_composite_form"
+        if physical_object.sharpness >= 7 and physical_object.portability:
+            return "sharp_portable_form"
+        if physical_object.length >= 6 and physical_object.hardness >= 5:
+            return "long_rigid_form"
+        if physical_object.mass >= 5 and physical_object.hardness >= 5:
+            return "heavy_impact_form"
+        return "mixed_form"
+
+    def _store_surplus_food(self, env, restored_energy: int) -> None:
+        if env is None or not self.near_nest:
+            return
+        if self.body.cognition_score < 4.2:
+            return
+        owner_id = self._nest_owner_id()
+        if owner_id is None:
+            return
+        nest_food_storage = env.get_nest_food_storage(owner_id)
+        threshold = REPRODUCTION_THRESHOLD + STORAGE_SURPLUS_THRESHOLD
+        if self.current_role in {"gatherer", "hunter", "caretaker"}:
+            threshold = REPRODUCTION_THRESHOLD - 10
+        projected_energy = self.energy + restored_energy
+        personal_floor = threshold + PERSONAL_ENERGY_STORAGE_MARGIN
+        if self.sex == "female" and self.current_stage == "adult":
+            personal_floor += 10
+        if projected_energy <= personal_floor:
+            return
+
+        surplus = projected_energy - personal_floor
+        storage_share = HOUSEHOLD_STORAGE_SHARE
+        if nest_food_storage < 10:
+            storage_share = LOW_BUFFER_STORAGE_SHARE
+        elif nest_food_storage < 20:
+            storage_share = max(storage_share, 0.45)
+
+        storage_amount = min(12, max(0, int(round(surplus * storage_share))))
+        if self._hearth_support_level() >= 0.35:
+            storage_amount += 2
+        if storage_amount <= 0:
+            return
+        stored = env.store_food_in_nest(owner_id, storage_amount)
+        if stored <= 0:
+            return
+
+        self.energy -= stored
+        self.stored_food_contributions += stored
+        self.recent_events.append(
+            f"store_food -> agent={self.agent_id} nest={owner_id} amount={stored}"
+        )
+
+    def _withdraw_nest_food_if_needed(self, env) -> None:
+        if not self.near_nest or self.nest_position is None:
+            return
+
+        owner_id = self.parent_id if self.current_stage == "child" and self.parent_id is not None else self._nest_owner_id()
+        if owner_id is None:
+            return
+        nest_food_storage = env.get_nest_food_storage(owner_id)
+        if nest_food_storage <= 0:
+            return
+        needed = 0
+        if self.current_stage == "child" and self.energy < 60:
+            needed = CHILD_NEST_WITHDRAWAL
+        elif self.current_stage != "child":
+            mate = self._find_reproduction_partner() if self.current_stage == "adult" else None
+            support_count = sum(
+                1
+                for member in self.local_group_members
+                if abs(member.x - self.x) + abs(member.y - self.y) <= SAFE_RADIUS
+                and member.current_stage in {"adult", "juvenile"}
+            )
+            reproduction_threshold = REPRODUCTION_THRESHOLD - int(self.body.reproduction_drive * 20)
+            if self.near_nest and support_count >= MIN_CARE_TEAM_FOR_BIRTH:
+                reproduction_threshold = max(
+                    100,
+                    reproduction_threshold - LINEAGE_REPRODUCTION_BONUS - int(self.body.parenting_instinct * 8),
+                )
+
+            breeder_priority = (
+                self.current_stage == "adult"
+                and self.sex == "female"
+                and mate is not None
+                and self.durability >= MINIMUM_REPRODUCTION_HEALTH
+            )
+
+            reserve = GENERAL_NEST_FOOD_RESERVE
+            if breeder_priority:
+                reserve = BREEDER_NEST_FOOD_RESERVE
+
+            if breeder_priority and self.energy < reproduction_threshold:
+                needed = min(18, max(8, reproduction_threshold - self.energy))
+            elif self.energy < CRITICAL_ADULT_WITHDRAW_ENERGY and nest_food_storage > reserve:
+                needed = 10
+
+            if needed > 0 and self.energy >= CRITICAL_ADULT_WITHDRAW_ENERGY and nest_food_storage <= reserve:
+                needed = 0
+        if needed <= 0:
+            return
+
+        available_to_withdraw = nest_food_storage
+        if self.current_stage != "child":
+            reserve = BREEDER_NEST_FOOD_RESERVE if (
+                self.current_stage == "adult"
+                and self.sex == "female"
+                and self.durability >= MINIMUM_REPRODUCTION_HEALTH
+                and self._find_reproduction_partner() is not None
+            ) else GENERAL_NEST_FOOD_RESERVE
+            if self.energy >= CRITICAL_ADULT_WITHDRAW_ENERGY:
+                available_to_withdraw = max(0, nest_food_storage - reserve)
+        withdrawn = env.withdraw_food_from_nest(owner_id, min(needed, available_to_withdraw))
+        if withdrawn <= 0:
+            return
+
+        self.energy += withdrawn
+        self.recent_events.append(
+            f"withdraw_food -> agent={self.agent_id} nest={owner_id} amount={withdrawn}"
+        )
+
+    def _resolve_life_state(self) -> bool:
+        if self.energy <= 0:
+            self.alive = False
+            self.death_reason = "energy_depleted"
+            return False
+        if self.durability <= 0:
+            self.alive = False
+            self.death_reason = "durability_depleted"
+            return False
+        if self.current_stage == "child" and not self.nearby_support and not self.near_nest and self.energy <= 8:
+            self.alive = False
+            self.death_reason = "child_isolation"
+            return False
+        return True
+
+    def _hearth_support_level(self) -> float:
+        if not self.near_nest or not hasattr(self, "_last_env"):
+            return 0.0
+        owner_id = self._nest_owner_id()
+        if owner_id is None:
+            return 0.0
+        return self._last_env.get_nest_hearth_intensity(owner_id)

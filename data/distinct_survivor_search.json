@@ -1,0 +1,92 @@
+{
+  "experiment_number": 27,
+  "change_note": "Multi-seed search for 50 distinct surviving body types without lowering world difficulty; stop after long stagnation if no new body plans appear",
+  "started_at": "2026-05-10T14:32:06",
+  "start_seed": 7,
+  "target_body_types": 50,
+  "max_seed_rounds": 12,
+  "max_stagnation_rounds": 10,
+  "found_distinct_body_types": 1,
+  "records": [
+    {
+      "body_index": 186,
+      "body_name": "body_186",
+      "body_design": "sensor=0, muscle=0, armor=1, brain=3",
+      "body_stats": "cost=95, sensor_vision=2, brain_limit=8, effective_vision=2, speed=1, durability=18, brain_drain=3",
+      "first_found_seed": 7,
+      "achieved_survivors": 50,
+      "total_births": 432,
+      "matured_children": 171,
+      "first_birth_day": 0,
+      "first_matured_child_day": 3
+    }
+  ],
+  "seed_summaries": [
+    {
+      "seed": 7,
+      "qualifying_bodies": 1,
+      "new_distinct_bodies": 1,
+      "total_distinct_bodies": 1
+    },
+    {
+      "seed": 8,
+      "qualifying_bodies": 1,
+      "new_distinct_bodies": 0,
+      "total_distinct_bodies": 1
+    },
+    {
+      "seed": 9,
+      "qualifying_bodies": 1,
+      "new_distinct_bodies": 0,
+      "total_distinct_bodies": 1
+    },
+    {
+      "seed": 10,
+      "qualifying_bodies": 1,
+      "new_distinct_bodies": 0,
+      "total_distinct_bodies": 1
+    },
+    {
+      "seed": 11,
+      "qualifying_bodies": 1,
+      "new_distinct_bodies": 0,
+      "total_distinct_bodies": 1
+    },
+    {
+      "seed": 12,
+      "qualifying_bodies": 1,
+      "new_distinct_bodies": 0,
+      "total_distinct_bodies": 1
+    },
+    {
+      "seed": 13,
+      "qualifying_bodies": 1,
+      "new_distinct_bodies": 0,
+      "total_distinct_bodies": 1
+    },
+    {
+      "seed": 14,
+      "qualifying_bodies": 1,
+      "new_distinct_bodies": 0,
+      "total_distinct_bodies": 1
+    },
+    {
+      "seed": 15,
+      "qualifying_bodies": 0,
+      "new_distinct_bodies": 0,
+      "total_distinct_bodies": 1
+    },
+    {
+      "seed": 16,
+      "qualifying_bodies": 1,
+      "new_distinct_bodies": 0,
+      "total_distinct_bodies": 1
+    },
+    {
+      "seed": 17,
+      "qualifying_bodies": 1,
+      "new_distinct_bodies": 0,
+      "total_distinct_bodies": 1
+    }
+  ]
+}

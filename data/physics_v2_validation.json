@@ -1,0 +1,54 @@
+{
+  "body_trial": {
+    "body_name": "body_8",
+    "body_design": "sensor=0, muscle=0, armor=1, brain=3, profile=social_planner",
+    "births": 2,
+    "matured_children": 2,
+    "peak_population": 14,
+    "final_tick": 137,
+    "physics_event_count": 96,
+    "state_counts": {
+      "waterlogged": 42,
+      "blackened": 10,
+      "charred": 10,
+      "sun_dried": 7,
+      "thermal_fractured": 1,
+      "dried": 1
+    },
+    "sample_events": [
+      "material_shift -> object=1 state=waterlogged temp_k=290.6 blackness=0.00 carbon=0.03 ash=0.00",
+      "material_shift -> object=11 state=waterlogged temp_k=291.2 blackness=0.00 carbon=0.03 ash=0.00",
+      "material_shift -> object=7 state=waterlogged temp_k=292.3 blackness=0.00 carbon=0.03 ash=0.00",
+      "material_shift -> object=9 state=waterlogged temp_k=292.6 blackness=0.00 carbon=0.03 ash=0.00",
+      "material_shift -> object=23 state=waterlogged temp_k=292.3 blackness=0.00 carbon=0.02 ash=0.00",
+      "material_shift -> object=19 state=waterlogged temp_k=292.5 blackness=0.00 carbon=0.02 ash=0.00",
+      "tend_hearth -> agent=11 nest=11 wood=1 leaf=1 intensity=0.61",
+      "tend_hearth -> agent=13 nest=9 wood=1 leaf=1 intensity=0.61",
+      "hearth_maintained -> nest=11 x=66 y=12 wood=1 leaf=1 intensity=0.61",
+      "hearth_maintained -> nest=9 x=64 y=11 wood=1 leaf=1 intensity=0.61",
+      "tend_hearth -> agent=11 nest=11 wood=1 leaf=0 intensity=0.78",
+      "tend_hearth -> agent=13 nest=9 wood=1 leaf=0 intensity=0.78",
+      "material_shift -> object=0 state=waterlogged temp_k=291.6 blackness=0.00 carbon=0.05 ash=0.00",
+      "material_shift -> object=17 state=waterlogged temp_k=291.8 blackness=0.00 carbon=0.02 ash=0.00",
+      "hearth_maintained -> nest=11 x=66 y=12 wood=1 leaf=0 intensity=0.78",
+      "hearth_maintained -> nest=9 x=64 y=11 wood=1 leaf=0 intensity=0.78",
+      "material_shift -> object=13 state=waterlogged temp_k=291.2 blackness=0.00 carbon=0.05 ash=0.00",
+      "material_shift -> object=14 state=waterlogged temp_k=290.9 blackness=0.00 carbon=0.07 ash=0.00",
+      "material_shift -> object=12 state=waterlogged temp_k=290.9 blackness=0.00 carbon=0.09 ash=0.00",
+      "material_shift -> object=36 state=waterlogged temp_k=290.9 blackness=0.00 carbon=0.02 ash=0.00"
+    ]
+  },
+  "hearth_probe": {
+    "clay_state_after_live_hearth": "waterlogged",
+    "clay_temperature_k": 295.701,
+    "stone_state_after_live_hearth": "raw",
+    "stone_temperature_k": 295.46
+  },
+  "forced_firing_probe": {
+    "final_state": "fired_hard",
+    "temperature_k": 860.337,
+    "hardness": 12,
+    "durability": 20,
+    "thermal_dose": 8255.664
+  }
+}

@@ -1,0 +1,139 @@
+{
+  "updated_at": "2026-05-11",
+  "baseline_founder_population": 250,
+  "current_working_body": "body_14",
+  "objective": "Achieve internally self-sustaining population dynamics without lowering world difficulty.",
+  "completed_steps": [
+    {
+      "id": "STEP-001",
+      "name": "Founder population search",
+      "status": "completed",
+      "result": "Best current founder region is around 250.",
+      "artifact": "C:\\artificial-evolution\\data\\founder_population_optimal_search.json"
+    },
+    {
+      "id": "STEP-002",
+      "name": "Direct projected-energy storage fix",
+      "status": "completed",
+      "result": "Confirmed bug, but direct fix worsened long-run outcomes.",
+      "artifact": "C:\\artificial-evolution\\data\\founder_opt_250_storage_fix_comparison.json"
+    },
+    {
+      "id": "STEP-003",
+      "name": "Household economy redesign",
+      "status": "completed",
+      "result": "Best recent intervention; restored performance close to baseline and produced gen9 runs.",
+      "artifact": "C:\\artificial-evolution\\data\\founder_opt_250_storage_redesign_comparison.json"
+    },
+    {
+      "id": "STEP-004",
+      "name": "Aggressive settlement overshoot suppression",
+      "status": "rolled_back",
+      "result": "Collapsed performance; mean max generation fell to 1.0.",
+      "artifact": "C:\\artificial-evolution\\data\\founder_opt_250_settlement_overshoot_fix_comparison.json"
+    },
+    {
+      "id": "STEP-005",
+      "name": "Anti-cohort reproduction cooldown",
+      "status": "rolled_back",
+      "result": "Collapsed births too hard; mean max generation fell to 2.5.",
+      "artifact": "C:\\artificial-evolution\\data\\founder_opt_250_anti_cohort_comparison.json"
+    },
+    {
+      "id": "STEP-006",
+      "name": "Adult household withdrawal alignment",
+      "status": "completed",
+      "result": "Mixed result. Some seeds improved strongly, but aggregate performance stayed below household-redesign-only performance.",
+      "artifact": "C:\\artificial-evolution\\data\\founder_opt_250_adult_withdrawal_fix_comparison.json"
+    },
+    {
+      "id": "STEP-007",
+      "name": "Breeder-priority household allocation",
+      "status": "completed_best_current",
+      "result": "Best aggregate result so far. Mean max generation rose to 7.5 and non-extinct runs rose to 8/10.",
+      "artifact": "C:\\artificial-evolution\\data\\founder_opt_250_breeder_priority_comparison.json"
+    },
+    {
+      "id": "STEP-008",
+      "name": "Active-nest-only support filtering",
+      "status": "rolled_back",
+      "result": "Reduced food inflation but did not produce stable runs; deep long-loop seeds generally worsened.",
+      "artifact": "C:\\artificial-evolution\\data\\long_loop_iteration_02_active_nest_support.json"
+    },
+    {
+      "id": "STEP-009",
+      "name": "Household-linked active nest probe",
+      "status": "ruled_out",
+      "result": "Too aggressive. Probe seeds collapsed around generation 2.",
+      "artifact": "C:\\artificial-evolution\\data\\research_runs\\long_loop_iter03_probe_seed_11\\manifest.json"
+    },
+    {
+      "id": "STEP-010",
+      "name": "Nest inheritance transfer",
+      "status": "rolled_back",
+      "result": "Naive nest ownership transfer destabilized the household graph and collapsed probe seeds near generation 2.",
+      "artifact": "C:\\artificial-evolution\\data\\research_runs\\long_loop_iter04_inheritance_probe_seed_11\\manifest.json"
+    },
+    {
+      "id": "STEP-011",
+      "name": "Juvenile and young-adult pipeline priority",
+      "status": "rolled_back",
+      "result": "Mixed but still below the best current breeder-priority long-loop baseline.",
+      "artifact": "C:\\artificial-evolution\\data\\research_runs\\long_loop_iter05_pipeline_probe_seed_11\\manifest.json"
+    }
+  ],
+  "open_suspicions": [
+    {
+      "id": "SUS-001",
+      "title": "Adult emergency withdrawal uses self.agent_id instead of household nest owner",
+      "priority": "high",
+      "status": "partially_confirmed",
+      "files": [
+        "C:\\artificial-evolution\\agents\\agent.py"
+      ],
+      "evidence": [
+        "Adults store and reproduce against household-aware nest resolution, but withdrawal uses self.agent_id",
+        "Matches the paradox of high stored food with many energy_depleted deaths and low_energy failures",
+        "A direct household-aware withdrawal fix produced strong gains in some seeds but not a clear aggregate win",
+        "A breeder-priority allocation rule produced the strongest aggregate result in the current investigation stage"
+      ]
+    },
+    {
+      "id": "SUS-002",
+      "title": "Nest creation injects food directly",
+      "priority": "high",
+      "status": "open",
+      "files": [
+        "C:\\artificial-evolution\\world\\environment.py"
+      ],
+      "evidence": [
+        "Each new nest starts with food_storage=18",
+        "In best redesign run, nest seeding alone explains about 46.5% of stored food total"
+      ]
+    },
+    {
+      "id": "SUS-003",
+      "title": "Nest support scales with nest count and inflates surplus",
+      "priority": "high",
+      "status": "open",
+      "files": [
+        "C:\\artificial-evolution\\world\\environment.py"
+      ],
+      "evidence": [
+        "Every nest gets support-food and local spawn chances",
+        "More nests can mean more ecological support even while population declines"
+      ]
+    }
+  ],
+  "current_best_state": {
+    "keep_patch": "household economy redesign + breeder-priority household allocation",
+    "avoid_patches": [
+      "aggressive settlement suppression",
+      "hard reproduction cooldown",
+      "active-nest-only support filtering",
+      "naive nest inheritance transfer",
+      "juvenile/young-adult priority replacement"
+    ],
+    "next_recommended_test": "parameter search around breeder-priority household constants"
+  }
+}

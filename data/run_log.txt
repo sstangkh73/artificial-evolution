@@ -1,0 +1,581 @@
+Artificial Evolution Survivor Search
+========================================
+MAX_AGE=200, TARGET_SURVIVORS=50, TARGET_BODY_TYPES=50, INITIAL_ENERGY=140
+Body 1 design: sensor=5, muscle=0, armor=0, brain=2
+Body 1 stats: cost=100, sensor_vision=7, brain_limit=6, effective_vision=6, speed=1, durability=10, brain_drain=2
+Body 1: achieved=50/50, peak_pop=114, births=3312, avg_age=68.0, avg_food=4.6, avg_children=1.0, deaths={'energy_depleted': 3190, 'lifespan_completed': 50, 'simulation_ended': 84}
+Accepted survivor body 1/50
+Body 2 design: sensor=4, muscle=0, armor=0, brain=2
+Body 2 stats: cost=90, sensor_vision=6, brain_limit=6, effective_vision=6, speed=1, durability=10, brain_drain=2
+Body 2: achieved=50/50, peak_pop=121, births=3564, avg_age=66.6, avg_food=4.4, avg_children=1.0, deaths={'energy_depleted': 3431, 'lifespan_completed': 50, 'simulation_ended': 95}
+Accepted survivor body 2/50
+Body 3 design: sensor=3, muscle=0, armor=1, brain=2
+Body 3 stats: cost=100, sensor_vision=5, brain_limit=6, effective_vision=5, speed=1, durability=18, brain_drain=2
+Body 3: achieved=7/50, peak_pop=88, births=475, avg_age=68.1, avg_food=4.4, avg_children=1.0, deaths={'energy_depleted': 480, 'lifespan_completed': 7}
+Body 4 design: sensor=3, muscle=0, armor=0, brain=2
+Body 4 stats: cost=80, sensor_vision=5, brain_limit=6, effective_vision=5, speed=1, durability=10, brain_drain=2
+Body 4: achieved=5/50, peak_pop=71, births=699, avg_age=62.1, avg_food=3.9, avg_children=1.0, deaths={'energy_depleted': 706, 'lifespan_completed': 5}
+Body 5 design: sensor=3, muscle=1, armor=0, brain=2
+Body 5 stats: cost=95, sensor_vision=5, brain_limit=6, effective_vision=5, speed=1, durability=10, brain_drain=2
+Body 5: achieved=0/50, peak_pop=17, births=32, avg_age=58.8, avg_food=3.2, avg_children=0.7, deaths={'energy_depleted': 44}
+Body 6 design: sensor=7, muscle=0, armor=0, brain=1
+Body 6 stats: cost=95, sensor_vision=9, brain_limit=4, effective_vision=4, speed=1, durability=10, brain_drain=1
+Body 6: achieved=50/50, peak_pop=131, births=1477, avg_age=79.0, avg_food=3.9, avg_children=1.0, deaths={'energy_depleted': 1335, 'lifespan_completed': 50, 'simulation_ended': 104}
+Accepted survivor body 3/50
+Body 7 design: sensor=6, muscle=0, armor=0, brain=1
+Body 7 stats: cost=85, sensor_vision=8, brain_limit=4, effective_vision=4, speed=1, durability=10, brain_drain=1
+Body 7: achieved=18/50, peak_pop=147, births=1269, avg_age=74.1, avg_food=3.4, avg_children=1.0, deaths={'energy_depleted': 1263, 'lifespan_completed': 18}
+Body 8 design: sensor=6, muscle=1, armor=0, brain=1
+Body 8 stats: cost=100, sensor_vision=8, brain_limit=4, effective_vision=4, speed=1, durability=10, brain_drain=1
+Body 8: achieved=50/50, peak_pop=140, births=2186, avg_age=79.1, avg_food=3.8, avg_children=1.0, deaths={'energy_depleted': 2039, 'lifespan_completed': 50, 'simulation_ended': 109}
+Accepted survivor body 4/50
+Body 9 design: sensor=5, muscle=0, armor=1, brain=1
+Body 9 stats: cost=95, sensor_vision=7, brain_limit=4, effective_vision=4, speed=1, durability=18, brain_drain=1
+Body 9: achieved=16/50, peak_pop=130, births=848, avg_age=79.1, avg_food=3.7, avg_children=1.0, deaths={'energy_depleted': 844, 'lifespan_completed': 16}
+Body 10 design: sensor=5, muscle=0, armor=0, brain=1
+Body 10 stats: cost=75, sensor_vision=7, brain_limit=4, effective_vision=4, speed=1, durability=10, brain_drain=1
+Body 10: achieved=8/50, peak_pop=148, births=412, avg_age=77.1, avg_food=3.6, avg_children=1.0, deaths={'energy_depleted': 416, 'lifespan_completed': 8}
+Body 11 design: sensor=5, muscle=1, armor=0, brain=1
+Body 11 stats: cost=90, sensor_vision=7, brain_limit=4, effective_vision=4, speed=1, durability=10, brain_drain=1
+Body 11: achieved=50/50, peak_pop=139, births=2253, avg_age=78.0, avg_food=3.8, avg_children=1.0, deaths={'energy_depleted': 2092, 'lifespan_completed': 50, 'simulation_ended': 123}
+Accepted survivor body 5/50
+Body 12 design: sensor=4, muscle=0, armor=1, brain=1
+Body 12 stats: cost=85, sensor_vision=6, brain_limit=4, effective_vision=4, speed=1, durability=18, brain_drain=1
+Body 12: achieved=50/50, peak_pop=132, births=2797, avg_age=77.0, avg_food=3.6, avg_children=1.0, deaths={'energy_depleted': 2732, 'lifespan_completed': 50, 'simulation_ended': 27}
+Accepted survivor body 6/50
+Body 13 design: sensor=4, muscle=1, armor=1, brain=1
+Body 13 stats: cost=100, sensor_vision=6, brain_limit=4, effective_vision=4, speed=1, durability=18, brain_drain=1
+Body 13: achieved=50/50, peak_pop=160, births=2293, avg_age=77.7, avg_food=3.7, avg_children=1.0, deaths={'energy_depleted': 2117, 'lifespan_completed': 50, 'simulation_ended': 138}
+Accepted survivor body 7/50
+Body 14 design: sensor=4, muscle=0, armor=0, brain=1
+Body 14 stats: cost=65, sensor_vision=6, brain_limit=4, effective_vision=4, speed=1, durability=10, brain_drain=1
+Body 14: achieved=5/50, peak_pop=132, births=461, avg_age=76.5, avg_food=3.5, avg_children=1.0, deaths={'energy_depleted': 468, 'lifespan_completed': 5}
+Body 15 design: sensor=4, muscle=1, armor=0, brain=1
+Body 15 stats: cost=80, sensor_vision=6, brain_limit=4, effective_vision=4, speed=1, durability=10, brain_drain=1
+Body 15: achieved=27/50, peak_pop=128, births=1446, avg_age=78.1, avg_food=3.6, avg_children=1.0, deaths={'energy_depleted': 1431, 'lifespan_completed': 27}
+Body 16 design: sensor=4, muscle=2, armor=0, brain=1
+Body 16 stats: cost=95, sensor_vision=6, brain_limit=4, effective_vision=4, speed=2, durability=10, brain_drain=1
+Body 16: achieved=0/50, peak_pop=14, births=2, avg_age=37.8, avg_food=0.7, avg_children=0.1, deaths={'energy_depleted': 14}
+Body 17 design: sensor=3, muscle=0, armor=2, brain=1
+Body 17 stats: cost=95, sensor_vision=5, brain_limit=4, effective_vision=4, speed=1, durability=26, brain_drain=1
+Body 17: achieved=50/50, peak_pop=147, births=2296, avg_age=79.0, avg_food=3.8, avg_children=1.0, deaths={'energy_depleted': 2212, 'lifespan_completed': 50, 'simulation_ended': 46}
+Accepted survivor body 8/50
+Body 18 design: sensor=3, muscle=0, armor=1, brain=1
+Body 18 stats: cost=75, sensor_vision=5, brain_limit=4, effective_vision=4, speed=1, durability=18, brain_drain=1
+Body 18: achieved=50/50, peak_pop=160, births=2246, avg_age=79.7, avg_food=3.8, avg_children=1.0, deaths={'energy_depleted': 2171, 'lifespan_completed': 50, 'simulation_ended': 37}
+Accepted survivor body 9/50
+Body 19 design: sensor=3, muscle=1, armor=1, brain=1
+Body 19 stats: cost=90, sensor_vision=5, brain_limit=4, effective_vision=4, speed=1, durability=18, brain_drain=1
+Body 19: achieved=5/50, peak_pop=133, births=383, avg_age=78.1, avg_food=3.6, avg_children=1.0, deaths={'energy_depleted': 390, 'lifespan_completed': 5}
+Body 20 design: sensor=3, muscle=0, armor=0, brain=1
+Body 20 stats: cost=55, sensor_vision=5, brain_limit=4, effective_vision=4, speed=1, durability=10, brain_drain=1
+Body 20: achieved=50/50, peak_pop=150, births=1851, avg_age=79.6, avg_food=3.9, avg_children=1.0, deaths={'energy_depleted': 1732, 'lifespan_completed': 50, 'simulation_ended': 81}
+Accepted survivor body 10/50
+Body 21 design: sensor=3, muscle=1, armor=0, brain=1
+Body 21 stats: cost=70, sensor_vision=5, brain_limit=4, effective_vision=4, speed=1, durability=10, brain_drain=1
+Body 21: achieved=9/50, peak_pop=123, births=490, avg_age=77.2, avg_food=3.6, avg_children=1.0, deaths={'energy_depleted': 493, 'lifespan_completed': 9}
+Body 22 design: sensor=3, muscle=2, armor=0, brain=1
+Body 22 stats: cost=85, sensor_vision=5, brain_limit=4, effective_vision=4, speed=2, durability=10, brain_drain=1
+Body 22: achieved=0/50, peak_pop=12, births=0, avg_age=37.4, avg_food=0.6, avg_children=0.0, deaths={'energy_depleted': 12}
+Body 23 design: sensor=3, muscle=3, armor=0, brain=1
+Body 23 stats: cost=100, sensor_vision=5, brain_limit=4, effective_vision=4, speed=2, durability=10, brain_drain=1
+Body 23: achieved=0/50, peak_pop=12, births=0, avg_age=35.8, avg_food=0.1, avg_children=0.0, deaths={'energy_depleted': 12}
+Body 24 design: sensor=2, muscle=0, armor=2, brain=1
+Body 24 stats: cost=85, sensor_vision=4, brain_limit=4, effective_vision=4, speed=1, durability=26, brain_drain=1
+Body 24: achieved=32/50, peak_pop=130, births=1082, avg_age=80.1, avg_food=3.8, avg_children=1.0, deaths={'energy_depleted': 1062, 'lifespan_completed': 32}
+Body 25 design: sensor=2, muscle=1, armor=2, brain=1
+Body 25 stats: cost=100, sensor_vision=4, brain_limit=4, effective_vision=4, speed=1, durability=26, brain_drain=1
+Body 25: achieved=34/50, peak_pop=150, births=1838, avg_age=79.5, avg_food=3.8, avg_children=1.0, deaths={'energy_depleted': 1816, 'lifespan_completed': 34}
+Body 26 design: sensor=2, muscle=0, armor=1, brain=1
+Body 26 stats: cost=65, sensor_vision=4, brain_limit=4, effective_vision=4, speed=1, durability=18, brain_drain=1
+Body 26: achieved=1/50, peak_pop=49, births=103, avg_age=70.2, avg_food=2.9, avg_children=0.9, deaths={'energy_depleted': 114, 'lifespan_completed': 1}
+Body 27 design: sensor=2, muscle=1, armor=1, brain=1
+Body 27 stats: cost=80, sensor_vision=4, brain_limit=4, effective_vision=4, speed=1, durability=18, brain_drain=1
+Body 27: achieved=37/50, peak_pop=183, births=1943, avg_age=77.6, avg_food=3.6, avg_children=1.0, deaths={'energy_depleted': 1918, 'lifespan_completed': 37}
+Body 28 design: sensor=2, muscle=2, armor=1, brain=1
+Body 28 stats: cost=95, sensor_vision=4, brain_limit=4, effective_vision=4, speed=2, durability=18, brain_drain=1
+Body 28: achieved=0/50, peak_pop=12, births=0, avg_age=38.7, avg_food=0.3, avg_children=0.0, deaths={'energy_depleted': 12}
+Body 29 design: sensor=2, muscle=0, armor=0, brain=1
+Body 29 stats: cost=45, sensor_vision=4, brain_limit=4, effective_vision=4, speed=1, durability=10, brain_drain=1
+Body 29: achieved=31/50, peak_pop=151, births=1457, avg_age=80.9, avg_food=3.9, avg_children=1.0, deaths={'energy_depleted': 1438, 'lifespan_completed': 31}
+Body 30 design: sensor=2, muscle=1, armor=0, brain=1
+Body 30 stats: cost=60, sensor_vision=4, brain_limit=4, effective_vision=4, speed=1, durability=10, brain_drain=1
+Body 30: achieved=22/50, peak_pop=146, births=975, avg_age=79.4, avg_food=3.7, avg_children=1.0, deaths={'energy_depleted': 965, 'lifespan_completed': 22}
+Body 31 design: sensor=2, muscle=2, armor=0, brain=1
+Body 31 stats: cost=75, sensor_vision=4, brain_limit=4, effective_vision=4, speed=2, durability=10, brain_drain=1
+Body 31: achieved=0/50, peak_pop=12, births=0, avg_age=37.8, avg_food=0.3, avg_children=0.0, deaths={'energy_depleted': 12}
+Body 32 design: sensor=2, muscle=3, armor=0, brain=1
+Body 32 stats: cost=90, sensor_vision=4, brain_limit=4, effective_vision=4, speed=2, durability=10, brain_drain=1
+Body 32: achieved=0/50, peak_pop=12, births=0, avg_age=37.6, avg_food=0.5, avg_children=0.0, deaths={'energy_depleted': 12}
+Body 33 design: sensor=2, muscle=0, armor=1, brain=2
+Body 33 stats: cost=90, sensor_vision=4, brain_limit=6, effective_vision=4, speed=1, durability=18, brain_drain=2
+Body 33: achieved=0/50, peak_pop=32, births=122, avg_age=60.3, avg_food=3.7, avg_children=0.9, deaths={'energy_depleted': 134}
+Body 34 design: sensor=2, muscle=0, armor=0, brain=2
+Body 34 stats: cost=70, sensor_vision=4, brain_limit=6, effective_vision=4, speed=1, durability=10, brain_drain=2
+Body 34: achieved=2/50, peak_pop=40, births=235, avg_age=58.5, avg_food=3.5, avg_children=1.0, deaths={'energy_depleted': 245, 'lifespan_completed': 2}
+Body 35 design: sensor=2, muscle=1, armor=0, brain=2
+Body 35 stats: cost=85, sensor_vision=4, brain_limit=6, effective_vision=4, speed=1, durability=10, brain_drain=2
+Body 35: achieved=0/50, peak_pop=13, births=7, avg_age=50.1, avg_food=2.0, avg_children=0.4, deaths={'energy_depleted': 19}
+Body 36 design: sensor=2, muscle=2, armor=0, brain=2
+Body 36 stats: cost=100, sensor_vision=4, brain_limit=6, effective_vision=4, speed=2, durability=10, brain_drain=2
+Body 36: achieved=0/50, peak_pop=12, births=0, avg_age=31.8, avg_food=0.4, avg_children=0.0, deaths={'energy_depleted': 12}
+Body 37 design: sensor=2, muscle=0, armor=0, brain=3
+Body 37 stats: cost=95, sensor_vision=4, brain_limit=8, effective_vision=4, speed=1, durability=10, brain_drain=3
+Body 37: achieved=0/50, peak_pop=14, births=18, avg_age=49.6, avg_food=3.4, avg_children=0.6, deaths={'energy_depleted': 30}
+Body 38 design: sensor=1, muscle=0, armor=3, brain=1
+Body 38 stats: cost=95, sensor_vision=3, brain_limit=4, effective_vision=3, speed=1, durability=34, brain_drain=1
+Body 38: achieved=0/50, peak_pop=29, births=143, avg_age=68.8, avg_food=2.8, avg_children=0.9, deaths={'energy_depleted': 155}
+Body 39 design: sensor=1, muscle=0, armor=2, brain=1
+Body 39 stats: cost=75, sensor_vision=3, brain_limit=4, effective_vision=3, speed=1, durability=26, brain_drain=1
+Body 39: achieved=0/50, peak_pop=12, births=5, avg_age=63.1, avg_food=1.5, avg_children=0.3, deaths={'energy_depleted': 17}
+Body 40 design: sensor=1, muscle=1, armor=2, brain=1
+Body 40 stats: cost=90, sensor_vision=3, brain_limit=4, effective_vision=3, speed=1, durability=26, brain_drain=1
+Body 40: achieved=0/50, peak_pop=14, births=10, avg_age=82.0, avg_food=3.1, avg_children=0.5, deaths={'energy_depleted': 22}
+Body 41 design: sensor=1, muscle=0, armor=1, brain=1
+Body 41 stats: cost=55, sensor_vision=3, brain_limit=4, effective_vision=3, speed=1, durability=18, brain_drain=1
+Body 41: achieved=0/50, peak_pop=13, births=27, avg_age=76.9, avg_food=3.2, avg_children=0.7, deaths={'energy_depleted': 39}
+Body 42 design: sensor=1, muscle=1, armor=1, brain=1
+Body 42 stats: cost=70, sensor_vision=3, brain_limit=4, effective_vision=3, speed=1, durability=18, brain_drain=1
+Body 42: achieved=1/50, peak_pop=44, births=247, avg_age=72.2, avg_food=3.1, avg_children=1.0, deaths={'energy_depleted': 258, 'lifespan_completed': 1}
+Body 43 design: sensor=1, muscle=2, armor=1, brain=1
+Body 43 stats: cost=85, sensor_vision=3, brain_limit=4, effective_vision=3, speed=2, durability=18, brain_drain=1
+Body 43: achieved=0/50, peak_pop=12, births=0, avg_age=36.6, avg_food=0.2, avg_children=0.0, deaths={'energy_depleted': 12}
+Body 44 design: sensor=1, muscle=3, armor=1, brain=1
+Body 44 stats: cost=100, sensor_vision=3, brain_limit=4, effective_vision=3, speed=2, durability=18, brain_drain=1
+Body 44: achieved=0/50, peak_pop=12, births=0, avg_age=37.2, avg_food=0.2, avg_children=0.0, deaths={'energy_depleted': 12}
+Body 45 design: sensor=1, muscle=0, armor=0, brain=1
+Body 45 stats: cost=35, sensor_vision=3, brain_limit=4, effective_vision=3, speed=1, durability=10, brain_drain=1
+Body 45: achieved=0/50, peak_pop=13, births=12, avg_age=73.8, avg_food=2.6, avg_children=0.5, deaths={'energy_depleted': 24}
+Body 46 design: sensor=1, muscle=1, armor=0, brain=1
+Body 46 stats: cost=50, sensor_vision=3, brain_limit=4, effective_vision=3, speed=1, durability=10, brain_drain=1
+Body 46: achieved=0/50, peak_pop=21, births=41, avg_age=72.4, avg_food=2.9, avg_children=0.8, deaths={'energy_depleted': 53}
+Body 47 design: sensor=1, muscle=2, armor=0, brain=1
+Body 47 stats: cost=65, sensor_vision=3, brain_limit=4, effective_vision=3, speed=2, durability=10, brain_drain=1
+Body 47: achieved=0/50, peak_pop=12, births=0, avg_age=36.8, avg_food=0.2, avg_children=0.0, deaths={'energy_depleted': 12}
+Body 48 design: sensor=1, muscle=3, armor=0, brain=1
+Body 48 stats: cost=80, sensor_vision=3, brain_limit=4, effective_vision=3, speed=2, durability=10, brain_drain=1
+Body 48: achieved=0/50, peak_pop=12, births=0, avg_age=38.6, avg_food=0.4, avg_children=0.0, deaths={'energy_depleted': 12}
+Body 49 design: sensor=1, muscle=4, armor=0, brain=1
+Body 49 stats: cost=95, sensor_vision=3, brain_limit=4, effective_vision=3, speed=3, durability=10, brain_drain=1
+Body 49: achieved=0/50, peak_pop=12, births=0, avg_age=26.8, avg_food=0.1, avg_children=0.0, deaths={'energy_depleted': 12}
+Body 50 design: sensor=1, muscle=0, armor=2, brain=2
+Body 50 stats: cost=100, sensor_vision=3, brain_limit=6, effective_vision=3, speed=1, durability=26, brain_drain=2
+Body 50: achieved=0/50, peak_pop=13, births=15, avg_age=57.5, avg_food=2.8, avg_children=0.6, deaths={'energy_depleted': 27}
+Body 51 design: sensor=1, muscle=0, armor=1, brain=2
+Body 51 stats: cost=80, sensor_vision=3, brain_limit=6, effective_vision=3, speed=1, durability=18, brain_drain=2
+Body 51: achieved=0/50, peak_pop=23, births=26, avg_age=56.1, avg_food=2.9, avg_children=0.7, deaths={'energy_depleted': 38}
+Body 52 design: sensor=1, muscle=1, armor=1, brain=2
+Body 52 stats: cost=95, sensor_vision=3, brain_limit=6, effective_vision=3, speed=1, durability=18, brain_drain=2
+Body 52: achieved=0/50, peak_pop=12, births=8, avg_age=53.2, avg_food=2.3, avg_children=0.4, deaths={'energy_depleted': 20}
+Body 53 design: sensor=1, muscle=0, armor=0, brain=2
+Body 53 stats: cost=60, sensor_vision=3, brain_limit=6, effective_vision=3, speed=1, durability=10, brain_drain=2
+Body 53: achieved=0/50, peak_pop=14, births=23, avg_age=57.1, avg_food=3.0, avg_children=0.7, deaths={'energy_depleted': 35}
+Body 54 design: sensor=1, muscle=1, armor=0, brain=2
+Body 54 stats: cost=75, sensor_vision=3, brain_limit=6, effective_vision=3, speed=1, durability=10, brain_drain=2
+Body 54: achieved=0/50, peak_pop=13, births=2, avg_age=47.7, avg_food=1.4, avg_children=0.1, deaths={'energy_depleted': 14}
+Body 55 design: sensor=1, muscle=2, armor=0, brain=2
+Body 55 stats: cost=90, sensor_vision=3, brain_limit=6, effective_vision=3, speed=2, durability=10, brain_drain=2
+Body 55: achieved=0/50, peak_pop=12, births=0, avg_age=29.6, avg_food=0.2, avg_children=0.0, deaths={'energy_depleted': 12}
+Body 56 design: sensor=1, muscle=0, armor=0, brain=3
+Body 56 stats: cost=85, sensor_vision=3, brain_limit=8, effective_vision=3, speed=1, durability=10, brain_drain=3
+Body 56: achieved=0/50, peak_pop=13, births=3, avg_age=44.6, avg_food=2.2, avg_children=0.2, deaths={'energy_depleted': 15}
+Body 57 design: sensor=1, muscle=1, armor=0, brain=3
+Body 57 stats: cost=100, sensor_vision=3, brain_limit=8, effective_vision=3, speed=1, durability=10, brain_drain=3
+Body 57: achieved=0/50, peak_pop=12, births=0, avg_age=37.2, avg_food=1.0, avg_children=0.0, deaths={'energy_depleted': 12}
+Body 58 design: sensor=8, muscle=0, armor=1, brain=0
+Body 58 stats: cost=100, sensor_vision=10, brain_limit=2, effective_vision=2, speed=1, durability=18, brain_drain=0
+Body 58: achieved=3/50, peak_pop=33, births=76, avg_age=98.1, avg_food=2.6, avg_children=0.9, deaths={'energy_depleted': 85, 'lifespan_completed': 3}
+Body 59 design: sensor=8, muscle=0, armor=0, brain=0
+Body 59 stats: cost=80, sensor_vision=10, brain_limit=2, effective_vision=2, speed=1, durability=10, brain_drain=0
+Body 59: achieved=1/50, peak_pop=21, births=21, avg_age=106.8, avg_food=2.7, avg_children=0.6, deaths={'energy_depleted': 32, 'lifespan_completed': 1}
+Body 60 design: sensor=8, muscle=1, armor=0, brain=0
+Body 60 stats: cost=95, sensor_vision=10, brain_limit=2, effective_vision=2, speed=1, durability=10, brain_drain=0
+Body 60: achieved=5/50, peak_pop=28, births=62, avg_age=104.8, avg_food=2.9, avg_children=0.8, deaths={'energy_depleted': 69, 'lifespan_completed': 5}
+Body 61 design: sensor=7, muscle=0, armor=1, brain=0
+Body 61 stats: cost=90, sensor_vision=9, brain_limit=2, effective_vision=2, speed=1, durability=18, brain_drain=0
+Body 61: achieved=6/50, peak_pop=33, births=116, avg_age=100.8, avg_food=2.7, avg_children=0.9, deaths={'energy_depleted': 122, 'lifespan_completed': 6}
+Body 62 design: sensor=7, muscle=0, armor=0, brain=0
+Body 62 stats: cost=70, sensor_vision=9, brain_limit=2, effective_vision=2, speed=1, durability=10, brain_drain=0
+Body 62: achieved=3/50, peak_pop=21, births=28, avg_age=105.6, avg_food=2.7, avg_children=0.7, deaths={'energy_depleted': 37, 'lifespan_completed': 3}
+Body 63 design: sensor=7, muscle=1, armor=0, brain=0
+Body 63 stats: cost=85, sensor_vision=9, brain_limit=2, effective_vision=2, speed=1, durability=10, brain_drain=0
+Body 63: achieved=9/50, peak_pop=53, births=167, avg_age=103.2, avg_food=2.9, avg_children=0.9, deaths={'energy_depleted': 170, 'lifespan_completed': 9}
+Body 64 design: sensor=7, muscle=2, armor=0, brain=0
+Body 64 stats: cost=100, sensor_vision=9, brain_limit=2, effective_vision=2, speed=2, durability=10, brain_drain=0
+Body 64: achieved=0/50, peak_pop=12, births=0, avg_age=47.9, avg_food=0.2, avg_children=0.0, deaths={'energy_depleted': 12}
+Body 65 design: sensor=6, muscle=0, armor=2, brain=0
+Body 65 stats: cost=100, sensor_vision=8, brain_limit=2, effective_vision=2, speed=1, durability=26, brain_drain=0
+Body 65: achieved=1/50, peak_pop=17, births=15, avg_age=111.1, avg_food=2.8, avg_children=0.6, deaths={'energy_depleted': 26, 'lifespan_completed': 1}
+Body 66 design: sensor=6, muscle=0, armor=1, brain=0
+Body 66 stats: cost=80, sensor_vision=8, brain_limit=2, effective_vision=2, speed=1, durability=18, brain_drain=0
+Body 66: achieved=5/50, peak_pop=34, births=113, avg_age=103.0, avg_food=2.9, avg_children=0.9, deaths={'energy_depleted': 120, 'lifespan_completed': 5}
+Body 67 design: sensor=6, muscle=1, armor=1, brain=0
+Body 67 stats: cost=95, sensor_vision=8, brain_limit=2, effective_vision=2, speed=1, durability=18, brain_drain=0
+Body 67: achieved=1/50, peak_pop=22, births=36, avg_age=108.2, avg_food=2.8, avg_children=0.8, deaths={'energy_depleted': 47, 'lifespan_completed': 1}
+Body 68 design: sensor=6, muscle=0, armor=0, brain=0
+Body 68 stats: cost=60, sensor_vision=8, brain_limit=2, effective_vision=2, speed=1, durability=10, brain_drain=0
+Body 68: achieved=27/50, peak_pop=122, births=520, avg_age=104.8, avg_food=3.1, avg_children=1.0, deaths={'energy_depleted': 505, 'lifespan_completed': 27}
+Body 69 design: sensor=6, muscle=1, armor=0, brain=0
+Body 69 stats: cost=75, sensor_vision=8, brain_limit=2, effective_vision=2, speed=1, durability=10, brain_drain=0
+Body 69: achieved=41/50, peak_pop=116, births=524, avg_age=109.1, avg_food=3.3, avg_children=1.0, deaths={'energy_depleted': 495, 'lifespan_completed': 41}
+Body 70 design: sensor=6, muscle=2, armor=0, brain=0
+Body 70 stats: cost=90, sensor_vision=8, brain_limit=2, effective_vision=2, speed=2, durability=10, brain_drain=0
+Body 70: achieved=0/50, peak_pop=12, births=0, avg_age=54.4, avg_food=0.5, avg_children=0.0, deaths={'energy_depleted': 12}
+Body 71 design: sensor=5, muscle=0, armor=2, brain=0
+Body 71 stats: cost=90, sensor_vision=7, brain_limit=2, effective_vision=2, speed=1, durability=26, brain_drain=0
+Body 71: achieved=16/50, peak_pop=61, births=206, avg_age=109.0, avg_food=3.2, avg_children=0.9, deaths={'energy_depleted': 202, 'lifespan_completed': 16}
+Body 72 design: sensor=5, muscle=0, armor=1, brain=0
+Body 72 stats: cost=70, sensor_vision=7, brain_limit=2, effective_vision=2, speed=1, durability=18, brain_drain=0
+Body 72: achieved=4/50, peak_pop=21, births=31, avg_age=108.8, avg_food=3.0, avg_children=0.7, deaths={'energy_depleted': 39, 'lifespan_completed': 4}
+Body 73 design: sensor=5, muscle=1, armor=1, brain=0
+Body 73 stats: cost=85, sensor_vision=7, brain_limit=2, effective_vision=2, speed=1, durability=18, brain_drain=0
+Body 73: achieved=3/50, peak_pop=14, births=12, avg_age=111.3, avg_food=2.9, avg_children=0.5, deaths={'energy_depleted': 21, 'lifespan_completed': 3}
+Body 74 design: sensor=5, muscle=2, armor=1, brain=0
+Body 74 stats: cost=100, sensor_vision=7, brain_limit=2, effective_vision=2, speed=2, durability=18, brain_drain=0
+Body 74: achieved=0/50, peak_pop=12, births=0, avg_age=53.7, avg_food=0.7, avg_children=0.0, deaths={'energy_depleted': 12}
+Body 75 design: sensor=5, muscle=0, armor=0, brain=0
+Body 75 stats: cost=50, sensor_vision=7, brain_limit=2, effective_vision=2, speed=1, durability=10, brain_drain=0
+Body 75: achieved=3/50, peak_pop=21, births=23, avg_age=110.4, avg_food=2.9, avg_children=0.7, deaths={'energy_depleted': 32, 'lifespan_completed': 3}
+Body 76 design: sensor=5, muscle=1, armor=0, brain=0
+Body 76 stats: cost=65, sensor_vision=7, brain_limit=2, effective_vision=2, speed=1, durability=10, brain_drain=0
+Body 76: achieved=1/50, peak_pop=18, births=17, avg_age=98.8, avg_food=2.2, avg_children=0.6, deaths={'energy_depleted': 28, 'lifespan_completed': 1}
+Body 77 design: sensor=5, muscle=2, armor=0, brain=0
+Body 77 stats: cost=80, sensor_vision=7, brain_limit=2, effective_vision=2, speed=2, durability=10, brain_drain=0
+Body 77: achieved=0/50, peak_pop=12, births=0, avg_age=54.2, avg_food=0.6, avg_children=0.0, deaths={'energy_depleted': 12}
+Body 78 design: sensor=5, muscle=3, armor=0, brain=0
+Body 78 stats: cost=95, sensor_vision=7, brain_limit=2, effective_vision=2, speed=2, durability=10, brain_drain=0
+Body 78: achieved=0/50, peak_pop=12, births=0, avg_age=50.1, avg_food=0.2, avg_children=0.0, deaths={'energy_depleted': 12}
+Body 79 design: sensor=4, muscle=0, armor=3, brain=0
+Body 79 stats: cost=100, sensor_vision=6, brain_limit=2, effective_vision=2, speed=1, durability=34, brain_drain=0
+Body 79: achieved=2/50, peak_pop=20, births=10, avg_age=119.2, avg_food=3.0, avg_children=0.5, deaths={'energy_depleted': 20, 'lifespan_completed': 2}
+Body 80 design: sensor=4, muscle=0, armor=2, brain=0
+Body 80 stats: cost=80, sensor_vision=6, brain_limit=2, effective_vision=2, speed=1, durability=26, brain_drain=0
+Body 80: achieved=3/50, peak_pop=23, births=36, avg_age=104.6, avg_food=2.8, avg_children=0.8, deaths={'energy_depleted': 45, 'lifespan_completed': 3}
+Body 81 design: sensor=4, muscle=1, armor=2, brain=0
+Body 81 stats: cost=95, sensor_vision=6, brain_limit=2, effective_vision=2, speed=1, durability=26, brain_drain=0
+Body 81: achieved=6/50, peak_pop=33, births=84, avg_age=105.8, avg_food=3.0, avg_children=0.9, deaths={'energy_depleted': 90, 'lifespan_completed': 6}
+Body 82 design: sensor=4, muscle=0, armor=1, brain=0
+Body 82 stats: cost=60, sensor_vision=6, brain_limit=2, effective_vision=2, speed=1, durability=18, brain_drain=0
+Body 82: achieved=2/50, peak_pop=14, births=9, avg_age=121.9, avg_food=3.1, avg_children=0.4, deaths={'energy_depleted': 19, 'lifespan_completed': 2}
+Body 83 design: sensor=4, muscle=1, armor=1, brain=0
+Body 83 stats: cost=75, sensor_vision=6, brain_limit=2, effective_vision=2, speed=1, durability=18, brain_drain=0
+Body 83: achieved=3/50, peak_pop=29, births=53, avg_age=107.7, avg_food=3.0, avg_children=0.8, deaths={'energy_depleted': 62, 'lifespan_completed': 3}
+Body 84 design: sensor=4, muscle=2, armor=1, brain=0
+Body 84 stats: cost=90, sensor_vision=6, brain_limit=2, effective_vision=2, speed=2, durability=18, brain_drain=0
+Body 84: achieved=0/50, peak_pop=12, births=0, avg_age=49.3, avg_food=0.3, avg_children=0.0, deaths={'energy_depleted': 12}
+Body 85 design: sensor=4, muscle=0, armor=0, brain=0
+Body 85 stats: cost=40, sensor_vision=6, brain_limit=2, effective_vision=2, speed=1, durability=10, brain_drain=0
+Body 85: achieved=2/50, peak_pop=22, births=30, avg_age=107.1, avg_food=2.9, avg_children=0.7, deaths={'energy_depleted': 40, 'lifespan_completed': 2}
+Body 86 design: sensor=4, muscle=1, armor=0, brain=0
+Body 86 stats: cost=55, sensor_vision=6, brain_limit=2, effective_vision=2, speed=1, durability=10, brain_drain=0
+Body 86: achieved=4/50, peak_pop=31, births=110, avg_age=106.5, avg_food=3.0, avg_children=0.9, deaths={'energy_depleted': 118, 'lifespan_completed': 4}
+Body 87 design: sensor=4, muscle=2, armor=0, brain=0
+Body 87 stats: cost=70, sensor_vision=6, brain_limit=2, effective_vision=2, speed=2, durability=10, brain_drain=0
+Body 87: achieved=0/50, peak_pop=12, births=0, avg_age=50.5, avg_food=0.2, avg_children=0.0, deaths={'energy_depleted': 12}
+Body 88 design: sensor=4, muscle=3, armor=0, brain=0
+Body 88 stats: cost=85, sensor_vision=6, brain_limit=2, effective_vision=2, speed=2, durability=10, brain_drain=0
+Body 88: achieved=0/50, peak_pop=12, births=0, avg_age=50.9, avg_food=0.4, avg_children=0.0, deaths={'energy_depleted': 12}
+Body 89 design: sensor=4, muscle=4, armor=0, brain=0
+Body 89 stats: cost=100, sensor_vision=6, brain_limit=2, effective_vision=2, speed=3, durability=10, brain_drain=0
+Body 89: achieved=0/50, peak_pop=12, births=0, avg_age=40.7, avg_food=0.5, avg_children=0.0, deaths={'energy_depleted': 12}
+Body 90 design: sensor=3, muscle=0, armor=3, brain=0
+Body 90 stats: cost=90, sensor_vision=5, brain_limit=2, effective_vision=2, speed=1, durability=34, brain_drain=0
+Body 90: achieved=1/50, peak_pop=20, births=14, avg_age=106.8, avg_food=2.6, avg_children=0.5, deaths={'energy_depleted': 25, 'lifespan_completed': 1}
+Body 91 design: sensor=3, muscle=0, armor=2, brain=0
+Body 91 stats: cost=70, sensor_vision=5, brain_limit=2, effective_vision=2, speed=1, durability=26, brain_drain=0
+Body 91: achieved=7/50, peak_pop=29, births=123, avg_age=106.0, avg_food=3.0, avg_children=0.9, deaths={'energy_depleted': 128, 'lifespan_completed': 7}
+Body 92 design: sensor=3, muscle=1, armor=2, brain=0
+Body 92 stats: cost=85, sensor_vision=5, brain_limit=2, effective_vision=2, speed=1, durability=26, brain_drain=0
+Body 92: achieved=34/50, peak_pop=146, births=598, avg_age=108.5, avg_food=3.2, avg_children=1.0, deaths={'energy_depleted': 576, 'lifespan_completed': 34}
+Body 93 design: sensor=3, muscle=2, armor=2, brain=0
+Body 93 stats: cost=100, sensor_vision=5, brain_limit=2, effective_vision=2, speed=1, durability=26, brain_drain=0
+Body 93: achieved=4/50, peak_pop=31, births=42, avg_age=113.7, avg_food=3.3, avg_children=0.8, deaths={'energy_depleted': 50, 'lifespan_completed': 4}
+Body 94 design: sensor=3, muscle=0, armor=1, brain=0
+Body 94 stats: cost=50, sensor_vision=5, brain_limit=2, effective_vision=2, speed=1, durability=18, brain_drain=0
+Body 94: achieved=3/50, peak_pop=22, births=34, avg_age=108.3, avg_food=2.9, avg_children=0.7, deaths={'energy_depleted': 43, 'lifespan_completed': 3}
+Body 95 design: sensor=3, muscle=1, armor=1, brain=0
+Body 95 stats: cost=65, sensor_vision=5, brain_limit=2, effective_vision=2, speed=1, durability=18, brain_drain=0
+Body 95: achieved=5/50, peak_pop=31, births=78, avg_age=109.6, avg_food=3.2, avg_children=0.9, deaths={'energy_depleted': 85, 'lifespan_completed': 5}
+Body 96 design: sensor=3, muscle=2, armor=1, brain=0
+Body 96 stats: cost=80, sensor_vision=5, brain_limit=2, effective_vision=2, speed=2, durability=18, brain_drain=0
+Body 96: achieved=0/50, peak_pop=12, births=1, avg_age=53.4, avg_food=0.6, avg_children=0.1, deaths={'energy_depleted': 13}
+Body 97 design: sensor=3, muscle=3, armor=1, brain=0
+Body 97 stats: cost=95, sensor_vision=5, brain_limit=2, effective_vision=2, speed=2, durability=18, brain_drain=0
+Body 97: achieved=0/50, peak_pop=12, births=0, avg_age=51.8, avg_food=0.4, avg_children=0.0, deaths={'energy_depleted': 12}
+Body 98 design: sensor=3, muscle=0, armor=0, brain=0
+Body 98 stats: cost=30, sensor_vision=5, brain_limit=2, effective_vision=2, speed=1, durability=10, brain_drain=0
+Body 98: achieved=9/50, peak_pop=52, births=162, avg_age=102.5, avg_food=2.9, avg_children=0.9, deaths={'energy_depleted': 165, 'lifespan_completed': 9}
+Body 99 design: sensor=3, muscle=1, armor=0, brain=0
+Body 99 stats: cost=45, sensor_vision=5, brain_limit=2, effective_vision=2, speed=1, durability=10, brain_drain=0
+Body 99: achieved=48/50, peak_pop=168, births=634, avg_age=109.6, avg_food=3.3, avg_children=1.0, deaths={'energy_depleted': 598, 'lifespan_completed': 48}
+Body 100 design: sensor=3, muscle=2, armor=0, brain=0
+Body 100 stats: cost=60, sensor_vision=5, brain_limit=2, effective_vision=2, speed=2, durability=10, brain_drain=0
+Body 100: achieved=0/50, peak_pop=12, births=0, avg_age=54.1, avg_food=0.6, avg_children=0.0, deaths={'energy_depleted': 12}
+Body 101 design: sensor=3, muscle=3, armor=0, brain=0
+Body 101 stats: cost=75, sensor_vision=5, brain_limit=2, effective_vision=2, speed=2, durability=10, brain_drain=0
+Body 101: achieved=0/50, peak_pop=12, births=0, avg_age=50.8, avg_food=0.3, avg_children=0.0, deaths={'energy_depleted': 12}
+Body 102 design: sensor=3, muscle=4, armor=0, brain=0
+Body 102 stats: cost=90, sensor_vision=5, brain_limit=2, effective_vision=2, speed=3, durability=10, brain_drain=0
+Body 102: achieved=0/50, peak_pop=12, births=0, avg_age=37.8, avg_food=0.2, avg_children=0.0, deaths={'energy_depleted': 12}
+Body 103 design: sensor=2, muscle=0, armor=4, brain=0
+Body 103 stats: cost=100, sensor_vision=4, brain_limit=2, effective_vision=2, speed=1, durability=42, brain_drain=0
+Body 103: achieved=1/50, peak_pop=16, births=7, avg_age=97.1, avg_food=1.8, avg_children=0.4, deaths={'energy_depleted': 18, 'lifespan_completed': 1}
+Body 104 design: sensor=2, muscle=0, armor=3, brain=0
+Body 104 stats: cost=80, sensor_vision=4, brain_limit=2, effective_vision=2, speed=1, durability=34, brain_drain=0
+Body 104: achieved=8/50, peak_pop=27, births=92, avg_age=102.0, avg_food=2.8, avg_children=0.9, deaths={'energy_depleted': 96, 'lifespan_completed': 8}
+Body 105 design: sensor=2, muscle=1, armor=3, brain=0
+Body 105 stats: cost=95, sensor_vision=4, brain_limit=2, effective_vision=2, speed=1, durability=34, brain_drain=0
+Body 105: achieved=8/50, peak_pop=49, births=138, avg_age=104.3, avg_food=2.9, avg_children=0.9, deaths={'energy_depleted': 142, 'lifespan_completed': 8}
+Body 106 design: sensor=2, muscle=0, armor=2, brain=0
+Body 106 stats: cost=60, sensor_vision=4, brain_limit=2, effective_vision=2, speed=1, durability=26, brain_drain=0
+Body 106: achieved=7/50, peak_pop=36, births=148, avg_age=106.4, avg_food=3.0, avg_children=0.9, deaths={'energy_depleted': 153, 'lifespan_completed': 7}
+Body 107 design: sensor=2, muscle=1, armor=2, brain=0
+Body 107 stats: cost=75, sensor_vision=4, brain_limit=2, effective_vision=2, speed=1, durability=26, brain_drain=0
+Body 107: achieved=8/50, peak_pop=58, births=172, avg_age=101.8, avg_food=2.9, avg_children=0.9, deaths={'energy_depleted': 176, 'lifespan_completed': 8}
+Body 108 design: sensor=2, muscle=2, armor=2, brain=0
+Body 108 stats: cost=90, sensor_vision=4, brain_limit=2, effective_vision=2, speed=1, durability=26, brain_drain=0
+Body 108: achieved=0/50, peak_pop=13, births=3, avg_age=90.1, avg_food=1.3, avg_children=0.2, deaths={'energy_depleted': 15}
+Body 109 design: sensor=2, muscle=0, armor=1, brain=0
+Body 109 stats: cost=40, sensor_vision=4, brain_limit=2, effective_vision=2, speed=1, durability=18, brain_drain=0
+Body 109: achieved=0/50, peak_pop=21, births=12, avg_age=101.8, avg_food=2.2, avg_children=0.5, deaths={'energy_depleted': 24}
+Body 110 design: sensor=2, muscle=1, armor=1, brain=0
+Body 110 stats: cost=55, sensor_vision=4, brain_limit=2, effective_vision=2, speed=1, durability=18, brain_drain=0
+Body 110: achieved=1/50, peak_pop=16, births=7, avg_age=111.4, avg_food=2.6, avg_children=0.4, deaths={'energy_depleted': 18, 'lifespan_completed': 1}
+Body 111 design: sensor=2, muscle=2, armor=1, brain=0
+Body 111 stats: cost=70, sensor_vision=4, brain_limit=2, effective_vision=2, speed=2, durability=18, brain_drain=0
+Body 111: achieved=0/50, peak_pop=12, births=0, avg_age=49.5, avg_food=0.2, avg_children=0.0, deaths={'energy_depleted': 12}
+Body 112 design: sensor=2, muscle=3, armor=1, brain=0
+Body 112 stats: cost=85, sensor_vision=4, brain_limit=2, effective_vision=2, speed=2, durability=18, brain_drain=0
+Body 112: achieved=0/50, peak_pop=13, births=1, avg_age=51.2, avg_food=0.6, avg_children=0.1, deaths={'energy_depleted': 13}
+Body 113 design: sensor=2, muscle=4, armor=1, brain=0
+Body 113 stats: cost=100, sensor_vision=4, brain_limit=2, effective_vision=2, speed=3, durability=18, brain_drain=0
+Body 113: achieved=0/50, peak_pop=12, births=0, avg_age=34.9, avg_food=0.0, avg_children=0.0, deaths={'energy_depleted': 12}
+Body 114 design: sensor=2, muscle=0, armor=0, brain=0
+Body 114 stats: cost=20, sensor_vision=4, brain_limit=2, effective_vision=2, speed=1, durability=10, brain_drain=0
+Body 114: achieved=3/50, peak_pop=32, births=50, avg_age=108.2, avg_food=3.0, avg_children=0.8, deaths={'energy_depleted': 59, 'lifespan_completed': 3}
+Body 115 design: sensor=2, muscle=1, armor=0, brain=0
+Body 115 stats: cost=35, sensor_vision=4, brain_limit=2, effective_vision=2, speed=1, durability=10, brain_drain=0
+Body 115: achieved=0/50, peak_pop=17, births=13, avg_age=107.0, avg_food=2.4, avg_children=0.5, deaths={'energy_depleted': 25}
+Body 116 design: sensor=2, muscle=2, armor=0, brain=0
+Body 116 stats: cost=50, sensor_vision=4, brain_limit=2, effective_vision=2, speed=2, durability=10, brain_drain=0
+Body 116: achieved=0/50, peak_pop=13, births=1, avg_age=51.2, avg_food=0.4, avg_children=0.1, deaths={'energy_depleted': 13}
+Body 117 design: sensor=2, muscle=3, armor=0, brain=0
+Body 117 stats: cost=65, sensor_vision=4, brain_limit=2, effective_vision=2, speed=2, durability=10, brain_drain=0
+Body 117: achieved=0/50, peak_pop=12, births=0, avg_age=54.6, avg_food=0.8, avg_children=0.0, deaths={'energy_depleted': 12}
+Body 118 design: sensor=2, muscle=4, armor=0, brain=0
+Body 118 stats: cost=80, sensor_vision=4, brain_limit=2, effective_vision=2, speed=3, durability=10, brain_drain=0
+Body 118: achieved=0/50, peak_pop=12, births=0, avg_age=38.1, avg_food=0.2, avg_children=0.0, deaths={'energy_depleted': 12}
+Body 119 design: sensor=2, muscle=5, armor=0, brain=0
+Body 119 stats: cost=95, sensor_vision=4, brain_limit=2, effective_vision=2, speed=3, durability=10, brain_drain=0
+Body 119: achieved=0/50, peak_pop=12, births=0, avg_age=40.3, avg_food=0.4, avg_children=0.0, deaths={'energy_depleted': 12}
+Body 120 design: sensor=1, muscle=0, armor=4, brain=0
+Body 120 stats: cost=90, sensor_vision=3, brain_limit=2, effective_vision=2, speed=1, durability=42, brain_drain=0
+Body 120: achieved=1/50, peak_pop=18, births=27, avg_age=100.6, avg_food=2.5, avg_children=0.7, deaths={'energy_depleted': 38, 'lifespan_completed': 1}
+Body 121 design: sensor=1, muscle=0, armor=3, brain=0
+Body 121 stats: cost=70, sensor_vision=3, brain_limit=2, effective_vision=2, speed=1, durability=34, brain_drain=0
+Body 121: achieved=7/50, peak_pop=37, births=164, avg_age=102.4, avg_food=2.8, avg_children=0.9, deaths={'energy_depleted': 169, 'lifespan_completed': 7}
+Body 122 design: sensor=1, muscle=1, armor=3, brain=0
+Body 122 stats: cost=85, sensor_vision=3, brain_limit=2, effective_vision=2, speed=1, durability=34, brain_drain=0
+Body 122: achieved=3/50, peak_pop=19, births=20, avg_age=107.2, avg_food=2.8, avg_children=0.6, deaths={'energy_depleted': 29, 'lifespan_completed': 3}
+Body 123 design: sensor=1, muscle=2, armor=3, brain=0
+Body 123 stats: cost=100, sensor_vision=3, brain_limit=2, effective_vision=2, speed=1, durability=34, brain_drain=0
+Body 123: achieved=1/50, peak_pop=26, births=34, avg_age=97.8, avg_food=2.4, avg_children=0.7, deaths={'energy_depleted': 45, 'lifespan_completed': 1}
+Body 124 design: sensor=1, muscle=0, armor=2, brain=0
+Body 124 stats: cost=50, sensor_vision=3, brain_limit=2, effective_vision=2, speed=1, durability=26, brain_drain=0
+Body 124: achieved=2/50, peak_pop=19, births=16, avg_age=99.7, avg_food=2.2, avg_children=0.6, deaths={'energy_depleted': 26, 'lifespan_completed': 2}
+Body 125 design: sensor=1, muscle=1, armor=2, brain=0
+Body 125 stats: cost=65, sensor_vision=3, brain_limit=2, effective_vision=2, speed=1, durability=26, brain_drain=0
+Body 125: achieved=0/50, peak_pop=27, births=63, avg_age=100.4, avg_food=2.7, avg_children=0.8, deaths={'energy_depleted': 75}
+Body 126 design: sensor=1, muscle=2, armor=2, brain=0
+Body 126 stats: cost=80, sensor_vision=3, brain_limit=2, effective_vision=2, speed=1, durability=26, brain_drain=0
+Body 126: achieved=3/50, peak_pop=24, births=84, avg_age=102.3, avg_food=2.7, avg_children=0.9, deaths={'energy_depleted': 93, 'lifespan_completed': 3}
+Body 127 design: sensor=1, muscle=3, armor=2, brain=0
+Body 127 stats: cost=95, sensor_vision=3, brain_limit=2, effective_vision=2, speed=1, durability=26, brain_drain=0
+Body 127: achieved=1/50, peak_pop=24, births=23, avg_age=100.3, avg_food=2.5, avg_children=0.7, deaths={'energy_depleted': 34, 'lifespan_completed': 1}
+Body 128 design: sensor=1, muscle=0, armor=1, brain=0
+Body 128 stats: cost=30, sensor_vision=3, brain_limit=2, effective_vision=2, speed=1, durability=18, brain_drain=0
+Body 128: achieved=3/50, peak_pop=20, births=54, avg_age=106.0, avg_food=2.9, avg_children=0.8, deaths={'energy_depleted': 63, 'lifespan_completed': 3}
+Body 129 design: sensor=1, muscle=1, armor=1, brain=0
+Body 129 stats: cost=45, sensor_vision=3, brain_limit=2, effective_vision=2, speed=1, durability=18, brain_drain=0
+Body 129: achieved=2/50, peak_pop=37, births=61, avg_age=107.1, avg_food=2.9, avg_children=0.8, deaths={'energy_depleted': 71, 'lifespan_completed': 2}
+Body 130 design: sensor=1, muscle=2, armor=1, brain=0
+Body 130 stats: cost=60, sensor_vision=3, brain_limit=2, effective_vision=2, speed=2, durability=18, brain_drain=0
+Body 130: achieved=0/50, peak_pop=12, births=1, avg_age=52.7, avg_food=0.6, avg_children=0.1, deaths={'energy_depleted': 13}
+Body 131 design: sensor=1, muscle=3, armor=1, brain=0
+Body 131 stats: cost=75, sensor_vision=3, brain_limit=2, effective_vision=2, speed=2, durability=18, brain_drain=0
+Body 131: achieved=0/50, peak_pop=12, births=0, avg_age=53.9, avg_food=0.6, avg_children=0.0, deaths={'energy_depleted': 12}
+Body 132 design: sensor=1, muscle=4, armor=1, brain=0
+Body 132 stats: cost=90, sensor_vision=3, brain_limit=2, effective_vision=2, speed=3, durability=18, brain_drain=0
+Body 132: achieved=0/50, peak_pop=12, births=0, avg_age=36.0, avg_food=0.1, avg_children=0.0, deaths={'energy_depleted': 12}
+Body 133 design: sensor=1, muscle=0, armor=0, brain=0
+Body 133 stats: cost=10, sensor_vision=3, brain_limit=2, effective_vision=2, speed=1, durability=10, brain_drain=0
+Body 133: achieved=1/50, peak_pop=18, births=22, avg_age=111.8, avg_food=3.0, avg_children=0.6, deaths={'energy_depleted': 33, 'lifespan_completed': 1}
+Body 134 design: sensor=1, muscle=1, armor=0, brain=0
+Body 134 stats: cost=25, sensor_vision=3, brain_limit=2, effective_vision=2, speed=1, durability=10, brain_drain=0
+Body 134: achieved=50/50, peak_pop=129, births=664, avg_age=106.0, avg_food=3.4, avg_children=1.0, deaths={'energy_depleted': 552, 'lifespan_completed': 50, 'simulation_ended': 74}
+Accepted survivor body 11/50
+Body 135 design: sensor=1, muscle=2, armor=0, brain=0
+Body 135 stats: cost=40, sensor_vision=3, brain_limit=2, effective_vision=2, speed=2, durability=10, brain_drain=0
+Body 135: achieved=0/50, peak_pop=14, births=2, avg_age=59.4, avg_food=1.1, avg_children=0.1, deaths={'energy_depleted': 14}
+Body 136 design: sensor=1, muscle=3, armor=0, brain=0
+Body 136 stats: cost=55, sensor_vision=3, brain_limit=2, effective_vision=2, speed=2, durability=10, brain_drain=0
+Body 136: achieved=0/50, peak_pop=13, births=1, avg_age=53.8, avg_food=0.6, avg_children=0.1, deaths={'energy_depleted': 13}
+Body 137 design: sensor=1, muscle=4, armor=0, brain=0
+Body 137 stats: cost=70, sensor_vision=3, brain_limit=2, effective_vision=2, speed=3, durability=10, brain_drain=0
+Body 137: achieved=0/50, peak_pop=12, births=0, avg_age=36.7, avg_food=0.2, avg_children=0.0, deaths={'energy_depleted': 12}
+Body 138 design: sensor=1, muscle=5, armor=0, brain=0
+Body 138 stats: cost=85, sensor_vision=3, brain_limit=2, effective_vision=2, speed=3, durability=10, brain_drain=0
+Body 138: achieved=0/50, peak_pop=12, births=0, avg_age=39.6, avg_food=0.4, avg_children=0.0, deaths={'energy_depleted': 12}
+Body 139 design: sensor=1, muscle=6, armor=0, brain=0
+Body 139 stats: cost=100, sensor_vision=3, brain_limit=2, effective_vision=2, speed=4, durability=10, brain_drain=0
+Body 139: achieved=0/50, peak_pop=12, births=0, avg_age=30.4, avg_food=0.2, avg_children=0.0, deaths={'energy_depleted': 12}
+Body 140 design: sensor=0, muscle=0, armor=4, brain=0
+Body 140 stats: cost=80, sensor_vision=2, brain_limit=2, effective_vision=2, speed=1, durability=42, brain_drain=0
+Body 140: achieved=11/50, peak_pop=60, births=243, avg_age=106.3, avg_food=3.1, avg_children=1.0, deaths={'energy_depleted': 244, 'lifespan_completed': 11}
+Body 141 design: sensor=0, muscle=1, armor=4, brain=0
+Body 141 stats: cost=95, sensor_vision=2, brain_limit=2, effective_vision=2, speed=1, durability=42, brain_drain=0
+Body 141: achieved=0/50, peak_pop=16, births=8, avg_age=96.7, avg_food=1.8, avg_children=0.4, deaths={'energy_depleted': 20}
+Body 142 design: sensor=0, muscle=0, armor=3, brain=0
+Body 142 stats: cost=60, sensor_vision=2, brain_limit=2, effective_vision=2, speed=1, durability=34, brain_drain=0
+Body 142: achieved=0/50, peak_pop=20, births=22, avg_age=101.3, avg_food=2.4, avg_children=0.6, deaths={'energy_depleted': 34}
+Body 143 design: sensor=0, muscle=1, armor=3, brain=0
+Body 143 stats: cost=75, sensor_vision=2, brain_limit=2, effective_vision=2, speed=1, durability=34, brain_drain=0
+Body 143: achieved=3/50, peak_pop=22, births=86, avg_age=104.2, avg_food=2.9, avg_children=0.9, deaths={'energy_depleted': 95, 'lifespan_completed': 3}
+Body 144 design: sensor=0, muscle=2, armor=3, brain=0
+Body 144 stats: cost=90, sensor_vision=2, brain_limit=2, effective_vision=2, speed=1, durability=34, brain_drain=0
+Body 144: achieved=1/50, peak_pop=15, births=18, avg_age=103.3, avg_food=2.5, avg_children=0.6, deaths={'energy_depleted': 29, 'lifespan_completed': 1}
+Body 145 design: sensor=0, muscle=0, armor=2, brain=0
+Body 145 stats: cost=40, sensor_vision=2, brain_limit=2, effective_vision=2, speed=1, durability=26, brain_drain=0
+Body 145: achieved=4/50, peak_pop=25, births=76, avg_age=103.7, avg_food=2.9, avg_children=0.9, deaths={'energy_depleted': 84, 'lifespan_completed': 4}
+Body 146 design: sensor=0, muscle=1, armor=2, brain=0
+Body 146 stats: cost=55, sensor_vision=2, brain_limit=2, effective_vision=2, speed=1, durability=26, brain_drain=0
+Body 146: achieved=4/50, peak_pop=21, births=54, avg_age=107.0, avg_food=3.0, avg_children=0.8, deaths={'energy_depleted': 62, 'lifespan_completed': 4}
+Body 147 design: sensor=0, muscle=2, armor=2, brain=0
+Body 147 stats: cost=70, sensor_vision=2, brain_limit=2, effective_vision=2, speed=1, durability=26, brain_drain=0
+Body 147: achieved=4/50, peak_pop=36, births=157, avg_age=98.1, avg_food=2.6, avg_children=0.9, deaths={'energy_depleted': 165, 'lifespan_completed': 4}
+Body 148 design: sensor=0, muscle=3, armor=2, brain=0
+Body 148 stats: cost=85, sensor_vision=2, brain_limit=2, effective_vision=2, speed=1, durability=26, brain_drain=0
+Body 148: achieved=7/50, peak_pop=29, births=58, avg_age=109.3, avg_food=3.2, avg_children=0.8, deaths={'energy_depleted': 63, 'lifespan_completed': 7}
+Body 149 design: sensor=0, muscle=4, armor=2, brain=0
+Body 149 stats: cost=100, sensor_vision=2, brain_limit=2, effective_vision=2, speed=2, durability=26, brain_drain=0
+Body 149: achieved=0/50, peak_pop=12, births=0, avg_age=50.4, avg_food=0.3, avg_children=0.0, deaths={'energy_depleted': 12}
+Body 150 design: sensor=0, muscle=0, armor=1, brain=0
+Body 150 stats: cost=20, sensor_vision=2, brain_limit=2, effective_vision=2, speed=1, durability=18, brain_drain=0
+Body 150: achieved=0/50, peak_pop=13, births=4, avg_age=104.9, avg_food=2.0, avg_children=0.2, deaths={'energy_depleted': 16}
+Body 151 design: sensor=0, muscle=1, armor=1, brain=0
+Body 151 stats: cost=35, sensor_vision=2, brain_limit=2, effective_vision=2, speed=1, durability=18, brain_drain=0
+Body 151: achieved=2/50, peak_pop=32, births=56, avg_age=103.2, avg_food=2.8, avg_children=0.8, deaths={'energy_depleted': 66, 'lifespan_completed': 2}
+Body 152 design: sensor=0, muscle=2, armor=1, brain=0
+Body 152 stats: cost=50, sensor_vision=2, brain_limit=2, effective_vision=2, speed=2, durability=18, brain_drain=0
+Body 152: achieved=0/50, peak_pop=12, births=0, avg_age=56.5, avg_food=0.7, avg_children=0.0, deaths={'energy_depleted': 12}
+Body 153 design: sensor=0, muscle=3, armor=1, brain=0
+Body 153 stats: cost=65, sensor_vision=2, brain_limit=2, effective_vision=2, speed=2, durability=18, brain_drain=0
+Body 153: achieved=0/50, peak_pop=12, births=0, avg_age=50.7, avg_food=0.4, avg_children=0.0, deaths={'energy_depleted': 12}
+Body 154 design: sensor=0, muscle=4, armor=1, brain=0
+Body 154 stats: cost=80, sensor_vision=2, brain_limit=2, effective_vision=2, speed=3, durability=18, brain_drain=0
+Body 154: achieved=0/50, peak_pop=12, births=0, avg_age=41.5, avg_food=0.6, avg_children=0.0, deaths={'energy_depleted': 12}
+Body 155 design: sensor=0, muscle=5, armor=1, brain=0
+Body 155 stats: cost=95, sensor_vision=2, brain_limit=2, effective_vision=2, speed=3, durability=18, brain_drain=0
+Body 155: achieved=0/50, peak_pop=12, births=0, avg_age=39.8, avg_food=0.4, avg_children=0.0, deaths={'energy_depleted': 12}
+Body 156 design: sensor=0, muscle=0, armor=0, brain=0
+Body 156 stats: cost=0, sensor_vision=2, brain_limit=2, effective_vision=2, speed=1, durability=10, brain_drain=0
+Body 156: achieved=3/50, peak_pop=28, births=55, avg_age=105.2, avg_food=2.8, avg_children=0.8, deaths={'energy_depleted': 64, 'lifespan_completed': 3}
+Body 157 design: sensor=0, muscle=1, armor=0, brain=0
+Body 157 stats: cost=15, sensor_vision=2, brain_limit=2, effective_vision=2, speed=1, durability=10, brain_drain=0
+Body 157: achieved=12/50, peak_pop=50, births=195, avg_age=102.1, avg_food=2.9, avg_children=0.9, deaths={'energy_depleted': 195, 'lifespan_completed': 12}
+Body 158 design: sensor=0, muscle=2, armor=0, brain=0
+Body 158 stats: cost=30, sensor_vision=2, brain_limit=2, effective_vision=2, speed=2, durability=10, brain_drain=0
+Body 158: achieved=0/50, peak_pop=12, births=0, avg_age=59.6, avg_food=0.9, avg_children=0.0, deaths={'energy_depleted': 12}
+Body 159 design: sensor=0, muscle=3, armor=0, brain=0
+Body 159 stats: cost=45, sensor_vision=2, brain_limit=2, effective_vision=2, speed=2, durability=10, brain_drain=0
+Body 159: achieved=0/50, peak_pop=12, births=0, avg_age=49.5, avg_food=0.2, avg_children=0.0, deaths={'energy_depleted': 12}
+Body 160 design: sensor=0, muscle=4, armor=0, brain=0
+Body 160 stats: cost=60, sensor_vision=2, brain_limit=2, effective_vision=2, speed=3, durability=10, brain_drain=0
+Body 160: achieved=0/50, peak_pop=12, births=0, avg_age=38.4, avg_food=0.3, avg_children=0.0, deaths={'energy_depleted': 12}
+Body 161 design: sensor=0, muscle=5, armor=0, brain=0
+Body 161 stats: cost=75, sensor_vision=2, brain_limit=2, effective_vision=2, speed=3, durability=10, brain_drain=0
+Body 161: achieved=0/50, peak_pop=12, births=0, avg_age=39.6, avg_food=0.4, avg_children=0.0, deaths={'energy_depleted': 12}
+Body 162 design: sensor=0, muscle=6, armor=0, brain=0
+Body 162 stats: cost=90, sensor_vision=2, brain_limit=2, effective_vision=2, speed=4, durability=10, brain_drain=0
+Body 162: achieved=0/50, peak_pop=12, births=0, avg_age=28.4, avg_food=0.1, avg_children=0.0, deaths={'energy_depleted': 12}
+Body 163 design: sensor=0, muscle=0, armor=3, brain=1
+Body 163 stats: cost=85, sensor_vision=2, brain_limit=4, effective_vision=2, speed=1, durability=34, brain_drain=1
+Body 163: achieved=0/50, peak_pop=14, births=3, avg_age=72.2, avg_food=2.1, avg_children=0.2, deaths={'energy_depleted': 15}
+Body 164 design: sensor=0, muscle=1, armor=3, brain=1
+Body 164 stats: cost=100, sensor_vision=2, brain_limit=4, effective_vision=2, speed=1, durability=34, brain_drain=1
+Body 164: achieved=0/50, peak_pop=13, births=1, avg_age=57.7, avg_food=0.8, avg_children=0.1, deaths={'energy_depleted': 13}
+Body 165 design: sensor=0, muscle=0, armor=2, brain=1
+Body 165 stats: cost=65, sensor_vision=2, brain_limit=4, effective_vision=2, speed=1, durability=26, brain_drain=1
+Body 165: achieved=0/50, peak_pop=12, births=1, avg_age=88.7, avg_food=3.1, avg_children=0.1, deaths={'energy_depleted': 13}
+Body 166 design: sensor=0, muscle=1, armor=2, brain=1
+Body 166 stats: cost=80, sensor_vision=2, brain_limit=4, effective_vision=2, speed=1, durability=26, brain_drain=1
+Body 166: achieved=1/50, peak_pop=15, births=5, avg_age=68.2, avg_food=1.9, avg_children=0.3, deaths={'energy_depleted': 16, 'lifespan_completed': 1}
+Body 167 design: sensor=0, muscle=2, armor=2, brain=1
+Body 167 stats: cost=95, sensor_vision=2, brain_limit=4, effective_vision=2, speed=1, durability=26, brain_drain=1
+Body 167: achieved=0/50, peak_pop=16, births=6, avg_age=74.4, avg_food=2.4, avg_children=0.3, deaths={'energy_depleted': 18}
+Body 168 design: sensor=0, muscle=0, armor=1, brain=1
+Body 168 stats: cost=45, sensor_vision=2, brain_limit=4, effective_vision=2, speed=1, durability=18, brain_drain=1
+Body 168: achieved=0/50, peak_pop=15, births=8, avg_age=75.9, avg_food=2.7, avg_children=0.4, deaths={'energy_depleted': 20}
+Body 169 design: sensor=0, muscle=1, armor=1, brain=1
+Body 169 stats: cost=60, sensor_vision=2, brain_limit=4, effective_vision=2, speed=1, durability=18, brain_drain=1
+Body 169: achieved=0/50, peak_pop=19, births=10, avg_age=75.7, avg_food=2.6, avg_children=0.5, deaths={'energy_depleted': 22}
+Body 170 design: sensor=0, muscle=2, armor=1, brain=1
+Body 170 stats: cost=75, sensor_vision=2, brain_limit=4, effective_vision=2, speed=2, durability=18, brain_drain=1
+Body 170: achieved=0/50, peak_pop=12, births=0, avg_age=39.3, avg_food=0.5, avg_children=0.0, deaths={'energy_depleted': 12}
+Body 171 design: sensor=0, muscle=3, armor=1, brain=1
+Body 171 stats: cost=90, sensor_vision=2, brain_limit=4, effective_vision=2, speed=2, durability=18, brain_drain=1
+Body 171: achieved=0/50, peak_pop=12, births=0, avg_age=36.5, avg_food=0.2, avg_children=0.0, deaths={'energy_depleted': 12}
+Body 172 design: sensor=0, muscle=0, armor=0, brain=1
+Body 172 stats: cost=25, sensor_vision=2, brain_limit=4, effective_vision=2, speed=1, durability=10, brain_drain=1
+Body 172: achieved=0/50, peak_pop=12, births=1, avg_age=78.6, avg_food=2.3, avg_children=0.1, deaths={'energy_depleted': 13}
+Body 173 design: sensor=0, muscle=1, armor=0, brain=1
+Body 173 stats: cost=40, sensor_vision=2, brain_limit=4, effective_vision=2, speed=1, durability=10, brain_drain=1
+Body 173: achieved=0/50, peak_pop=14, births=8, avg_age=65.0, avg_food=1.8, avg_children=0.4, deaths={'energy_depleted': 20}
+Body 174 design: sensor=0, muscle=2, armor=0, brain=1
+Body 174 stats: cost=55, sensor_vision=2, brain_limit=4, effective_vision=2, speed=2, durability=10, brain_drain=1
+Body 174: achieved=0/50, peak_pop=12, births=0, avg_age=35.7, avg_food=0.1, avg_children=0.0, deaths={'energy_depleted': 12}
+Body 175 design: sensor=0, muscle=3, armor=0, brain=1
+Body 175 stats: cost=70, sensor_vision=2, brain_limit=4, effective_vision=2, speed=2, durability=10, brain_drain=1
+Body 175: achieved=0/50, peak_pop=12, births=0, avg_age=36.8, avg_food=0.2, avg_children=0.0, deaths={'energy_depleted': 12}
+Body 176 design: sensor=0, muscle=4, armor=0, brain=1
+Body 176 stats: cost=85, sensor_vision=2, brain_limit=4, effective_vision=2, speed=3, durability=10, brain_drain=1
+Body 176: achieved=0/50, peak_pop=12, births=0, avg_age=29.7, avg_food=0.2, avg_children=0.0, deaths={'energy_depleted': 12}
+Body 177 design: sensor=0, muscle=5, armor=0, brain=1
+Body 177 stats: cost=100, sensor_vision=2, brain_limit=4, effective_vision=2, speed=3, durability=10, brain_drain=1
+Body 177: achieved=0/50, peak_pop=12, births=0, avg_age=31.8, avg_food=0.4, avg_children=0.0, deaths={'energy_depleted': 12}
+Body 178 design: sensor=0, muscle=0, armor=2, brain=2
+Body 178 stats: cost=90, sensor_vision=2, brain_limit=6, effective_vision=2, speed=1, durability=26, brain_drain=2
+Body 178: achieved=0/50, peak_pop=12, births=0, avg_age=46.3, avg_food=1.1, avg_children=0.0, deaths={'energy_depleted': 12}
+Body 179 design: sensor=0, muscle=0, armor=1, brain=2
+Body 179 stats: cost=70, sensor_vision=2, brain_limit=6, effective_vision=2, speed=1, durability=18, brain_drain=2
+Body 179: achieved=0/50, peak_pop=13, births=5, avg_age=54.6, avg_food=2.2, avg_children=0.3, deaths={'energy_depleted': 17}
+Body 180 design: sensor=0, muscle=1, armor=1, brain=2
+Body 180 stats: cost=85, sensor_vision=2, brain_limit=6, effective_vision=2, speed=1, durability=18, brain_drain=2
+Body 180: achieved=0/50, peak_pop=12, births=0, avg_age=42.6, avg_food=0.7, avg_children=0.0, deaths={'energy_depleted': 12}
+Body 181 design: sensor=0, muscle=2, armor=1, brain=2
+Body 181 stats: cost=100, sensor_vision=2, brain_limit=6, effective_vision=2, speed=2, durability=18, brain_drain=2
+Body 181: achieved=0/50, peak_pop=12, births=0, avg_age=30.3, avg_food=0.2, avg_children=0.0, deaths={'energy_depleted': 12}
+Body 182 design: sensor=0, muscle=0, armor=0, brain=2
+Body 182 stats: cost=50, sensor_vision=2, brain_limit=6, effective_vision=2, speed=1, durability=10, brain_drain=2
+Body 182: achieved=0/50, peak_pop=12, births=1, avg_age=52.6, avg_food=1.8, avg_children=0.1, deaths={'energy_depleted': 13}
+Body 183 design: sensor=0, muscle=1, armor=0, brain=2
+Body 183 stats: cost=65, sensor_vision=2, brain_limit=6, effective_vision=2, speed=1, durability=10, brain_drain=2
+Body 183: achieved=0/50, peak_pop=13, births=3, avg_age=50.7, avg_food=1.7, avg_children=0.2, deaths={'energy_depleted': 15}
+Body 184 design: sensor=0, muscle=2, armor=0, brain=2
+Body 184 stats: cost=80, sensor_vision=2, brain_limit=6, effective_vision=2, speed=2, durability=10, brain_drain=2
+Body 184: achieved=0/50, peak_pop=12, births=0, avg_age=33.3, avg_food=0.6, avg_children=0.0, deaths={'energy_depleted': 12}
+Body 185 design: sensor=0, muscle=3, armor=0, brain=2
+Body 185 stats: cost=95, sensor_vision=2, brain_limit=6, effective_vision=2, speed=2, durability=10, brain_drain=2
+Body 185: achieved=0/50, peak_pop=12, births=0, avg_age=31.2, avg_food=0.3, avg_children=0.0, deaths={'energy_depleted': 12}
+Body 186 design: sensor=0, muscle=0, armor=1, brain=3
+Body 186 stats: cost=95, sensor_vision=2, brain_limit=8, effective_vision=2, speed=1, durability=18, brain_drain=3
+Body 186: achieved=0/50, peak_pop=12, births=0, avg_age=35.9, avg_food=0.9, avg_children=0.0, deaths={'energy_depleted': 12}
+Body 187 design: sensor=0, muscle=0, armor=0, brain=3
+Body 187 stats: cost=75, sensor_vision=2, brain_limit=8, effective_vision=2, speed=1, durability=10, brain_drain=3
+Body 187: achieved=0/50, peak_pop=12, births=1, avg_age=36.1, avg_food=1.1, avg_children=0.1, deaths={'energy_depleted': 13}
+Body 188 design: sensor=0, muscle=1, armor=0, brain=3
+Body 188 stats: cost=90, sensor_vision=2, brain_limit=8, effective_vision=2, speed=1, durability=10, brain_drain=3
+Body 188: achieved=0/50, peak_pop=12, births=0, avg_age=32.8, avg_food=0.6, avg_children=0.0, deaths={'energy_depleted': 12}
+----------------------------------------
+Qualified body types: 11/50
+Top survivor body: body_1

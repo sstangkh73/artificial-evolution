@@ -1,0 +1,194 @@
+{
+  "iteration": 2,
+  "description": "Active-nest-only support window, long horizon, no TARGET_SURVIVORS stop",
+  "body_index": 14,
+  "body_design": "sensor=0, muscle=0, armor=1, brain=3, profile=nurturing_settler",
+  "population": 250,
+  "seeds": [
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16
+  ],
+  "max_ticks": 20000,
+  "success_runs": [],
+  "strong_runs": [],
+  "runs": [
+    {
+      "seed": 7,
+      "final_tick": 1051,
+      "population_extinct": true,
+      "final_population": 0,
+      "peak_population": 375,
+      "total_births": 279,
+      "matured_children": 223,
+      "max_generation_observed": null,
+      "adult_generation_counts": {},
+      "stored_food_total": 12841,
+      "death_reasons": {
+        "energy_depleted": 440,
+        "lifespan_completed": 89
+      },
+      "research_manifest_path": "C:\\artificial-evolution\\data\\research_runs\\long_loop_iter02_active_nest_support_seed_7\\manifest.json"
+    },
+    {
+      "seed": 8,
+      "final_tick": 546,
+      "population_extinct": true,
+      "final_population": 0,
+      "peak_population": 375,
+      "total_births": 160,
+      "matured_children": 111,
+      "max_generation_observed": null,
+      "adult_generation_counts": {},
+      "stored_food_total": 2272,
+      "death_reasons": {
+        "energy_depleted": 377,
+        "lifespan_completed": 33
+      },
+      "research_manifest_path": "C:\\artificial-evolution\\data\\research_runs\\long_loop_iter02_active_nest_support_seed_8\\manifest.json"
+    },
+    {
+      "seed": 9,
+      "final_tick": 389,
+      "population_extinct": true,
+      "final_population": 0,
+      "peak_population": 377,
+      "total_births": 139,
+      "matured_children": 82,
+      "max_generation_observed": null,
+      "adult_generation_counts": {},
+      "stored_food_total": 1067,
+      "death_reasons": {
+        "energy_depleted": 372,
+        "lifespan_completed": 17
+      },
+      "research_manifest_path": "C:\\artificial-evolution\\data\\research_runs\\long_loop_iter02_active_nest_support_seed_9\\manifest.json"
+    },
+    {
+      "seed": 10,
+      "final_tick": 972,
+      "population_extinct": true,
+      "final_population": 0,
+      "peak_population": 375,
+      "total_births": 233,
+      "matured_children": 162,
+      "max_generation_observed": null,
+      "adult_generation_counts": {},
+      "stored_food_total": 3433,
+      "death_reasons": {
+        "energy_depleted": 416,
+        "lifespan_completed": 67
+      },
+      "research_manifest_path": "C:\\artificial-evolution\\data\\research_runs\\long_loop_iter02_active_nest_support_seed_10\\manifest.json"
+    },
+    {
+      "seed": 11,
+      "final_tick": 2497,
+      "population_extinct": true,
+      "final_population": 0,
+      "peak_population": 376,
+      "total_births": 625,
+      "matured_children": 562,
+      "max_generation_observed": null,
+      "adult_generation_counts": {},
+      "stored_food_total": 31047,
+      "death_reasons": {
+        "energy_depleted": 553,
+        "lifespan_completed": 322
+      },
+      "research_manifest_path": "C:\\artificial-evolution\\data\\research_runs\\long_loop_iter02_active_nest_support_seed_11\\manifest.json"
+    },
+    {
+      "seed": 12,
+      "final_tick": 775,
+      "population_extinct": true,
+      "final_population": 0,
+      "peak_population": 375,
+      "total_births": 186,
+      "matured_children": 137,
+      "max_generation_observed": null,
+      "adult_generation_counts": {},
+      "stored_food_total": 3939,
+      "death_reasons": {
+        "energy_depleted": 389,
+        "lifespan_completed": 47
+      },
+      "research_manifest_path": "C:\\artificial-evolution\\data\\research_runs\\long_loop_iter02_active_nest_support_seed_12\\manifest.json"
+    },
+    {
+      "seed": 13,
+      "final_tick": 1153,
+      "population_extinct": true,
+      "final_population": 0,
+      "peak_population": 377,
+      "total_births": 281,
+      "matured_children": 227,
+      "max_generation_observed": null,
+      "adult_generation_counts": {},
+      "stored_food_total": 12333,
+      "death_reasons": {
+        "energy_depleted": 413,
+        "lifespan_completed": 118
+      },
+      "research_manifest_path": "C:\\artificial-evolution\\data\\research_runs\\long_loop_iter02_active_nest_support_seed_13\\manifest.json"
+    },
+    {
+      "seed": 14,
+      "final_tick": 811,
+      "population_extinct": true,
+      "final_population": 0,
+      "peak_population": 375,
+      "total_births": 206,
+      "matured_children": 150,
+      "max_generation_observed": null,
+      "adult_generation_counts": {},
+      "stored_food_total": 2419,
+      "death_reasons": {
+        "energy_depleted": 399,
+        "lifespan_completed": 57
+      },
+      "research_manifest_path": "C:\\artificial-evolution\\data\\research_runs\\long_loop_iter02_active_nest_support_seed_14\\manifest.json"
+    },
+    {
+      "seed": 15,
+      "final_tick": 1174,
+      "population_extinct": true,
+      "final_population": 0,
+      "peak_population": 375,
+      "total_births": 233,
+      "matured_children": 178,
+      "max_generation_observed": null,
+      "adult_generation_counts": {},
+      "stored_food_total": 16040,
+      "death_reasons": {
+        "energy_depleted": 397,
+        "lifespan_completed": 86
+      },
+      "research_manifest_path": "C:\\artificial-evolution\\data\\research_runs\\long_loop_iter02_active_nest_support_seed_15\\manifest.json"
+    },
+    {
+      "seed": 16,
+      "final_tick": 645,
+      "population_extinct": true,
+      "final_population": 0,
+      "peak_population": 375,
+      "total_births": 184,
+      "matured_children": 128,
+      "max_generation_observed": null,
+      "adult_generation_counts": {},
+      "stored_food_total": 3997,
+      "death_reasons": {
+        "energy_depleted": 379,
+        "lifespan_completed": 55
+      },
+      "research_manifest_path": "C:\\artificial-evolution\\data\\research_runs\\long_loop_iter02_active_nest_support_seed_16\\manifest.json"
+    }
+  ]
+}

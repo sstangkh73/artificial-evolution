@@ -1,0 +1,27 @@
+{
+  "experiment_number": 45,
+  "change_note": "Family household continuity fix",
+  "started_at": "2026-05-10T20:57:32",
+  "seed": 7,
+  "body_index": 8,
+  "body_design": "sensor=0, muscle=0, armor=1, brain=3, profile=social_planner",
+  "body_stats": "cost=95, sensor_vision=2, brain_limit=10, effective_vision=2, speed=1, durability=18, brain_drain=3, metabolism=1.06, memory=1.08, social=2.13, diet=omnivore_bias, life_history=care_investor",
+  "male_founders": 25,
+  "female_founders": 25,
+  "max_ticks": 5000,
+  "summary": {
+    "seed": 7,
+    "body_index": 8,
+    "body_name": "body_8",
+    "body_design": "sensor=0, muscle=0, armor=1, brain=3, profile=social_planner",
+    "final_tick": 275,
+    "peak_population": 75,
+    "total_births": 34,
+    "matured_children": 30,
+    "population_extinct": false,
+    "target_generation_reached": true,
+    "target_generation_tick": 275,
+    "first_birth_tick": 1,
+    "dashboard_path": "C:\\artificial-evolution\\data\\dashboards\\sexed_generation_mode\\experiment_045_sexed_seed_7\\index.html"
+  }
+}

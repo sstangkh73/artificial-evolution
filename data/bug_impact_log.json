@@ -1,0 +1,146 @@
+{
+  "schema_version": 1,
+  "updated_at": "2026-05-11",
+  "entries": [
+    {
+      "id": "BUG-001",
+      "title": "Household continuity failure across generations",
+      "status": "fixed",
+      "severity": "critical",
+      "area": "reproduction_household_access",
+      "affected_files": [
+        "C:\\artificial-evolution\\agents\\agent.py"
+      ],
+      "distorted_metrics": [
+        "gen1_reproduction_block_reason",
+        "nest_food_low",
+        "target_generation_reached",
+        "population_extinct"
+      ],
+      "research_risk": [
+        "Made the world look harder than it really was",
+        "Made gen1->gen2 failure look like a pure ecology problem",
+        "Could falsely suggest viable body designs did not exist"
+      ],
+      "before_fix_behavior": [
+        "Adult children often failed reproduction due to nest food access problems",
+        "Family household storage resolution was unstable across generations",
+        "Many runs failed before gen3"
+      ],
+      "detection_evidence": [
+        "Experiments 042-044 reproduction diagnostics",
+        "Repeated repro_fail patterns with nest_food_low"
+      ],
+      "fix_summary": [
+        "Updated household nest resolution for parent/shared-home continuity"
+      ],
+      "after_fix_behavior": [
+        "Sexed-world runs could reach gen3 without lowering world difficulty"
+      ],
+      "current_interpretation": [
+        "Pre-fix sexed extinction runs are partly contaminated by a household continuity bug"
+      ]
+    },
+    {
+      "id": "BUG-002",
+      "title": "Research tick telemetry gap",
+      "status": "fixed",
+      "severity": "high",
+      "area": "telemetry_export",
+      "affected_files": [
+        "C:\\artificial-evolution\\simulation\\runner.py",
+        "C:\\artificial-evolution\\simulation\\research_artifacts.py"
+      ],
+      "distorted_metrics": [
+        "tick_metrics.csv",
+        "tick_checkpoints.md"
+      ],
+      "research_risk": [
+        "Blocked direct per-tick collapse analysis for research-only runs",
+        "Made some inheritance bundles look complete when timeline data was empty"
+      ],
+      "before_fix_behavior": [
+        "Research-only runs could export empty tick_metrics.csv",
+        "tick_summaries were captured only when capture_dashboard was enabled"
+      ],
+      "detection_evidence": [
+        "Empty tick_metrics.csv in inheritance research bundles despite valid manifests"
+      ],
+      "fix_summary": [
+        "Capture per-tick telemetry whenever capture_dashboard or capture_research_data is enabled"
+      ],
+      "after_fix_behavior": [
+        "Repaired inheritance runs now include full per-tick collapse profiles"
+      ],
+      "current_interpretation": [
+        "Old research bundles with empty tick metrics are incomplete for demographic-timing analysis"
+      ]
+    },
+    {
+      "id": "BUG-003",
+      "title": "Projected-energy storage ordering bug",
+      "status": "fixed",
+      "severity": "high",
+      "area": "food_storage_economy",
+      "affected_files": [
+        "C:\\artificial-evolution\\agents\\agent.py"
+      ],
+      "distorted_metrics": [
+        "nest_food_storage",
+        "store_food",
+        "nest_food_low",
+        "mean_max_generation",
+        "mean_matured_children"
+      ],
+      "research_risk": [
+        "Understated household food buffering",
+        "Could misattribute low nest storage to ecology alone",
+        "Masked the true personal-vs-household energy tradeoff"
+      ],
+      "before_fix_behavior": [
+        "Storage checks ran against pre-meal energy rather than projected post-meal energy",
+        "Agents could fail to store food on the same tick they had just become able to do so"
+      ],
+      "detection_evidence": [
+        "Direct code inspection of call order in agent.py"
+      ],
+      "fix_summary": [
+        "Store-surplus logic now uses projected_energy = self.energy + restored_energy"
+      ],
+      "after_fix_behavior": [
+        "Founder-250 A/B comparison worsened after the fix",
+        "mean_max_generation 6.6 -> 4.2",
+        "mean_final_tick 594.9 -> 525.2",
+        "mean_matured_children 108.5 -> 86.6",
+        "gen>=7 runs 6/10 -> 1/10"
+      ],
+      "current_interpretation": [
+        "The bug was real but had been masking a harsher model imbalance",
+        "The simulation currently over-penalizes the balance between personal energy and household storage after storage is made more correct"
+      ],
+      "comparison_artifact": "C:\\artificial-evolution\\data\\founder_opt_250_storage_fix_comparison.json"
+    }
+  ],
+  "ruled_out_hypotheses": [
+    {
+      "id": "HYP-001",
+      "title": "Missing sex assignment in gen1",
+      "status": "ruled_out",
+      "reason_ruled_out": [
+        "spawn_child assigns sex explicitly",
+        "Telemetry confirmed gen1 males and females existed",
+        "The failure was in reproduction gates, not sex inheritance"
+      ]
+    },
+    {
+      "id": "HYP-002",
+      "title": "Missing generation or parent transmission",
+      "status": "ruled_out",
+      "reason_ruled_out": [
+        "spawn_child assigns generation=self.generation + 1",
+        "parent_id and other_parent_id were present",
+        "Lineage telemetry confirmed metadata propagation"
+      ]
+    }
+  ]
+}

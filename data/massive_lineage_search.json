@@ -1,0 +1,50 @@
+{
+  "experiment_number": 28,
+  "change_note": "Smoke test for massive lineage search with scalable founder populations and lineage success criteria",
+  "started_at": "2026-05-10T14:47:20",
+  "start_seed": 7,
+  "target_body_types": 5,
+  "founder_population_steps": [
+    12,
+    24,
+    48,
+    96,
+    192
+  ],
+  "max_population_multiplier": 20,
+  "max_ticks": 15000,
+  "max_seed_rounds": 3,
+  "found_lineage_body_types": 2,
+  "records": [
+    {
+      "body_index": 8,
+      "body_name": "body_8",
+      "body_design": "sensor=0, muscle=0, armor=1, brain=3, profile=social_planner",
+      "body_stats": "cost=95, sensor_vision=2, brain_limit=10, effective_vision=2, speed=1, durability=18, brain_drain=3, metabolism=1.06, memory=1.08, social=2.13, diet=omnivore_bias, life_history=care_investor",
+      "first_found_seed": 7,
+      "founder_population": 12,
+      "max_population": 240,
+      "max_ticks": 15000,
+      "achieved_survivors": 50,
+      "total_births": 497,
+      "matured_children": 260,
+      "first_birth_day": 0,
+      "first_matured_child_day": 3
+    },
+    {
+      "body_index": 14,
+      "body_name": "body_14",
+      "body_design": "sensor=0, muscle=0, armor=1, brain=3, profile=nurturing_settler",
+      "body_stats": "cost=95, sensor_vision=2, brain_limit=9, effective_vision=2, speed=1, durability=18, brain_drain=3, metabolism=0.96, memory=1.03, social=2.13, diet=omnivore_bias, life_history=care_investor",
+      "first_found_seed": 7,
+      "founder_population": 12,
+      "max_population": 240,
+      "max_ticks": 15000,
+      "achieved_survivors": 50,
+      "total_births": 536,
+      "matured_children": 299,
+      "first_birth_day": 0,
+      "first_matured_child_day": 3
+    }
+  ]
+}
