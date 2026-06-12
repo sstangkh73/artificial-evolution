@@ -91,6 +91,15 @@ class MaterialSpec:
     char_yield: float
     oxidation_rate: float
     porosity: float
+    photosynthetic_transmittance: float = 0.0
+    solar_reflectance: float = 0.18
+    solar_absorptance: float = 0.72
+    infrared_transmittance: float = 0.02
+    compressive_strength_mpa: float = 1.0
+    tensile_strength_mpa: float = 0.2
+    bending_strength_mpa: float = 0.3
+    cutting_resistance_n: float = 10.0
+    friction_coefficient: float = 0.55
 
 
 MATERIAL_SPECS = {
@@ -108,6 +117,15 @@ MATERIAL_SPECS = {
         char_yield=0.28,
         oxidation_rate=0.55,
         porosity=0.55,
+        photosynthetic_transmittance=0.04,
+        solar_reflectance=0.22,
+        solar_absorptance=0.70,
+        infrared_transmittance=0.03,
+        compressive_strength_mpa=35.0,
+        tensile_strength_mpa=75.0,
+        bending_strength_mpa=65.0,
+        cutting_resistance_n=55.0,
+        friction_coefficient=0.62,
     ),
     MATERIAL_LEAF: MaterialSpec(
         name=MATERIAL_LEAF,
@@ -123,6 +141,15 @@ MATERIAL_SPECS = {
         char_yield=0.18,
         oxidation_rate=0.82,
         porosity=0.82,
+        photosynthetic_transmittance=0.10,
+        solar_reflectance=0.12,
+        solar_absorptance=0.76,
+        infrared_transmittance=0.08,
+        compressive_strength_mpa=0.05,
+        tensile_strength_mpa=1.2,
+        bending_strength_mpa=0.08,
+        cutting_resistance_n=2.0,
+        friction_coefficient=0.45,
     ),
     MATERIAL_STONE: MaterialSpec(
         name=MATERIAL_STONE,
@@ -138,6 +165,15 @@ MATERIAL_SPECS = {
         char_yield=0.0,
         oxidation_rate=0.01,
         porosity=0.04,
+        photosynthetic_transmittance=0.0,
+        solar_reflectance=0.24,
+        solar_absorptance=0.70,
+        infrared_transmittance=0.0,
+        compressive_strength_mpa=120.0,
+        tensile_strength_mpa=8.0,
+        bending_strength_mpa=15.0,
+        cutting_resistance_n=180.0,
+        friction_coefficient=0.78,
     ),
     MATERIAL_SOIL: MaterialSpec(
         name=MATERIAL_SOIL,
@@ -153,6 +189,15 @@ MATERIAL_SPECS = {
         char_yield=0.0,
         oxidation_rate=0.01,
         porosity=0.48,
+        photosynthetic_transmittance=0.0,
+        solar_reflectance=0.16,
+        solar_absorptance=0.76,
+        infrared_transmittance=0.0,
+        compressive_strength_mpa=1.8,
+        tensile_strength_mpa=0.08,
+        bending_strength_mpa=0.12,
+        cutting_resistance_n=8.0,
+        friction_coefficient=0.68,
     ),
     MATERIAL_CLAY: MaterialSpec(
         name=MATERIAL_CLAY,
@@ -168,6 +213,15 @@ MATERIAL_SPECS = {
         char_yield=0.0,
         oxidation_rate=0.0,
         porosity=0.5,
+        photosynthetic_transmittance=0.0,
+        solar_reflectance=0.20,
+        solar_absorptance=0.72,
+        infrared_transmittance=0.0,
+        compressive_strength_mpa=2.2,
+        tensile_strength_mpa=0.12,
+        bending_strength_mpa=0.18,
+        cutting_resistance_n=12.0,
+        friction_coefficient=0.72,
     ),
     MATERIAL_SAND: MaterialSpec(
         name=MATERIAL_SAND,
@@ -183,6 +237,15 @@ MATERIAL_SPECS = {
         char_yield=0.0,
         oxidation_rate=0.0,
         porosity=0.42,
+        photosynthetic_transmittance=0.0,
+        solar_reflectance=0.34,
+        solar_absorptance=0.58,
+        infrared_transmittance=0.0,
+        compressive_strength_mpa=0.9,
+        tensile_strength_mpa=0.02,
+        bending_strength_mpa=0.03,
+        cutting_resistance_n=5.0,
+        friction_coefficient=0.55,
     ),
     MATERIAL_WATER: MaterialSpec(
         name=MATERIAL_WATER,
@@ -198,6 +261,15 @@ MATERIAL_SPECS = {
         char_yield=0.0,
         oxidation_rate=0.0,
         porosity=0.0,
+        photosynthetic_transmittance=0.68,
+        solar_reflectance=0.06,
+        solar_absorptance=0.38,
+        infrared_transmittance=0.35,
+        compressive_strength_mpa=0.0,
+        tensile_strength_mpa=0.0,
+        bending_strength_mpa=0.0,
+        cutting_resistance_n=0.0,
+        friction_coefficient=0.0,
     ),
     MATERIAL_IRON: MaterialSpec(
         name=MATERIAL_IRON,
@@ -213,6 +285,15 @@ MATERIAL_SPECS = {
         char_yield=0.0,
         oxidation_rate=0.05,
         porosity=0.0,
+        photosynthetic_transmittance=0.0,
+        solar_reflectance=0.55,
+        solar_absorptance=0.40,
+        infrared_transmittance=0.0,
+        compressive_strength_mpa=250.0,
+        tensile_strength_mpa=250.0,
+        bending_strength_mpa=220.0,
+        cutting_resistance_n=260.0,
+        friction_coefficient=0.74,
     ),
     MATERIAL_FIBER: MaterialSpec(
         name=MATERIAL_FIBER,
@@ -228,6 +309,15 @@ MATERIAL_SPECS = {
         char_yield=0.22,
         oxidation_rate=0.68,
         porosity=0.7,
+        photosynthetic_transmittance=0.16,
+        solar_reflectance=0.18,
+        solar_absorptance=0.66,
+        infrared_transmittance=0.12,
+        compressive_strength_mpa=0.12,
+        tensile_strength_mpa=35.0,
+        bending_strength_mpa=1.0,
+        cutting_resistance_n=10.0,
+        friction_coefficient=0.58,
     ),
     MATERIAL_ASH: MaterialSpec(
         name=MATERIAL_ASH,
@@ -243,6 +333,15 @@ MATERIAL_SPECS = {
         char_yield=0.0,
         oxidation_rate=0.0,
         porosity=0.88,
+        photosynthetic_transmittance=0.0,
+        solar_reflectance=0.32,
+        solar_absorptance=0.60,
+        infrared_transmittance=0.0,
+        compressive_strength_mpa=0.04,
+        tensile_strength_mpa=0.01,
+        bending_strength_mpa=0.01,
+        cutting_resistance_n=1.0,
+        friction_coefficient=0.35,
     ),
 }
 
@@ -258,6 +357,76 @@ CHILD_GROWTH = {
 class FoodResource:
     kind: str
     energy: int
+    source: str = "ambient_spawn"
+    plant_id: int | None = None
+    created_tick: int = 0
+
+
+@dataclass(frozen=True)
+class PlantSpeciesSpec:
+    name: str
+    germination_water_min: float
+    germination_water_max: float
+    germination_temp_min_k: float
+    germination_temp_max_k: float
+    germination_oxygen_min: float
+    burial_depth_min_cm: float
+    burial_depth_max_cm: float
+    germination_good_ticks: int
+    light_saturation: float
+    nutrient_demand: float
+    maturity_biomass: float
+    fruiting_interval_ticks: int
+    max_age_ticks: int
+    natural_seed_interval_ticks: int
+    natural_seed_drop_chance: float
+    natural_seed_drop_radius: int
+    natural_seed_drop_max_count: int
+
+
+PLANT_SPECIES = {
+    "wild_grain": PlantSpeciesSpec(
+        name="wild_grain",
+        germination_water_min=0.24,
+        germination_water_max=0.78,
+        germination_temp_min_k=281.0,
+        germination_temp_max_k=309.0,
+        germination_oxygen_min=0.14,
+        burial_depth_min_cm=0.3,
+        burial_depth_max_cm=4.5,
+        germination_good_ticks=28,
+        light_saturation=0.64,
+        nutrient_demand=0.32,
+        maturity_biomass=1.0,
+        fruiting_interval_ticks=85,
+        max_age_ticks=900,
+        natural_seed_interval_ticks=120,
+        natural_seed_drop_chance=0.38,
+        natural_seed_drop_radius=3,
+        natural_seed_drop_max_count=3,
+    )
+}
+
+
+@dataclass
+class PlantSeed:
+    seed_id: int
+    species: str
+    x: int
+    y: int
+    burial_depth_cm: float
+    viability: float = 1.0
+    age_ticks: int = 0
+    accumulated_good_ticks: int = 0
+    biomass: float = 0.0
+    state: str = "seed"
+    last_food_tick: int = -10_000
+    last_natural_seed_tick: int = -10_000
+    carried_by_agent_id: int | None = None
+    parent_plant_id: int | None = None
+    dispersal_mode: str = "unknown"
+    dropped_by_agent_id: int | None = None
+    created_tick: int = 0
 
 
 @dataclass
@@ -333,7 +502,7 @@ class Environment:
     max_food: int = 220
     day_length: int = 20
     season_length: int = 80
-    base_food_spawn_per_tick: int = 10
+    base_food_spawn_per_tick: int = 5
     max_large_animals: int = 24
     large_animal_spawn_per_tick: int = 2
     food_spawn_multiplier: float = 1.0
@@ -347,16 +516,30 @@ class Environment:
     fertility_spawn_cost: float = 0.14
     fertility_harvest_cost: float = 0.08
     minimum_fertility: float = 0.05
-    global_food_decline_per_day: float = 0.01
-    minimum_global_food_multiplier: float = 0.30
+    global_food_decline_per_day: float = 0.025
+    minimum_global_food_multiplier: float = 0.02
+    bootstrap_food_spawn_ticks: int = 120
+    wild_food_spawn_after_bootstrap_multiplier: float = 0.08
+    natural_seed_rain_per_tick: int = 0
+    max_plant_seeds: int = 450
+    plant_lifecycle_enabled: bool = True
+    scaffolded_agent_actions_enabled: bool = False
+    scaffolded_nest_support_enabled: bool = False
+    scaffolded_social_support_enabled: bool = False
+    legacy_scaffold_nest_enabled: bool = False
+    legacy_oracle_perception_enabled: bool = False
+    ambient_food_decay_chance: float = 0.006
+    plant_food_decay_chance: float = 0.003
     tick_count: int = 0
     food_positions: dict[tuple[int, int], FoodResource] = field(default_factory=dict)
     large_animals: dict[int, LargeAnimal] = field(default_factory=dict)
     nests: dict[int, Nest] = field(default_factory=dict)
     objects: dict[int, PhysicalObject] = field(default_factory=dict)
+    plant_seeds: dict[int, PlantSeed] = field(default_factory=dict)
     next_animal_id: int = 0
     next_herd_id: int = 0
     next_object_id: int = 0
+    next_seed_id: int = 0
     active_nest_owner_ids: set[int] = field(default_factory=set)
     nest_owner_aliases: dict[int, int] = field(default_factory=dict)
     physics_events: list[str] = field(default_factory=list)
@@ -366,6 +549,11 @@ class Environment:
     moisture_map: list[list[float]] = field(init=False)
     temperature_map: list[list[float]] = field(init=False)
     oxygen_map: list[list[float]] = field(init=False)
+    photosynthetic_light_map: list[list[float]] = field(init=False)
+    soil_disturbance_map: list[list[float]] = field(init=False)
+    soil_nitrogen_map: list[list[float]] = field(init=False)
+    soil_phosphorus_map: list[list[float]] = field(init=False)
+    soil_potassium_map: list[list[float]] = field(init=False)
     surface_fuel_map: list[list[float]] = field(init=False)
     managed_food_map: list[list[float]] = field(init=False)
 
@@ -376,6 +564,11 @@ class Environment:
         self.moisture_map = self._generate_moisture_map()
         self.temperature_map = self._generate_temperature_map()
         self.oxygen_map = self._generate_oxygen_map()
+        self.photosynthetic_light_map = self._generate_photosynthetic_light_map()
+        self.soil_disturbance_map = [[0.0 for _ in range(self.width)] for _ in range(self.height)]
+        self.soil_nitrogen_map = self._generate_soil_nutrient_map("nitrogen")
+        self.soil_phosphorus_map = self._generate_soil_nutrient_map("phosphorus")
+        self.soil_potassium_map = self._generate_soil_nutrient_map("potassium")
         self.surface_fuel_map = self._generate_surface_fuel_map()
         self.managed_food_map = [[0.0 for _ in range(self.width)] for _ in range(self.height)]
 
@@ -394,11 +587,17 @@ class Environment:
         self.physics_events.clear()
         self._recover_fertility()
         self._decay_managed_food()
+        self._decay_soil_disturbance()
+        self._decay_food_resources(rng)
         self._update_world_physics(rng)
+        self._update_radiation_fields()
+        self._natural_seed_rain(rng)
+        self._update_plant_lifecycle(rng)
         self._spawn_food(rng)
         self._spawn_large_animals(rng)
         self._move_large_animals(rng)
-        self._support_nests(rng)
+        if self.scaffolded_nest_support_enabled:
+            self._support_nests(rng)
         self._update_nest_hearths(rng)
         self._update_object_physics()
 
@@ -423,6 +622,53 @@ class Environment:
     def get_cell_moisture(self, x: int, y: int) -> float:
         return self.moisture_map[y][x]
 
+    def get_cell_photosynthetic_light(self, x: int, y: int) -> float:
+        return self.photosynthetic_light_map[y][x]
+
+    def get_cell_soil_nutrients(self, x: int, y: int) -> float:
+        return (
+            self.soil_nitrogen_map[y][x]
+            + self.soil_phosphorus_map[y][x]
+            + self.soil_potassium_map[y][x]
+        ) / 3.0
+
+    def plant_state_counts(self) -> dict[str, int]:
+        counts = {
+            "seed": 0,
+            "carried_seed": 0,
+            "sprout": 0,
+            "mature": 0,
+            "dead": 0,
+            "natural_drop_seed": 0,
+            "harvest_drop_seed": 0,
+            "agent_carried_seed": 0,
+            "agent_disturbed_seed": 0,
+            "natural_seed_rain_seed": 0,
+        }
+        for plant in self.plant_seeds.values():
+            if plant.carried_by_agent_id is not None:
+                counts["carried_seed"] += 1
+                counts["agent_carried_seed"] += 1
+            else:
+                counts[plant.state] = counts.get(plant.state, 0) + 1
+            if plant.dispersal_mode in {"natural_drop", "harvest_drop", "agent_carried", "agent_disturbed", "natural_seed_rain"}:
+                key = f"{plant.dispersal_mode}_seed"
+                counts[key] = counts.get(key, 0) + 1
+        return counts
+
+    def mean_photosynthetic_light(self) -> float:
+        total = 0.0
+        for row in self.photosynthetic_light_map:
+            total += sum(row)
+        return total / max(1, self.width * self.height)
+
+    def mean_soil_nutrients(self) -> float:
+        total = 0.0
+        for y in range(self.height):
+            for x in range(self.width):
+                total += self.get_cell_soil_nutrients(x, y)
+        return total / max(1, self.width * self.height)
+
     def pop_physics_events(self) -> list[str]:
         events = list(self.physics_events)
         self.physics_events.clear()
@@ -444,7 +690,45 @@ class Environment:
         resource = self.food_positions.pop((x, y), None)
         if resource is not None:
             self._deplete_fertility(x, y, self.fertility_harvest_cost)
+            if resource.plant_id is not None:
+                self._harvest_plant(resource.plant_id)
+            if resource.kind == FOOD_RAW_PLANT:
+                self._drop_harvest_seed(x, y, resource)
         return resource
+
+    def food_signal_at(self, x: int, y: int, radius: int) -> float:
+        signal = 0.0
+        radius = max(0, radius)
+        for (food_x, food_y), resource in self.food_positions.items():
+            distance = abs(food_x - x) + abs(food_y - y)
+            if distance > radius:
+                continue
+            source_weight = 1.35 if resource.source == "plant_lifecycle" else 1.0
+            signal += (resource.energy * source_weight) / ((distance + 1) ** 2)
+        return signal
+
+    def animal_signal_at(self, x: int, y: int, radius: int) -> float:
+        signal = 0.0
+        radius = max(0, radius)
+        for animal in self.large_animals.values():
+            distance = abs(animal.x - x) + abs(animal.y - y)
+            if distance > radius:
+                continue
+            signal += animal.energy / ((distance + 1) ** 2)
+        return signal
+
+    def disturb_surface(self, x: int, y: int, force: float, agent_id: int | None = None) -> None:
+        if not self.is_walkable(x, y) or force <= 0.0:
+            return
+        if self.ground_material_map[y][x] not in {MATERIAL_SOIL, MATERIAL_SAND, MATERIAL_CLAY}:
+            return
+        previous = self.soil_disturbance_map[y][x]
+        self.soil_disturbance_map[y][x] = min(1.0, previous + force)
+        if previous < 0.10 <= self.soil_disturbance_map[y][x]:
+            actor = f" agent={agent_id}" if agent_id is not None else ""
+            self.physics_events.append(
+                f"surface_disturbed -> x={x} y={y}{actor} force={self.soil_disturbance_map[y][x]:.2f}"
+            )
 
     def is_walkable(self, x: int, y: int) -> bool:
         return 0 <= x < self.width and 0 <= y < self.height
@@ -455,6 +739,8 @@ class Environment:
         y: int,
         vision_range: int,
     ) -> tuple[int, int] | None:
+        if not self.legacy_oracle_perception_enabled:
+            return None
         nearest = None
         nearest_distance = None
         for food_x, food_y in self.food_positions:
@@ -465,6 +751,71 @@ class Environment:
                 nearest = (food_x, food_y)
                 nearest_distance = distance
         return nearest
+
+    def find_nearest_warm_cell(
+        self,
+        x: int,
+        y: int,
+        vision_range: int,
+        minimum_temperature_k: float,
+    ) -> tuple[int, int] | None:
+        if not self.legacy_oracle_perception_enabled:
+            return None
+        nearest = None
+        nearest_score = None
+        min_x = max(0, x - vision_range)
+        max_x = min(self.width - 1, x + vision_range)
+        min_y = max(0, y - vision_range)
+        max_y = min(self.height - 1, y + vision_range)
+        for scan_y in range(min_y, max_y + 1):
+            for scan_x in range(min_x, max_x + 1):
+                temperature_k = self.temperature_map[scan_y][scan_x]
+                if temperature_k < minimum_temperature_k:
+                    continue
+                distance = abs(scan_x - x) + abs(scan_y - y)
+                danger = self.get_danger_level(scan_x, scan_y)
+                score = (distance, danger, -temperature_k)
+                if nearest_score is None or score < nearest_score:
+                    nearest = (scan_x, scan_y)
+                    nearest_score = score
+        return nearest
+
+    def find_loose_seed_at(self, x: int, y: int) -> PlantSeed | None:
+        for plant in self.plant_seeds.values():
+            if (
+                plant.state == "seed"
+                and plant.carried_by_agent_id is None
+                and plant.x == x
+                and plant.y == y
+            ):
+                return plant
+        return None
+
+    def pick_seed(self, seed_id: int, agent_id: int) -> bool:
+        plant = self.plant_seeds.get(seed_id)
+        if plant is None or plant.state != "seed" or plant.carried_by_agent_id is not None:
+            return False
+        plant.carried_by_agent_id = agent_id
+        plant.dispersal_mode = "agent_carried"
+        plant.dropped_by_agent_id = agent_id
+        plant.x = -1
+        plant.y = -1
+        return True
+
+    def drop_seed(self, seed_id: int, x: int, y: int, burial_depth_cm: float = 0.0) -> bool:
+        plant = self.plant_seeds.get(seed_id)
+        if plant is None or plant.state != "seed":
+            return False
+        if not self.is_walkable(x, y):
+            return False
+        plant.carried_by_agent_id = None
+        plant.x = x
+        plant.y = y
+        if plant.dropped_by_agent_id is not None:
+            plant.dispersal_mode = "agent_carried"
+        plant.burial_depth_cm = max(0.0, burial_depth_cm)
+        plant.accumulated_good_ticks = 0
+        return True
 
     def find_nearest_large_animal(
         self,
@@ -489,6 +840,8 @@ class Environment:
         y: int,
         vision_range: int,
     ) -> tuple[int, int] | None:
+        if not self.legacy_oracle_perception_enabled:
+            return None
         nearest = None
         nearest_distance = None
         min_x = max(0, x - vision_range)
@@ -564,6 +917,8 @@ class Environment:
         return nearest_owner_id
 
     def consume_building_resources(self, x: int, y: int, radius: int, required: int) -> int:
+        if not self.scaffolded_agent_actions_enabled or not self.legacy_scaffold_nest_enabled:
+            return 0
         consumed = 0
         targets = [
             position
@@ -573,11 +928,19 @@ class Environment:
         ]
         targets.sort(key=lambda position: abs(position[0] - x) + abs(position[1] - y))
         for position in targets[:required]:
-            self.food_positions.pop(position, None)
+            resource = self.food_positions.pop(position, None)
+            if resource is None:
+                continue
+            if resource.plant_id is not None:
+                self._harvest_plant(resource.plant_id)
+            if resource.kind == FOOD_RAW_PLANT:
+                self._drop_harvest_seed(position[0], position[1], resource)
             consumed += 1
         return consumed
 
     def build_nest(self, owner_id: int, x: int, y: int, safe_radius: int = 4) -> Nest | None:
+        if not self.scaffolded_agent_actions_enabled or not self.legacy_scaffold_nest_enabled:
+            return None
         if owner_id in self.nests:
             return None
         starter_leaf = 1 if self.surface_fuel_map[y][x] >= 0.04 else 0
@@ -672,6 +1035,8 @@ class Environment:
         return nest.hearth_intensity
 
     def tend_food_patch(self, owner_id: int, rng: Random) -> dict[str, object]:
+        if not self.scaffolded_agent_actions_enabled or not self.legacy_scaffold_nest_enabled:
+            return {"success": False, "reason": "scaffold_disabled"}
         nest = self.find_nest(owner_id)
         if nest is None:
             return {"success": False, "reason": "missing_nest"}
@@ -1385,6 +1750,47 @@ class Environment:
             rows.append(row)
         return rows
 
+    def _generate_photosynthetic_light_map(self) -> list[list[float]]:
+        rows: list[list[float]] = []
+        for y in range(self.height):
+            row: list[float] = []
+            for x in range(self.width):
+                ground_spec = MATERIAL_SPECS[self.ground_material_map[y][x]]
+                row.append(max(0.0, min(1.0, 1.0 - ground_spec.solar_absorptance)))
+            rows.append(row)
+        return rows
+
+    def _generate_soil_nutrient_map(self, nutrient: str) -> list[list[float]]:
+        offsets = {
+            "nitrogen": 0.08,
+            "phosphorus": -0.02,
+            "potassium": 0.03,
+        }
+        offset = offsets.get(nutrient, 0.0)
+        rows: list[list[float]] = []
+        for y in range(self.height):
+            row: list[float] = []
+            for x in range(self.width):
+                ground = self.ground_material_map[y][x]
+                biome = self._zone_for_position(x, y)
+                if ground == MATERIAL_WATER:
+                    base = 0.02
+                elif ground == MATERIAL_SOIL:
+                    base = 0.56
+                elif ground == MATERIAL_CLAY:
+                    base = 0.48
+                elif ground == MATERIAL_SAND:
+                    base = 0.18
+                else:
+                    base = 0.08
+                if biome in {ZONE_SAFE_HIGH_FOOD, ZONE_DANGER_HIGH_FOOD}:
+                    base += 0.22
+                if biome == ZONE_DANGER_LOW_FOOD:
+                    base -= 0.08
+                row.append(max(0.0, min(1.0, base + offset)))
+            rows.append(row)
+        return rows
+
     def _generate_surface_fuel_map(self) -> list[list[float]]:
         rows: list[list[float]] = []
         for y in range(self.height):
@@ -1426,9 +1832,403 @@ class Environment:
                 decay = 0.004 if self.is_safe_area(x, y) else 0.006
                 row[x] = max(0.0, value - decay)
 
+    def _decay_soil_disturbance(self) -> None:
+        for y, row in enumerate(self.soil_disturbance_map):
+            for x, value in enumerate(row):
+                if value <= 0.0:
+                    continue
+                row[x] = max(0.0, value - 0.035)
+
+    def _decay_food_resources(self, rng: Random) -> None:
+        if not self.food_positions:
+            return
+        for (x, y), resource in list(self.food_positions.items()):
+            age_ticks = max(0, self.tick_count - resource.created_tick)
+            if resource.source in {"ambient_spawn", "wild_plant"}:
+                base_decay = self.ambient_food_decay_chance
+            else:
+                base_decay = self.plant_food_decay_chance
+            age_decay = min(0.018, age_ticks / max(1, self.day_length * 900))
+            if rng.random() > base_decay + age_decay:
+                continue
+            self.food_positions.pop((x, y), None)
+            if resource.source == "plant_lifecycle":
+                self.physics_events.append(
+                    f"plant_lifecycle_food_decayed -> plant={resource.plant_id if resource.plant_id is not None else -1} "
+                    f"x={x} y={y} energy={resource.energy} age_ticks={age_ticks}"
+                )
+            else:
+                self.physics_events.append(
+                    f"food_decayed -> source={resource.source} x={x} y={y} energy={resource.energy} age_ticks={age_ticks}"
+                )
+            self.surface_fuel_map[y][x] = min(1.0, self.surface_fuel_map[y][x] + 0.01)
+            self.fertility_map[y][x] = min(1.0, self.fertility_map[y][x] + 0.004)
+
     def _deplete_fertility(self, x: int, y: int, amount: float) -> None:
         current = self.fertility_map[y][x]
         self.fertility_map[y][x] = max(self.minimum_fertility, current - amount)
+
+    def _solar_input(self) -> float:
+        if self.is_night:
+            return 0.0
+        seasonal_multiplier = {
+            SEASON_SPRING: 0.86,
+            SEASON_SUMMER: 1.00,
+            SEASON_AUTUMN: 0.72,
+            SEASON_WINTER: 0.46,
+        }[self.season]
+        return seasonal_multiplier
+
+    def _update_radiation_fields(self) -> None:
+        solar_energy = self._solar_input()
+        biomass_by_cell: dict[tuple[int, int], float] = {}
+        for plant in self.plant_seeds.values():
+            if plant.state in {"sprout", "mature"} and plant.biomass > 0.0:
+                biomass_by_cell[(plant.x, plant.y)] = biomass_by_cell.get((plant.x, plant.y), 0.0) + plant.biomass
+
+        leaf_spec = MATERIAL_SPECS[MATERIAL_LEAF]
+        for y in range(self.height):
+            for x in range(self.width):
+                ground_spec = MATERIAL_SPECS[self.ground_material_map[y][x]]
+                surface_organic_cover = min(1.0, self.surface_fuel_map[y][x] * 2.5)
+                surface_transmittance = (
+                    (1.0 - surface_organic_cover)
+                    + (surface_organic_cover * leaf_spec.photosynthetic_transmittance)
+                )
+                plant_biomass = biomass_by_cell.get((x, y), 0.0)
+                plant_surface_area = min(1.0, plant_biomass * 0.55)
+                plant_transmittance = (
+                    (1.0 - plant_surface_area)
+                    + (plant_surface_area * leaf_spec.photosynthetic_transmittance)
+                )
+                reflected = ground_spec.solar_reflectance * 0.18
+                absorbed_by_ground_surface = ground_spec.solar_absorptance * 0.10
+                photosynthetic_band = solar_energy * surface_transmittance * plant_transmittance
+                self.photosynthetic_light_map[y][x] = max(
+                    0.0,
+                    min(1.0, photosynthetic_band * (1.0 - reflected - absorbed_by_ground_surface)),
+                )
+
+    def _natural_seed_rain(self, rng: Random) -> None:
+        if not self.plant_lifecycle_enabled or self.natural_seed_rain_per_tick <= 0:
+            return
+        if len(self.plant_seeds) >= self.max_plant_seeds:
+            return
+
+        for _ in range(self.natural_seed_rain_per_tick):
+            if len(self.plant_seeds) >= self.max_plant_seeds:
+                return
+            x = rng.randrange(self.width)
+            y = rng.randrange(self.height)
+            if self.ground_material_map[y][x] == MATERIAL_WATER:
+                continue
+            local_nutrients = self.get_cell_soil_nutrients(x, y)
+            profile = self.get_zone_profile(x, y)
+            establishment_chance = profile["food_density"] * self.get_fertility(x, y) * local_nutrients
+            if rng.random() > establishment_chance:
+                continue
+            self._deposit_seed(
+                species="wild_grain",
+                x=x,
+                y=y,
+                burial_depth_cm=rng.uniform(0.1, 5.2),
+                dispersal_mode="natural_seed_rain",
+            )
+
+    def _deposit_seed(
+        self,
+        *,
+        species: str,
+        x: int,
+        y: int,
+        burial_depth_cm: float,
+        dispersal_mode: str,
+        parent_plant_id: int | None = None,
+        dropped_by_agent_id: int | None = None,
+    ) -> PlantSeed:
+        plant = PlantSeed(
+            seed_id=self.next_seed_id,
+            species=species,
+            x=x,
+            y=y,
+            burial_depth_cm=burial_depth_cm,
+            parent_plant_id=parent_plant_id,
+            dispersal_mode=dispersal_mode,
+            dropped_by_agent_id=dropped_by_agent_id,
+            created_tick=self.tick_count,
+        )
+        self.plant_seeds[plant.seed_id] = plant
+        self.next_seed_id += 1
+        return plant
+
+    def _drop_harvest_seed(self, x: int, y: int, resource: FoodResource) -> None:
+        if not self.plant_lifecycle_enabled:
+            return
+        if len(self.plant_seeds) >= self.max_plant_seeds:
+            return
+        if self.ground_material_map[y][x] == MATERIAL_WATER:
+            return
+        seed = self._deposit_seed(
+            species="wild_grain",
+            x=x,
+            y=y,
+            burial_depth_cm=0.0,
+            dispersal_mode="harvest_drop",
+            parent_plant_id=resource.plant_id,
+        )
+        self.physics_events.append(
+            f"harvest_seed_dropped -> seed={seed.seed_id} x={x} y={y} source={resource.source} "
+            f"parent={resource.plant_id if resource.plant_id is not None else -1} mode={seed.dispersal_mode}"
+        )
+
+    def _update_plant_lifecycle(self, rng: Random) -> None:
+        if not self.plant_lifecycle_enabled:
+            return
+
+        dead_plant_ids: list[int] = []
+        for plant in list(self.plant_seeds.values()):
+            spec = PLANT_SPECIES[plant.species]
+            plant.age_ticks += 1
+            if plant.carried_by_agent_id is not None:
+                plant.viability -= 0.0002
+                if plant.viability <= 0.0 or plant.age_ticks > spec.max_age_ticks:
+                    dead_plant_ids.append(plant.seed_id)
+                continue
+            water = self.moisture_map[plant.y][plant.x]
+            temperature_k = self.temperature_map[plant.y][plant.x]
+            oxygen = self.oxygen_map[plant.y][plant.x]
+            light = self.photosynthetic_light_map[plant.y][plant.x]
+            nutrients = self.get_cell_soil_nutrients(plant.x, plant.y)
+
+            if plant.state == "seed":
+                self._settle_surface_seed(plant, spec, rng)
+                if self._seed_germination_conditions_met(plant, spec, water, temperature_k, oxygen):
+                    plant.accumulated_good_ticks += 1
+                else:
+                    plant.accumulated_good_ticks = max(0, plant.accumulated_good_ticks - 1)
+                    plant.viability -= 0.0007
+
+                if plant.accumulated_good_ticks >= spec.germination_good_ticks:
+                    plant.state = "sprout"
+                    plant.biomass = 0.08
+                    self._consume_soil_nutrients(plant.x, plant.y, 0.01)
+                    self.physics_events.append(
+                        f"seed_germinated -> seed={plant.seed_id} species={plant.species} x={plant.x} y={plant.y} "
+                        f"water={water:.2f} temp_k={temperature_k:.1f} oxygen={oxygen:.2f} light={light:.2f} "
+                        f"nutrients={nutrients:.2f} depth_cm={plant.burial_depth_cm:.1f}"
+                    )
+            elif plant.state in {"sprout", "mature"}:
+                growth_factor = self._plant_growth_factor(spec, water, temperature_k, oxygen, light, nutrients)
+                if growth_factor > 0.0:
+                    growth = growth_factor * 0.035
+                    plant.biomass = min(spec.maturity_biomass * 2.8, plant.biomass + growth)
+                    self._consume_soil_nutrients(plant.x, plant.y, growth * spec.nutrient_demand * 0.05)
+                    self.surface_fuel_map[plant.y][plant.x] = min(
+                        1.0,
+                        self.surface_fuel_map[plant.y][plant.x] + (growth * 0.02),
+                    )
+                else:
+                    plant.biomass = max(0.0, plant.biomass - 0.006)
+                    plant.viability -= 0.0015
+
+                if plant.state == "sprout" and plant.biomass >= spec.maturity_biomass:
+                    plant.state = "mature"
+                    self.physics_events.append(
+                        f"plant_matured -> seed={plant.seed_id} species={plant.species} x={plant.x} y={plant.y} "
+                        f"biomass={plant.biomass:.2f} light={light:.2f} nutrients={nutrients:.2f}"
+                    )
+
+                if plant.state == "mature":
+                    self._maybe_emit_plant_food(plant, spec, growth_factor, rng)
+                    self._maybe_drop_natural_offspring_seeds(plant, spec, growth_factor, rng)
+
+            death_reason = None
+            if plant.viability <= 0.0:
+                death_reason = "low_viability"
+            elif plant.age_ticks > spec.max_age_ticks:
+                death_reason = "max_age"
+            elif plant.state in {"sprout", "mature"} and plant.biomass <= 0.0:
+                death_reason = "no_biomass"
+            if death_reason is not None:
+                self.physics_events.append(
+                    f"plant_died -> seed={plant.seed_id} species={plant.species} x={plant.x} y={plant.y} "
+                    f"state={plant.state} age_ticks={plant.age_ticks} reason={death_reason} "
+                    f"mode={plant.dispersal_mode} parent={plant.parent_plant_id if plant.parent_plant_id is not None else -1}"
+                )
+                dead_plant_ids.append(plant.seed_id)
+
+        for plant_id in dead_plant_ids:
+            plant = self.plant_seeds.pop(plant_id, None)
+            if plant is None:
+                continue
+            if plant.x >= 0 and plant.y >= 0:
+                self.surface_fuel_map[plant.y][plant.x] = min(
+                    1.0,
+                    self.surface_fuel_map[plant.y][plant.x] + (plant.biomass * 0.08),
+                )
+
+    def _settle_surface_seed(self, plant: PlantSeed, spec: PlantSpeciesSpec, rng: Random) -> None:
+        if plant.burial_depth_cm >= spec.burial_depth_max_cm:
+            return
+        ground = self.ground_material_map[plant.y][plant.x]
+        if ground not in {MATERIAL_SOIL, MATERIAL_SAND, MATERIAL_CLAY}:
+            return
+        disturbance = self.soil_disturbance_map[plant.y][plant.x]
+        if disturbance < 0.05:
+            return
+        previous_depth = plant.burial_depth_cm
+        moisture = self.moisture_map[plant.y][plant.x]
+        material_multiplier = {
+            MATERIAL_SAND: 1.25,
+            MATERIAL_SOIL: 1.0,
+            MATERIAL_CLAY: 0.55,
+        }.get(ground, 0.0)
+        plant.burial_depth_cm = min(
+            spec.burial_depth_max_cm,
+            plant.burial_depth_cm + (disturbance * material_multiplier * (0.10 + moisture * 0.12)),
+        )
+        if previous_depth < spec.burial_depth_min_cm <= plant.burial_depth_cm:
+            self.physics_events.append(
+                f"seed_buried_by_disturbance -> seed={plant.seed_id} x={plant.x} y={plant.y} "
+                f"depth_cm={plant.burial_depth_cm:.2f} disturbance={disturbance:.2f}"
+            )
+
+    def _seed_germination_conditions_met(
+        self,
+        plant: PlantSeed,
+        spec: PlantSpeciesSpec,
+        water: float,
+        temperature_k: float,
+        oxygen: float,
+    ) -> bool:
+        return (
+            plant.viability > 0.0
+            and spec.germination_water_min <= water <= spec.germination_water_max
+            and spec.germination_temp_min_k <= temperature_k <= spec.germination_temp_max_k
+            and oxygen >= spec.germination_oxygen_min
+            and spec.burial_depth_min_cm <= plant.burial_depth_cm <= spec.burial_depth_max_cm
+        )
+
+    def _plant_growth_factor(
+        self,
+        spec: PlantSpeciesSpec,
+        water: float,
+        temperature_k: float,
+        oxygen: float,
+        light: float,
+        nutrients: float,
+    ) -> float:
+        water_midpoint = (spec.germination_water_min + spec.germination_water_max) / 2.0
+        water_span = max(0.01, (spec.germination_water_max - spec.germination_water_min) / 2.0)
+        water_factor = max(0.0, 1.0 - (abs(water - water_midpoint) / water_span))
+        temperature_midpoint = (spec.germination_temp_min_k + spec.germination_temp_max_k) / 2.0
+        temperature_span = max(0.01, (spec.germination_temp_max_k - spec.germination_temp_min_k) / 2.0)
+        temperature_factor = max(0.0, 1.0 - (abs(temperature_k - temperature_midpoint) / temperature_span))
+        oxygen_factor = max(0.0, min(1.0, (oxygen - 0.08) / 0.13))
+        light_factor = max(0.0, min(1.0, light / max(0.01, spec.light_saturation)))
+        nutrient_factor = max(0.0, min(1.0, nutrients / max(0.01, spec.nutrient_demand)))
+        return water_factor * temperature_factor * oxygen_factor * light_factor * nutrient_factor
+
+    def _consume_soil_nutrients(self, x: int, y: int, amount: float) -> None:
+        if amount <= 0.0:
+            return
+        self.soil_nitrogen_map[y][x] = max(0.0, self.soil_nitrogen_map[y][x] - amount)
+        self.soil_phosphorus_map[y][x] = max(0.0, self.soil_phosphorus_map[y][x] - (amount * 0.55))
+        self.soil_potassium_map[y][x] = max(0.0, self.soil_potassium_map[y][x] - (amount * 0.75))
+
+    def _maybe_emit_plant_food(
+        self,
+        plant: PlantSeed,
+        spec: PlantSpeciesSpec,
+        growth_factor: float,
+        rng: Random,
+    ) -> None:
+        if len(self.food_positions) >= self.max_food:
+            return
+        if (plant.x, plant.y) in self.food_positions:
+            return
+        if self.tick_count - plant.last_food_tick < spec.fruiting_interval_ticks:
+            return
+        if growth_factor < 0.18:
+            return
+        seasonal_bonus = 1.25 if self.season in {SEASON_SPRING, SEASON_SUMMER} else 0.75
+        fruiting_chance = min(0.55, growth_factor * seasonal_bonus)
+        if rng.random() > fruiting_chance:
+            return
+
+        energy = FOOD_ENERGY[FOOD_RAW_PLANT] + int(min(8.0, plant.biomass * 3.0))
+        self.food_positions[(plant.x, plant.y)] = FoodResource(
+            kind=FOOD_RAW_PLANT,
+            energy=energy,
+            source="plant_lifecycle",
+            plant_id=plant.seed_id,
+            created_tick=self.tick_count,
+        )
+        plant.last_food_tick = self.tick_count
+        plant.biomass = max(spec.maturity_biomass * 0.72, plant.biomass - 0.18)
+        self.physics_events.append(
+            f"plant_fruited -> seed={plant.seed_id} species={plant.species} x={plant.x} y={plant.y} "
+            f"energy={energy} biomass={plant.biomass:.2f} light={self.photosynthetic_light_map[plant.y][plant.x]:.2f}"
+        )
+
+    def _maybe_drop_natural_offspring_seeds(
+        self,
+        plant: PlantSeed,
+        spec: PlantSpeciesSpec,
+        growth_factor: float,
+        rng: Random,
+    ) -> None:
+        if len(self.plant_seeds) >= self.max_plant_seeds:
+            return
+        if self.tick_count - plant.last_natural_seed_tick < spec.natural_seed_interval_ticks:
+            return
+        if growth_factor < 0.14:
+            return
+        if rng.random() > min(0.85, spec.natural_seed_drop_chance * (0.7 + growth_factor)):
+            return
+
+        dropped = 0
+        attempts = max(4, spec.natural_seed_drop_max_count * 5)
+        for _ in range(attempts):
+            if dropped >= spec.natural_seed_drop_max_count or len(self.plant_seeds) >= self.max_plant_seeds:
+                break
+            dx = rng.randint(-spec.natural_seed_drop_radius, spec.natural_seed_drop_radius)
+            dy = rng.randint(-spec.natural_seed_drop_radius, spec.natural_seed_drop_radius)
+            if abs(dx) + abs(dy) > spec.natural_seed_drop_radius:
+                continue
+            seed_x = max(0, min(self.width - 1, plant.x + dx))
+            seed_y = max(0, min(self.height - 1, plant.y + dy))
+            if self.ground_material_map[seed_y][seed_x] == MATERIAL_WATER:
+                continue
+            if rng.random() > max(0.08, self.get_fertility(seed_x, seed_y) * self.get_cell_soil_nutrients(seed_x, seed_y)):
+                continue
+            burial_depth = rng.uniform(0.0, 0.8)
+            seed = self._deposit_seed(
+                species=plant.species,
+                x=seed_x,
+                y=seed_y,
+                burial_depth_cm=burial_depth,
+                dispersal_mode="natural_drop",
+                parent_plant_id=plant.seed_id,
+            )
+            self.physics_events.append(
+                f"natural_seed_dropped -> seed={seed.seed_id} parent={plant.seed_id} x={seed_x} y={seed_y} "
+                f"mode=natural_drop depth_cm={burial_depth:.2f} distance={abs(dx) + abs(dy)}"
+            )
+            dropped += 1
+
+        if dropped > 0:
+            plant.last_natural_seed_tick = self.tick_count
+
+    def _harvest_plant(self, plant_id: int) -> None:
+        plant = self.plant_seeds.get(plant_id)
+        if plant is None:
+            return
+        spec = PLANT_SPECIES[plant.species]
+        plant.biomass = max(0.0, plant.biomass - 0.12)
+        self.surface_fuel_map[plant.y][plant.x] = min(1.0, self.surface_fuel_map[plant.y][plant.x] + 0.01)
+        if plant.biomass < spec.maturity_biomass * 0.35:
+            plant.state = "sprout"
 
     def _zone_for_position(self, x: int, y: int) -> str:
         left_side = x < self.width // 2
@@ -1442,13 +2242,21 @@ class Environment:
         return ZONE_DANGER_LOW_FOOD
 
     def _spawn_food(self, rng: Random) -> None:
+        if self.base_food_spawn_per_tick <= 0:
+            return
+        bootstrap_multiplier = (
+            1.0
+            if self.tick_count <= self.bootstrap_food_spawn_ticks
+            else self.wild_food_spawn_after_bootstrap_multiplier
+        )
         seasonal_rate = int(round(
             self.base_food_spawn_per_tick
             * SEASON_FOOD_MULTIPLIER[self.season]
             * self.food_spawn_multiplier
             * self.food_pressure_multiplier
+            * bootstrap_multiplier
         ))
-        spawn_attempts = max(1, seasonal_rate)
+        spawn_attempts = max(0, seasonal_rate)
         for _ in range(spawn_attempts):
             if len(self.food_positions) >= self.max_food:
                 return
@@ -1462,6 +2270,8 @@ class Environment:
                 self.food_positions[(x, y)] = FoodResource(
                     kind=FOOD_RAW_PLANT,
                     energy=FOOD_ENERGY[FOOD_RAW_PLANT],
+                    source="wild_plant",
+                    created_tick=self.tick_count,
                 )
                 self._deplete_fertility(x, y, self.fertility_spawn_cost)
 
@@ -1676,5 +2486,7 @@ class Environment:
                     self.food_positions[(spawn_x, spawn_y)] = FoodResource(
                         kind=FOOD_RAW_PLANT,
                         energy=FOOD_ENERGY[FOOD_RAW_PLANT],
+                        source="nest_support",
+                        created_tick=self.tick_count,
                     )
                     self._deplete_fertility(spawn_x, spawn_y, self.fertility_spawn_cost / 2)

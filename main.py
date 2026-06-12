@@ -4,6 +4,7 @@ import argparse
 
 from simulation.runner import (
     run_first_tool_emergence_study,
+    run_immortal_discovery_capture,
     run_paper_data_capture,
     run_publication_batch_capture,
     run_robustness_sweep_capture,
@@ -13,6 +14,7 @@ from simulation.runner import (
     run_distinct_survivor_search,
     run_massive_lineage_search,
     run_prototype_experiment,
+    run_world_discovery_phase_capture,
 )
 
 
@@ -31,9 +33,23 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument(
         "--mode",
-        choices=["prototype", "distinct-search", "massive-lineage", "dashboard", "paper", "publication-batch", "robustness-batch", "first-tool", "first-technology", "sexed-test", "sexed-search"],
+        choices=[
+            "prototype",
+            "distinct-search",
+            "massive-lineage",
+            "dashboard",
+            "paper",
+            "publication-batch",
+            "robustness-batch",
+            "world-discovery",
+            "immortal-discovery",
+            "first-tool",
+            "first-technology",
+            "sexed-test",
+            "sexed-search",
+        ],
         default="prototype",
-        help="Run a prototype sweep, a distinct survivor search, a massive lineage search, a visual dashboard demo, or a research-grade paper capture.",
+        help="Run a prototype sweep, search, dashboard, paper capture, publication batch, robustness batch, or world-discovery phase.",
     )
     parser.add_argument(
         "--max-seed-rounds",
@@ -75,7 +91,7 @@ def parse_args() -> argparse.Namespace:
         "--study-seeds",
         type=int,
         default=12,
-        help="Number of seeds to run for first-tool study mode.",
+        help="Number of seeds to run for study and batch modes.",
     )
     return parser.parse_args()
 
@@ -125,6 +141,22 @@ if __name__ == "__main__":
             start_seed=args.seed,
             seed_count=args.study_seeds,
             change_note=args.change_note,
+            max_ticks=args.dashboard_ticks,
+            snapshot_interval=args.snapshot_interval,
+        )
+    elif args.mode == "world-discovery":
+        run_world_discovery_phase_capture(
+            start_seed=args.seed,
+            seed_count=args.study_seeds,
+            change_note=args.change_note,
+            max_ticks=args.dashboard_ticks,
+            snapshot_interval=args.snapshot_interval,
+        )
+    elif args.mode == "immortal-discovery":
+        run_immortal_discovery_capture(
+            seed=args.seed,
+            change_note=args.change_note,
+            body_index=args.paper_body_index,
             max_ticks=args.dashboard_ticks,
             snapshot_interval=args.snapshot_interval,
         )

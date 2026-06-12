@@ -39,7 +39,8 @@
 
 ### สิ่งที่เปลี่ยนในระบบ
 - body แบบ morphology เดียวกันสามารถมี behavior ต่างกันได้
-- memory, cooking, danger avoidance, hunting และ home-building ถูก bias ด้วย traits
+- memory, heat-use efficiency, danger avoidance และ hunting ถูก bias ด้วย traits
+- cooking และ home-building ไม่เกิดจาก trait ตรง ๆ ใน substrate-first runs
 - diet specialization เริ่มมีผลต่อ value ของอาหาร
 - role identity เริ่มอิง personality + ecology มากกว่า stat ดิบ
 
@@ -87,7 +88,8 @@ This version no longer treats agents as only `sensor / muscle / armor / brain`. 
 
 ### What Changes In Practice
 - the same morphology can now produce different behaviors
-- memory, cooking, danger avoidance, hunting, and home-building are trait-biased
+- memory, heat-use efficiency, danger avoidance, and hunting are trait-biased
+- cooking and home-building do not come directly from traits in substrate-first runs
 - diet specialization starts to shape food value
 - role identity is driven more by personality plus ecology than by raw stats alone
 

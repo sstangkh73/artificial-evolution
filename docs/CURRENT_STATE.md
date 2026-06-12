@@ -152,9 +152,10 @@ current code behavior, and longer-term research goals.
 
 ### Cooking And Food Logistics
 
-- Cooking exists as an energy transformation step.
-- Food sharing and redistribution exist.
-- However, there is no explicit cooking site, fuel system, spoilage system, or transport inventory model.
+- Cooking no longer exists as a trait-only energy transformation step.
+- Food can become cooked only if external heat exists at the agent location.
+- Automatic food sharing and redistribution are disabled in substrate-first runs.
+- There is still no complete transport inventory, spoilage, or full production-chain model.
 
 ### Hunting And Ecology
 

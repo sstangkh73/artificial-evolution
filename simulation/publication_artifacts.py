@@ -145,6 +145,11 @@ def _secondary_outcomes_rows(replicates: list[dict[str, object]]) -> list[dict[s
                 "final_male": row["final_male"],
                 "max_generation_observed": row["max_generation_observed"],
                 "reproduction_failure_events": row["reproduction_failure_events"],
+                "mean_agent_memory_sites": row.get("mean_agent_memory_sites", 0),
+                "max_agent_memory_sites": row.get("max_agent_memory_sites", 0),
+                "social_contact_rate": row.get("social_contact_rate", 0),
+                "object_experiment_agent_rate": row.get("object_experiment_agent_rate", 0),
+                "mean_friend_count": row.get("mean_friend_count", 0),
             }
         )
     return rows
@@ -162,6 +167,9 @@ def _condition_level_statistics(replicates: list[dict[str, object]]) -> list[dic
         matured = [float(item["matured_children"]) for item in rows]
         final_ticks = [float(item["final_tick"]) for item in rows]
         tech_ticks = [float(item["first_technology_tick"]) for item in rows if item["first_technology_tick"] not in (None, "")]
+        memory_means = [float(item.get("mean_agent_memory_sites", 0) or 0) for item in rows]
+        social_rates = [float(item.get("social_contact_rate", 0) or 0) for item in rows]
+        object_experiment_rates = [float(item.get("object_experiment_agent_rate", 0) or 0) for item in rows]
         gen3_successes = sum(1 for item in rows if bool(item["target_generation_reached"]))
         extinctions = sum(1 for item in rows if bool(item["population_extinct"]))
         tech_successes = sum(1 for item in rows if item["first_technology_tick"] not in (None, ""))
@@ -180,6 +188,9 @@ def _condition_level_statistics(replicates: list[dict[str, object]]) -> list[dic
                 "matured_children_mean": round(statistics.fmean(matured), 3),
                 "final_tick_mean": round(statistics.fmean(final_ticks), 3),
                 "first_technology_tick_mean": round(statistics.fmean(tech_ticks), 3) if tech_ticks else None,
+                "mean_agent_memory_sites_mean": round(statistics.fmean(memory_means), 3),
+                "social_contact_rate_mean": round(statistics.fmean(social_rates), 4),
+                "object_experiment_agent_rate_mean": round(statistics.fmean(object_experiment_rates), 4),
                 "peak_population_iqr": round(_iqr(peak_values), 3),
                 "total_births_iqr": round(_iqr(births), 3),
                 "matured_children_iqr": round(_iqr(matured), 3),

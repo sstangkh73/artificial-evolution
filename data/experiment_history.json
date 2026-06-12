@@ -1,5 +1,5 @@
 {
-  "last_experiment_number": 48,
+  "last_experiment_number": 49,
   "runs": [
     {
       "experiment_number": 1,
@@ -416,6 +416,14 @@
       "seed": 7,
       "qualified_body_types": 23,
       "tested_body_candidates": 24
+    },
+    {
+      "experiment_number": 49,
+      "change_note": "Immortal 50-founder unsupervised long discovery run",
+      "started_at": "2026-06-08T20:39:58",
+      "seed": 7,
+      "qualified_body_types": 1,
+      "tested_body_candidates": 1
     }
   ]
 }

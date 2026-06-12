@@ -756,6 +756,91 @@ def run_robustness_sweep_capture(
     )
 
 
+def run_world_discovery_phase_capture(
+    start_seed: int = 7,
+    seed_count: int = 4,
+    change_note: str = "Phase-separated world discovery study",
+    max_ticks: int = 1600,
+    snapshot_interval: int = 20,
+) -> str:
+    candidate_bodies = generate_candidate_body_plans()
+    conditions = _world_discovery_conditions(candidate_bodies, max_ticks=max_ticks)
+    return _run_publication_conditions_batch(
+        conditions=conditions,
+        start_seed=start_seed,
+        seed_count=seed_count,
+        change_note=change_note,
+        snapshot_interval=snapshot_interval,
+        batch_label="world_discovery_phase",
+        headline="Artificial Evolution World Discovery Phase Capture",
+    )
+
+
+def run_immortal_discovery_capture(
+    seed: int = 7,
+    change_note: str = "Immortal open-ended discovery run",
+    body_index: int = 8,
+    max_ticks: int = 8000,
+    snapshot_interval: int = 25,
+) -> ExperimentResult:
+    experiment = start_experiment_run(change_note)
+    candidate_bodies = generate_candidate_body_plans()
+    resolved_body_index = max(1, min(body_index, len(candidate_bodies)))
+    body = candidate_bodies[resolved_body_index - 1]
+    founder_sexes = ["male"] * 25 + ["female"] * 25
+    rng = Random(seed)
+
+    log(experiment, "Artificial Evolution Immortal Discovery Run")
+    log(experiment, "=" * 49)
+    log(experiment, f"Experiment #{experiment.experiment_number}")
+    log(experiment, f"Change note: {change_note}")
+    log(experiment, f"Started at: {experiment.started_at}")
+    log(
+        experiment,
+        f"Seed: {seed} | body_index={resolved_body_index} | founders=50 | "
+        f"immortal=True | max_ticks={max_ticks} | snapshot_interval={snapshot_interval}",
+    )
+    log(experiment, f"Body: {body.short_description}")
+
+    result = run_single_body_trial(
+        rng,
+        body_index=resolved_body_index,
+        body=body,
+        initial_population=50,
+        max_population=250,
+        max_ticks=max_ticks,
+        capture_dashboard=True,
+        dashboard_group="immortal_discovery",
+        dashboard_run_name=f"experiment_{experiment.experiment_number:03d}_immortal_discovery",
+        dashboard_seed=seed,
+        dashboard_title="Immortal Discovery Run",
+        snapshot_interval=snapshot_interval,
+        capture_research_data=True,
+        research_run_name=f"experiment_{experiment.experiment_number:03d}_immortal_discovery",
+        research_seed=seed,
+        research_change_note=change_note,
+        research_condition_id="immortal_discovery_50_founders",
+        research_condition_label="Immortal 50-founder open-ended discovery",
+        research_question=(
+            "What changes emerge when 50 immortal reproductive agents are left "
+            "unsupervised in the world with no added teaching intervention?"
+        ),
+        founder_sexes=founder_sexes,
+        stop_on_target_survivors=False,
+        immortal_agents=True,
+    )
+
+    if result.research_manifest_path is not None:
+        log(experiment, f"Research manifest: {result.research_manifest_path}")
+    if result.dashboard_path is not None:
+        log(experiment, f"Dashboard: {result.dashboard_path}")
+    if result.telemetry_path is not None:
+        log(experiment, f"Telemetry: {result.telemetry_path}")
+
+    finalize_experiment_run(experiment, [result], [result], seed)
+    return result
+
+
 def _run_publication_conditions_batch(
     *,
     conditions: list[PublicationConditionSpec],
@@ -842,6 +927,7 @@ def _run_publication_conditions_batch(
             final_snapshot = tick_rows[-1] if tick_rows else {}
             reproduce_fail_count = sum(1 for event in events if event.get("event_type") == "repro_fail")
             max_generation_observed = max((int(agent.get("generation", 0)) for agent in agent_rows), default=0)
+            learning_proxy = _agent_learning_proxy_summary(agent_rows)
             replicate_id = f"{condition.condition_id}_seed_{seed}"
             replicate_rows.append(
                 {
@@ -876,6 +962,11 @@ def _run_publication_conditions_batch(
                     "final_male": final_snapshot.get("male", 0),
                     "max_generation_observed": max_generation_observed,
                     "reproduction_failure_events": reproduce_fail_count,
+                    "mean_agent_memory_sites": learning_proxy["mean_agent_memory_sites"],
+                    "max_agent_memory_sites": learning_proxy["max_agent_memory_sites"],
+                    "social_contact_rate": learning_proxy["social_contact_rate"],
+                    "object_experiment_agent_rate": learning_proxy["object_experiment_agent_rate"],
+                    "mean_friend_count": learning_proxy["mean_friend_count"],
                     "manifest_path": result.research_manifest_path,
                     "dashboard_path": result.dashboard_path,
                     "telemetry_path": result.telemetry_path,
@@ -1159,6 +1250,150 @@ def _robustness_conditions(candidate_bodies: list[BodyPlan], max_ticks: int) -> 
     return conditions
 
 
+def _world_discovery_conditions(candidate_bodies: list[BodyPlan], max_ticks: int) -> list[PublicationConditionSpec]:
+    sexed_founders = ["male"] * 25 + ["female"] * 25
+    body8 = candidate_bodies[7]
+    body14 = candidate_bodies[13]
+    control_body_index = 131 if len(candidate_bodies) >= 131 else len(candidate_bodies)
+    sensory_control = candidate_bodies[control_body_index - 1]
+
+    frontier_object_env = {
+        "max_food": 115,
+        "base_food_spawn_per_tick": 4,
+        "max_large_animals": 34,
+        "large_animal_spawn_per_tick": 3,
+        "food_spawn_multiplier": 0.82,
+        "nest_support_food_chance": 0.06,
+        "nest_support_spawn_chance": 0.05,
+        "safe_area_stone_chance": 0.02,
+        "frontier_stone_bonus": 0.22,
+        "frontier_band": 10,
+        "global_food_decline_per_day": 0.014,
+        "minimum_global_food_multiplier": 0.28,
+    }
+    novel_scarcity_env = {
+        "max_food": 95,
+        "base_food_spawn_per_tick": 3,
+        "max_large_animals": 28,
+        "large_animal_spawn_per_tick": 2,
+        "food_spawn_multiplier": 0.72,
+        "nest_support_food_chance": 0.03,
+        "nest_support_spawn_chance": 0.03,
+        "safe_area_stone_chance": 0.01,
+        "frontier_stone_bonus": 0.08,
+        "frontier_band": 12,
+        "day_length": 16,
+        "season_length": 60,
+        "global_food_decline_per_day": 0.018,
+        "minimum_global_food_multiplier": 0.22,
+    }
+
+    return [
+        PublicationConditionSpec(
+            condition_id="embodied_world_model_body_8",
+            label="Embodied world-model body 8",
+            question="Can high-cognition embodied agents accumulate usable Type-1 world knowledge from direct interaction in the default world?",
+            body_index=8,
+            body_name="body_8",
+            body_design=body8.short_description,
+            body_stats=body8.stats_description,
+            initial_population=INITIAL_POPULATION,
+            max_population=MAX_POPULATION,
+            max_ticks=max_ticks,
+            founder_mode="default_alternating",
+            founder_sexes=None,
+            stop_on_generation_adult=None,
+            env_kwargs=None,
+            spawn_strategy="default",
+        ),
+        PublicationConditionSpec(
+            condition_id="frontier_object_discovery_body_8",
+            label="Frontier object discovery body 8",
+            question="Does scarcity plus frontier material access drive object experimentation and first technology emergence?",
+            body_index=8,
+            body_name="body_8",
+            body_design=body8.short_description,
+            body_stats=body8.stats_description,
+            initial_population=INITIAL_POPULATION,
+            max_population=MAX_POPULATION,
+            max_ticks=min(max_ticks, 1000),
+            founder_mode="default_alternating",
+            founder_sexes=None,
+            stop_on_generation_adult=None,
+            env_kwargs=frontier_object_env,
+            spawn_strategy="frontier_safe_high_food",
+        ),
+        PublicationConditionSpec(
+            condition_id="collective_world_model_body_8",
+            label="Collective world-model body 8",
+            question="Does a larger sexed community turn individual memories into group-level persistence across generations?",
+            body_index=8,
+            body_name="body_8",
+            body_design=body8.short_description,
+            body_stats=body8.stats_description,
+            initial_population=50,
+            max_population=MAX_POPULATION,
+            max_ticks=max(max_ticks, 2200),
+            founder_mode="25_male_25_female",
+            founder_sexes=sexed_founders,
+            stop_on_generation_adult=3,
+            env_kwargs=None,
+            spawn_strategy="default",
+        ),
+        PublicationConditionSpec(
+            condition_id="collective_world_model_body_14",
+            label="Collective world-model body 14",
+            question="Does the nurturing-settler lineage build a more stable collective world model than the social-planner lineage?",
+            body_index=14,
+            body_name="body_14",
+            body_design=body14.short_description,
+            body_stats=body14.stats_description,
+            initial_population=50,
+            max_population=MAX_POPULATION,
+            max_ticks=max(max_ticks, 2200),
+            founder_mode="25_male_25_female",
+            founder_sexes=sexed_founders,
+            stop_on_generation_adult=3,
+            env_kwargs=None,
+            spawn_strategy="default",
+        ),
+        PublicationConditionSpec(
+            condition_id=f"sensory_control_body_{control_body_index}",
+            label=f"Sensory control body {control_body_index}",
+            question="Do high-sensor lower-brain agents survive without producing the same memory, social, and technology signatures?",
+            body_index=control_body_index,
+            body_name=f"body_{control_body_index}",
+            body_design=sensory_control.short_description,
+            body_stats=sensory_control.stats_description,
+            initial_population=INITIAL_POPULATION,
+            max_population=MAX_POPULATION,
+            max_ticks=max_ticks,
+            founder_mode="default_alternating",
+            founder_sexes=None,
+            stop_on_generation_adult=None,
+            env_kwargs=None,
+            spawn_strategy="default",
+        ),
+        PublicationConditionSpec(
+            condition_id="novel_scarcity_transfer_body_8",
+            label="Novel scarcity transfer body 8",
+            question="Do direct-interaction strategies remain viable when the world is made less abundant and more temporally variable?",
+            body_index=8,
+            body_name="body_8",
+            body_design=body8.short_description,
+            body_stats=body8.stats_description,
+            initial_population=INITIAL_POPULATION,
+            max_population=MAX_POPULATION,
+            max_ticks=max_ticks,
+            founder_mode="default_alternating",
+            founder_sexes=None,
+            stop_on_generation_adult=None,
+            env_kwargs=novel_scarcity_env,
+            spawn_strategy="frontier_safe_high_food",
+        ),
+    ]
+
+
 def _load_research_manifest_bundle(manifest_path: Path) -> dict[str, object]:
     manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
     return {
@@ -1202,6 +1437,48 @@ def _coerce_csv_value(value: str | None) -> object:
         return int(value)
     except ValueError:
         return value
+
+
+def _agent_learning_proxy_summary(agent_rows: list[dict[str, object]]) -> dict[str, float | int]:
+    if not agent_rows:
+        return {
+            "mean_agent_memory_sites": 0.0,
+            "max_agent_memory_sites": 0,
+            "social_contact_rate": 0.0,
+            "object_experiment_agent_rate": 0.0,
+            "mean_friend_count": 0.0,
+        }
+
+    memory_counts: list[int] = []
+    friend_counts: list[int] = []
+    object_experimenters = 0
+    for row in agent_rows:
+        memory_count = sum(
+            int(row.get(key) or 0)
+            for key in (
+                "remembered_food_sources_count",
+                "remembered_safe_zones_count",
+                "remembered_danger_count",
+                "remembered_nest_locations_count",
+            )
+        )
+        friend_count = int(row.get("friend_count") or 0)
+        memory_counts.append(memory_count)
+        friend_counts.append(friend_count)
+
+        constructions = row.get("technology_constructions_json")
+        if isinstance(constructions, dict) and any(int(value) > 0 for value in constructions.values()):
+            object_experimenters += 1
+
+    row_count = len(agent_rows)
+    social_agents = sum(1 for count in friend_counts if count > 0)
+    return {
+        "mean_agent_memory_sites": round(sum(memory_counts) / row_count, 3),
+        "max_agent_memory_sites": max(memory_counts),
+        "social_contact_rate": round(social_agents / row_count, 4),
+        "object_experiment_agent_rate": round(object_experimenters / row_count, 4),
+        "mean_friend_count": round(sum(friend_counts) / row_count, 3),
+    }
 
 
 def _git_revision() -> str | None:
@@ -1772,7 +2049,44 @@ def _make_tick_summary(
         if alive_agents
         else 0.0
     )
+    mean_safety_feeling = (
+        sum(agent.safety_feeling for agent in alive_agents) / len(alive_agents)
+        if alive_agents
+        else 0.0
+    )
+    mean_comfort_level = (
+        sum(agent.comfort_level for agent in alive_agents) / len(alive_agents)
+        if alive_agents
+        else 0.0
+    )
+    mean_fear_level = (
+        sum(agent.fear_level for agent in alive_agents) / len(alive_agents)
+        if alive_agents
+        else 0.0
+    )
+    mean_hunger_level = (
+        sum(agent.hunger_level for agent in alive_agents) / len(alive_agents)
+        if alive_agents
+        else 0.0
+    )
+    mean_pair_bond_ticks = (
+        sum(agent.pair_bond_ticks for agent in alive_agents) / len(alive_agents)
+        if alive_agents
+        else 0.0
+    )
+    affect_ready_adults = sum(
+        1
+        for agent in alive_agents
+        if agent.current_stage == "adult"
+        and agent.safety_feeling >= 0.66
+        and agent.comfort_level >= 0.58
+        and agent.hunger_level < 0.35
+        and agent.fear_level < 0.42
+        and agent.safety_streak_ticks >= 10
+        and agent.pair_bond_ticks >= 14
+    )
     biome_counts = Counter(env.get_biome(agent.x, agent.y) for agent in alive_agents)
+    plant_counts = env.plant_state_counts()
     return {
         "tick": tick,
         "day": tick // env.day_length,
@@ -1801,10 +2115,23 @@ def _make_tick_summary(
         "large_animals": len(env.large_animals),
         "mean_energy": round(mean_energy, 3),
         "mean_durability": round(mean_durability, 3),
+        "mean_safety_feeling": round(mean_safety_feeling, 3),
+        "mean_comfort_level": round(mean_comfort_level, 3),
+        "mean_fear_level": round(mean_fear_level, 3),
+        "mean_hunger_level": round(mean_hunger_level, 3),
+        "mean_pair_bond_ticks": round(mean_pair_bond_ticks, 3),
+        "affect_ready_adults": affect_ready_adults,
         "population_safe_low_food": biome_counts.get("safe_low_food", 0),
         "population_safe_high_food": biome_counts.get("safe_high_food", 0),
         "population_danger_high_food": biome_counts.get("danger_high_food", 0),
         "population_danger_low_food": biome_counts.get("danger_low_food", 0),
+        "plants_total": len(env.plant_seeds),
+        "plant_state_seed": plant_counts.get("seed", 0),
+        "plant_state_carried_seed": plant_counts.get("carried_seed", 0),
+        "plant_state_sprout": plant_counts.get("sprout", 0),
+        "plant_state_mature": plant_counts.get("mature", 0),
+        "mean_photosynthetic_light": round(env.mean_photosynthetic_light(), 3),
+        "mean_soil_nutrients": round(env.mean_soil_nutrients(), 3),
         "top_lineages": _top_lineages(agents),
     }
 
@@ -2017,6 +2344,7 @@ def run_single_body_trial(
     research_condition_id: str | None = None,
     research_condition_label: str | None = None,
     research_question: str | None = None,
+    immortal_agents: bool = False,
 ) -> ExperimentResult:
     env = Environment(**(env_kwargs or {}))
     spawn_positions = _spawn_initial_positions(env, rng, initial_population, body, strategy=spawn_strategy)
@@ -2033,6 +2361,7 @@ def run_single_body_trial(
                 lineage_id=_lineage_label(agent_id),
                 sex=sex,
                 generation=0,
+                immortal=immortal_agents,
             )
         )
 
@@ -2672,12 +3001,35 @@ def run_single_body_trial(
                     "other_parent_id": agent.other_parent_id,
                     "sex": agent.sex,
                     "generation": agent.generation,
+                    "immortal": agent.immortal,
+                    "preferred_role": agent.preferred_role,
+                    "final_role": agent.current_role,
+                    "friend_count": len(agent.friend_ids),
+                    "instinct_state": agent.instinct_state,
+                    "hunger_stress_ticks": agent.hunger_stress_ticks,
+                    "cold_stress_ticks": agent.cold_stress_ticks,
+                    "fear_stress_ticks": agent.fear_stress_ticks,
+                    "carried_seed_id": agent.carried_seed_id,
+                    "safety_feeling": round(agent.safety_feeling, 3),
+                    "comfort_level": round(agent.comfort_level, 3),
+                    "attachment_level": round(agent.attachment_level, 3),
+                    "hunger_level": round(agent.hunger_level, 3),
+                    "fear_level": round(agent.fear_level, 3),
+                    "cold_level": round(agent.cold_level, 3),
+                    "wetness": round(agent.wetness, 3),
+                    "body_temperature_k": round(agent.body_temperature_k, 3),
+                    "safety_streak_ticks": agent.safety_streak_ticks,
+                    "pair_bond_ticks": agent.pair_bond_ticks,
                     "body_profile": agent.body.trait_profile,
                     "body_inherited_from_profiles": agent.body.inherited_from_profiles,
                     "body_trait_mutation_count": agent.body.trait_mutation_count,
                     "body_morphology_mutation_count": agent.body.morphology_mutation_count,
                     "body_units_json": agent.body.morphology_values,
                     "body_traits_json": agent.body.trait_values,
+                    "remembered_food_sources_count": len(agent.remembered_food_sources),
+                    "remembered_safe_zones_count": len(agent.remembered_safe_zones),
+                    "remembered_danger_count": len(agent.remembered_danger),
+                    "remembered_nest_locations_count": len(agent.remembered_nest_locations),
                     "age": agent.age,
                     "children_count": agent.children_count,
                     "food_eaten": agent.food_eaten,
@@ -2766,6 +3118,7 @@ def run_single_body_trial(
                 "male_founders": sum(1 for value in founder_sexes if value == "male") if founder_sexes is not None else sum(1 for agent in archived_agents if agent.parent_id is None and agent.sex == "male"),
                 "female_founders": sum(1 for value in founder_sexes if value == "female") if founder_sexes is not None else sum(1 for agent in archived_agents if agent.parent_id is None and agent.sex == "female"),
                 "stop_on_generation_adult": stop_on_generation_adult,
+                "immortal_agents": immortal_agents,
                 "environment_overrides": env_kwargs or {},
                 "world_physics_v2": True,
             },

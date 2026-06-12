@@ -163,6 +163,22 @@ For robustness sweeps across harsher technology-emergence and lower-food sexed c
 python main.py --mode robustness-batch --seed 7 --study-seeds 4 --dashboard-ticks 1600 --snapshot-interval 20
 ```
 
+### World Discovery Phase Mode
+
+For the phase-separated study of embodied, collective, and material world discovery:
+
+```powershell
+python main.py --mode world-discovery --seed 7 --study-seeds 4 --dashboard-ticks 1600 --snapshot-interval 20
+```
+
+### Immortal Discovery Single Run
+
+For one long open-ended run with 50 immortal, reproductive founders:
+
+```powershell
+python main.py --mode immortal-discovery --seed 7 --paper-body-index 8 --dashboard-ticks 8000 --snapshot-interval 25
+```
+
 ### Render Publication Figures
 
 To render PNG figures from any publication package:

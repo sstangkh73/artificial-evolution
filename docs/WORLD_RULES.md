@@ -170,15 +170,16 @@ Zones:
 
 Food:
 - Food now has multiple forms: `raw_plant`, `cooked_plant`, `raw_meat`, `cooked_meat`
-- Plants spawn randomly based on zone
+- Wild plant food is now a bootstrap source that declines after early ticks
+- Plant-lifecycle food is the intended long-run food source
 - Large animals spawn as herds in high-food, high-danger areas
 - Food amount is limited
 - Basic technology materials exist: `wood`, `stone`, `fiber`
 
 Cooking:
-- `brain >= 2` enables simple cooking
-- `brain >= 3` increases the cooked-energy bonus
-- `brain >= 4` improves food sharing to children or groups
+- Brain/cooking traits no longer cook food by themselves
+- Food only becomes cooked when the agent is exposed to an external heat source
+- Automatic food sharing and group redistribution are disabled in substrate-first runs
 
 Hunting:
 - Large animals require team hunting to be reliable

@@ -5,6 +5,7 @@ from random import Random
 
 from agents.body import BodyPlan, inherit_body_plan
 from world.environment import (
+    AMBIENT_TEMPERATURE_K,
     CHILD_GROWTH,
     FOOD_RAW_MEAT,
     FOOD_RAW_PLANT,
@@ -42,6 +43,16 @@ BREEDER_NEST_FOOD_RESERVE = 10
 GENERAL_NEST_FOOD_RESERVE = 20
 CRITICAL_ADULT_WITHDRAW_ENERGY = 28
 BIRTH_NEST_FOOD_COST = 8
+HUNGER_PRIORITY_ENERGY = 58
+HUNGER_CRITICAL_ENERGY = 24
+FEAR_INSTINCT_DANGER = 0.45
+COLD_STRESS_TEMPERATURE_K = 286.15
+WARM_TARGET_TEMPERATURE_K = 289.15
+REPRODUCTION_SAFETY_THRESHOLD = 0.66
+REPRODUCTION_COMFORT_THRESHOLD = 0.58
+REPRODUCTION_ATTACHMENT_THRESHOLD = 0.28
+REPRODUCTION_SAFETY_STREAK = 10
+REPRODUCTION_PAIR_BOND_STREAK = 14
 
 
 @dataclass
@@ -102,6 +113,22 @@ class Agent:
     reproduction_partner_id: int | None = None
     reproduction_cooldown: int = 0
     reproduction_debug: dict[str, object] = field(default_factory=dict, repr=False)
+    immortal: bool = False
+    instinct_state: str = "balanced"
+    hunger_stress_ticks: int = 0
+    cold_stress_ticks: int = 0
+    fear_stress_ticks: int = 0
+    carried_seed_id: int | None = None
+    body_temperature_k: float = AMBIENT_TEMPERATURE_K
+    wetness: float = 0.0
+    hunger_level: float = 0.0
+    fear_level: float = 0.0
+    cold_level: float = 0.0
+    safety_feeling: float = 0.5
+    comfort_level: float = 0.5
+    attachment_level: float = 0.0
+    safety_streak_ticks: int = 0
+    pair_bond_ticks: int = 0
 
     def __post_init__(self) -> None:
         self.durability = self.body.durability
@@ -122,46 +149,40 @@ class Agent:
         if not self._resolve_life_state():
             return False
 
-        self._try_build_nest(env)
-        self._gather_materials_for_nest(env, rng)
-        self._tend_food_patch(env, rng)
-        self._maintain_hearth(env)
-        self._experiment_with_objects(env, rng)
+        self._update_affective_state(env)
+        instinct = self._dominant_instinct(env)
+        self._apply_instinct_pressure(env, instinct)
 
-        hunted = self._try_hunt_large_animal(env, rng)
-        if hunted:
-            visible_food = None
+        if instinct != "balanced":
+            self._act_on_instinct(env, rng, instinct)
         else:
-            visible_food = env.find_nearest_food(
-                self.x,
-                self.y,
-                self._effective_vision(env.is_night),
-            )
+            if getattr(env, "scaffolded_agent_actions_enabled", False):
+                self._try_build_nest(env)
+                self._gather_materials_for_nest(env, rng)
+                self._tend_food_patch(env, rng)
+                self._maintain_hearth(env)
+                self._experiment_with_objects(env, rng)
 
-        if visible_food is None:
-            self._wander(env, rng)
-        else:
-            self._remember_food(visible_food[0], visible_food[1])
-            self._move_toward(env, visible_food[0], visible_food[1])
+            hunted = self._try_hunt_large_animal(env, rng)
+            if not hunted and not self._move_toward_food_signal(env, rng):
+                self._wander(env, rng)
+            self._handle_seed_primitive(env, rng)
 
-        resource = env.consume_food(self.x, self.y)
-        if resource is not None:
-            restored_energy = self._process_food_resource(env, resource)
-            self.energy += restored_energy
-            self.food_eaten += 1
-            self._remember_food(self.x, self.y)
+        self._consume_current_food(env)
 
         self._apply_environmental_danger(env, rng)
 
         if not self._resolve_life_state():
             return False
 
-        if self.age >= MAX_AGE:
+        if self.age >= MAX_AGE and not self.immortal:
             self.completed_lifespan = True
             self.alive = False
             self.death_reason = "lifespan_completed"
             return False
 
+        if instinct != "balanced":
+            return False
         return self.can_reproduce()
 
     def can_reproduce(self) -> bool:
@@ -191,25 +212,36 @@ class Agent:
         )
         mate = self._find_reproduction_partner()
         self.reproduction_partner_id = mate.agent_id if mate is not None else None
-        reproduction_threshold = REPRODUCTION_THRESHOLD - int(self.body.reproduction_drive * 20)
-        nest_food_storage = 0
-        owner_id = self._nest_owner_id()
-        if owner_id is not None:
-            nest_food_storage = self._last_env.get_nest_food_storage(owner_id) if hasattr(self, "_last_env") else 0
-        if self.near_nest and support_count >= MIN_CARE_TEAM_FOR_BIRTH:
-            reproduction_threshold = max(
-                100,
-                reproduction_threshold - LINEAGE_REPRODUCTION_BONUS - int(self.body.parenting_instinct * 8),
-            )
-        nest_food_requirement = BREEDER_NEST_FOOD_RESERVE + (local_child_load * 6)
+        reproduction_threshold = (
+            REPRODUCTION_THRESHOLD
+            - int(self.body.reproduction_drive * 20)
+            - int(self.safety_feeling * 14)
+            - int(self.comfort_level * 18)
+            - min(14, support_count * 4)
+        )
+        reproduction_threshold += local_child_load * 8
+        reproduction_threshold = max(92, reproduction_threshold)
+        mate_safe_enough = (
+            mate is not None
+            and mate.fear_level < 0.45
+            and mate.hunger_level < 0.45
+            and mate.cold_level < 0.55
+        )
         conditions = {
             "adult_age": self.age >= ADULT_AGE,
             "adult_stage": self.current_stage == "adult",
             "energy_ok": self.energy >= reproduction_threshold,
             "durability_ok": self.durability >= MINIMUM_REPRODUCTION_HEALTH,
-            "near_nest": self.near_nest,
-            "nest_food_ok": nest_food_storage >= nest_food_requirement,
+            "safety_ok": self.safety_feeling >= REPRODUCTION_SAFETY_THRESHOLD,
+            "comfort_ok": self.comfort_level >= REPRODUCTION_COMFORT_THRESHOLD,
+            "attachment_ok": self.attachment_level >= REPRODUCTION_ATTACHMENT_THRESHOLD,
+            "safe_duration_ok": self.safety_streak_ticks >= REPRODUCTION_SAFETY_STREAK,
+            "pair_bond_ok": self.pair_bond_ticks >= REPRODUCTION_PAIR_BOND_STREAK,
+            "hunger_ok": self.hunger_level < 0.35,
+            "fear_ok": self.fear_level < 0.50,
+            "cold_ok": self.cold_level < 0.60,
             "mate_ok": mate is not None,
+            "mate_safe_ok": mate_safe_enough,
             "cooldown_ok": self.reproduction_cooldown <= 0,
         }
         if all(conditions.values()):
@@ -222,12 +254,26 @@ class Agent:
                 reason_list.append("not_adult")
             if not conditions["energy_ok"]:
                 reason_list.append("low_energy")
-            if not conditions["near_nest"]:
-                reason_list.append("not_near_nest")
-            if not conditions["nest_food_ok"]:
-                reason_list.append("nest_food_low")
+            if not conditions["safety_ok"]:
+                reason_list.append("low_safety")
+            if not conditions["comfort_ok"]:
+                reason_list.append("low_comfort")
+            if not conditions["attachment_ok"]:
+                reason_list.append("low_attachment")
+            if not conditions["safe_duration_ok"]:
+                reason_list.append("short_safety_window")
+            if not conditions["pair_bond_ok"]:
+                reason_list.append("short_pair_bond")
+            if not conditions["hunger_ok"]:
+                reason_list.append("hungry")
+            if not conditions["fear_ok"]:
+                reason_list.append("fearful")
+            if not conditions["cold_ok"]:
+                reason_list.append("cold")
             if not conditions["mate_ok"]:
                 reason_list.append("no_mate")
+            if not conditions["mate_safe_ok"]:
+                reason_list.append("mate_stressed")
             if not conditions["durability_ok"]:
                 reason_list.append("low_durability")
             if not conditions["cooldown_ok"]:
@@ -241,8 +287,14 @@ class Agent:
             "reasons": reason_list,
             "near_nest": self.near_nest,
             "mate": mate is not None,
-            "nest_food": nest_food_storage,
-            "nest_food_requirement": nest_food_requirement,
+            "safety_feeling": round(self.safety_feeling, 3),
+            "comfort_level": round(self.comfort_level, 3),
+            "attachment_level": round(self.attachment_level, 3),
+            "hunger_level": round(self.hunger_level, 3),
+            "fear_level": round(self.fear_level, 3),
+            "cold_level": round(self.cold_level, 3),
+            "safety_streak_ticks": self.safety_streak_ticks,
+            "pair_bond_ticks": self.pair_bond_ticks,
             "energy": self.energy,
             "threshold": reproduction_threshold,
             "support_count": support_count,
@@ -257,6 +309,8 @@ class Agent:
             return "child"
         if self.age <= JUVENILE_MAX_AGE:
             return "juvenile"
+        if self.immortal:
+            return "adult"
         if self.age < OLD_AGE:
             return "adult"
         return "old"
@@ -299,21 +353,10 @@ class Agent:
             sum(member.x for member in members) / len(members),
             sum(member.y for member in members) / len(members),
         )
-        shared_food = self._collect_shared_memory(members, "remembered_food")
-        shared_danger = self._collect_shared_memory(members, "remembered_danger")
-        shared_food_sources = self._collect_shared_memory(members, "remembered_food_sources")
-        shared_safe_zones = self._collect_shared_memory(members, "remembered_safe_zones")
-        shared_nests = self._collect_shared_memory(members, "remembered_nest_locations")
-        self.remembered_food = shared_food[: max(1, self._memory_capacity() // 2)]
-        self.remembered_danger = shared_danger[: self._memory_capacity()]
-        self.remembered_food_sources = shared_food_sources[: self._strategic_memory_capacity()]
-        self.remembered_safe_zones = shared_safe_zones[: self._strategic_memory_capacity()]
-        self.remembered_nest_locations = shared_nests[: self._strategic_memory_capacity()]
-        self.shared_home_owner_id = self._resolve_shared_home_owner(members)
+        self.shared_home_owner_id = None
         self.group_target = (
-            shared_food_sources[0]
-            if shared_food_sources
-            else shared_food[0] if shared_food else None
+            int(round(self.group_center[0])),
+            int(round(self.group_center[1])),
         )
 
     def _collect_shared_memory(
@@ -396,6 +439,7 @@ class Agent:
                 self.agent_id: 8.0,
                 **({mate.agent_id: 6.0} if mate is not None else {}),
             },
+            immortal=self.immortal,
         )
 
     def prepare_reproduction(self, env, mate: "Agent" | None, litter_size: int) -> None:
@@ -403,6 +447,7 @@ class Agent:
         self.energy -= total_cost
         self.current_role = "caretaker"
         self.reproduction_cooldown = max(10, 20 + (litter_size * 6) - int(self.body.parenting_instinct * 8))
+        self.pair_bond_ticks = 0
         owner_id = self._nest_owner_id()
         if owner_id is not None:
             env.withdraw_food_from_nest(owner_id, BIRTH_NEST_FOOD_COST * litter_size)
@@ -410,6 +455,7 @@ class Agent:
             mate.energy -= max(12, (REPRODUCTION_COST // 2) + max(0, litter_size - 1) * 8)
             mate.current_role = "protector" if mate.current_role == "solo" else mate.current_role
             mate.reproduction_cooldown = max(mate.reproduction_cooldown, 10 + (litter_size * 4))
+            mate.pair_bond_ticks = max(0, mate.pair_bond_ticks - (REPRODUCTION_PAIR_BOND_STREAK // 2))
 
     def decide_litter_size(self, env, mate: "Agent" | None, rng: Random) -> int:
         litter_size = 1
@@ -474,6 +520,286 @@ class Agent:
         if not is_night:
             return stage_adjusted_vision
         return max(1, stage_adjusted_vision // 2)
+
+    def _clamp01(self, value: float) -> float:
+        return max(0.0, min(1.0, value))
+
+    def _update_affective_state(self, env) -> None:
+        local_temp = env.get_cell_temperature(self.x, self.y)
+        local_moisture = env.get_cell_moisture(self.x, self.y)
+        local_danger = env.get_danger_level(self.x, self.y)
+        nearby_allies = sum(
+            1
+            for member in self.local_group_members
+            if abs(member.x - self.x) + abs(member.y - self.y) <= SAFE_RADIUS
+        )
+        nearby_food = env.nearby_food_count(self.x, self.y, radius=3)
+        partner_near = self._nearby_reproductive_partner_present()
+
+        wetness_target = self._clamp01((local_moisture - 0.38) / 0.55)
+        if local_temp >= AMBIENT_TEMPERATURE_K + 3.0:
+            wetness_target *= 0.75
+        self.wetness += (wetness_target - self.wetness) * 0.16
+
+        ally_warmth = min(1.2, nearby_allies * 0.18)
+        hearth_warmth = min(2.5, self._hearth_support_level() * 2.5)
+        target_body_temp = local_temp + ally_warmth + hearth_warmth - (self.wetness * 3.2)
+        self.body_temperature_k += (target_body_temp - self.body_temperature_k) * 0.12
+
+        max_durability = max(1, self.body.durability)
+        injury_pressure = self._clamp01((max_durability - self.durability) / max_durability)
+        remembered_danger_here = 0.18 if (self.x, self.y) in self.remembered_danger else 0.0
+        social_buffer = min(0.24, nearby_allies * 0.045)
+        food_buffer = min(0.14, nearby_food * 0.035)
+        safe_area_buffer = max(0.0, 0.35 - local_danger) * 0.34
+
+        self.hunger_level = self._clamp01((HUNGER_PRIORITY_ENERGY - self.energy) / HUNGER_PRIORITY_ENERGY)
+        self.cold_level = self._clamp01((COLD_STRESS_TEMPERATURE_K - self.body_temperature_k) / 9.0)
+        raw_fear = (
+            local_danger
+            + injury_pressure * 0.38
+            + remembered_danger_here
+            + (0.08 if env.is_night else 0.0)
+            - social_buffer
+            - safe_area_buffer
+        )
+        self.fear_level = self._clamp01(raw_fear)
+
+        self.attachment_level = self._clamp01(
+            (nearby_allies * 0.055)
+            + (self.body.cooperation_drive * 0.18)
+            + (self.body.parenting_instinct * 0.14)
+            + (0.10 if partner_near else 0.0)
+        )
+        safety_target = self._clamp01(
+            0.50
+            + safe_area_buffer
+            + social_buffer
+            + food_buffer
+            - (self.fear_level * 0.55)
+            - (self.hunger_level * 0.34)
+            - (self.cold_level * 0.42)
+            - (self.wetness * 0.18)
+        )
+        self.safety_feeling += (safety_target - self.safety_feeling) * 0.22
+        self.comfort_level = self._clamp01(
+            self.safety_feeling
+            + food_buffer
+            + (social_buffer * 0.5)
+            - (self.hunger_level * 0.30)
+            - (self.cold_level * 0.34)
+            - (self.wetness * 0.16)
+        )
+        if self.safety_feeling >= REPRODUCTION_SAFETY_THRESHOLD and self.comfort_level >= REPRODUCTION_COMFORT_THRESHOLD:
+            self.safety_streak_ticks += 1
+        else:
+            self.safety_streak_ticks = max(0, self.safety_streak_ticks - 1)
+
+        if (
+            partner_near
+            and self.safety_feeling >= REPRODUCTION_SAFETY_THRESHOLD
+            and self.comfort_level >= REPRODUCTION_COMFORT_THRESHOLD
+            and self.hunger_level < 0.35
+            and self.fear_level < 0.42
+        ):
+            self.pair_bond_ticks += 1
+        else:
+            self.pair_bond_ticks = max(0, self.pair_bond_ticks - 1)
+
+    def _dominant_instinct(self, env) -> str:
+        if self.energy <= HUNGER_PRIORITY_ENERGY or self.hunger_level >= 0.35:
+            return "hunger"
+        if self.fear_level >= FEAR_INSTINCT_DANGER or (self.x, self.y) in self.remembered_danger:
+            return "fear"
+        if self.cold_level >= 0.35:
+            return "cold"
+        return "balanced"
+
+    def _nearby_reproductive_partner_present(self) -> bool:
+        if self.current_stage != "adult":
+            return False
+        target_sex = "male" if self.sex == "female" else "female"
+        return any(
+            member.sex == target_sex
+            and member.current_stage == "adult"
+            and member.durability >= MINIMUM_REPRODUCTION_HEALTH
+            and member.energy >= max(36, REPRODUCTION_COST // 2)
+            and abs(member.x - self.x) + abs(member.y - self.y) <= SAFE_RADIUS
+            for member in self.local_group_members
+        )
+
+    def _apply_instinct_pressure(self, env, instinct: str) -> None:
+        if instinct == "hunger":
+            self.hunger_stress_ticks += 1
+            self.instinct_state = "hunger"
+            if self.energy <= HUNGER_CRITICAL_ENERGY and self.hunger_stress_ticks % 8 == 0:
+                self.durability = max(1, self.durability - 1)
+        else:
+            self.hunger_stress_ticks = max(0, self.hunger_stress_ticks - 1)
+
+        if instinct == "cold":
+            self.cold_stress_ticks += 1
+            self.instinct_state = "cold"
+            if self.cold_stress_ticks % 10 == 0:
+                self.energy -= 1
+        else:
+            self.cold_stress_ticks = max(0, self.cold_stress_ticks - 1)
+
+        if instinct == "fear":
+            self.fear_stress_ticks += 1
+            self.instinct_state = "fear"
+            self._remember_danger(self.x, self.y)
+        else:
+            self.fear_stress_ticks = max(0, self.fear_stress_ticks - 1)
+
+        if instinct == "balanced":
+            self.instinct_state = "balanced"
+
+    def _act_on_instinct(self, env, rng: Random, instinct: str) -> None:
+        if instinct == "hunger":
+            self._act_on_hunger_instinct(env, rng)
+        elif instinct == "cold":
+            self._act_on_cold_instinct(env, rng)
+        elif instinct == "fear":
+            self._act_on_fear_instinct(env, rng)
+        if instinct != "hunger":
+            self._handle_seed_primitive(env, rng)
+
+    def _act_on_hunger_instinct(self, env, rng: Random) -> None:
+        if self._consume_current_food(env):
+            return
+        if self._move_toward_food_signal(env, rng, urgency=1.3):
+            return
+        remembered_food = self._best_remembered_target(self.remembered_food_sources)
+        if remembered_food is not None:
+            self._move_toward(env, remembered_food[0], remembered_food[1])
+            return
+        self._move_by_instinct_score(
+            env,
+            rng,
+            lambda next_x, next_y: (
+                env.animal_signal_at(next_x, next_y, radius=max(1, self._effective_vision(env.is_night) // 2)) * 0.015
+                - (env.get_danger_level(next_x, next_y) * 0.7)
+                + (self.body.gather_drive * 0.1)
+            ),
+        )
+
+    def _act_on_cold_instinct(self, env, rng: Random) -> None:
+        self._move_by_instinct_score(
+            env,
+            rng,
+            lambda next_x, next_y: (
+                (env.get_cell_temperature(next_x, next_y) - env.get_cell_temperature(self.x, self.y)) * 0.35
+                - (env.get_danger_level(next_x, next_y) * 1.2)
+                + max(0.0, 0.32 - env.get_danger_level(next_x, next_y))
+            ),
+        )
+
+    def _act_on_fear_instinct(self, env, rng: Random) -> None:
+        self._move_by_instinct_score(
+            env,
+            rng,
+            lambda next_x, next_y: (
+                -env.get_danger_level(next_x, next_y) * (2.2 + self.body.danger_avoidance)
+                + max(0.0, 0.38 - env.get_danger_level(next_x, next_y)) * 2.0
+            ),
+        )
+
+    def _move_toward_food_signal(self, env, rng: Random, urgency: float = 1.0) -> bool:
+        radius = max(1, min(5, self._effective_vision(env.is_night)))
+        current_signal = env.food_signal_at(self.x, self.y, radius=radius)
+        moved = self._move_by_instinct_score(
+            env,
+            rng,
+            lambda next_x, next_y: (
+                env.food_signal_at(next_x, next_y, radius=radius) * urgency
+                - env.get_danger_level(next_x, next_y) * (0.7 + self.body.danger_avoidance)
+                + (self.body.gather_drive * 0.05)
+            ),
+            minimum_improvement=current_signal * 0.02,
+        )
+        return moved
+
+    def _move_by_instinct_score(
+        self,
+        env,
+        rng: Random,
+        score_cell,
+        minimum_improvement: float = 0.0,
+    ) -> bool:
+        candidates = [(1, 0), (-1, 0), (0, 1), (0, -1)]
+        rng.shuffle(candidates)
+        scored_steps: list[tuple[float, tuple[int, int]]] = []
+        current_score = float(score_cell(self.x, self.y))
+        move_distance = self._movement_speed()
+        for dx, dy in candidates:
+            next_x = max(0, min(env.width - 1, self.x + (dx * move_distance)))
+            next_y = max(0, min(env.height - 1, self.y + (dy * move_distance)))
+            if not env.is_walkable(next_x, next_y):
+                continue
+            scored_steps.append((float(score_cell(next_x, next_y)) + (rng.random() * 0.05), (dx, dy)))
+        if not scored_steps:
+            return False
+        scored_steps.sort(key=lambda item: item[0], reverse=True)
+        if scored_steps[0][0] <= current_score + minimum_improvement:
+            return False
+        return self._move(env, scored_steps[0][1][0], scored_steps[0][1][1])
+
+    def _consume_current_food(self, env) -> bool:
+        resource = env.consume_food(self.x, self.y)
+        if resource is None:
+            return False
+        restored_energy = self._process_food_resource(env, resource)
+        self.energy += restored_energy
+        self.food_eaten += 1
+        self._remember_food(self.x, self.y)
+        if resource.source == "plant_lifecycle":
+            self.recent_events.append(
+                f"plant_lifecycle_food_consumed -> agent={self.agent_id} "
+                f"plant={resource.plant_id if resource.plant_id is not None else -1} "
+                f"x={self.x} y={self.y} energy={resource.energy} kind={resource.kind}"
+            )
+        else:
+            self.recent_events.append(
+                f"food_consumed -> agent={self.agent_id} source={resource.source} "
+                f"x={self.x} y={self.y} energy={resource.energy} kind={resource.kind}"
+            )
+        self.hunger_stress_ticks = 0
+        self.instinct_state = "balanced"
+        return True
+
+    def _handle_seed_primitive(self, env, rng: Random) -> None:
+        if self.energy <= HUNGER_CRITICAL_ENERGY:
+            return
+        if self.carried_seed_id is not None and self.carried_seed_id not in env.plant_seeds:
+            self.carried_seed_id = None
+        if self.carried_seed_id is not None:
+            drop_chance = 0.08 + (self.body.curiosity * 0.04)
+            if self.instinct_state in {"fear", "cold"}:
+                drop_chance += 0.12
+            if rng.random() > drop_chance:
+                return
+            burial_depth = 0.0
+            if env.drop_seed(self.carried_seed_id, self.x, self.y, burial_depth_cm=burial_depth):
+                if hasattr(env, "disturb_surface"):
+                    env.disturb_surface(self.x, self.y, force=0.08 + (self.body.curiosity * 0.04), agent_id=self.agent_id)
+                self.recent_events.append(
+                    f"seed_dropped -> agent={self.agent_id} seed={self.carried_seed_id} x={self.x} y={self.y} depth_cm={burial_depth:.2f}"
+                )
+                self.carried_seed_id = None
+            return
+
+        loose_seed = env.find_loose_seed_at(self.x, self.y)
+        if loose_seed is None:
+            return
+        pickup_chance = 0.015 + (self.body.curiosity * 0.05) + (self.body.gather_drive * 0.015)
+        if rng.random() > pickup_chance:
+            return
+        if env.pick_seed(loose_seed.seed_id, self.agent_id):
+            self.carried_seed_id = loose_seed.seed_id
+            self.recent_events.append(
+                f"seed_picked -> agent={self.agent_id} seed={loose_seed.seed_id} x={self.x} y={self.y}"
+            )
 
     def _wander(self, env, rng: Random) -> None:
         if self.body.cognition_score < 1.2:
@@ -574,8 +900,7 @@ class Agent:
 
             if self.energy < 60:
                 score -= danger_level * 1.5
-                if env.is_safe_area(proposed_x, proposed_y):
-                    score += 1.2 + self.body.danger_avoidance
+                score += max(0.0, 0.35 - danger_level) * (1.2 + self.body.danger_avoidance)
 
             if self.nest_position is not None:
                 current_nest_distance = abs(self.nest_position[0] - self.x) + abs(self.nest_position[1] - self.y)
@@ -604,7 +929,7 @@ class Agent:
                 if self.group_target is not None:
                     score += 1.0
             elif self.current_role == "protector":
-                if self.near_nest or env.is_safe_area(proposed_x, proposed_y):
+                if self.near_nest or danger_level <= 0.35:
                     score += 1.1
             elif self.current_role == "experimenter":
                 if self.nest_position is not None:
@@ -616,8 +941,7 @@ class Agent:
                 elif self.parent_id is not None:
                     score -= 0.6
                 score -= self.child_stress * 0.15
-                if env.is_safe_area(proposed_x, proposed_y):
-                    score += 1.0
+                score += max(0.0, 0.35 - danger_level)
             if self._best_object_score(env, "cut", "plant") >= 8.0 and (proposed_x, proposed_y) in self.remembered_food_sources:
                 score += 1.6
             if self._best_object_score(env, "pierce", "prey") >= 9.0 and self.group_target is not None:
@@ -672,16 +996,21 @@ class Agent:
         if self.current_stage == "child" and not self.nearby_support:
             movement_penalty += 1
         self.energy -= movement_penalty
+        if hasattr(env, "disturb_surface"):
+            env.disturb_surface(self.x, self.y, force=min(0.22, 0.04 * max(1, traveled)), agent_id=self.agent_id)
         return True
 
     def _try_hunt_large_animal(self, env, rng: Random) -> bool:
-        if self.body.cognition_score >= 4.2 and self.nest_position is None and self.is_safe_area:
+        if (
+            getattr(env, "scaffolded_agent_actions_enabled", False)
+            and self.body.cognition_score >= 4.2
+            and self.nest_position is None
+            and self.is_safe_area
+        ):
             return False
-        vision = self._effective_vision(env.is_night)
         pierce_score = self._best_object_score(env, "pierce", "prey")
-        if pierce_score >= 9.0:
-            vision += 1
-        animal = env.find_nearest_large_animal(self.x, self.y, vision)
+        engage_range = max(1, self.body.speed + (1 if pierce_score >= 9.0 else 0))
+        animal = env.find_nearest_large_animal(self.x, self.y, engage_range)
         if animal is None:
             return False
 
@@ -701,7 +1030,7 @@ class Agent:
 
         hunt_team = [self]
         for member in self.local_group_members:
-            if abs(member.x - animal.x) + abs(member.y - animal.y) <= max(4, vision):
+            if abs(member.x - animal.x) + abs(member.y - animal.y) <= max(3, engage_range + 1):
                 hunt_team.append(member)
         if len(hunt_team) < 2:
             if self.group_center is not None:
@@ -713,12 +1042,10 @@ class Agent:
                 )
                 self.group_target = (nearest_teammate.x, nearest_teammate.y)
             else:
-                self.group_target = (animal.x, animal.y)
+                self.group_target = None
             return False
 
-        engage_range = max(1, self.body.speed + (1 if pierce_score >= 9.0 else 0))
         if abs(animal.x - self.x) + abs(animal.y - self.y) > engage_range:
-            self.group_target = (animal.x, animal.y)
             return False
 
         outcome = env.attempt_hunt(animal.animal_id, hunt_team, rng)
@@ -752,7 +1079,11 @@ class Agent:
             member.food_eaten += 1
             member.successful_hunt()
             member._apply_object_action(env, "pierce", "prey", base_outcome=2.0)
-            if member.body.cognition_score >= 4.2 and member.is_safe_area:
+            if (
+                getattr(env, "scaffolded_agent_actions_enabled", False)
+                and member.body.cognition_score >= 4.2
+                and member.is_safe_area
+            ):
                 member.settlement_target = (member.x, member.y)
                 member._try_build_nest(env)
         self.recent_events.append(
@@ -861,7 +1192,7 @@ class Agent:
     def _consume_processed_food(self, env, food_kind: str, base_energy: int) -> int:
         cooked_kind = food_kind
         restored_energy = base_energy
-        if self.body.cooking_skill >= 0.5:
+        if self._has_external_cooking_heat(env) and self.body.cooking_skill >= 0.5:
             if food_kind == FOOD_RAW_PLANT:
                 cooked_kind = "cooked_plant"
                 restored_energy = self._cooked_energy(food_kind, base_energy)
@@ -889,10 +1220,15 @@ class Agent:
         if self._hearth_support_level() >= 0.35:
             self.growth_progress += 1
 
-        if self.body.social_score >= 1.7:
-            self._share_food_support(restored_energy)
+        if getattr(env, "scaffolded_social_support_enabled", False) and self.body.social_score >= 1.7:
+            self._share_food_support(env, restored_energy)
         self._store_surplus_food(env, restored_energy)
         return restored_energy
+
+    def _has_external_cooking_heat(self, env) -> bool:
+        if self._hearth_support_level() >= 0.35:
+            return True
+        return env.get_cell_temperature(self.x, self.y) >= 373.15
 
     def _cooked_energy(self, food_kind: str, raw_energy: int) -> int:
         hearth_bonus = 1.0 + (self._hearth_support_level() * 0.2)
@@ -909,7 +1245,9 @@ class Agent:
         bonus = 1.2 + (self.body.cooking_skill * 0.25)
         return int(round(raw_energy * bonus * hearth_bonus))
 
-    def _share_food_support(self, restored_energy: int) -> None:
+    def _share_food_support(self, env, restored_energy: int) -> None:
+        if not getattr(env, "scaffolded_social_support_enabled", False):
+            return
         if not self.local_group_members:
             return
 
@@ -1122,7 +1460,11 @@ class Agent:
         if self.current_stage != "child":
             self.nearby_support = False
             self.near_parent = False
-            if self.body.cognition_score >= 4.2 and self.nest_position is None:
+            if (
+                getattr(env, "scaffolded_agent_actions_enabled", False)
+                and self.body.cognition_score >= 4.2
+                and self.nest_position is None
+            ):
                 if self.is_safe_area and env.nearby_food_count(self.x, self.y, radius=3) >= 2:
                     self.settlement_target = (self.x, self.y)
                 else:
@@ -1445,6 +1787,8 @@ class Agent:
         return True
 
     def _try_build_nest(self, env) -> None:
+        if not getattr(env, "scaffolded_agent_actions_enabled", False):
+            return
         if self.body.cognition_score < 4.2 or self.body.parenting_instinct < 0.55:
             return
         if self.current_stage != "adult":
@@ -1508,6 +1852,8 @@ class Agent:
         )
 
     def _gather_materials_for_nest(self, env, rng: Random) -> None:
+        if not getattr(env, "scaffolded_agent_actions_enabled", False):
+            return
         if self.body.crafting_skill < 1.3:
             return
         if self.current_stage not in {"adult", "juvenile"}:
@@ -1537,6 +1883,8 @@ class Agent:
         )
 
     def _maintain_hearth(self, env) -> None:
+        if not getattr(env, "scaffolded_agent_actions_enabled", False):
+            return
         if self.current_stage != "adult":
             return
         if not self.near_nest:
@@ -1560,6 +1908,8 @@ class Agent:
         )
 
     def _tend_food_patch(self, env, rng: Random) -> None:
+        if not getattr(env, "scaffolded_agent_actions_enabled", False):
+            return
         if self.current_stage != "adult":
             return
         if not self.near_nest:
@@ -1587,6 +1937,8 @@ class Agent:
         )
 
     def _experiment_with_objects(self, env, rng: Random) -> None:
+        if not getattr(env, "scaffolded_agent_actions_enabled", False):
+            return
         if self.body.crafting_skill < 1.4:
             return
         if self.current_stage != "adult":
@@ -1797,10 +2149,15 @@ class Agent:
         )
 
     def _resolve_life_state(self) -> bool:
+        if self.immortal:
+            self.energy = max(1, self.energy)
+            self.durability = max(1, self.durability)
+            return True
         if self.energy <= 0:
-            self.alive = False
-            self.death_reason = "energy_depleted"
-            return False
+            self.energy = 1
+            self.hunger_stress_ticks += 1
+            self.instinct_state = "hunger"
+            return True
         if self.durability <= 0:
             self.alive = False
             self.death_reason = "durability_depleted"

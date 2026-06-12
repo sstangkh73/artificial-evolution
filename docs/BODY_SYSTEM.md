@@ -88,23 +88,22 @@ Brain:
 - Helps avoid previously dangerous locations
 - Improves safe and energy-efficient path selection
 - Enables cooperation when brain capacity is high enough
-- `brain >= 2` can perform simple cooking
-- `brain >= 3` gains stronger cooked-energy bonuses
-- `brain >= 4` shares food more effectively with children or group members
+- Cooking no longer comes from brain units alone; food only becomes cooked when an external heat source is present
+- Higher cooking-related traits only improve use of real heat once discovered
+- Automatic food sharing is disabled in substrate-first runs
 
 Cooperation abilities:
 - Remember allies
-- Send signals
-- Follow the group
-- Split roles
-- Plan together
+- Stay near observed allies
+- Form proximity groups
+- Build pair/social affect from local contact
 
 Food Intelligence:
 - `raw_plant`: `6` energy, easy to gather, slow child growth
-- `cooked_plant`: starts at `14` energy, requires brain/tool/time, moderate child growth
+- `cooked_plant`: requires raw plant plus a real heat source, moderate child growth
 - `raw_meat`: `18` energy, requires hunting, fast child growth but risky
-- `cooked_meat`: starts at `30` energy, requires hunting plus cooking, fastest child growth
-- `brain >= 3` and `brain >= 4` further improve cooked-food output
+- `cooked_meat`: requires hunting plus a real heat source, fastest child growth
+- Cooking traits only matter after heat exposure exists in the world
 
 Team Hunting:
 - Large animals require coordinated hunting power
