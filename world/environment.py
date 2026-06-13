@@ -523,6 +523,14 @@ class Environment:
     natural_seed_rain_per_tick: int = 0
     max_plant_seeds: int = 450
     plant_lifecycle_enabled: bool = True
+    plant_seed_max_age_multiplier: float = 1.0
+    plant_growth_rate_multiplier: float = 1.0
+    sprout_biomass_loss_multiplier: float = 1.0
+    germination_good_ticks_multiplier: float = 1.0
+    plant_fruiting_interval_multiplier: float = 1.0
+    plant_fruiting_growth_threshold_multiplier: float = 1.0
+    plant_fruiting_chance_multiplier: float = 1.0
+    natural_seed_drop_chance_multiplier: float = 1.0
     scaffolded_agent_actions_enabled: bool = False
     scaffolded_nest_support_enabled: bool = False
     scaffolded_social_support_enabled: bool = False
@@ -1988,10 +1996,15 @@ class Environment:
         dead_plant_ids: list[int] = []
         for plant in list(self.plant_seeds.values()):
             spec = PLANT_SPECIES[plant.species]
+            max_age_ticks = max(1, int(round(spec.max_age_ticks * self.plant_seed_max_age_multiplier)))
+            germination_good_ticks = max(
+                1,
+                int(round(spec.germination_good_ticks * self.germination_good_ticks_multiplier)),
+            )
             plant.age_ticks += 1
             if plant.carried_by_agent_id is not None:
                 plant.viability -= 0.0002
-                if plant.viability <= 0.0 or plant.age_ticks > spec.max_age_ticks:
+                if plant.viability <= 0.0 or plant.age_ticks > max_age_ticks:
                     dead_plant_ids.append(plant.seed_id)
                 continue
             water = self.moisture_map[plant.y][plant.x]
@@ -1999,6 +2012,7 @@ class Environment:
             oxygen = self.oxygen_map[plant.y][plant.x]
             light = self.photosynthetic_light_map[plant.y][plant.x]
             nutrients = self.get_cell_soil_nutrients(plant.x, plant.y)
+            growth_factor = 0.0
 
             if plant.state == "seed":
                 self._settle_surface_seed(plant, spec, rng)
@@ -2008,7 +2022,7 @@ class Environment:
                     plant.accumulated_good_ticks = max(0, plant.accumulated_good_ticks - 1)
                     plant.viability -= 0.0007
 
-                if plant.accumulated_good_ticks >= spec.germination_good_ticks:
+                if plant.accumulated_good_ticks >= germination_good_ticks:
                     plant.state = "sprout"
                     plant.biomass = 0.08
                     self._consume_soil_nutrients(plant.x, plant.y, 0.01)
@@ -2020,7 +2034,7 @@ class Environment:
             elif plant.state in {"sprout", "mature"}:
                 growth_factor = self._plant_growth_factor(spec, water, temperature_k, oxygen, light, nutrients)
                 if growth_factor > 0.0:
-                    growth = growth_factor * 0.035
+                    growth = growth_factor * 0.035 * self.plant_growth_rate_multiplier
                     plant.biomass = min(spec.maturity_biomass * 2.8, plant.biomass + growth)
                     self._consume_soil_nutrients(plant.x, plant.y, growth * spec.nutrient_demand * 0.05)
                     self.surface_fuel_map[plant.y][plant.x] = min(
@@ -2028,7 +2042,7 @@ class Environment:
                         self.surface_fuel_map[plant.y][plant.x] + (growth * 0.02),
                     )
                 else:
-                    plant.biomass = max(0.0, plant.biomass - 0.006)
+                    plant.biomass = max(0.0, plant.biomass - (0.006 * self.sprout_biomass_loss_multiplier))
                     plant.viability -= 0.0015
 
                 if plant.state == "sprout" and plant.biomass >= spec.maturity_biomass:
@@ -2045,14 +2059,16 @@ class Environment:
             death_reason = None
             if plant.viability <= 0.0:
                 death_reason = "low_viability"
-            elif plant.age_ticks > spec.max_age_ticks:
+            elif plant.age_ticks > max_age_ticks:
                 death_reason = "max_age"
             elif plant.state in {"sprout", "mature"} and plant.biomass <= 0.0:
                 death_reason = "no_biomass"
             if death_reason is not None:
                 self.physics_events.append(
                     f"plant_died -> seed={plant.seed_id} species={plant.species} x={plant.x} y={plant.y} "
-                    f"state={plant.state} age_ticks={plant.age_ticks} reason={death_reason} "
+                    f"state={plant.state} age_ticks={plant.age_ticks} reason={death_reason} biomass={plant.biomass:.3f} "
+                    f"water={water:.2f} temp_k={temperature_k:.1f} light={light:.2f} nutrients={nutrients:.2f} "
+                    f"growth={growth_factor:.3f} "
                     f"mode={plant.dispersal_mode} parent={plant.parent_plant_id if plant.parent_plant_id is not None else -1}"
                 )
                 dead_plant_ids.append(plant.seed_id)
@@ -2147,12 +2163,16 @@ class Environment:
             return
         if (plant.x, plant.y) in self.food_positions:
             return
-        if self.tick_count - plant.last_food_tick < spec.fruiting_interval_ticks:
+        fruiting_interval_ticks = max(
+            1,
+            int(round(spec.fruiting_interval_ticks * self.plant_fruiting_interval_multiplier)),
+        )
+        if self.tick_count - plant.last_food_tick < fruiting_interval_ticks:
             return
-        if growth_factor < 0.18:
+        if growth_factor < (0.18 * self.plant_fruiting_growth_threshold_multiplier):
             return
         seasonal_bonus = 1.25 if self.season in {SEASON_SPRING, SEASON_SUMMER} else 0.75
-        fruiting_chance = min(0.55, growth_factor * seasonal_bonus)
+        fruiting_chance = min(0.90, growth_factor * seasonal_bonus * self.plant_fruiting_chance_multiplier)
         if rng.random() > fruiting_chance:
             return
 
@@ -2184,7 +2204,8 @@ class Environment:
             return
         if growth_factor < 0.14:
             return
-        if rng.random() > min(0.85, spec.natural_seed_drop_chance * (0.7 + growth_factor)):
+        natural_seed_drop_chance = spec.natural_seed_drop_chance * self.natural_seed_drop_chance_multiplier
+        if rng.random() > min(0.95, natural_seed_drop_chance * (0.7 + growth_factor)):
             return
 
         dropped = 0

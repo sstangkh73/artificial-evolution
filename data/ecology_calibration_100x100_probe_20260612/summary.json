@@ -1,0 +1,48 @@
+{
+  "objective": "Calibrate ecology density before judging agent learning.",
+  "run_count": 1,
+  "failure_count": 0,
+  "configs": 1,
+  "seeds": [
+    20260610
+  ],
+  "success_criteria": {
+    "ecology_ignition": "plant_fruited > 0",
+    "agent_food_link": "plant_lifecycle_food_consumed > 0",
+    "strong_candidate": "fruited in >=70% of seeds for a config before learning claims"
+  },
+  "best_configs": [
+    {
+      "width": 100,
+      "height": 100,
+      "max_food_per_100_cells": 20.0,
+      "max_food": 2000,
+      "base_food_spawn_per_tick": 4,
+      "food_spawn_multiplier": 0.7,
+      "bootstrap_food_spawn_ticks": 300,
+      "wild_food_spawn_after_bootstrap_multiplier": 0.1,
+      "natural_seed_rain_per_tick": 0,
+      "max_plant_seeds": 7600,
+      "runs": 1,
+      "germinated_runs": 1,
+      "matured_runs": 0,
+      "fruited_runs": 0,
+      "plant_food_consumed_runs": 0,
+      "mean_ignition_score": 98.0,
+      "mean_seed_germinated": 14.0,
+      "mean_plant_matured": 0.0,
+      "mean_plant_fruited": 0.0,
+      "mean_plant_food_consumed": 0.0,
+      "mean_plant_died_no_biomass": 14.0,
+      "mean_plant_died_max_age": 50.0,
+      "mean_plant_died_low_viability": 0.0,
+      "mean_hunger_level": 0.983,
+      "mean_ticks_per_second": 42.8,
+      "mean_seed_to_germinated_rate": 0.2188,
+      "mean_germinated_to_matured_rate": 0.0,
+      "mean_matured_to_fruited_rate": 0.0,
+      "best_status": "seed_germinated"
+    }
+  ],
+  "failures": []
+}

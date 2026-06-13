@@ -1,0 +1,1166 @@
+{
+  "seed": 20260610,
+  "body_index": 37,
+  "body": "sensor=2, muscle=2, armor=0, brain=2, profile=social_planner",
+  "stop_reason": "time_limit_reached",
+  "elapsed_seconds": 45.004,
+  "tick": 1566,
+  "day": 78,
+  "population": 50,
+  "peak_population": 50,
+  "births": 0,
+  "nests": 0,
+  "plant_counts": {
+    "seed": 78,
+    "carried_seed": 0,
+    "sprout": 63,
+    "mature": 13,
+    "dead": 0,
+    "natural_drop_seed": 85,
+    "harvest_drop_seed": 69,
+    "agent_carried_seed": 0,
+    "agent_disturbed_seed": 0,
+    "natural_seed_rain_seed": 0
+  },
+  "plant_origins": {
+    "harvest_drop": 69,
+    "harvest_drop_seed": 57,
+    "harvest_drop_sprout": 12,
+    "natural_drop": 85,
+    "natural_drop_mature": 13,
+    "natural_drop_sprout": 51,
+    "natural_drop_seed": 21
+  },
+  "affect": {
+    "mean_safety_feeling": 0.0,
+    "mean_comfort_level": 0.0,
+    "mean_fear_level": 0.315,
+    "mean_hunger_level": 0.983,
+    "mean_pair_bond_ticks": 0.0,
+    "affect_ready_adults": 0
+  },
+  "agent_state": {
+    "instinct_states": {
+      "hunger": 50
+    },
+    "adult_female_reproduction_reasons": {
+      "low_energy|low_safety|low_comfort|short_safety_window|short_pair_bond|no_mate|mate_stressed|low_durability": 11,
+      "low_energy|low_safety|short_safety_window|short_pair_bond|no_mate|mate_stressed|low_durability": 9,
+      "low_energy|low_safety|low_comfort|low_attachment|short_safety_window|short_pair_bond|no_mate|mate_stressed|low_durability": 5
+    },
+    "max_safety_feeling": 0.0,
+    "max_comfort_level": 0.0,
+    "max_attachment_level": 0.38,
+    "max_pair_bond_ticks": 0,
+    "max_safety_streak_ticks": 0
+  },
+  "food_sources": {},
+  "plant_lifecycle_food": {
+    "remaining": 0,
+    "consumed": 33,
+    "decayed": 8,
+    "fruited": 41
+  },
+  "event_location_hotspots": {
+    "harvest_seed_dropped": [
+      {
+        "x": 76,
+        "y": 44,
+        "count": 6
+      },
+      {
+        "x": 90,
+        "y": 46,
+        "count": 4
+      },
+      {
+        "x": 73,
+        "y": 27,
+        "count": 4
+      },
+      {
+        "x": 74,
+        "y": 26,
+        "count": 3
+      },
+      {
+        "x": 73,
+        "y": 47,
+        "count": 3
+      },
+      {
+        "x": 75,
+        "y": 49,
+        "count": 3
+      },
+      {
+        "x": 87,
+        "y": 37,
+        "count": 2
+      },
+      {
+        "x": 91,
+        "y": 49,
+        "count": 2
+      }
+    ],
+    "natural_seed_dropped": [
+      {
+        "x": 75,
+        "y": 26,
+        "count": 3
+      },
+      {
+        "x": 73,
+        "y": 24,
+        "count": 2
+      },
+      {
+        "x": 77,
+        "y": 27,
+        "count": 2
+      },
+      {
+        "x": 72,
+        "y": 28,
+        "count": 2
+      },
+      {
+        "x": 75,
+        "y": 28,
+        "count": 2
+      },
+      {
+        "x": 75,
+        "y": 25,
+        "count": 2
+      },
+      {
+        "x": 73,
+        "y": 30,
+        "count": 2
+      },
+      {
+        "x": 74,
+        "y": 25,
+        "count": 2
+      }
+    ],
+    "plant_died": [
+      {
+        "x": 91,
+        "y": 49,
+        "count": 2
+      },
+      {
+        "x": 76,
+        "y": 27,
+        "count": 1
+      },
+      {
+        "x": 74,
+        "y": 26,
+        "count": 1
+      },
+      {
+        "x": 61,
+        "y": 39,
+        "count": 1
+      },
+      {
+        "x": 76,
+        "y": 44,
+        "count": 1
+      },
+      {
+        "x": 87,
+        "y": 37,
+        "count": 1
+      },
+      {
+        "x": 91,
+        "y": 39,
+        "count": 1
+      },
+      {
+        "x": 73,
+        "y": 27,
+        "count": 1
+      }
+    ],
+    "plant_fruited": [
+      {
+        "x": 76,
+        "y": 44,
+        "count": 5
+      },
+      {
+        "x": 73,
+        "y": 27,
+        "count": 3
+      },
+      {
+        "x": 90,
+        "y": 46,
+        "count": 3
+      },
+      {
+        "x": 73,
+        "y": 47,
+        "count": 3
+      },
+      {
+        "x": 74,
+        "y": 26,
+        "count": 2
+      },
+      {
+        "x": 74,
+        "y": 27,
+        "count": 2
+      },
+      {
+        "x": 76,
+        "y": 27,
+        "count": 2
+      },
+      {
+        "x": 75,
+        "y": 49,
+        "count": 2
+      }
+    ],
+    "plant_lifecycle_food_consumed": [
+      {
+        "x": 76,
+        "y": 44,
+        "count": 5
+      },
+      {
+        "x": 73,
+        "y": 27,
+        "count": 3
+      },
+      {
+        "x": 90,
+        "y": 46,
+        "count": 3
+      },
+      {
+        "x": 74,
+        "y": 26,
+        "count": 2
+      },
+      {
+        "x": 73,
+        "y": 47,
+        "count": 2
+      },
+      {
+        "x": 75,
+        "y": 49,
+        "count": 2
+      },
+      {
+        "x": 75,
+        "y": 24,
+        "count": 2
+      },
+      {
+        "x": 77,
+        "y": 27,
+        "count": 2
+      }
+    ],
+    "plant_lifecycle_food_decayed": [
+      {
+        "x": 76,
+        "y": 27,
+        "count": 2
+      },
+      {
+        "x": 74,
+        "y": 27,
+        "count": 2
+      },
+      {
+        "x": 73,
+        "y": 47,
+        "count": 1
+      },
+      {
+        "x": 74,
+        "y": 45,
+        "count": 1
+      },
+      {
+        "x": 76,
+        "y": 29,
+        "count": 1
+      },
+      {
+        "x": 76,
+        "y": 42,
+        "count": 1
+      }
+    ],
+    "plant_matured": [
+      {
+        "x": 74,
+        "y": 26,
+        "count": 1
+      },
+      {
+        "x": 74,
+        "y": 27,
+        "count": 1
+      },
+      {
+        "x": 73,
+        "y": 27,
+        "count": 1
+      },
+      {
+        "x": 90,
+        "y": 46,
+        "count": 1
+      },
+      {
+        "x": 76,
+        "y": 44,
+        "count": 1
+      },
+      {
+        "x": 76,
+        "y": 27,
+        "count": 1
+      },
+      {
+        "x": 61,
+        "y": 39,
+        "count": 1
+      },
+      {
+        "x": 73,
+        "y": 47,
+        "count": 1
+      }
+    ],
+    "seed_buried_by_disturbance": [
+      {
+        "x": 73,
+        "y": 27,
+        "count": 4
+      },
+      {
+        "x": 74,
+        "y": 26,
+        "count": 3
+      },
+      {
+        "x": 91,
+        "y": 49,
+        "count": 2
+      },
+      {
+        "x": 73,
+        "y": 24,
+        "count": 2
+      },
+      {
+        "x": 73,
+        "y": 28,
+        "count": 2
+      },
+      {
+        "x": 77,
+        "y": 27,
+        "count": 2
+      },
+      {
+        "x": 75,
+        "y": 24,
+        "count": 2
+      },
+      {
+        "x": 76,
+        "y": 27,
+        "count": 1
+      }
+    ],
+    "seed_germinated": [
+      {
+        "x": 73,
+        "y": 27,
+        "count": 4
+      },
+      {
+        "x": 77,
+        "y": 27,
+        "count": 4
+      },
+      {
+        "x": 74,
+        "y": 26,
+        "count": 3
+      },
+      {
+        "x": 75,
+        "y": 26,
+        "count": 3
+      },
+      {
+        "x": 91,
+        "y": 49,
+        "count": 2
+      },
+      {
+        "x": 75,
+        "y": 28,
+        "count": 2
+      },
+      {
+        "x": 75,
+        "y": 25,
+        "count": 2
+      },
+      {
+        "x": 71,
+        "y": 27,
+        "count": 2
+      }
+    ]
+  },
+  "mean_photosynthetic_light": 0.41,
+  "mean_soil_nutrients": 0.513,
+  "event_counts": {
+    "group formed": 2982,
+    "surface_disturbed": 5914,
+    "food_consumed": 74,
+    "harvest_seed_dropped": 106,
+    "food_decayed": 230,
+    "seed_buried_by_disturbance": 52,
+    "seed_germinated": 96,
+    "plant_matured": 26,
+    "plant_fruited": 41,
+    "natural_seed_dropped": 85,
+    "plant_lifecycle_food_consumed": 33,
+    "plant_lifecycle_food_decayed": 8,
+    "plant_died": 37
+  },
+  "event_attribute_counts": {
+    "natural_seed_distance": {
+      "3": 42,
+      "2": 21,
+      "1": 19,
+      "0": 3
+    },
+    "plant_died_mode": {
+      "harvest_drop": 37
+    },
+    "plant_died_reason": {
+      "low_viability": 37
+    }
+  },
+  "event_numeric_summaries": {
+    "plant_died_age_ticks": {
+      "count": 37,
+      "mean": 1275.0811,
+      "min": 1006.0,
+      "max": 1429.0
+    },
+    "plant_died_biomass": {
+      "count": 37,
+      "mean": 0.4453,
+      "min": 0.0,
+      "max": 1.202
+    },
+    "plant_died_growth": {
+      "count": 37,
+      "mean": 0.0,
+      "min": 0.0,
+      "max": 0.0
+    },
+    "plant_died_light": {
+      "count": 37,
+      "mean": 0.1968,
+      "min": 0.0,
+      "max": 0.64
+    },
+    "plant_died_nutrients": {
+      "count": 37,
+      "mean": 0.7941,
+      "min": 0.74,
+      "max": 0.81
+    },
+    "plant_died_temp_k": {
+      "count": 37,
+      "mean": 287.5189,
+      "min": 277.6,
+      "max": 298.2
+    },
+    "plant_died_water": {
+      "count": 37,
+      "mean": 0.7716,
+      "min": 0.68,
+      "max": 0.83
+    }
+  },
+  "first_event_tick": {
+    "group formed": 1,
+    "surface_disturbed": 1,
+    "food_consumed": 25,
+    "harvest_seed_dropped": 25,
+    "food_decayed": 29,
+    "seed_buried_by_disturbance": 108,
+    "seed_germinated": 121,
+    "plant_matured": 736,
+    "plant_fruited": 737,
+    "natural_seed_dropped": 760,
+    "plant_lifecycle_food_consumed": 770,
+    "plant_lifecycle_food_decayed": 892,
+    "plant_died": 1063
+  },
+  "signals": [
+    {
+      "type": "plant_lifecycle_breakthrough",
+      "confidence": "medium",
+      "stop_candidate": false,
+      "plant_matured": 26,
+      "plant_fruited": 41,
+      "seed_buried_by_disturbance": 52,
+      "seed_germinated": 96,
+      "reason": "A seed produced through harvest and burial-by-disturbance reached mature/fruiting plant lifecycle without oracle or farm scaffolds."
+    },
+    {
+      "type": "plant_lifecycle_food_fate_observed",
+      "confidence": "high",
+      "stop_candidate": true,
+      "plant_lifecycle_food_consumed": 33,
+      "plant_lifecycle_food_decayed": 8,
+      "plant_fruited": 41,
+      "reason": "At least one plant-lifecycle food item reached an observed fate: consumed by an agent or decayed in the world."
+    }
+  ],
+  "stop_signals": [
+    {
+      "type": "plant_lifecycle_food_fate_observed",
+      "confidence": "high",
+      "stop_candidate": true,
+      "plant_lifecycle_food_consumed": 33,
+      "plant_lifecycle_food_decayed": 8,
+      "plant_fruited": 41,
+      "reason": "At least one plant-lifecycle food item reached an observed fate: consumed by an agent or decayed in the world."
+    }
+  ],
+  "event_samples": [
+    "harvest_seed_dropped -> seed=0 x=76 y=36 source=wild_plant parent=-1 mode=harvest_drop",
+    "harvest_seed_dropped -> seed=1 x=90 y=39 source=wild_plant parent=-1 mode=harvest_drop",
+    "harvest_seed_dropped -> seed=2 x=84 y=33 source=wild_plant parent=-1 mode=harvest_drop",
+    "harvest_seed_dropped -> seed=3 x=76 y=27 source=wild_plant parent=-1 mode=harvest_drop",
+    "harvest_seed_dropped -> seed=4 x=81 y=37 source=wild_plant parent=-1 mode=harvest_drop",
+    "harvest_seed_dropped -> seed=5 x=87 y=40 source=wild_plant parent=-1 mode=harvest_drop",
+    "harvest_seed_dropped -> seed=6 x=96 y=39 source=wild_plant parent=-1 mode=harvest_drop",
+    "harvest_seed_dropped -> seed=7 x=87 y=37 source=wild_plant parent=-1 mode=harvest_drop",
+    "harvest_seed_dropped -> seed=8 x=91 y=39 source=wild_plant parent=-1 mode=harvest_drop",
+    "harvest_seed_dropped -> seed=9 x=92 y=40 source=wild_plant parent=-1 mode=harvest_drop",
+    "harvest_seed_dropped -> seed=10 x=89 y=48 source=wild_plant parent=-1 mode=harvest_drop",
+    "harvest_seed_dropped -> seed=11 x=84 y=21 source=wild_plant parent=-1 mode=harvest_drop",
+    "harvest_seed_dropped -> seed=12 x=82 y=38 source=wild_plant parent=-1 mode=harvest_drop",
+    "harvest_seed_dropped -> seed=13 x=74 y=26 source=wild_plant parent=-1 mode=harvest_drop",
+    "harvest_seed_dropped -> seed=14 x=84 y=42 source=wild_plant parent=-1 mode=harvest_drop",
+    "harvest_seed_dropped -> seed=15 x=80 y=24 source=wild_plant parent=-1 mode=harvest_drop",
+    "harvest_seed_dropped -> seed=16 x=83 y=34 source=wild_plant parent=-1 mode=harvest_drop",
+    "harvest_seed_dropped -> seed=17 x=82 y=21 source=wild_plant parent=-1 mode=harvest_drop",
+    "harvest_seed_dropped -> seed=18 x=80 y=41 source=wild_plant parent=-1 mode=harvest_drop",
+    "harvest_seed_dropped -> seed=19 x=91 y=28 source=wild_plant parent=-1 mode=harvest_drop",
+    "harvest_seed_dropped -> seed=20 x=91 y=49 source=wild_plant parent=-1 mode=harvest_drop",
+    "harvest_seed_dropped -> seed=21 x=85 y=13 source=wild_plant parent=-1 mode=harvest_drop",
+    "harvest_seed_dropped -> seed=22 x=61 y=39 source=wild_plant parent=-1 mode=harvest_drop",
+    "harvest_seed_dropped -> seed=23 x=78 y=27 source=wild_plant parent=-1 mode=harvest_drop",
+    "seed_buried_by_disturbance -> seed=13 x=74 y=26 depth_cm=0.30 disturbance=0.15",
+    "harvest_seed_dropped -> seed=24 x=91 y=49 source=wild_plant parent=-1 mode=harvest_drop",
+    "seed_germinated -> seed=13 species=wild_grain x=74 y=26 water=0.66 temp_k=296.6 oxygen=0.21 light=0.65 nutrients=0.81 depth_cm=0.7",
+    "harvest_seed_dropped -> seed=25 x=73 y=26 source=wild_plant parent=-1 mode=harvest_drop",
+    "harvest_seed_dropped -> seed=26 x=85 y=44 source=wild_plant parent=-1 mode=harvest_drop",
+    "harvest_seed_dropped -> seed=27 x=73 y=33 source=wild_plant parent=-1 mode=harvest_drop",
+    "harvest_seed_dropped -> seed=28 x=66 y=22 source=wild_plant parent=-1 mode=harvest_drop",
+    "harvest_seed_dropped -> seed=29 x=60 y=27 source=wild_plant parent=-1 mode=harvest_drop",
+    "harvest_seed_dropped -> seed=30 x=67 y=31 source=wild_plant parent=-1 mode=harvest_drop",
+    "harvest_seed_dropped -> seed=31 x=87 y=22 source=wild_plant parent=-1 mode=harvest_drop",
+    "harvest_seed_dropped -> seed=32 x=85 y=35 source=wild_plant parent=-1 mode=harvest_drop",
+    "harvest_seed_dropped -> seed=33 x=62 y=17 source=wild_plant parent=-1 mode=harvest_drop",
+    "harvest_seed_dropped -> seed=34 x=84 y=14 source=wild_plant parent=-1 mode=harvest_drop",
+    "harvest_seed_dropped -> seed=35 x=97 y=24 source=wild_plant parent=-1 mode=harvest_drop",
+    "harvest_seed_dropped -> seed=36 x=84 y=12 source=wild_plant parent=-1 mode=harvest_drop",
+    "harvest_seed_dropped -> seed=37 x=82 y=20 source=wild_plant parent=-1 mode=harvest_drop",
+    "seed_buried_by_disturbance -> seed=3 x=76 y=27 depth_cm=0.31 disturbance=0.05",
+    "harvest_seed_dropped -> seed=38 x=59 y=39 source=wild_plant parent=-1 mode=harvest_drop",
+    "harvest_seed_dropped -> seed=39 x=93 y=41 source=wild_plant parent=-1 mode=harvest_drop",
+    "harvest_seed_dropped -> seed=40 x=65 y=39 source=wild_plant parent=-1 mode=harvest_drop",
+    "harvest_seed_dropped -> seed=41 x=88 y=23 source=wild_plant parent=-1 mode=harvest_drop",
+    "seed_germinated -> seed=3 species=wild_grain x=76 y=27 water=0.75 temp_k=286.6 oxygen=0.21 light=0.00 nutrients=0.81 depth_cm=0.3",
+    "harvest_seed_dropped -> seed=42 x=91 y=55 source=wild_plant parent=-1 mode=harvest_drop",
+    "harvest_seed_dropped -> seed=43 x=83 y=24 source=wild_plant parent=-1 mode=harvest_drop",
+    "seed_buried_by_disturbance -> seed=22 x=61 y=39 depth_cm=0.31 disturbance=0.11",
+    "harvest_seed_dropped -> seed=44 x=73 y=47 source=wild_plant parent=-1 mode=harvest_drop",
+    "harvest_seed_dropped -> seed=45 x=76 y=44 source=wild_plant parent=-1 mode=harvest_drop",
+    "harvest_seed_dropped -> seed=46 x=75 y=49 source=wild_plant parent=-1 mode=harvest_drop",
+    "harvest_seed_dropped -> seed=47 x=87 y=5 source=wild_plant parent=-1 mode=harvest_drop",
+    "harvest_seed_dropped -> seed=48 x=89 y=7 source=wild_plant parent=-1 mode=harvest_drop",
+    "seed_buried_by_disturbance -> seed=20 x=91 y=49 depth_cm=0.31 disturbance=0.18",
+    "seed_buried_by_disturbance -> seed=24 x=91 y=49 depth_cm=0.31 disturbance=0.18",
+    "seed_germinated -> seed=22 species=wild_grain x=61 y=39 water=0.77 temp_k=287.6 oxygen=0.21 light=0.00 nutrients=0.81 depth_cm=0.7",
+    "harvest_seed_dropped -> seed=49 x=71 y=11 source=wild_plant parent=-1 mode=harvest_drop",
+    "seed_buried_by_disturbance -> seed=45 x=76 y=44 depth_cm=0.33 disturbance=0.17",
+    "harvest_seed_dropped -> seed=50 x=92 y=24 source=wild_plant parent=-1 mode=harvest_drop",
+    "seed_germinated -> seed=20 species=wild_grain x=91 y=49 water=0.68 temp_k=286.7 oxygen=0.21 light=0.00 nutrients=0.81 depth_cm=0.4",
+    "seed_germinated -> seed=24 species=wild_grain x=91 y=49 water=0.68 temp_k=286.7 oxygen=0.21 light=0.00 nutrients=0.80 depth_cm=0.4",
+    "harvest_seed_dropped -> seed=51 x=90 y=46 source=wild_plant parent=-1 mode=harvest_drop",
+    "harvest_seed_dropped -> seed=52 x=75 y=14 source=wild_plant parent=-1 mode=harvest_drop",
+    "harvest_seed_dropped -> seed=53 x=89 y=40 source=wild_plant parent=-1 mode=harvest_drop",
+    "harvest_seed_dropped -> seed=54 x=71 y=16 source=wild_plant parent=-1 mode=harvest_drop",
+    "seed_germinated -> seed=45 species=wild_grain x=76 y=44 water=0.74 temp_k=283.9 oxygen=0.21 light=0.39 nutrients=0.81 depth_cm=0.8",
+    "harvest_seed_dropped -> seed=55 x=73 y=27 source=wild_plant parent=-1 mode=harvest_drop",
+    "seed_buried_by_disturbance -> seed=55 x=73 y=27 depth_cm=0.33 disturbance=0.87",
+    "harvest_seed_dropped -> seed=56 x=95 y=13 source=wild_plant parent=-1 mode=harvest_drop",
+    "harvest_seed_dropped -> seed=57 x=75 y=11 source=wild_plant parent=-1 mode=harvest_drop",
+    "harvest_seed_dropped -> seed=58 x=74 y=24 source=wild_plant parent=-1 mode=harvest_drop",
+    "harvest_seed_dropped -> seed=59 x=77 y=34 source=wild_plant parent=-1 mode=harvest_drop",
+    "seed_buried_by_disturbance -> seed=51 x=90 y=46 depth_cm=0.30 disturbance=0.07",
+    "harvest_seed_dropped -> seed=60 x=90 y=52 source=wild_plant parent=-1 mode=harvest_drop",
+    "harvest_seed_dropped -> seed=61 x=87 y=59 source=wild_plant parent=-1 mode=harvest_drop",
+    "harvest_seed_dropped -> seed=62 x=89 y=28 source=wild_plant parent=-1 mode=harvest_drop",
+    "harvest_seed_dropped -> seed=63 x=78 y=16 source=wild_plant parent=-1 mode=harvest_drop",
+    "harvest_seed_dropped -> seed=64 x=68 y=36 source=wild_plant parent=-1 mode=harvest_drop",
+    "harvest_seed_dropped -> seed=65 x=71 y=27 source=wild_plant parent=-1 mode=harvest_drop",
+    "harvest_seed_dropped -> seed=66 x=67 y=33 source=wild_plant parent=-1 mode=harvest_drop",
+    "harvest_seed_dropped -> seed=67 x=62 y=32 source=wild_plant parent=-1 mode=harvest_drop",
+    "seed_germinated -> seed=55 species=wild_grain x=73 y=27 water=0.77 temp_k=281.8 oxygen=0.21 light=0.00 nutrients=0.81 depth_cm=4.5",
+    "harvest_seed_dropped -> seed=68 x=74 y=27 source=wild_plant parent=-1 mode=harvest_drop",
+    "seed_buried_by_disturbance -> seed=68 x=74 y=27 depth_cm=0.37 disturbance=0.41",
+    "harvest_seed_dropped -> seed=69 x=94 y=28 source=wild_plant parent=-1 mode=harvest_drop",
+    "seed_germinated -> seed=68 species=wild_grain x=74 y=27 water=0.74 temp_k=292.1 oxygen=0.21 light=0.67 nutrients=0.81 depth_cm=0.8",
+    "seed_germinated -> seed=51 species=wild_grain x=90 y=46 water=0.77 temp_k=292.9 oxygen=0.21 light=0.77 nutrients=0.81 depth_cm=0.3",
+    "harvest_seed_dropped -> seed=70 x=52 y=28 source=wild_plant parent=-1 mode=harvest_drop",
+    "harvest_seed_dropped -> seed=71 x=60 y=14 source=wild_plant parent=-1 mode=harvest_drop",
+    "harvest_seed_dropped -> seed=72 x=54 y=44 source=wild_plant parent=-1 mode=harvest_drop",
+    "seed_buried_by_disturbance -> seed=46 x=75 y=49 depth_cm=0.32 disturbance=0.25",
+    "seed_buried_by_disturbance -> seed=44 x=73 y=47 depth_cm=0.32 disturbance=0.25",
+    "seed_germinated -> seed=44 species=wild_grain x=73 y=47 water=0.78 temp_k=292.1 oxygen=0.21 light=0.77 nutrients=0.81 depth_cm=0.7",
+    "seed_germinated -> seed=46 species=wild_grain x=75 y=49 water=0.78 temp_k=292.1 oxygen=0.21 light=0.77 nutrients=0.81 depth_cm=1.2",
+    "seed_buried_by_disturbance -> seed=31 x=87 y=22 depth_cm=0.30 disturbance=0.05",
+    "seed_germinated -> seed=31 species=wild_grain x=87 y=22 water=0.77 temp_k=290.1 oxygen=0.21 light=0.00 nutrients=0.81 depth_cm=0.3",
+    "seed_buried_by_disturbance -> seed=7 x=87 y=37 depth_cm=0.30 disturbance=0.06",
+    "seed_germinated -> seed=7 species=wild_grain x=87 y=37 water=0.75 temp_k=295.2 oxygen=0.21 light=0.90 nutrients=0.81 depth_cm=0.3",
+    "plant_matured -> seed=13 species=wild_grain x=74 y=26 biomass=1.00 light=0.41 nutrients=0.79",
+    "plant_fruited -> seed=13 species=wild_grain x=74 y=26 energy=9 biomass=0.83 light=0.41",
+    "plant_matured -> seed=68 species=wild_grain x=74 y=27 biomass=1.00 light=0.45 nutrients=0.79",
+    "seed_buried_by_disturbance -> seed=8 x=91 y=39 depth_cm=0.30 disturbance=0.05",
+    "seed_buried_by_disturbance -> seed=25 x=73 y=26 depth_cm=0.33 disturbance=0.27",
+    "seed_germinated -> seed=8 species=wild_grain x=91 y=39 water=0.70 temp_k=295.3 oxygen=0.21 light=0.00 nutrients=0.81 depth_cm=0.3",
+    "seed_germinated -> seed=25 species=wild_grain x=73 y=26 water=0.70 temp_k=295.0 oxygen=0.21 light=0.00 nutrients=0.81 depth_cm=2.0",
+    "natural_seed_dropped -> seed=73 parent=13 x=73 y=24 mode=natural_drop depth_cm=0.29 distance=3",
+    "natural_seed_dropped -> seed=74 parent=13 x=73 y=28 mode=natural_drop depth_cm=0.01 distance=3",
+    "natural_seed_dropped -> seed=75 parent=13 x=75 y=24 mode=natural_drop depth_cm=0.54 distance=3",
+    "natural_seed_dropped -> seed=76 parent=68 x=75 y=26 mode=natural_drop depth_cm=0.14 distance=2",
+    "natural_seed_dropped -> seed=77 parent=68 x=77 y=27 mode=natural_drop depth_cm=0.30 distance=3",
+    "natural_seed_dropped -> seed=78 parent=68 x=72 y=28 mode=natural_drop depth_cm=0.19 distance=3",
+    "seed_buried_by_disturbance -> seed=73 x=73 y=24 depth_cm=0.40 disturbance=0.63",
+    "plant_fruited -> seed=68 species=wild_grain x=74 y=27 energy=9 biomass=0.86 light=0.44",
+    "seed_buried_by_disturbance -> seed=76 x=75 y=26 depth_cm=0.31 disturbance=0.93",
+    "seed_buried_by_disturbance -> seed=35 x=97 y=24 depth_cm=0.31 disturbance=0.05",
+    "plant_matured -> seed=55 species=wild_grain x=73 y=27 biomass=1.00 light=0.45 nutrients=0.79",
+    "natural_seed_dropped -> seed=79 parent=55 x=71 y=28 mode=natural_drop depth_cm=0.26 distance=3",
+    "natural_seed_dropped -> seed=80 parent=55 x=75 y=26 mode=natural_drop depth_cm=0.65 distance=3",
+    "natural_seed_dropped -> seed=81 parent=55 x=75 y=28 mode=natural_drop depth_cm=0.55 distance=3",
+    "plant_lifecycle_food_consumed -> agent=4 plant=55 x=73 y=27 energy=9 kind=raw_plant",
+    "plant_fruited -> seed=55 species=wild_grain x=73 y=27 energy=9 biomass=0.86 light=0.44",
+    "harvest_seed_dropped -> seed=82 x=73 y=27 source=plant_lifecycle parent=55 mode=harvest_drop",
+    "seed_buried_by_disturbance -> seed=82 x=73 y=27 depth_cm=0.35 disturbance=0.96",
+    "plant_matured -> seed=51 species=wild_grain x=90 y=46 biomass=1.00 light=0.45 nutrients=0.79",
+    "plant_fruited -> seed=51 species=wild_grain x=90 y=46 energy=9 biomass=0.82 light=0.45",
+    "natural_seed_dropped -> seed=83 parent=51 x=91 y=47 mode=natural_drop depth_cm=0.41 distance=2",
+    "natural_seed_dropped -> seed=84 parent=51 x=91 y=48 mode=natural_drop depth_cm=0.76 distance=3",
+    "natural_seed_dropped -> seed=85 parent=51 x=90 y=45 mode=natural_drop depth_cm=0.17 distance=1",
+    "seed_germinated -> seed=73 species=wild_grain x=73 y=24 water=0.69 temp_k=299.7 oxygen=0.21 light=0.90 nutrients=0.81 depth_cm=2.5",
+    "seed_germinated -> seed=75 species=wild_grain x=75 y=24 water=0.69 temp_k=299.7 oxygen=0.21 light=0.90 nutrients=0.81 depth_cm=0.6",
+    "plant_matured -> seed=45 species=wild_grain x=76 y=44 biomass=1.00 light=0.45 nutrients=0.79",
+    "plant_fruited -> seed=45 species=wild_grain x=76 y=44 energy=9 biomass=0.82 light=0.45",
+    "natural_seed_dropped -> seed=86 parent=45 x=76 y=42 mode=natural_drop depth_cm=0.44 distance=2",
+    "natural_seed_dropped -> seed=87 parent=45 x=74 y=45 mode=natural_drop depth_cm=0.51 distance=3",
+    "natural_seed_dropped -> seed=88 parent=45 x=76 y=47 mode=natural_drop depth_cm=0.21 distance=3",
+    "seed_germinated -> seed=76 species=wild_grain x=75 y=26 water=0.69 temp_k=299.8 oxygen=0.21 light=0.90 nutrients=0.81 depth_cm=2.6",
+    "seed_germinated -> seed=77 species=wild_grain x=77 y=27 water=0.69 temp_k=299.8 oxygen=0.21 light=0.90 nutrients=0.81 depth_cm=0.6",
+    "seed_germinated -> seed=35 species=wild_grain x=97 y=24 water=0.69 temp_k=299.9 oxygen=0.21 light=0.90 nutrients=0.81 depth_cm=0.3",
+    "plant_matured -> seed=3 species=wild_grain x=76 y=27 biomass=1.00 light=0.45 nutrients=0.79",
+    "natural_seed_dropped -> seed=89 parent=3 x=76 y=26 mode=natural_drop depth_cm=0.26 distance=1",
+    "natural_seed_dropped -> seed=90 parent=3 x=75 y=25 mode=natural_drop depth_cm=0.31 distance=3",
+    "natural_seed_dropped -> seed=91 parent=3 x=76 y=29 mode=natural_drop depth_cm=0.64 distance=2",
+    "plant_fruited -> seed=3 species=wild_grain x=76 y=27 energy=9 biomass=0.83 light=0.45",
+    "plant_lifecycle_food_consumed -> agent=13 plant=45 x=76 y=44 energy=9 kind=raw_plant",
+    "seed_germinated -> seed=80 species=wild_grain x=75 y=26 water=0.69 temp_k=298.7 oxygen=0.21 light=0.00 nutrients=0.80 depth_cm=3.1",
+    "seed_germinated -> seed=81 species=wild_grain x=75 y=28 water=0.69 temp_k=298.7 oxygen=0.21 light=0.00 nutrients=0.81 depth_cm=0.6",
+    "harvest_seed_dropped -> seed=92 x=76 y=44 source=plant_lifecycle parent=45 mode=harvest_drop",
+    "seed_germinated -> seed=82 species=wild_grain x=73 y=27 water=0.68 temp_k=297.0 oxygen=0.21 light=0.00 nutrients=0.79 depth_cm=2.6",
+    "seed_germinated -> seed=83 species=wild_grain x=91 y=47 water=0.69 temp_k=296.1 oxygen=0.21 light=0.00 nutrients=0.81 depth_cm=0.4",
+    "seed_germinated -> seed=84 species=wild_grain x=91 y=48 water=0.69 temp_k=296.1 oxygen=0.21 light=0.00 nutrients=0.81 depth_cm=0.8",
+    "seed_germinated -> seed=86 species=wild_grain x=76 y=42 water=0.69 temp_k=296.0 oxygen=0.21 light=0.00 nutrients=0.81 depth_cm=0.4",
+    "seed_germinated -> seed=87 species=wild_grain x=74 y=45 water=0.69 temp_k=296.0 oxygen=0.21 light=0.00 nutrients=0.81 depth_cm=0.5",
+    "seed_germinated -> seed=90 species=wild_grain x=75 y=25 water=0.69 temp_k=295.5 oxygen=0.21 light=0.00 nutrients=0.81 depth_cm=0.3",
+    "seed_germinated -> seed=91 species=wild_grain x=76 y=29 water=0.69 temp_k=295.5 oxygen=0.21 light=0.00 nutrients=0.81 depth_cm=0.6",
+    "plant_lifecycle_food_consumed -> agent=4 plant=55 x=73 y=27 energy=8 kind=raw_plant",
+    "plant_fruited -> seed=55 species=wild_grain x=73 y=27 energy=8 biomass=0.72 light=0.31",
+    "harvest_seed_dropped -> seed=93 x=73 y=27 source=plant_lifecycle parent=55 mode=harvest_drop",
+    "plant_fruited -> seed=45 species=wild_grain x=76 y=44 energy=8 biomass=0.72 light=0.37",
+    "plant_lifecycle_food_consumed -> agent=13 plant=45 x=76 y=44 energy=8 kind=raw_plant",
+    "seed_buried_by_disturbance -> seed=93 x=73 y=27 depth_cm=0.36 disturbance=0.96",
+    "harvest_seed_dropped -> seed=94 x=76 y=44 source=plant_lifecycle parent=45 mode=harvest_drop",
+    "plant_matured -> seed=22 species=wild_grain x=61 y=39 biomass=1.01 light=0.31 nutrients=0.79",
+    "seed_germinated -> seed=93 species=wild_grain x=73 y=27 water=0.72 temp_k=291.0 oxygen=0.21 light=0.00 nutrients=0.78 depth_cm=2.6",
+    "plant_lifecycle_food_consumed -> agent=13 plant=51 x=90 y=46 energy=9 kind=raw_plant",
+    "harvest_seed_dropped -> seed=95 x=90 y=46 source=plant_lifecycle parent=51 mode=harvest_drop",
+    "plant_lifecycle_food_decayed -> plant=3 x=76 y=27 energy=9 age_ticks=113",
+    "seed_buried_by_disturbance -> seed=65 x=71 y=27 depth_cm=0.31 disturbance=0.14",
+    "plant_lifecycle_food_consumed -> agent=13 plant=13 x=74 y=26 energy=9 kind=raw_plant",
+    "harvest_seed_dropped -> seed=96 x=74 y=26 source=plant_lifecycle parent=13 mode=harvest_drop",
+    "seed_buried_by_disturbance -> seed=74 x=73 y=28 depth_cm=0.41 disturbance=0.55",
+    "plant_lifecycle_food_decayed -> plant=68 x=74 y=27 energy=9 age_ticks=175",
+    "seed_buried_by_disturbance -> seed=79 x=71 y=28 depth_cm=0.31 disturbance=0.10",
+    "seed_germinated -> seed=65 species=wild_grain x=71 y=27 water=0.78 temp_k=292.1 oxygen=0.21 light=0.77 nutrients=0.81 depth_cm=4.1",
+    "seed_germinated -> seed=74 species=wild_grain x=73 y=28 water=0.78 temp_k=292.1 oxygen=0.21 light=0.77 nutrients=0.81 depth_cm=4.5",
+    "seed_germinated -> seed=79 species=wild_grain x=71 y=28 water=0.78 temp_k=292.1 oxygen=0.21 light=0.77 nutrients=0.81 depth_cm=0.6",
+    "seed_buried_by_disturbance -> seed=5 x=87 y=40 depth_cm=0.30 disturbance=0.05",
+    "plant_fruited -> seed=45 species=wild_grain x=76 y=44 energy=8 biomass=0.72 light=0.56",
+    "plant_fruited -> seed=3 species=wild_grain x=76 y=27 energy=8 biomass=0.77 light=0.47",
+    "plant_fruited -> seed=13 species=wild_grain x=74 y=26 energy=9 biomass=0.83 light=0.45",
+    "plant_fruited -> seed=51 species=wild_grain x=90 y=46 energy=8 biomass=0.72 light=0.50",
+    "seed_germinated -> seed=5 species=wild_grain x=87 y=40 water=0.73 temp_k=298.6 oxygen=0.21 light=0.90 nutrients=0.81 depth_cm=0.3",
+    "plant_died -> seed=3 species=wild_grain x=76 y=27 state=mature age_ticks=1028 reason=low_viability biomass=0.845 water=0.71 temp_k=297.3 light=0.00 nutrients=0.78 growth=0.000 mode=harvest_drop parent=-1",
+    "seed_buried_by_disturbance -> seed=85 x=90 y=45 depth_cm=0.31 disturbance=0.11",
+    "plant_lifecycle_food_consumed -> agent=21 plant=45 x=76 y=44 energy=8 kind=raw_plant",
+    "harvest_seed_dropped -> seed=97 x=76 y=44 source=plant_lifecycle parent=45 mode=harvest_drop",
+    "natural_seed_dropped -> seed=98 parent=22 x=61 y=37 mode=natural_drop depth_cm=0.11 distance=2",
+    "natural_seed_dropped -> seed=99 parent=22 x=62 y=40 mode=natural_drop depth_cm=0.24 distance=2",
+    "natural_seed_dropped -> seed=100 parent=22 x=61 y=38 mode=natural_drop depth_cm=0.65 distance=1",
+    "natural_seed_dropped -> seed=101 parent=55 x=73 y=30 mode=natural_drop depth_cm=0.63 distance=3",
+    "natural_seed_dropped -> seed=102 parent=55 x=74 y=25 mode=natural_drop depth_cm=0.44 distance=3",
+    "natural_seed_dropped -> seed=103 parent=55 x=75 y=28 mode=natural_drop depth_cm=0.15 distance=3",
+    "natural_seed_dropped -> seed=104 parent=13 x=74 y=29 mode=natural_drop depth_cm=0.17 distance=3",
+    "natural_seed_dropped -> seed=105 parent=13 x=72 y=26 mode=natural_drop depth_cm=0.57 distance=2",
+    "natural_seed_dropped -> seed=106 parent=13 x=72 y=25 mode=natural_drop depth_cm=0.55 distance=3",
+    "plant_fruited -> seed=45 species=wild_grain x=76 y=44 energy=8 biomass=0.72 light=0.55",
+    "natural_seed_dropped -> seed=107 parent=51 x=92 y=46 mode=natural_drop depth_cm=0.62 distance=2",
+    "natural_seed_dropped -> seed=108 parent=51 x=87 y=46 mode=natural_drop depth_cm=0.21 distance=3",
+    "natural_seed_dropped -> seed=109 parent=51 x=89 y=46 mode=natural_drop depth_cm=0.01 distance=1",
+    "natural_seed_dropped -> seed=110 parent=68 x=74 y=25 mode=natural_drop depth_cm=0.34 distance=2",
+    "natural_seed_dropped -> seed=111 parent=68 x=71 y=27 mode=natural_drop depth_cm=0.58 distance=3",
+    "natural_seed_dropped -> seed=112 parent=68 x=73 y=25 mode=natural_drop depth_cm=0.50 distance=3",
+    "plant_fruited -> seed=22 species=wild_grain x=61 y=39 energy=9 biomass=0.94 light=0.40",
+    "natural_seed_dropped -> seed=113 parent=45 x=77 y=44 mode=natural_drop depth_cm=0.62 distance=1",
+    "natural_seed_dropped -> seed=114 parent=45 x=75 y=42 mode=natural_drop depth_cm=0.76 distance=3",
+    "natural_seed_dropped -> seed=115 parent=45 x=76 y=46 mode=natural_drop depth_cm=0.79 distance=2",
+    "plant_lifecycle_food_consumed -> agent=21 plant=45 x=76 y=44 energy=8 kind=raw_plant",
+    "seed_germinated -> seed=85 species=wild_grain x=90 y=45 water=0.70 temp_k=297.4 oxygen=0.21 light=0.90 nutrients=0.81 depth_cm=0.6",
+    "seed_buried_by_disturbance -> seed=108 x=87 y=46 depth_cm=0.36 disturbance=0.45",
+    "seed_buried_by_disturbance -> seed=109 x=89 y=46 depth_cm=0.36 disturbance=0.96",
+    "harvest_seed_dropped -> seed=116 x=76 y=44 source=plant_lifecycle parent=45 mode=harvest_drop",
+    "plant_lifecycle_food_consumed -> agent=38 plant=55 x=73 y=27 energy=8 kind=raw_plant",
+    "plant_fruited -> seed=55 species=wild_grain x=73 y=27 energy=8 biomass=0.72 light=0.30",
+    "plant_fruited -> seed=68 species=wild_grain x=74 y=27 energy=9 biomass=1.04 light=0.36",
+    "harvest_seed_dropped -> seed=117 x=73 y=27 source=plant_lifecycle parent=55 mode=harvest_drop",
+    "plant_lifecycle_food_consumed -> agent=27 plant=22 x=61 y=39 energy=9 kind=raw_plant",
+    "harvest_seed_dropped -> seed=118 x=61 y=39 source=plant_lifecycle parent=22 mode=harvest_drop",
+    "seed_germinated -> seed=100 species=wild_grain x=61 y=38 water=0.69 temp_k=299.7 oxygen=0.21 light=0.90 nutrients=0.81 depth_cm=0.7",
+    "seed_germinated -> seed=101 species=wild_grain x=73 y=30 water=0.69 temp_k=299.7 oxygen=0.21 light=0.90 nutrients=0.81 depth_cm=0.6",
+    "seed_germinated -> seed=102 species=wild_grain x=74 y=25 water=0.69 temp_k=299.7 oxygen=0.21 light=0.90 nutrients=0.81 depth_cm=0.4",
+    "seed_germinated -> seed=105 species=wild_grain x=72 y=26 water=0.69 temp_k=299.8 oxygen=0.21 light=0.90 nutrients=0.81 depth_cm=0.6",
+    "seed_germinated -> seed=106 species=wild_grain x=72 y=25 water=0.69 temp_k=299.8 oxygen=0.21 light=0.90 nutrients=0.81 depth_cm=0.6",
+    "seed_germinated -> seed=107 species=wild_grain x=92 y=46 water=0.69 temp_k=299.8 oxygen=0.21 light=0.90 nutrients=0.81 depth_cm=0.6",
+    "seed_germinated -> seed=110 species=wild_grain x=74 y=25 water=0.69 temp_k=299.8 oxygen=0.21 light=0.86 nutrients=0.80 depth_cm=0.3",
+    "seed_germinated -> seed=111 species=wild_grain x=71 y=27 water=0.69 temp_k=299.8 oxygen=0.21 light=0.67 nutrients=0.80 depth_cm=0.6",
+    "seed_germinated -> seed=112 species=wild_grain x=73 y=25 water=0.69 temp_k=299.8 oxygen=0.21 light=0.90 nutrients=0.81 depth_cm=0.5",
+    "seed_germinated -> seed=108 species=wild_grain x=87 y=46 water=0.69 temp_k=299.9 oxygen=0.21 light=0.90 nutrients=0.81 depth_cm=2.2",
+    "seed_germinated -> seed=109 species=wild_grain x=89 y=46 water=0.69 temp_k=299.9 oxygen=0.21 light=0.90 nutrients=0.81 depth_cm=2.7",
+    "seed_germinated -> seed=113 species=wild_grain x=77 y=44 water=0.69 temp_k=299.9 oxygen=0.21 light=0.90 nutrients=0.81 depth_cm=0.7",
+    "seed_germinated -> seed=114 species=wild_grain x=75 y=42 water=0.69 temp_k=299.9 oxygen=0.21 light=0.90 nutrients=0.81 depth_cm=0.8",
+    "seed_germinated -> seed=115 species=wild_grain x=76 y=46 water=0.69 temp_k=299.9 oxygen=0.21 light=0.90 nutrients=0.81 depth_cm=0.8",
+    "seed_buried_by_disturbance -> seed=117 x=73 y=27 depth_cm=0.34 disturbance=0.22",
+    "plant_matured -> seed=44 species=wild_grain x=73 y=47 biomass=1.01 light=0.45 nutrients=0.79",
+    "plant_fruited -> seed=44 species=wild_grain x=73 y=47 energy=9 biomass=0.83 light=0.45",
+    "natural_seed_dropped -> seed=119 parent=44 x=72 y=47 mode=natural_drop depth_cm=0.12 distance=1",
+    "natural_seed_dropped -> seed=120 parent=44 x=75 y=47 mode=natural_drop depth_cm=0.28 distance=2",
+    "natural_seed_dropped -> seed=121 parent=44 x=71 y=47 mode=natural_drop depth_cm=0.26 distance=2",
+    "plant_matured -> seed=46 species=wild_grain x=75 y=49 biomass=1.01 light=0.45 nutrients=0.79",
+    "natural_seed_dropped -> seed=122 parent=46 x=77 y=48 mode=natural_drop depth_cm=0.13 distance=3",
+    "plant_lifecycle_food_consumed -> agent=15 plant=44 x=73 y=47 energy=9 kind=raw_plant",
+    "plant_matured -> seed=31 species=wild_grain x=87 y=22 biomass=1.01 light=0.45 nutrients=0.79",
+    "natural_seed_dropped -> seed=123 parent=31 x=86 y=23 mode=natural_drop depth_cm=0.71 distance=2",
+    "natural_seed_dropped -> seed=124 parent=31 x=87 y=21 mode=natural_drop depth_cm=0.14 distance=1",
+    "natural_seed_dropped -> seed=125 parent=31 x=88 y=22 mode=natural_drop depth_cm=0.28 distance=1",
+    "harvest_seed_dropped -> seed=126 x=73 y=47 source=plant_lifecycle parent=44 mode=harvest_drop",
+    "plant_matured -> seed=7 species=wild_grain x=87 y=37 biomass=1.00 light=0.45 nutrients=0.79",
+    "plant_fruited -> seed=31 species=wild_grain x=87 y=22 energy=9 biomass=0.84 light=0.44",
+    "plant_fruited -> seed=46 species=wild_grain x=75 y=49 energy=9 biomass=0.85 light=0.44",
+    "plant_lifecycle_food_consumed -> agent=15 plant=46 x=75 y=49 energy=9 kind=raw_plant",
+    "harvest_seed_dropped -> seed=127 x=75 y=49 source=plant_lifecycle parent=46 mode=harvest_drop",
+    "plant_lifecycle_food_consumed -> agent=28 plant=31 x=87 y=22 energy=9 kind=raw_plant",
+    "harvest_seed_dropped -> seed=128 x=87 y=22 source=plant_lifecycle parent=31 mode=harvest_drop",
+    "seed_buried_by_disturbance -> seed=103 x=75 y=28 depth_cm=0.31 disturbance=0.19",
+    "plant_died -> seed=13 species=wild_grain x=74 y=26 state=mature age_ticks=1021 reason=low_viability biomass=1.106 water=0.69 temp_k=296.6 light=0.00 nutrients=0.78 growth=0.000 mode=harvest_drop parent=-1",
+    "seed_germinated -> seed=117 species=wild_grain x=73 y=27 water=0.68 temp_k=296.0 oxygen=0.21 light=0.00 nutrients=0.76 depth_cm=1.9",
+    "plant_died -> seed=22 species=wild_grain x=61 y=39 state=mature age_ticks=1010 reason=low_viability biomass=1.011 water=0.68 temp_k=295.7 light=0.00 nutrients=0.78 growth=0.000 mode=harvest_drop parent=-1",
+    "seed_germinated -> seed=123 species=wild_grain x=86 y=23 water=0.69 temp_k=295.5 oxygen=0.21 light=0.00 nutrients=0.81 depth_cm=0.7",
+    "plant_lifecycle_food_consumed -> agent=21 plant=51 x=90 y=46 energy=8 kind=raw_plant",
+    "harvest_seed_dropped -> seed=129 x=90 y=46 source=plant_lifecycle parent=51 mode=harvest_drop",
+    "seed_germinated -> seed=103 species=wild_grain x=75 y=28 water=0.69 temp_k=295.2 oxygen=0.21 light=0.00 nutrients=0.79 depth_cm=1.1",
+    "natural_seed_dropped -> seed=130 parent=7 x=88 y=39 mode=natural_drop depth_cm=0.68 distance=3",
+    "natural_seed_dropped -> seed=131 parent=7 x=87 y=38 mode=natural_drop depth_cm=0.36 distance=1",
+    "natural_seed_dropped -> seed=132 parent=7 x=87 y=39 mode=natural_drop depth_cm=0.20 distance=2",
+    "plant_fruited -> seed=7 species=wild_grain x=87 y=37 energy=9 biomass=0.84 light=0.32",
+    "plant_fruited -> seed=45 species=wild_grain x=76 y=44 energy=8 biomass=0.74 light=0.32",
+    "plant_lifecycle_food_consumed -> agent=23 plant=45 x=76 y=44 energy=8 kind=raw_plant",
+    "plant_fruited -> seed=51 species=wild_grain x=90 y=46 energy=8 biomass=0.78 light=0.33",
+    "harvest_seed_dropped -> seed=133 x=76 y=44 source=plant_lifecycle parent=45 mode=harvest_drop",
+    "plant_lifecycle_food_consumed -> agent=14 plant=7 x=87 y=37 energy=9 kind=raw_plant",
+    "plant_fruited -> seed=44 species=wild_grain x=73 y=47 energy=8 biomass=0.72 light=0.39",
+    "harvest_seed_dropped -> seed=134 x=87 y=37 source=plant_lifecycle parent=7 mode=harvest_drop",
+    "plant_matured -> seed=25 species=wild_grain x=73 y=26 biomass=1.00 light=0.33 nutrients=0.79",
+    "plant_matured -> seed=8 species=wild_grain x=91 y=39 biomass=1.00 light=0.32 nutrients=0.79",
+    "seed_buried_by_disturbance -> seed=10 x=89 y=48 depth_cm=0.34 disturbance=0.19",
+    "seed_germinated -> seed=130 species=wild_grain x=88 y=39 water=0.73 temp_k=292.0 oxygen=0.21 light=0.64 nutrients=0.81 depth_cm=0.7",
+    "seed_germinated -> seed=131 species=wild_grain x=87 y=38 water=0.73 temp_k=292.0 oxygen=0.21 light=0.64 nutrients=0.81 depth_cm=0.4",
+    "seed_germinated -> seed=10 species=wild_grain x=89 y=48 water=0.75 temp_k=289.1 oxygen=0.21 light=0.00 nutrients=0.81 depth_cm=0.4",
+    "plant_lifecycle_food_decayed -> plant=3 x=76 y=27 energy=8 age_ticks=95",
+    "plant_died -> seed=20 species=wild_grain x=91 y=49 state=sprout age_ticks=1110 reason=low_viability biomass=0.865 water=0.79 temp_k=283.4 light=0.06 nutrients=0.77 growth=0.000 mode=harvest_drop parent=-1",
+    "plant_lifecycle_food_decayed -> plant=44 x=73 y=47 energy=8 age_ticks=91",
+    "plant_died -> seed=24 species=wild_grain x=91 y=49 state=sprout age_ticks=1100 reason=low_viability biomass=0.860 water=0.81 temp_k=282.8 light=0.20 nutrients=0.77 growth=0.000 mode=harvest_drop parent=-1",
+    "plant_lifecycle_food_consumed -> agent=18 plant=13 x=74 y=26 energy=9 kind=raw_plant",
+    "harvest_seed_dropped -> seed=135 x=74 y=26 source=plant_lifecycle parent=13 mode=harvest_drop",
+    "seed_buried_by_disturbance -> seed=96 x=74 y=26 depth_cm=0.31 disturbance=0.07",
+    "seed_buried_by_disturbance -> seed=58 x=74 y=24 depth_cm=0.31 disturbance=0.09",
+    "seed_buried_by_disturbance -> seed=54 x=71 y=16 depth_cm=0.32 disturbance=0.13",
+    "plant_lifecycle_food_consumed -> agent=23 plant=51 x=90 y=46 energy=8 kind=raw_plant",
+    "harvest_seed_dropped -> seed=136 x=90 y=46 source=plant_lifecycle parent=51 mode=harvest_drop",
+    "seed_buried_by_disturbance -> seed=135 x=74 y=26 depth_cm=0.33 disturbance=0.15",
+    "plant_died -> seed=45 species=wild_grain x=76 y=44 state=mature age_ticks=1046 reason=low_viability biomass=0.845 water=0.83 temp_k=278.7 light=0.00 nutrients=0.77 growth=0.000 mode=harvest_drop parent=-1",
+    "plant_died -> seed=7 species=wild_grain x=87 y=37 state=mature age_ticks=1210 reason=low_viability biomass=0.831 water=0.83 temp_k=278.2 light=0.00 nutrients=0.79 growth=0.000 mode=harvest_drop parent=-1",
+    "seed_buried_by_disturbance -> seed=26 x=85 y=44 depth_cm=0.32 disturbance=0.19",
+    "plant_died -> seed=8 species=wild_grain x=91 y=39 state=mature age_ticks=1207 reason=low_viability biomass=1.003 water=0.83 temp_k=277.6 light=0.00 nutrients=0.79 growth=0.000 mode=harvest_drop parent=-1",
+    "plant_died -> seed=55 species=wild_grain x=73 y=27 state=mature age_ticks=1036 reason=low_viability biomass=0.694 water=0.82 temp_k=285.7 light=0.20 nutrients=0.74 growth=0.000 mode=harvest_drop parent=-1",
+    "plant_died -> seed=51 species=wild_grain x=90 y=46 state=mature age_ticks=1046 reason=low_viability biomass=0.733 water=0.80 temp_k=286.9 light=0.48 nutrients=0.78 growth=0.000 mode=harvest_drop parent=-1",
+    "plant_lifecycle_food_decayed -> plant=68 x=74 y=27 energy=9 age_ticks=209",
+    "plant_died -> seed=25 species=wild_grain x=73 y=26 state=mature age_ticks=1176 reason=low_viability biomass=0.987 water=0.79 temp_k=290.3 light=0.00 nutrients=0.79 growth=0.000 mode=harvest_drop parent=-1",
+    "plant_died -> seed=68 species=wild_grain x=74 y=27 state=mature age_ticks=1006 reason=low_viability biomass=1.202 water=0.78 temp_k=289.7 light=0.00 nutrients=0.78 growth=0.000 mode=harvest_drop parent=-1",
+    "plant_died -> seed=31 species=wild_grain x=87 y=22 state=mature age_ticks=1157 reason=low_viability biomass=0.837 water=0.78 temp_k=289.3 light=0.00 nutrients=0.79 growth=0.000 mode=harvest_drop parent=-1",
+    "plant_died -> seed=35 species=wild_grain x=97 y=24 state=sprout age_ticks=1147 reason=low_viability biomass=0.811 water=0.78 temp_k=288.6 light=0.00 nutrients=0.79 growth=0.000 mode=harvest_drop parent=-1",
+    "seed_germinated -> seed=96 species=wild_grain x=74 y=26 water=0.78 temp_k=291.2 oxygen=0.21 light=0.64 nutrients=0.78 depth_cm=2.9",
+    "seed_germinated -> seed=135 species=wild_grain x=74 y=26 water=0.78 temp_k=291.2 oxygen=0.21 light=0.64 nutrients=0.77 depth_cm=2.7",
+    "seed_germinated -> seed=26 species=wild_grain x=85 y=44 water=0.78 temp_k=292.1 oxygen=0.21 light=0.77 nutrients=0.81 depth_cm=0.6",
+    "seed_germinated -> seed=54 species=wild_grain x=71 y=16 water=0.78 temp_k=292.1 oxygen=0.21 light=0.77 nutrients=0.81 depth_cm=0.5",
+    "seed_germinated -> seed=58 species=wild_grain x=74 y=24 water=0.78 temp_k=292.1 oxygen=0.21 light=0.77 nutrients=0.81 depth_cm=3.1",
+    "plant_died -> seed=5 species=wild_grain x=87 y=40 state=sprout age_ticks=1297 reason=low_viability biomass=0.569 water=0.77 temp_k=289.6 light=0.00 nutrients=0.79 growth=0.000 mode=harvest_drop parent=-1",
+    "plant_fruited -> seed=44 species=wild_grain x=73 y=47 energy=8 biomass=0.72 light=0.54",
+    "plant_lifecycle_food_consumed -> agent=27 plant=46 x=75 y=49 energy=8 kind=raw_plant",
+    "plant_fruited -> seed=46 species=wild_grain x=75 y=49 energy=8 biomass=0.72 light=0.50",
+    "harvest_seed_dropped -> seed=137 x=75 y=49 source=plant_lifecycle parent=46 mode=harvest_drop",
+    "plant_lifecycle_food_consumed -> agent=27 plant=44 x=73 y=47 energy=8 kind=raw_plant",
+    "harvest_seed_dropped -> seed=138 x=73 y=47 source=plant_lifecycle parent=44 mode=harvest_drop",
+    "seed_buried_by_disturbance -> seed=132 x=87 y=39 depth_cm=0.33 disturbance=0.22",
+    "natural_seed_dropped -> seed=139 parent=46 x=75 y=48 mode=natural_drop depth_cm=0.76 distance=1",
+    "natural_seed_dropped -> seed=140 parent=46 x=75 y=49 mode=natural_drop depth_cm=0.05 distance=0",
+    "natural_seed_dropped -> seed=141 parent=46 x=74 y=47 mode=natural_drop depth_cm=0.78 distance=3",
+    "natural_seed_dropped -> seed=142 parent=44 x=73 y=48 mode=natural_drop depth_cm=0.44 distance=1",
+    "natural_seed_dropped -> seed=143 parent=44 x=75 y=46 mode=natural_drop depth_cm=0.60 distance=3",
+    "natural_seed_dropped -> seed=144 parent=44 x=74 y=46 mode=natural_drop depth_cm=0.23 distance=2",
+    "plant_died -> seed=44 species=wild_grain x=73 y=47 state=mature age_ticks=1163 reason=low_viability biomass=0.713 water=0.71 temp_k=298.2 light=0.00 nutrients=0.78 growth=0.000 mode=harvest_drop parent=-1",
+    "plant_died -> seed=10 species=wild_grain x=89 y=48 state=sprout age_ticks=1306 reason=low_viability biomass=0.209 water=0.71 temp_k=297.7 light=0.00 nutrients=0.80 growth=0.000 mode=harvest_drop parent=-1",
+    "plant_died -> seed=46 species=wild_grain x=75 y=49 state=mature age_ticks=1162 reason=low_viability biomass=0.710 water=0.70 temp_k=297.8 light=0.00 nutrients=0.78 growth=0.000 mode=harvest_drop parent=-1",
+    "seed_germinated -> seed=132 species=wild_grain x=87 y=39 water=0.71 temp_k=296.6 oxygen=0.21 light=0.00 nutrients=0.81 depth_cm=0.7",
+    "seed_germinated -> seed=139 species=wild_grain x=75 y=48 water=0.71 temp_k=296.1 oxygen=0.21 light=0.00 nutrients=0.81 depth_cm=0.8",
+    "seed_germinated -> seed=141 species=wild_grain x=74 y=47 water=0.71 temp_k=296.1 oxygen=0.21 light=0.00 nutrients=0.81 depth_cm=0.8",
+    "seed_germinated -> seed=142 species=wild_grain x=73 y=48 water=0.71 temp_k=295.9 oxygen=0.21 light=0.00 nutrients=0.81 depth_cm=0.4",
+    "seed_germinated -> seed=143 species=wild_grain x=75 y=46 water=0.71 temp_k=295.9 oxygen=0.21 light=0.00 nutrients=0.81 depth_cm=0.6",
+    "seed_buried_by_disturbance -> seed=43 x=83 y=24 depth_cm=0.31 disturbance=0.15",
+    "plant_lifecycle_food_consumed -> agent=39 plant=75 x=75 y=24 energy=9 kind=raw_plant",
+    "seed_germinated -> seed=43 species=wild_grain x=83 y=24 water=0.70 temp_k=297.4 oxygen=0.21 light=0.90 nutrients=0.81 depth_cm=1.0",
+    "plant_matured -> seed=73 species=wild_grain x=73 y=24 biomass=1.01 light=0.45 nutrients=0.79",
+    "natural_seed_dropped -> seed=145 parent=73 x=72 y=24 mode=natural_drop depth_cm=0.09 distance=1",
+    "natural_seed_dropped -> seed=146 parent=73 x=71 y=23 mode=natural_drop depth_cm=0.28 distance=3",
+    "natural_seed_dropped -> seed=147 parent=73 x=73 y=24 mode=natural_drop depth_cm=0.17 distance=0",
+    "plant_matured -> seed=75 species=wild_grain x=75 y=24 biomass=1.00 light=0.45 nutrients=0.79",
+    "plant_fruited -> seed=75 species=wild_grain x=75 y=24 energy=9 biomass=0.82 light=0.45",
+    "natural_seed_dropped -> seed=148 parent=75 x=73 y=23 mode=natural_drop depth_cm=0.08 distance=3",
+    "natural_seed_dropped -> seed=149 parent=75 x=75 y=25 mode=natural_drop depth_cm=0.52 distance=1",
+    "natural_seed_dropped -> seed=150 parent=75 x=75 y=26 mode=natural_drop depth_cm=0.77 distance=2",
+    "harvest_seed_dropped -> seed=151 x=75 y=24 source=plant_lifecycle parent=75 mode=harvest_drop",
+    "plant_matured -> seed=77 species=wild_grain x=77 y=27 biomass=1.01 light=0.45 nutrients=0.79",
+    "natural_seed_dropped -> seed=152 parent=77 x=77 y=26 mode=natural_drop depth_cm=0.23 distance=1",
+    "natural_seed_dropped -> seed=153 parent=77 x=79 y=26 mode=natural_drop depth_cm=0.54 distance=3",
+    "natural_seed_dropped -> seed=154 parent=77 x=77 y=27 mode=natural_drop depth_cm=0.79 distance=0",
+    "plant_fruited -> seed=77 species=wild_grain x=77 y=27 energy=9 biomass=0.85 light=0.44",
+    "plant_matured -> seed=83 species=wild_grain x=91 y=47 biomass=1.00 light=0.45 nutrients=0.79",
+    "natural_seed_dropped -> seed=155 parent=83 x=91 y=44 mode=natural_drop depth_cm=0.44 distance=3",
+    "natural_seed_dropped -> seed=156 parent=83 x=93 y=48 mode=natural_drop depth_cm=0.55 distance=3",
+    "natural_seed_dropped -> seed=157 parent=83 x=92 y=45 mode=natural_drop depth_cm=0.53 distance=3",
+    "plant_matured -> seed=84 species=wild_grain x=91 y=48 biomass=1.01 light=0.45 nutrients=0.79",
+    "natural_seed_dropped -> seed=158 parent=84 x=89 y=49 mode=natural_drop depth_cm=0.02 distance=3",
+    "natural_seed_dropped -> seed=159 parent=84 x=92 y=48 mode=natural_drop depth_cm=0.57 distance=1",
+    "natural_seed_dropped -> seed=160 parent=84 x=92 y=48 mode=natural_drop depth_cm=0.53 distance=1",
+    "plant_matured -> seed=86 species=wild_grain x=76 y=42 biomass=1.01 light=0.45 nutrients=0.79",
+    "natural_seed_dropped -> seed=161 parent=86 x=75 y=42 mode=natural_drop depth_cm=0.49 distance=1",
+    "natural_seed_dropped -> seed=162 parent=86 x=77 y=43 mode=natural_drop depth_cm=0.57 distance=2",
+    "natural_seed_dropped -> seed=163 parent=86 x=79 y=42 mode=natural_drop depth_cm=0.31 distance=3",
+    "plant_matured -> seed=90 species=wild_grain x=75 y=25 biomass=1.01 light=0.45 nutrients=0.79",
+    "natural_seed_dropped -> seed=164 parent=90 x=76 y=27 mode=natural_drop depth_cm=0.27 distance=3",
+    "natural_seed_dropped -> seed=165 parent=90 x=74 y=27 mode=natural_drop depth_cm=0.07 distance=3",
+    "natural_seed_dropped -> seed=166 parent=90 x=72 y=25 mode=natural_drop depth_cm=0.77 distance=3",
+    "plant_matured -> seed=91 species=wild_grain x=76 y=29 biomass=1.00 light=0.45 nutrients=0.79",
+    "plant_fruited -> seed=91 species=wild_grain x=76 y=29 energy=9 biomass=0.82 light=0.45",
+    "plant_fruited -> seed=83 species=wild_grain x=91 y=47 energy=9 biomass=0.83 light=0.45",
+    "plant_fruited -> seed=86 species=wild_grain x=76 y=42 energy=9 biomass=0.84 light=0.45",
+    "plant_matured -> seed=87 species=wild_grain x=74 y=45 biomass=1.01 light=0.44 nutrients=0.79",
+    "natural_seed_dropped -> seed=167 parent=87 x=72 y=44 mode=natural_drop depth_cm=0.46 distance=3",
+    "natural_seed_dropped -> seed=168 parent=87 x=72 y=46 mode=natural_drop depth_cm=0.37 distance=3",
+    "natural_seed_dropped -> seed=169 parent=87 x=73 y=43 mode=natural_drop depth_cm=0.24 distance=3",
+    "natural_seed_dropped -> seed=170 parent=91 x=75 y=27 mode=natural_drop depth_cm=0.75 distance=3",
+    "natural_seed_dropped -> seed=171 parent=91 x=74 y=28 mode=natural_drop depth_cm=0.56 distance=3",
+    "natural_seed_dropped -> seed=172 parent=91 x=76 y=28 mode=natural_drop depth_cm=0.46 distance=1",
+    "plant_fruited -> seed=73 species=wild_grain x=73 y=24 energy=9 biomass=0.89 light=0.42",
+    "plant_fruited -> seed=84 species=wild_grain x=91 y=48 energy=9 biomass=0.87 light=0.43",
+    "seed_buried_by_disturbance -> seed=152 x=77 y=26 depth_cm=0.32 disturbance=0.22",
+    "plant_fruited -> seed=87 species=wild_grain x=74 y=45 energy=9 biomass=0.87 light=0.42",
+    "plant_lifecycle_food_consumed -> agent=49 plant=77 x=77 y=27 energy=9 kind=raw_plant",
+    "harvest_seed_dropped -> seed=173 x=77 y=27 source=plant_lifecycle parent=77 mode=harvest_drop",
+    "plant_lifecycle_food_consumed -> agent=3 plant=90 x=75 y=25 energy=9 kind=raw_plant",
+    "plant_matured -> seed=81 species=wild_grain x=75 y=28 biomass=1.00 light=0.28 nutrients=0.78",
+    "plant_fruited -> seed=90 species=wild_grain x=75 y=25 energy=9 biomass=0.92 light=0.41",
+    "harvest_seed_dropped -> seed=174 x=75 y=25 source=plant_lifecycle parent=90 mode=harvest_drop",
+    "plant_lifecycle_food_consumed -> agent=39 plant=73 x=73 y=24 energy=9 kind=raw_plant",
+    "harvest_seed_dropped -> seed=175 x=73 y=24 source=plant_lifecycle parent=73 mode=harvest_drop",
+    "plant_matured -> seed=74 species=wild_grain x=73 y=28 biomass=1.01 light=0.45 nutrients=0.79",
+    "natural_seed_dropped -> seed=176 parent=74 x=73 y=30 mode=natural_drop depth_cm=0.05 distance=2",
+    "natural_seed_dropped -> seed=177 parent=74 x=72 y=28 mode=natural_drop depth_cm=0.55 distance=1",
+    "natural_seed_dropped -> seed=178 parent=74 x=74 y=29 mode=natural_drop depth_cm=0.08 distance=2",
+    "plant_matured -> seed=79 species=wild_grain x=71 y=28 biomass=1.00 light=0.45 nutrients=0.79",
+    "natural_seed_dropped -> seed=179 parent=79 x=69 y=28 mode=natural_drop depth_cm=0.33 distance=2",
+    "natural_seed_dropped -> seed=180 parent=79 x=74 y=28 mode=natural_drop depth_cm=0.17 distance=3",
+    "natural_seed_dropped -> seed=181 parent=79 x=70 y=29 mode=natural_drop depth_cm=0.00 distance=2",
+    "seed_germinated -> seed=149 species=wild_grain x=75 y=25 water=0.69 temp_k=299.9 oxygen=0.21 light=0.52 nutrients=0.79 depth_cm=0.5",
+    "seed_germinated -> seed=150 species=wild_grain x=75 y=26 water=0.69 temp_k=299.9 oxygen=0.21 light=0.20 nutrients=0.77 depth_cm=0.8",
+    "seed_buried_by_disturbance -> seed=120 x=75 y=47 depth_cm=0.30 disturbance=0.06",
+    "seed_germinated -> seed=153 species=wild_grain x=79 y=26 water=0.69 temp_k=300.0 oxygen=0.21 light=0.90 nutrients=0.81 depth_cm=0.5",
+    "seed_germinated -> seed=154 species=wild_grain x=77 y=27 water=0.69 temp_k=300.0 oxygen=0.21 light=0.49 nutrients=0.79 depth_cm=0.8",
+    "seed_germinated -> seed=155 species=wild_grain x=91 y=44 water=0.69 temp_k=299.3 oxygen=0.21 light=0.00 nutrients=0.81 depth_cm=0.4",
+    "seed_germinated -> seed=156 species=wild_grain x=93 y=48 water=0.69 temp_k=299.3 oxygen=0.21 light=0.00 nutrients=0.81 depth_cm=0.5",
+    "seed_germinated -> seed=157 species=wild_grain x=92 y=45 water=0.69 temp_k=299.3 oxygen=0.21 light=0.00 nutrients=0.81 depth_cm=0.5",
+    "seed_germinated -> seed=159 species=wild_grain x=92 y=48 water=0.69 temp_k=299.3 oxygen=0.21 light=0.00 nutrients=0.81 depth_cm=0.6",
+    "seed_germinated -> seed=160 species=wild_grain x=92 y=48 water=0.69 temp_k=299.3 oxygen=0.21 light=0.00 nutrients=0.80 depth_cm=0.5",
+    "seed_germinated -> seed=161 species=wild_grain x=75 y=42 water=0.69 temp_k=299.3 oxygen=0.21 light=0.00 nutrients=0.79 depth_cm=1.1",
+    "seed_germinated -> seed=162 species=wild_grain x=77 y=43 water=0.69 temp_k=299.3 oxygen=0.21 light=0.00 nutrients=0.81 depth_cm=0.6",
+    "seed_germinated -> seed=163 species=wild_grain x=79 y=42 water=0.69 temp_k=299.3 oxygen=0.21 light=0.00 nutrients=0.81 depth_cm=0.3",
+    "seed_germinated -> seed=166 species=wild_grain x=72 y=25 water=0.69 temp_k=299.3 oxygen=0.21 light=0.00 nutrients=0.79 depth_cm=0.8",
+    "seed_germinated -> seed=167 species=wild_grain x=72 y=44 water=0.69 temp_k=298.7 oxygen=0.21 light=0.00 nutrients=0.81 depth_cm=0.5",
+    "seed_germinated -> seed=168 species=wild_grain x=72 y=46 water=0.69 temp_k=298.7 oxygen=0.21 light=0.00 nutrients=0.81 depth_cm=0.4",
+    "seed_germinated -> seed=170 species=wild_grain x=75 y=27 water=0.69 temp_k=298.7 oxygen=0.21 light=0.00 nutrients=0.81 depth_cm=0.8",
+    "seed_germinated -> seed=171 species=wild_grain x=74 y=28 water=0.69 temp_k=298.7 oxygen=0.21 light=0.00 nutrients=0.81 depth_cm=0.6",
+    "seed_germinated -> seed=172 species=wild_grain x=76 y=28 water=0.69 temp_k=298.7 oxygen=0.21 light=0.00 nutrients=0.81 depth_cm=0.5",
+    "seed_germinated -> seed=152 species=wild_grain x=77 y=26 water=0.69 temp_k=297.7 oxygen=0.21 light=0.00 nutrients=0.81 depth_cm=0.5",
+    "seed_buried_by_disturbance -> seed=180 x=74 y=28 depth_cm=0.30 disturbance=0.12",
+    "seed_germinated -> seed=120 species=wild_grain x=75 y=47 water=0.69 temp_k=295.7 oxygen=0.21 light=0.00 nutrients=0.81 depth_cm=0.5",
+    "seed_germinated -> seed=177 species=wild_grain x=72 y=28 water=0.69 temp_k=295.7 oxygen=0.21 light=0.00 nutrients=0.81 depth_cm=0.5",
+    "seed_germinated -> seed=179 species=wild_grain x=69 y=28 water=0.69 temp_k=295.7 oxygen=0.21 light=0.00 nutrients=0.81 depth_cm=0.3",
+    "plant_lifecycle_food_consumed -> agent=7 plant=83 x=91 y=47 energy=9 kind=raw_plant",
+    "harvest_seed_dropped -> seed=182 x=91 y=47 source=plant_lifecycle parent=83 mode=harvest_drop",
+    "seed_buried_by_disturbance -> seed=173 x=77 y=27 depth_cm=0.30 disturbance=0.15",
+    "plant_lifecycle_food_consumed -> agent=2 plant=74 x=73 y=28 energy=9 kind=raw_plant",
+    "plant_lifecycle_food_consumed -> agent=49 plant=77 x=77 y=27 energy=8 kind=raw_plant",
+    "plant_fruited -> seed=74 species=wild_grain x=73 y=28 energy=9 biomass=0.84 light=0.32",
+    "plant_fruited -> seed=75 species=wild_grain x=75 y=24 energy=8 biomass=0.74 light=0.34",
+    "plant_fruited -> seed=77 species=wild_grain x=77 y=27 energy=8 biomass=0.72 light=0.33",
+    "seed_germinated -> seed=180 species=wild_grain x=74 y=28 water=0.70 temp_k=294.6 oxygen=0.21 light=0.62 nutrients=0.80 depth_cm=0.6",
+    "harvest_seed_dropped -> seed=183 x=73 y=28 source=plant_lifecycle parent=74 mode=harvest_drop",
+    "harvest_seed_dropped -> seed=184 x=77 y=27 source=plant_lifecycle parent=77 mode=harvest_drop",
+    "plant_lifecycle_food_consumed -> agent=46 plant=90 x=75 y=25 energy=8 kind=raw_plant",
+    "plant_fruited -> seed=90 species=wild_grain x=75 y=25 energy=8 biomass=0.72 light=0.33",
+    "harvest_seed_dropped -> seed=185 x=75 y=25 source=plant_lifecycle parent=90 mode=harvest_drop",
+    "plant_lifecycle_food_consumed -> agent=2 plant=75 x=75 y=24 energy=8 kind=raw_plant",
+    "harvest_seed_dropped -> seed=186 x=75 y=24 source=plant_lifecycle parent=75 mode=harvest_drop",
+    "plant_lifecycle_food_consumed -> agent=7 plant=83 x=91 y=47 energy=8 kind=raw_plant",
+    "plant_fruited -> seed=83 species=wild_grain x=91 y=47 energy=8 biomass=0.72 light=0.35",
+    "harvest_seed_dropped -> seed=187 x=91 y=47 source=plant_lifecycle parent=83 mode=harvest_drop",
+    "plant_lifecycle_food_consumed -> agent=19 plant=84 x=91 y=48 energy=9 kind=raw_plant",
+    "harvest_seed_dropped -> seed=188 x=91 y=48 source=plant_lifecycle parent=84 mode=harvest_drop",
+    "plant_lifecycle_food_consumed -> agent=19 plant=84 x=91 y=48 energy=8 kind=raw_plant",
+    "plant_fruited -> seed=84 species=wild_grain x=91 y=48 energy=8 biomass=0.73 light=0.34",
+    "seed_germinated -> seed=173 species=wild_grain x=77 y=27 water=0.70 temp_k=292.7 oxygen=0.21 light=0.34 nutrients=0.78 depth_cm=0.7",
+    "harvest_seed_dropped -> seed=189 x=91 y=48 source=plant_lifecycle parent=84 mode=harvest_drop",
+    "seed_buried_by_disturbance -> seed=184 x=77 y=27 depth_cm=0.31 disturbance=0.23",
+    "plant_fruited -> seed=73 species=wild_grain x=73 y=24 energy=8 biomass=0.80 light=0.32",
+    "plant_lifecycle_food_consumed -> agent=16 plant=73 x=73 y=24 energy=8 kind=raw_plant",
+    "harvest_seed_dropped -> seed=190 x=73 y=24 source=plant_lifecycle parent=73 mode=harvest_drop",
+    "seed_buried_by_disturbance -> seed=146 x=71 y=23 depth_cm=0.31 disturbance=0.06",
+    "plant_died -> seed=0 species=wild_grain x=76 y=36 state=seed age_ticks=1429 reason=low_viability biomass=0.000 water=0.73 temp_k=292.0 light=0.64 nutrients=0.81 growth=0.000 mode=harvest_drop parent=-1",
+    "plant_died -> seed=1 species=wild_grain x=90 y=39 state=seed age_ticks=1429 reason=low_viability biomass=0.000 water=0.74 temp_k=291.8 light=0.64 nutrients=0.81 growth=0.000 mode=harvest_drop parent=-1",
+    "plant_died -> seed=2 species=wild_grain x=84 y=33 state=seed age_ticks=1429 reason=low_viability biomass=0.000 water=0.74 temp_k=291.8 light=0.64 nutrients=0.81 growth=0.000 mode=harvest_drop parent=-1",
+    "plant_matured -> seed=85 species=wild_grain x=90 y=45 biomass=1.00 light=0.32 nutrients=0.79",
+    "seed_buried_by_disturbance -> seed=176 x=73 y=30 depth_cm=0.31 disturbance=0.07",
+    "seed_buried_by_disturbance -> seed=89 x=76 y=26 depth_cm=0.31 disturbance=0.08",
+    "seed_germinated -> seed=184 species=wild_grain x=77 y=27 water=0.72 temp_k=289.8 oxygen=0.21 light=0.00 nutrients=0.76 depth_cm=0.9",
+    "seed_germinated -> seed=146 species=wild_grain x=71 y=23 water=0.75 temp_k=287.9 oxygen=0.21 light=0.00 nutrients=0.81 depth_cm=0.3",
+    "plant_died -> seed=4 species=wild_grain x=81 y=37 state=seed age_ticks=1429 reason=low_viability biomass=0.000 water=0.75 temp_k=287.7 light=0.00 nutrients=0.81 growth=0.000 mode=harvest_drop parent=-1",
+    "seed_germinated -> seed=176 species=wild_grain x=73 y=30 water=0.75 temp_k=286.8 oxygen=0.21 light=0.00 nutrients=0.79 depth_cm=0.3",
+    "seed_germinated -> seed=89 species=wild_grain x=76 y=26 water=0.76 temp_k=286.4 oxygen=0.21 light=0.00 nutrients=0.81 depth_cm=0.5",
+    "plant_lifecycle_food_decayed -> plant=87 x=74 y=45 energy=9 age_ticks=70",
+    "seed_buried_by_disturbance -> seed=52 x=75 y=14 depth_cm=0.31 disturbance=0.05",
+    "plant_died -> seed=6 species=wild_grain x=96 y=39 state=seed age_ticks=1429 reason=low_viability biomass=0.000 water=0.76 temp_k=288.5 light=0.64 nutrients=0.81 growth=0.000 mode=harvest_drop parent=-1",
+    "seed_germinated -> seed=52 species=wild_grain x=75 y=14 water=0.77 temp_k=290.8 oxygen=0.21 light=0.64 nutrients=0.81 depth_cm=0.3",
+    "plant_died -> seed=9 species=wild_grain x=92 y=40 state=seed age_ticks=1429 reason=low_viability biomass=0.000 water=0.77 temp_k=290.9 light=0.64 nutrients=0.81 growth=0.000 mode=harvest_drop parent=-1",
+    "plant_lifecycle_food_decayed -> plant=91 x=76 y=29 energy=9 age_ticks=98",
+    "plant_died -> seed=11 species=wild_grain x=84 y=21 state=seed age_ticks=1429 reason=low_viability biomass=0.000 water=0.77 temp_k=287.4 light=0.00 nutrients=0.81 growth=0.000 mode=harvest_drop parent=-1",
+    "seed_buried_by_disturbance -> seed=183 x=73 y=28 depth_cm=0.34 disturbance=0.46",
+    "plant_died -> seed=12 species=wild_grain x=82 y=38 state=seed age_ticks=1429 reason=low_viability biomass=0.000 water=0.77 temp_k=286.5 light=0.00 nutrients=0.81 growth=0.000 mode=harvest_drop parent=-1",
+    "plant_died -> seed=14 species=wild_grain x=84 y=42 state=seed age_ticks=1429 reason=low_viability biomass=0.000 water=0.77 temp_k=286.2 light=0.00 nutrients=0.81 growth=0.000 mode=harvest_drop parent=-1",
+    "plant_died -> seed=15 species=wild_grain x=80 y=24 state=seed age_ticks=1429 reason=low_viability biomass=0.000 water=0.77 temp_k=286.2 light=0.00 nutrients=0.81 growth=0.000 mode=harvest_drop parent=-1",
+    "seed_buried_by_disturbance -> seed=147 x=73 y=24 depth_cm=0.30 disturbance=0.18",
+    "seed_buried_by_disturbance -> seed=151 x=75 y=24 depth_cm=0.30 disturbance=0.47",
+    "seed_buried_by_disturbance -> seed=186 x=75 y=24 depth_cm=0.33 disturbance=0.44",
+    "seed_germinated -> seed=183 species=wild_grain x=73 y=28 water=0.77 temp_k=285.6 oxygen=0.21 light=0.23 nutrients=0.79 depth_cm=2.3",
+    "plant_died -> seed=16 species=wild_grain x=83 y=34 state=seed age_ticks=1429 reason=low_viability biomass=0.000 water=0.78 temp_k=284.5 light=0.41 nutrients=0.81 growth=0.000 mode=harvest_drop parent=-1",
+    "plant_died -> seed=17 species=wild_grain x=82 y=21 state=seed age_ticks=1429 reason=low_viability biomass=0.000 water=0.78 temp_k=284.3 light=0.41 nutrients=0.81 growth=0.000 mode=harvest_drop parent=-1",
+    "plant_died -> seed=18 species=wild_grain x=80 y=41 state=seed age_ticks=1429 reason=low_viability biomass=0.000 water=0.79 temp_k=283.7 light=0.41 nutrients=0.81 growth=0.000 mode=harvest_drop parent=-1",
+    "plant_died -> seed=19 species=wild_grain x=91 y=28 state=seed age_ticks=1429 reason=low_viability biomass=0.000 water=0.79 temp_k=283.7 light=0.41 nutrients=0.81 growth=0.000 mode=harvest_drop parent=-1",
+    "plant_died -> seed=21 species=wild_grain x=85 y=13 state=seed age_ticks=1429 reason=low_viability biomass=0.000 water=0.79 temp_k=283.4 light=0.41 nutrients=0.81 growth=0.000 mode=harvest_drop parent=-1",
+    "plant_lifecycle_food_decayed -> plant=86 x=76 y=42 energy=9 age_ticks=125",
+    "plant_died -> seed=23 species=wild_grain x=78 y=27 state=seed age_ticks=1429 reason=low_viability biomass=0.000 water=0.80 temp_k=282.9 light=0.41 nutrients=0.81 growth=0.000 mode=harvest_drop parent=-1",
+    "plant_died -> seed=26 species=wild_grain x=85 y=44 state=sprout age_ticks=1404 reason=low_viability biomass=0.709 water=0.81 temp_k=282.7 light=0.27 nutrients=0.79 growth=0.000 mode=harvest_drop parent=-1",
+    "plant_died -> seed=65 species=wild_grain x=71 y=27 state=sprout age_ticks=1253 reason=low_viability biomass=0.935 water=0.81 temp_k=279.3 light=0.00 nutrients=0.77 growth=0.000 mode=harvest_drop parent=-1",
+    "seed_buried_by_disturbance -> seed=59 x=77 y=34 depth_cm=0.31 disturbance=0.07",
+    "seed_buried_by_disturbance -> seed=27 x=73 y=33 depth_cm=0.31 disturbance=0.12",
+    "plant_died -> seed=27 species=wild_grain x=73 y=33 state=seed age_ticks=1429 reason=low_viability biomass=0.000 water=0.82 temp_k=280.6 light=0.41 nutrients=0.81 growth=0.000 mode=harvest_drop parent=-1"
+  ],
+  "event_samples_by_kind": {
+    "harvest_seed_dropped": [
+      "harvest_seed_dropped -> seed=0 x=76 y=36 source=wild_plant parent=-1 mode=harvest_drop",
+      "harvest_seed_dropped -> seed=1 x=90 y=39 source=wild_plant parent=-1 mode=harvest_drop",
+      "harvest_seed_dropped -> seed=2 x=84 y=33 source=wild_plant parent=-1 mode=harvest_drop",
+      "harvest_seed_dropped -> seed=3 x=76 y=27 source=wild_plant parent=-1 mode=harvest_drop",
+      "harvest_seed_dropped -> seed=4 x=81 y=37 source=wild_plant parent=-1 mode=harvest_drop",
+      "harvest_seed_dropped -> seed=5 x=87 y=40 source=wild_plant parent=-1 mode=harvest_drop"
+    ],
+    "natural_seed_dropped": [
+      "natural_seed_dropped -> seed=73 parent=13 x=73 y=24 mode=natural_drop depth_cm=0.29 distance=3",
+      "natural_seed_dropped -> seed=74 parent=13 x=73 y=28 mode=natural_drop depth_cm=0.01 distance=3",
+      "natural_seed_dropped -> seed=75 parent=13 x=75 y=24 mode=natural_drop depth_cm=0.54 distance=3",
+      "natural_seed_dropped -> seed=76 parent=68 x=75 y=26 mode=natural_drop depth_cm=0.14 distance=2",
+      "natural_seed_dropped -> seed=77 parent=68 x=77 y=27 mode=natural_drop depth_cm=0.30 distance=3",
+      "natural_seed_dropped -> seed=78 parent=68 x=72 y=28 mode=natural_drop depth_cm=0.19 distance=3"
+    ],
+    "plant_died": [
+      "plant_died -> seed=3 species=wild_grain x=76 y=27 state=mature age_ticks=1028 reason=low_viability biomass=0.845 water=0.71 temp_k=297.3 light=0.00 nutrients=0.78 growth=0.000 mode=harvest_drop parent=-1",
+      "plant_died -> seed=13 species=wild_grain x=74 y=26 state=mature age_ticks=1021 reason=low_viability biomass=1.106 water=0.69 temp_k=296.6 light=0.00 nutrients=0.78 growth=0.000 mode=harvest_drop parent=-1",
+      "plant_died -> seed=22 species=wild_grain x=61 y=39 state=mature age_ticks=1010 reason=low_viability biomass=1.011 water=0.68 temp_k=295.7 light=0.00 nutrients=0.78 growth=0.000 mode=harvest_drop parent=-1",
+      "plant_died -> seed=20 species=wild_grain x=91 y=49 state=sprout age_ticks=1110 reason=low_viability biomass=0.865 water=0.79 temp_k=283.4 light=0.06 nutrients=0.77 growth=0.000 mode=harvest_drop parent=-1",
+      "plant_died -> seed=24 species=wild_grain x=91 y=49 state=sprout age_ticks=1100 reason=low_viability biomass=0.860 water=0.81 temp_k=282.8 light=0.20 nutrients=0.77 growth=0.000 mode=harvest_drop parent=-1",
+      "plant_died -> seed=45 species=wild_grain x=76 y=44 state=mature age_ticks=1046 reason=low_viability biomass=0.845 water=0.83 temp_k=278.7 light=0.00 nutrients=0.77 growth=0.000 mode=harvest_drop parent=-1"
+    ],
+    "plant_fruited": [
+      "plant_fruited -> seed=13 species=wild_grain x=74 y=26 energy=9 biomass=0.83 light=0.41",
+      "plant_fruited -> seed=68 species=wild_grain x=74 y=27 energy=9 biomass=0.86 light=0.44",
+      "plant_fruited -> seed=55 species=wild_grain x=73 y=27 energy=9 biomass=0.86 light=0.44",
+      "plant_fruited -> seed=51 species=wild_grain x=90 y=46 energy=9 biomass=0.82 light=0.45",
+      "plant_fruited -> seed=45 species=wild_grain x=76 y=44 energy=9 biomass=0.82 light=0.45",
+      "plant_fruited -> seed=3 species=wild_grain x=76 y=27 energy=9 biomass=0.83 light=0.45"
+    ],
+    "plant_lifecycle_food_consumed": [
+      "plant_lifecycle_food_consumed -> agent=4 plant=55 x=73 y=27 energy=9 kind=raw_plant",
+      "plant_lifecycle_food_consumed -> agent=13 plant=45 x=76 y=44 energy=9 kind=raw_plant",
+      "plant_lifecycle_food_consumed -> agent=4 plant=55 x=73 y=27 energy=8 kind=raw_plant",
+      "plant_lifecycle_food_consumed -> agent=13 plant=45 x=76 y=44 energy=8 kind=raw_plant",
+      "plant_lifecycle_food_consumed -> agent=13 plant=51 x=90 y=46 energy=9 kind=raw_plant",
+      "plant_lifecycle_food_consumed -> agent=13 plant=13 x=74 y=26 energy=9 kind=raw_plant"
+    ],
+    "plant_lifecycle_food_decayed": [
+      "plant_lifecycle_food_decayed -> plant=3 x=76 y=27 energy=9 age_ticks=113",
+      "plant_lifecycle_food_decayed -> plant=68 x=74 y=27 energy=9 age_ticks=175",
+      "plant_lifecycle_food_decayed -> plant=3 x=76 y=27 energy=8 age_ticks=95",
+      "plant_lifecycle_food_decayed -> plant=44 x=73 y=47 energy=8 age_ticks=91",
+      "plant_lifecycle_food_decayed -> plant=68 x=74 y=27 energy=9 age_ticks=209",
+      "plant_lifecycle_food_decayed -> plant=87 x=74 y=45 energy=9 age_ticks=70"
+    ],
+    "plant_matured": [
+      "plant_matured -> seed=13 species=wild_grain x=74 y=26 biomass=1.00 light=0.41 nutrients=0.79",
+      "plant_matured -> seed=68 species=wild_grain x=74 y=27 biomass=1.00 light=0.45 nutrients=0.79",
+      "plant_matured -> seed=55 species=wild_grain x=73 y=27 biomass=1.00 light=0.45 nutrients=0.79",
+      "plant_matured -> seed=51 species=wild_grain x=90 y=46 biomass=1.00 light=0.45 nutrients=0.79",
+      "plant_matured -> seed=45 species=wild_grain x=76 y=44 biomass=1.00 light=0.45 nutrients=0.79",
+      "plant_matured -> seed=3 species=wild_grain x=76 y=27 biomass=1.00 light=0.45 nutrients=0.79"
+    ],
+    "seed_buried_by_disturbance": [
+      "seed_buried_by_disturbance -> seed=13 x=74 y=26 depth_cm=0.30 disturbance=0.15",
+      "seed_buried_by_disturbance -> seed=3 x=76 y=27 depth_cm=0.31 disturbance=0.05",
+      "seed_buried_by_disturbance -> seed=22 x=61 y=39 depth_cm=0.31 disturbance=0.11",
+      "seed_buried_by_disturbance -> seed=20 x=91 y=49 depth_cm=0.31 disturbance=0.18",
+      "seed_buried_by_disturbance -> seed=24 x=91 y=49 depth_cm=0.31 disturbance=0.18",
+      "seed_buried_by_disturbance -> seed=45 x=76 y=44 depth_cm=0.33 disturbance=0.17"
+    ],
+    "seed_germinated": [
+      "seed_germinated -> seed=13 species=wild_grain x=74 y=26 water=0.66 temp_k=296.6 oxygen=0.21 light=0.65 nutrients=0.81 depth_cm=0.7",
+      "seed_germinated -> seed=3 species=wild_grain x=76 y=27 water=0.75 temp_k=286.6 oxygen=0.21 light=0.00 nutrients=0.81 depth_cm=0.3",
+      "seed_germinated -> seed=22 species=wild_grain x=61 y=39 water=0.77 temp_k=287.6 oxygen=0.21 light=0.00 nutrients=0.81 depth_cm=0.7",
+      "seed_germinated -> seed=20 species=wild_grain x=91 y=49 water=0.68 temp_k=286.7 oxygen=0.21 light=0.00 nutrients=0.81 depth_cm=0.4",
+      "seed_germinated -> seed=24 species=wild_grain x=91 y=49 water=0.68 temp_k=286.7 oxygen=0.21 light=0.00 nutrients=0.80 depth_cm=0.4",
+      "seed_germinated -> seed=45 species=wild_grain x=76 y=44 water=0.74 temp_k=283.9 oxygen=0.21 light=0.39 nutrients=0.81 depth_cm=0.8"
+    ]
+  },
+  "sample_harvest_seed_dropped": [
+    "harvest_seed_dropped -> seed=0 x=76 y=36 source=wild_plant parent=-1 mode=harvest_drop",
+    "harvest_seed_dropped -> seed=1 x=90 y=39 source=wild_plant parent=-1 mode=harvest_drop",
+    "harvest_seed_dropped -> seed=2 x=84 y=33 source=wild_plant parent=-1 mode=harvest_drop",
+    "harvest_seed_dropped -> seed=3 x=76 y=27 source=wild_plant parent=-1 mode=harvest_drop",
+    "harvest_seed_dropped -> seed=4 x=81 y=37 source=wild_plant parent=-1 mode=harvest_drop",
+    "harvest_seed_dropped -> seed=5 x=87 y=40 source=wild_plant parent=-1 mode=harvest_drop"
+  ],
+  "sample_build_nest": [],
+  "sample_tend_food_patch": [],
+  "sample_plant_fruited": [
+    "plant_fruited -> seed=13 species=wild_grain x=74 y=26 energy=9 biomass=0.83 light=0.41",
+    "plant_fruited -> seed=68 species=wild_grain x=74 y=27 energy=9 biomass=0.86 light=0.44",
+    "plant_fruited -> seed=55 species=wild_grain x=73 y=27 energy=9 biomass=0.86 light=0.44",
+    "plant_fruited -> seed=51 species=wild_grain x=90 y=46 energy=9 biomass=0.82 light=0.45",
+    "plant_fruited -> seed=45 species=wild_grain x=76 y=44 energy=9 biomass=0.82 light=0.45",
+    "plant_fruited -> seed=3 species=wild_grain x=76 y=27 energy=9 biomass=0.83 light=0.45"
+  ],
+  "sample_natural_seed_dropped": [
+    "natural_seed_dropped -> seed=73 parent=13 x=73 y=24 mode=natural_drop depth_cm=0.29 distance=3",
+    "natural_seed_dropped -> seed=74 parent=13 x=73 y=28 mode=natural_drop depth_cm=0.01 distance=3",
+    "natural_seed_dropped -> seed=75 parent=13 x=75 y=24 mode=natural_drop depth_cm=0.54 distance=3",
+    "natural_seed_dropped -> seed=76 parent=68 x=75 y=26 mode=natural_drop depth_cm=0.14 distance=2",
+    "natural_seed_dropped -> seed=77 parent=68 x=77 y=27 mode=natural_drop depth_cm=0.30 distance=3",
+    "natural_seed_dropped -> seed=78 parent=68 x=72 y=28 mode=natural_drop depth_cm=0.19 distance=3"
+  ],
+  "sample_plant_died": [
+    "plant_died -> seed=3 species=wild_grain x=76 y=27 state=mature age_ticks=1028 reason=low_viability biomass=0.845 water=0.71 temp_k=297.3 light=0.00 nutrients=0.78 growth=0.000 mode=harvest_drop parent=-1",
+    "plant_died -> seed=13 species=wild_grain x=74 y=26 state=mature age_ticks=1021 reason=low_viability biomass=1.106 water=0.69 temp_k=296.6 light=0.00 nutrients=0.78 growth=0.000 mode=harvest_drop parent=-1",
+    "plant_died -> seed=22 species=wild_grain x=61 y=39 state=mature age_ticks=1010 reason=low_viability biomass=1.011 water=0.68 temp_k=295.7 light=0.00 nutrients=0.78 growth=0.000 mode=harvest_drop parent=-1",
+    "plant_died -> seed=20 species=wild_grain x=91 y=49 state=sprout age_ticks=1110 reason=low_viability biomass=0.865 water=0.79 temp_k=283.4 light=0.06 nutrients=0.77 growth=0.000 mode=harvest_drop parent=-1",
+    "plant_died -> seed=24 species=wild_grain x=91 y=49 state=sprout age_ticks=1100 reason=low_viability biomass=0.860 water=0.81 temp_k=282.8 light=0.20 nutrients=0.77 growth=0.000 mode=harvest_drop parent=-1",
+    "plant_died -> seed=45 species=wild_grain x=76 y=44 state=mature age_ticks=1046 reason=low_viability biomass=0.845 water=0.83 temp_k=278.7 light=0.00 nutrients=0.77 growth=0.000 mode=harvest_drop parent=-1"
+  ],
+  "sample_plant_lifecycle_food_consumed": [
+    "plant_lifecycle_food_consumed -> agent=4 plant=55 x=73 y=27 energy=9 kind=raw_plant",
+    "plant_lifecycle_food_consumed -> agent=13 plant=45 x=76 y=44 energy=9 kind=raw_plant",
+    "plant_lifecycle_food_consumed -> agent=4 plant=55 x=73 y=27 energy=8 kind=raw_plant",
+    "plant_lifecycle_food_consumed -> agent=13 plant=45 x=76 y=44 energy=8 kind=raw_plant",
+    "plant_lifecycle_food_consumed -> agent=13 plant=51 x=90 y=46 energy=9 kind=raw_plant",
+    "plant_lifecycle_food_consumed -> agent=13 plant=13 x=74 y=26 energy=9 kind=raw_plant"
+  ],
+  "sample_plant_lifecycle_food_decayed": [
+    "plant_lifecycle_food_decayed -> plant=3 x=76 y=27 energy=9 age_ticks=113",
+    "plant_lifecycle_food_decayed -> plant=68 x=74 y=27 energy=9 age_ticks=175",
+    "plant_lifecycle_food_decayed -> plant=3 x=76 y=27 energy=8 age_ticks=95",
+    "plant_lifecycle_food_decayed -> plant=44 x=73 y=47 energy=8 age_ticks=91",
+    "plant_lifecycle_food_decayed -> plant=68 x=74 y=27 energy=9 age_ticks=209",
+    "plant_lifecycle_food_decayed -> plant=87 x=74 y=45 energy=9 age_ticks=70"
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "objective": "Phase 3: test whether agent-displaced seeds causally enter the plant-food lifecycle.",
+  "phase3_pass": true,
+  "run_count": 3,
+  "passing_runs": 3,
+  "failure_count": 0,
+  "seeds": [
+    20260610,
+    20260611,
+    20260612
+  ],
+  "success_criteria": {
+    "min_passing_runs": 3,
+    "min_agent_moved_seed_count": 8,
+    "min_agent_moved_seed_completed_chains": 3,
+    "min_agent_moved_seed_chain_agents": 2,
+    "min_same_agent_seed_food_chains": 0,
+    "min_agent_moved_vs_control_completed_lift": 1.0
+  },
+  "mean_agent_moved_seed_count": 162.3333,
+  "mean_agent_moved_seed_completed_chains": 16.3333,
+  "mean_agent_moved_seed_chain_agents": 12.6667,
+  "mean_same_agent_seed_food_chains": 4.0,
+  "mean_agent_moved_vs_control_completed_lift": 1.3973,
+  "failures": []
+}

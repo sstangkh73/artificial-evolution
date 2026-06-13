@@ -168,7 +168,9 @@ class Agent:
                 self._wander(env, rng)
             self._handle_seed_primitive(env, rng)
 
-        self._consume_current_food(env)
+        consumed_food = self._consume_current_food(env)
+        if consumed_food or self.carried_seed_id is not None:
+            self._handle_seed_primitive(env, rng, food_contact=consumed_food)
 
         self._apply_environmental_danger(env, rng)
 
@@ -768,8 +770,8 @@ class Agent:
         self.instinct_state = "balanced"
         return True
 
-    def _handle_seed_primitive(self, env, rng: Random) -> None:
-        if self.energy <= HUNGER_CRITICAL_ENERGY:
+    def _handle_seed_primitive(self, env, rng: Random, food_contact: bool = False) -> None:
+        if self.energy <= HUNGER_CRITICAL_ENERGY and not food_contact and self.carried_seed_id is None:
             return
         if self.carried_seed_id is not None and self.carried_seed_id not in env.plant_seeds:
             self.carried_seed_id = None
@@ -777,6 +779,8 @@ class Agent:
             drop_chance = 0.08 + (self.body.curiosity * 0.04)
             if self.instinct_state in {"fear", "cold"}:
                 drop_chance += 0.12
+            if self.instinct_state == "hunger":
+                drop_chance += 0.06
             if rng.random() > drop_chance:
                 return
             burial_depth = 0.0
@@ -793,6 +797,8 @@ class Agent:
         if loose_seed is None:
             return
         pickup_chance = 0.015 + (self.body.curiosity * 0.05) + (self.body.gather_drive * 0.015)
+        if food_contact:
+            pickup_chance += 0.18 + (self.body.curiosity * 0.08) + (self.body.gather_drive * 0.025)
         if rng.random() > pickup_chance:
             return
         if env.pick_seed(loose_seed.seed_id, self.agent_id):

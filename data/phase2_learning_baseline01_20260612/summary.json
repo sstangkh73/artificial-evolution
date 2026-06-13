@@ -1,0 +1,26 @@
+{
+  "objective": "Phase 2: test reward-place learning from plant-lifecycle food without adding semantic farming instructions.",
+  "phase2_pass": true,
+  "run_count": 3,
+  "passing_runs": 3,
+  "failure_count": 0,
+  "seeds": [
+    20260610,
+    20260611,
+    20260612
+  ],
+  "success_criteria": {
+    "min_passing_runs": 3,
+    "min_plant_matured": 1,
+    "min_plant_fruited": 1,
+    "min_plant_food_consumed": 5,
+    "min_owner_revisited_rewards": 5,
+    "min_owner_revisit_agents": 2,
+    "min_owner_revisit_lift": 2.0
+  },
+  "mean_plant_food_consumed": 291.3333,
+  "mean_owner_revisited_reward_events": 269.6667,
+  "mean_owner_revisit_agents": 44.6667,
+  "mean_owner_revisit_lift": 61.3747,
+  "failures": []
+}

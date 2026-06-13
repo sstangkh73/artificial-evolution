@@ -1,0 +1,2 @@
+seed,phase3_pass,elapsed_seconds,tick,population,seed_picked,seed_dropped,plant_food_consumed,agent_moved_seed_count,agent_moved_seed_agents,agent_moved_seed_germinated,agent_moved_seed_matured,agent_moved_seed_fruited,agent_moved_seed_completed_chains,agent_moved_seed_food_events,agent_moved_seed_chain_agents,same_agent_seed_food_chains,control_seed_count,control_seed_completed_chains,agent_moved_completed_chain_rate,control_completed_chain_rate,agent_moved_vs_control_completed_lift
+20260610,False,60.004,2726,50,0,0,191,0,0,0,0,0,0,0,0,0,826,80,0.0,0.09685,0.0

@@ -1,0 +1,4 @@
+seed,phase2_pass,elapsed_seconds,tick,population,plant_matured,plant_fruited,plant_food_consumed,plant_food_decayed,parsed_reward_events,rewarded_agents,owner_revisited_reward_events,owner_revisited_reward_fraction,owner_revisit_agents,owner_revisit_tick_hits,owner_revisit_opportunities,random_expected_owner_hits,owner_revisit_lift,first_owner_revisit_tick
+20260610,True,90.003,3030,50,193,377,228,97,228,45,214,0.9386,45,50941,178762,732.924,69.504,790
+20260611,True,90.015,3087,50,203,398,205,143,205,41,194,0.94634,41,40951,164956,673.253,60.826,479
+20260612,True,90.041,3255,50,399,770,441,305,441,48,401,0.9093,48,74077,336666,1377.045,53.794,749
