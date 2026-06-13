@@ -22,7 +22,7 @@ from reportlab.platypus import (
 
 
 ROOT = Path(__file__).resolve().parents[1]
-OUT = ROOT / "รายงาน_Concept_Proposal.pdf"
+OUT = ROOT / "reports" / "proposal" / "รายงาน_Concept_Proposal.pdf"
 FLOWCHART = ROOT / "assets" / "population_continuity_flowchart.png"
 FONT_DIR = ROOT / "assets" / "fonts"
 
@@ -72,6 +72,7 @@ def add_page_number(canvas, doc) -> None:
 
 def build() -> None:
     register_fonts()
+    OUT.parent.mkdir(parents=True, exist_ok=True)
 
     doc = SimpleDocTemplate(
         str(OUT),

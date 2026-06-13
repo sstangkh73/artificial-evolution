@@ -12,9 +12,9 @@ This file maps the main paper-draft claims to the current evidence in the reposi
 ## Phase 1 Narrative
 
 - Phase 1 English summary:
-  - [C:/artificial-evolution/phase1_report/artificial_evolution_phase1_summary_en.pdf](C:/artificial-evolution/phase1_report/artificial_evolution_phase1_summary_en.pdf)
+  - [C:/artificial-evolution/reports/phase1/artificial_evolution_phase1_summary_en.pdf](C:/artificial-evolution/reports/phase1/artificial_evolution_phase1_summary_en.pdf)
 - Phase 1 Thai summary:
-  - [C:/artificial-evolution/phase1_report/artificial_evolution_phase1_summary_th.pdf](C:/artificial-evolution/phase1_report/artificial_evolution_phase1_summary_th.pdf)
+  - [C:/artificial-evolution/reports/phase1/artificial_evolution_phase1_summary_th.pdf](C:/artificial-evolution/reports/phase1/artificial_evolution_phase1_summary_th.pdf)
 - Phase 1 lineage-capable search result:
   - [C:/artificial-evolution/data/massive_lineage_search.md](C:/artificial-evolution/data/massive_lineage_search.md)
 - Canonical successful bodies:

@@ -236,5 +236,5 @@ Use these as the primary current references:
 - [data/experiment_history.json](/C:/artificial-evolution/data/experiment_history.json)
 - [data/experiments/experiment_026.md](/C:/artificial-evolution/data/experiments/experiment_026.md)
 - [data/experiments/experiment_031.md](/C:/artificial-evolution/data/experiments/experiment_031.md)
-- [phase1_report/artificial_evolution_phase1_summary_en.docx](/C:/artificial-evolution/phase1_report/artificial_evolution_phase1_summary_en.docx)
-- [phase1_report/artificial_evolution_phase1_summary_th.docx](/C:/artificial-evolution/phase1_report/artificial_evolution_phase1_summary_th.docx)
+- [reports/phase1/artificial_evolution_phase1_summary_en.docx](/C:/artificial-evolution/reports/phase1/artificial_evolution_phase1_summary_en.docx)
+- [reports/phase1/artificial_evolution_phase1_summary_th.docx](/C:/artificial-evolution/reports/phase1/artificial_evolution_phase1_summary_th.docx)

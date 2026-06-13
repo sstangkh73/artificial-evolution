@@ -8,7 +8,7 @@
 
 - โค้ดหลัก: `main.py`, `agents/agent.py`, `agents/body.py`, `world/environment.py`, `simulation/runner.py`, `simulation/research_artifacts.py`, `simulation/publication_artifacts.py`, `visualization/dashboard.py`
 - เอกสารสถานะและกติกา: `docs/CURRENT_STATE.md`, `docs/STABILITY_INVESTIGATION_LOG.md`, `docs/BUG_IMPACT_LOG.md`, `docs/PHASE2_ROADMAP.md`, `docs/WORLD_RULES.md`, `docs/BODY_SYSTEM.md`, `docs/TRAIT_SPACE.md`, `docs/TECH_TREE.md`, `docs/WORLD_PHYSICS_V2.md`
-- รายงานและ paper draft: `reports/paper_draft_2026-05-11/*`, `phase1_report/*`, โดยเฉพาะรายงานที่ปรึกษาและ update progress ล่าสุด
+- รายงานและ paper draft: `reports/manuscript/paper_draft_2026-05-11/*`, `reports/phase1/*`, โดยเฉพาะรายงานที่ปรึกษาและ update progress ล่าสุด
 - ผลทดลอง: `data/experiment_history.json`, `data/update_progress_log.*`, `data/latest_experiment_snapshot_2026-05-20.md`, `data/long_loop_iteration_01.*`, `data/long_loop_iteration_02_active_nest_support.*`, `data/founder_opt_250_*`, `data/publication_packages/experiment_047_publication_batch`, `data/publication_packages/experiment_048_robustness_sweep`
 - ไฟล์นอกแกน artificial-evolution เช่น `tmp_patch_lifespayback*.py`, `tmp_patch_distortium_save.py`, `utmt_*.csx`, `bodysmith_*` ถูกอ่านแบบจำแนกหมวดแล้ว พบว่าเป็นงาน patch/save-edit หรือ GameMaker/UTMT คนละสายกับปัญหา simulation หลัก จึงไม่นำมาใช้เป็นหลักฐานของคอขวด artificial-evolution
 
