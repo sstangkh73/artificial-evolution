@@ -588,6 +588,7 @@ def run_watch(args: argparse.Namespace) -> dict[str, object]:
         seed_drop_safe_fear_max=getattr(args, "seed_drop_safe_fear_max", 0.45),
         seed_drop_safe_cold_max=getattr(args, "seed_drop_safe_cold_max", 0.45),
         seed_drop_safe_safety_min=getattr(args, "seed_drop_safe_safety_min", 0.45),
+        metabolism_model=getattr(args, "metabolism_model", "v1"),
     )
     founder_sexes = ["male"] * (args.initial_population // 2) + ["female"] * (
         args.initial_population - (args.initial_population // 2)
@@ -2495,6 +2496,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--food-signal-radius-cap", type=int, default=None)
     parser.add_argument("--plant-lifecycle-food-signal-weight", type=float, default=1.35)
     parser.add_argument("--seed-hunger-drop-bonus", type=float, default=0.06)
+    parser.add_argument("--metabolism-model", choices=["v1", "v2"], default="v1")
     parser.add_argument("--seed-drop-block-critical-hunger", action=argparse.BooleanOptionalAction, default=False)
     parser.add_argument("--seed-drop-safe-window-only", action=argparse.BooleanOptionalAction, default=False)
     parser.add_argument("--seed-drop-safe-hunger-max", type=float, default=0.55)

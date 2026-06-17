@@ -18,6 +18,7 @@ from world.environment import (
     MATERIAL_STONE,
     MATERIAL_WOOD,
 )
+from world import metabolism
 
 MAX_AGE = 200
 INITIAL_ENERGY = 140
@@ -1222,7 +1223,26 @@ class Agent:
         return max(1, int(round((self.body.brain_units * 2) + (self.body.memory_retention * 5))))
 
     def _process_food_resource(self, env, resource) -> int:
-        return self._consume_processed_food(env, resource.kind, resource.energy)
+        base_energy = self._metabolic_base_energy(env, resource)
+        return self._consume_processed_food(env, resource.kind, base_energy)
+
+    def _metabolic_base_energy(self, env, resource) -> int:
+        """Base food energy before cooking/tool bonuses.
+
+        v1 (default): legacy fixed FOOD_ENERGY carried on the resource.
+        v2: composition x THIS body's enzyme_profile, so a body that cannot
+        chemically break down a nutrient gains nothing from it
+        (see world/metabolism.py). Gated by env.metabolism_model so v1 behavior
+        is unchanged. Note: v2 uses a fixed per-kind mass, so fruit-biomass
+        variation is not yet reflected (a later v2.x refinement).
+        """
+        if getattr(env, "metabolism_model", "v1") != "v2":
+            return resource.energy
+        composition = metabolism.COMPOSITION.get(resource.kind)
+        if composition is None:
+            return resource.energy
+        mass = metabolism.FOOD_MASS.get(resource.kind, 1.0)
+        return int(round(metabolism.digestible_energy(composition, mass, self.body.enzyme_profile)))
 
     def _consume_processed_food(self, env, food_kind: str, base_energy: int) -> int:
         cooked_kind = food_kind
