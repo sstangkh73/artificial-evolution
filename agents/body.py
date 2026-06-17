@@ -153,6 +153,14 @@ class BodyPlan:
     inherited_from_profiles: str = "generated"
     trait_mutation_count: int = 0
     morphology_mutation_count: int = 0
+    # Metabolism Physics v2 genes (heritable; defaults keep v1 behavior intact).
+    # See reports/metabolism_physics_v2_0_protocol_2026-06-15.th.md
+    gape: float = 5.0
+    gut_capacity: float = 8.0
+    gut_transit_ticks: int = 6
+    acid_strength: float = 0.4
+    cellulose_efficiency: float = 0.25
+    toxin_tolerance: float = 0.2
 
     @classmethod
     def from_archetype(
@@ -181,6 +189,22 @@ class BodyPlan:
             + self.armor_units * ARMOR_COST
             + self.brain_units * BRAIN_COST
         )
+
+    @property
+    def enzyme_profile(self) -> dict[str, float]:
+        """Digestive efficiency per nutrient, derived from heritable genes.
+
+        See reports/metabolism_physics_v2_0_protocol_2026-06-15.th.md. `shell`
+        is 0.0 here: seed coats are cracked by gut acid (acid_strength vs a
+        seed's shell_hardness, v2.2), not by enzymes.
+        """
+        return {
+            "sugar": 0.9,
+            "protein": 0.7 * self.meat_efficiency,
+            "fiber": self.cellulose_efficiency * self.plant_efficiency,
+            "shell": 0.0,
+            "water": 0.0,
+        }
 
     @property
     def sensor_vision(self) -> int:
