@@ -22,7 +22,7 @@ from simulation.runner import (
     _spawn_initial_positions,
     _update_social_groups,
 )
-from world.environment import Environment
+from world.environment import Environment, PLANT_SPECIES
 
 SAMPLED_EVENT_KINDS = {
     "build_nest",
@@ -93,6 +93,24 @@ def _event_int(event_text: str, field_name: str) -> int | None:
         return int(float(value))
     except ValueError:
         return None
+
+
+def _int_list(value: object, default: list[int] | None = None) -> list[int]:
+    if default is None:
+        default = []
+    if value is None:
+        return default
+    if isinstance(value, str):
+        values: list[int] = []
+        for item in value.split(","):
+            item = item.strip()
+            if not item:
+                continue
+            values.append(int(item))
+        return values or default
+    if isinstance(value, (list, tuple)):
+        return [int(item) for item in value]
+    return default
 
 
 def _numeric_summary(values: list[float]) -> dict[str, float | int]:
@@ -205,6 +223,150 @@ def _round_lift(numerator_rate: float, denominator_rate: float) -> float | None:
     if denominator_rate <= 0:
         return None
     return round(numerator_rate / denominator_rate, 3)
+
+
+def _manhattan(a: tuple[int, int], b: tuple[int, int]) -> int:
+    return abs(a[0] - b[0]) + abs(a[1] - b[1])
+
+
+def _seed_record_position(record: dict[str, object]) -> tuple[int, int] | None:
+    x_value = record.get("last_drop_x")
+    y_value = record.get("last_drop_y")
+    if isinstance(x_value, int) and isinstance(y_value, int):
+        return (x_value, y_value)
+    x_value = record.get("origin_x")
+    y_value = record.get("origin_y")
+    if isinstance(x_value, int) and isinstance(y_value, int):
+        return (x_value, y_value)
+    return None
+
+
+def _seed_completed_chain(record: dict[str, object]) -> bool:
+    return (
+        record.get("germinated_tick") is not None
+        and record.get("matured_tick") is not None
+        and record.get("first_fruited_tick") is not None
+        and int(record.get("consumed_count", 0)) > 0
+    )
+
+
+def _clamp01(value: float) -> float:
+    return max(0.0, min(1.0, value))
+
+
+def _quality_lift(numerator: float, denominator: float) -> float | None:
+    if denominator <= 0:
+        return None
+    return round(numerator / denominator, 4)
+
+
+def _site_quality_snapshot(env: Environment, x: int, y: int) -> dict[str, float | int]:
+    spec = PLANT_SPECIES["wild_grain"]
+    moisture = env.get_cell_moisture(x, y)
+    light = env.get_cell_photosynthetic_light(x, y)
+    nutrients = env.get_cell_soil_nutrients(x, y)
+    temp_k = env.get_cell_temperature(x, y)
+    danger = env.get_danger_level(x, y)
+    moisture_midpoint = (spec.germination_water_min + spec.germination_water_max) / 2.0
+    moisture_span = max(0.01, (spec.germination_water_max - spec.germination_water_min) / 2.0)
+    temp_midpoint = (spec.germination_temp_min_k + spec.germination_temp_max_k) / 2.0
+    temp_span = max(0.01, (spec.germination_temp_max_k - spec.germination_temp_min_k) / 2.0)
+    moisture_fit = _clamp01(1.0 - (abs(moisture - moisture_midpoint) / moisture_span))
+    temperature_fit = _clamp01(1.0 - (abs(temp_k - temp_midpoint) / temp_span))
+    light_fit = _clamp01(light / max(0.01, spec.light_saturation))
+    nutrient_score = _clamp01(nutrients / max(0.01, spec.nutrient_demand))
+    danger_penalty = _clamp01(danger)
+    temperature_penalty = round(1.0 - temperature_fit, 5)
+    quality_total = max(
+        0.0,
+        (moisture_fit * 0.30)
+        + (light_fit * 0.24)
+        + (nutrient_score * 0.24)
+        + (temperature_fit * 0.14)
+        - (danger_penalty * 0.18),
+    )
+    return {
+        "x": x,
+        "y": y,
+        "quality_score_total": round(quality_total, 5),
+        "moisture_fit": round(moisture_fit, 5),
+        "light_fit": round(light_fit, 5),
+        "nutrient_score": round(nutrient_score, 5),
+        "danger_penalty": round(danger_penalty, 5),
+        "temperature_penalty": temperature_penalty,
+        "raw_moisture": round(moisture, 5),
+        "raw_light": round(light, 5),
+        "raw_nutrients": round(nutrients, 5),
+        "raw_temperature_k": round(temp_k, 3),
+        "raw_danger": round(danger, 5),
+    }
+
+
+def _mean_quality_snapshots(snapshots: list[dict[str, float | int]]) -> dict[str, float | int] | None:
+    if not snapshots:
+        return None
+    fields = [
+        "quality_score_total",
+        "moisture_fit",
+        "light_fit",
+        "nutrient_score",
+        "danger_penalty",
+        "temperature_penalty",
+    ]
+    return {
+        field: round(
+            sum(float(snapshot[field]) for snapshot in snapshots if field in snapshot) / len(snapshots),
+            5,
+        )
+        for field in fields
+    }
+
+
+def _nearby_quality_control(env: Environment, x: int, y: int, radius: int = 3) -> dict[str, float | int] | None:
+    snapshots: list[dict[str, float | int]] = []
+    for scan_y in range(max(0, y - radius), min(env.height, y + radius + 1)):
+        for scan_x in range(max(0, x - radius), min(env.width, x + radius + 1)):
+            if scan_x == x and scan_y == y:
+                continue
+            if abs(scan_x - x) + abs(scan_y - y) > radius:
+                continue
+            if not env.is_walkable(scan_x, scan_y):
+                continue
+            snapshots.append(_site_quality_snapshot(env, scan_x, scan_y))
+    return _mean_quality_snapshots(snapshots)
+
+
+def _visible_quality_controls(
+    env: Environment,
+    x: int,
+    y: int,
+    radius: int,
+) -> tuple[dict[str, float | int] | None, dict[str, float | int] | None]:
+    snapshots: list[dict[str, float | int]] = []
+    radius = max(1, radius)
+    for scan_y in range(max(0, y - radius), min(env.height, y + radius + 1)):
+        for scan_x in range(max(0, x - radius), min(env.width, x + radius + 1)):
+            if scan_x == x and scan_y == y:
+                continue
+            if abs(scan_x - x) + abs(scan_y - y) > radius:
+                continue
+            if not env.is_walkable(scan_x, scan_y):
+                continue
+            snapshots.append(_site_quality_snapshot(env, scan_x, scan_y))
+    if not snapshots:
+        return None, None
+    best = max(snapshots, key=lambda snapshot: float(snapshot["quality_score_total"]))
+    return _mean_quality_snapshots(snapshots), best
+
+
+def _deterministic_world_control(env: Environment, seed_id: int, tick: int) -> dict[str, float | int]:
+    value = ((seed_id + 1) * 1103515245 + (tick + 17) * 12345) & 0x7FFFFFFF
+    for attempt in range(max(1, env.width * env.height)):
+        x = (value + (attempt * 37)) % env.width
+        y = ((value // max(1, env.width)) + (attempt * 53)) % env.height
+        if env.is_walkable(x, y):
+            return _site_quality_snapshot(env, x, y)
+    return _site_quality_snapshot(env, 0, 0)
 
 
 def _evaluate_signals(
@@ -417,6 +579,15 @@ def run_watch(args: argparse.Namespace) -> dict[str, object]:
         plant_fruiting_growth_threshold_multiplier=args.plant_fruiting_growth_threshold_multiplier,
         plant_fruiting_chance_multiplier=args.plant_fruiting_chance_multiplier,
         natural_seed_drop_chance_multiplier=args.natural_seed_drop_chance_multiplier,
+        food_signal_radius_cap=getattr(args, "food_signal_radius_cap", None),
+        plant_lifecycle_food_signal_weight=getattr(args, "plant_lifecycle_food_signal_weight", 1.35),
+        seed_hunger_drop_bonus=getattr(args, "seed_hunger_drop_bonus", 0.06),
+        seed_drop_block_critical_hunger=getattr(args, "seed_drop_block_critical_hunger", False),
+        seed_drop_safe_window_only=getattr(args, "seed_drop_safe_window_only", False),
+        seed_drop_safe_hunger_max=getattr(args, "seed_drop_safe_hunger_max", 0.55),
+        seed_drop_safe_fear_max=getattr(args, "seed_drop_safe_fear_max", 0.45),
+        seed_drop_safe_cold_max=getattr(args, "seed_drop_safe_cold_max", 0.45),
+        seed_drop_safe_safety_min=getattr(args, "seed_drop_safe_safety_min", 0.45),
     )
     founder_sexes = ["male"] * (args.initial_population // 2) + ["female"] * (
         args.initial_population - (args.initial_population // 2)
@@ -467,6 +638,13 @@ def run_watch(args: argparse.Namespace) -> dict[str, object]:
         "plant_died_reason": Counter(),
         "plant_died_mode": Counter(),
         "natural_seed_distance": Counter(),
+        "seed_pick_instinct": Counter(),
+        "seed_pick_food_contact": Counter(),
+        "seed_drop_context": Counter(),
+        "seed_drop_instinct": Counter(),
+        "seed_drop_food_contact": Counter(),
+        "seed_drop_safe_window": Counter(),
+        "seed_drop_critical_hunger": Counter(),
     }
     event_numeric_values: dict[str, list[float]] = {
         "plant_died_age_ticks": [],
@@ -476,6 +654,18 @@ def run_watch(args: argparse.Namespace) -> dict[str, object]:
         "plant_died_light": [],
         "plant_died_nutrients": [],
         "plant_died_growth": [],
+        "seed_pick_energy": [],
+        "seed_pick_hunger": [],
+        "seed_pick_fear": [],
+        "seed_pick_cold": [],
+        "seed_pick_comfort": [],
+        "seed_drop_energy": [],
+        "seed_drop_hunger": [],
+        "seed_drop_fear": [],
+        "seed_drop_cold": [],
+        "seed_drop_comfort": [],
+        "seed_drop_safety": [],
+        "seed_drop_chance": [],
     }
     reward_records: list[dict[str, int]] = []
     next_reward_record_id = 0
@@ -510,6 +700,28 @@ def run_watch(args: argparse.Namespace) -> dict[str, object]:
     started = time.monotonic()
     next_progress_at = started
     phase3_min_seed_move_distance = getattr(args, "phase3_min_seed_move_distance", 1)
+    phase4_patch_radius = getattr(args, "phase4_patch_radius", 4)
+    phase4_min_patch_moved_seed_drops = getattr(args, "phase4_min_patch_moved_seed_drops", 3)
+    phase4_patch_return_min_delay_ticks = getattr(
+        args,
+        "phase4_patch_return_min_delay_ticks",
+        getattr(args, "learning_revisit_min_delay_ticks", 20),
+    )
+    phase4_patch_return_max_age_ticks = getattr(
+        args,
+        "phase4_patch_return_max_age_ticks",
+        getattr(args, "learning_revisit_max_age_ticks", 2000),
+    )
+    phase4_min_matched_control_seeds = getattr(args, "phase4_min_matched_control_seeds", 5)
+    phase5_future_control_offsets = sorted(
+        offset
+        for offset in _int_list(getattr(args, "phase5_future_control_offsets", [10, 25, 50]), [10, 25, 50])
+        if offset > 0
+    )
+    phase4_drop_watchers: list[dict[str, object]] = []
+    phase5_future_path_watchers: list[dict[str, object]] = []
+    carried_seed_position_controls: dict[tuple[int, int], dict[str, object]] = {}
+    carried_seed_state_windows: dict[tuple[int, int], dict[str, object]] = {}
 
     def seed_record(seed_id: int) -> dict[str, object]:
         record = seed_records.get(seed_id)
@@ -554,6 +766,42 @@ def run_watch(args: argparse.Namespace) -> dict[str, object]:
                 "decayed_count": 0,
                 "death_tick": None,
                 "death_reason": None,
+                "drop_site_quality": None,
+                "current_position_control_quality": None,
+                "nearby_control_quality": None,
+                "visible_control_quality": None,
+                "visible_best_control_quality": None,
+                "random_world_control_quality": None,
+                "future_path_control_qualities": {},
+                "drop_vs_current_position_lift": None,
+                "drop_vs_nearby_control_lift": None,
+                "drop_vs_visible_control_lift": None,
+                "drop_vs_visible_best_control_lift": None,
+                "drop_vs_random_world_lift": None,
+                "drop_vs_future_path_control_lift": None,
+                "hunger_recovery_control_quality": None,
+                "safe_window_control_quality": None,
+                "drop_vs_hunger_recovery_position_lift": None,
+                "drop_vs_safe_window_position_lift": None,
+                "had_hunger_while_carried": False,
+                "carry_ticks_observed": 0,
+                "first_hunger_tick_while_carried": None,
+                "first_hunger_recovery_tick": None,
+                "first_safe_window_tick": None,
+                "last_pick_instinct": None,
+                "last_pick_food_contact": None,
+                "last_drop_context": None,
+                "last_drop_instinct": None,
+                "last_drop_food_contact": None,
+                "last_drop_safe_window": None,
+                "last_drop_critical_hunger": None,
+                "last_drop_energy": None,
+                "last_drop_hunger": None,
+                "last_drop_fear": None,
+                "last_drop_cold": None,
+                "last_drop_comfort": None,
+                "last_drop_safety": None,
+                "last_drop_chance": None,
             }
             seed_records[seed_id] = record
         return record
@@ -729,6 +977,717 @@ def run_watch(args: argparse.Namespace) -> dict[str, object]:
             "sample_agent_moved_seed_chains": sample_chains,
         }
 
+    def phase4_patch_metrics_summary() -> dict[str, object]:
+        records = list(seed_records.values())
+        agent_moved_records = [
+            record
+            for record in records
+            if bool(record.get("agent_moved")) and _seed_record_position(record) is not None
+        ]
+        control_records = [
+            record
+            for record in records
+            if not bool(record.get("agent_moved"))
+            and record.get("source_kind") in {"harvest_seed_dropped", "natural_seed_dropped"}
+            and _seed_record_position(record) is not None
+        ]
+
+        def site_signature(position: tuple[int, int]) -> tuple[float, float, float, float]:
+            x, y = position
+            return (
+                env.get_cell_moisture(x, y),
+                env.get_cell_photosynthetic_light(x, y),
+                env.get_cell_soil_nutrients(x, y),
+                env.get_danger_level(x, y),
+            )
+
+        def matched_controls(position: tuple[int, int]) -> tuple[list[dict[str, object]], str]:
+            moisture, light, nutrients, danger = site_signature(position)
+            matched: list[dict[str, object]] = []
+            for record in control_records:
+                control_position = _seed_record_position(record)
+                if control_position is None:
+                    continue
+                control_moisture, control_light, control_nutrients, control_danger = site_signature(control_position)
+                if (
+                    abs(control_moisture - moisture) <= 0.15
+                    and abs(control_light - light) <= 0.20
+                    and abs(control_nutrients - nutrients) <= 0.25
+                    and abs(control_danger - danger) <= 0.25
+                ):
+                    matched.append(record)
+            if len(matched) >= phase4_min_matched_control_seeds:
+                return matched, "matched_micro_site"
+            return control_records, "broad_fallback"
+
+        def summarize_center(center: tuple[int, int]) -> dict[str, object]:
+            members = [
+                record
+                for record in agent_moved_records
+                if (position := _seed_record_position(record)) is not None
+                and _manhattan(position, center) <= phase4_patch_radius
+            ]
+            member_seed_ids = {
+                int(record["seed_id"])
+                for record in members
+                if isinstance(record.get("seed_id"), int)
+            }
+            completed_members = [record for record in members if _seed_completed_chain(record)]
+            control_group, control_mode = matched_controls(center)
+            completed_controls = [record for record in control_group if _seed_completed_chain(record)]
+            moved_rate = _round_rate(len(completed_members), len(members))
+            control_rate = _round_rate(len(completed_controls), len(control_group))
+            patch_watchers = [
+                watcher
+                for watcher in phase4_drop_watchers
+                if watcher.get("seed_id") in member_seed_ids
+                and isinstance(watcher.get("x"), int)
+                and isinstance(watcher.get("y"), int)
+                and _manhattan((int(watcher["x"]), int(watcher["y"])), center) <= phase4_patch_radius
+            ]
+            return_agents: set[int] = set()
+            first_return_tick: int | None = None
+            return_tick_hits = 0
+            return_opportunities = 0
+            random_expected_return_hits = 0.0
+            dropper_returned_after_left = 0
+            dropper_left_watchers = 0
+            dropper_return_tick_hits = 0
+            dropper_return_opportunities = 0
+            dropper_random_expected_hits = 0.0
+            non_dropper_return_tick_hits = 0
+            non_dropper_return_opportunities = 0
+            non_dropper_random_expected_hits = 0.0
+            non_dropper_return_agents: set[int] = set()
+            pre_fruit_return_agents: set[int] = set()
+            post_fruit_return_agents: set[int] = set()
+            pre_drop_visit_counts: list[int] = []
+            first_drop_tick: int | None = None
+            for watcher in patch_watchers:
+                return_tick_hits += int(watcher.get("return_tick_hits", 0))
+                return_opportunities += int(watcher.get("return_opportunities", 0))
+                random_expected_return_hits += float(watcher.get("random_expected_return_hits", 0.0))
+                dropper_return_tick_hits += int(watcher.get("dropper_return_tick_hits_after_left", 0))
+                dropper_return_opportunities += int(watcher.get("dropper_return_opportunities_after_left", 0))
+                dropper_random_expected_hits += float(watcher.get("dropper_random_expected_return_hits", 0.0))
+                non_dropper_return_tick_hits += int(watcher.get("non_dropper_return_tick_hits", 0))
+                non_dropper_return_opportunities += int(watcher.get("non_dropper_return_opportunities", 0))
+                non_dropper_random_expected_hits += float(watcher.get("non_dropper_random_expected_return_hits", 0.0))
+                if watcher.get("dropper_left_tick") is not None:
+                    dropper_left_watchers += 1
+                if bool(watcher.get("dropper_returned_after_left")):
+                    dropper_returned_after_left += 1
+                pre_drop_visit_count = watcher.get("pre_drop_visit_count_near")
+                if isinstance(pre_drop_visit_count, int):
+                    pre_drop_visit_counts.append(pre_drop_visit_count)
+                watcher_drop_tick = watcher.get("drop_tick")
+                if isinstance(watcher_drop_tick, int) and (
+                    first_drop_tick is None or watcher_drop_tick < first_drop_tick
+                ):
+                    first_drop_tick = watcher_drop_tick
+                watcher_returned_agents = watcher.get("returned_agents", set())
+                if isinstance(watcher_returned_agents, set):
+                    return_agents.update(int(agent_id) for agent_id in watcher_returned_agents)
+                watcher_non_dropper_agents = watcher.get("non_dropper_returned_agents", set())
+                if isinstance(watcher_non_dropper_agents, set):
+                    non_dropper_return_agents.update(int(agent_id) for agent_id in watcher_non_dropper_agents)
+                watcher_pre_fruit_agents = watcher.get("pre_fruit_returned_agents", set())
+                if isinstance(watcher_pre_fruit_agents, set):
+                    pre_fruit_return_agents.update(int(agent_id) for agent_id in watcher_pre_fruit_agents)
+                watcher_post_fruit_agents = watcher.get("post_fruit_returned_agents", set())
+                if isinstance(watcher_post_fruit_agents, set):
+                    post_fruit_return_agents.update(int(agent_id) for agent_id in watcher_post_fruit_agents)
+                watcher_first_tick = watcher.get("first_return_tick")
+                if isinstance(watcher_first_tick, int) and (
+                    first_return_tick is None or watcher_first_tick < first_return_tick
+                ):
+                    first_return_tick = watcher_first_tick
+            same_agent_chains = sum(
+                1
+                for record in completed_members
+                if record.get("moved_by_agent") in record.get("consumed_by_agents", set())
+            )
+            return_lift = None
+            if random_expected_return_hits > 0:
+                return_lift = round(return_tick_hits / random_expected_return_hits, 3)
+            dropper_return_lift = None
+            if dropper_random_expected_hits > 0:
+                dropper_return_lift = round(dropper_return_tick_hits / dropper_random_expected_hits, 3)
+            non_dropper_return_lift = None
+            if non_dropper_random_expected_hits > 0:
+                non_dropper_return_lift = round(non_dropper_return_tick_hits / non_dropper_random_expected_hits, 3)
+            productivity_lift = _round_lift(moved_rate, control_rate)
+            final_visit_count = _visit_count_near(visit_counter, center[0], center[1], phase4_patch_radius)
+            pre_drop_visit_count_at_first_drop = min(pre_drop_visit_counts) if pre_drop_visit_counts else 0
+            pre_fruit_agent_count = len(pre_fruit_return_agents)
+            post_fruit_agent_count = len(post_fruit_return_agents)
+            return {
+                "center": [center[0], center[1]],
+                "radius": phase4_patch_radius,
+                "moved_seed_drops": len(members),
+                "moved_seed_agents": len(
+                    {
+                        int(record["moved_by_agent"])
+                        for record in members
+                        if isinstance(record.get("moved_by_agent"), int)
+                    }
+                ),
+                "completed_seed_chains": len(completed_members),
+                "food_consumed": sum(int(record.get("consumed_count", 0)) for record in members),
+                "same_agent_patch_food_chains": same_agent_chains,
+                "return_tick_hits_after_drop": return_tick_hits,
+                "return_opportunities_after_drop": return_opportunities,
+                "random_expected_return_hits": round(random_expected_return_hits, 3),
+                "return_lift_vs_random_control": return_lift,
+                "return_agents": len(return_agents),
+                "first_return_tick": first_return_tick,
+                "first_drop_tick": first_drop_tick,
+                "pre_drop_visit_count_at_first_drop": pre_drop_visit_count_at_first_drop,
+                "final_visit_count_near": final_visit_count,
+                "visit_delta_after_first_drop": max(0, final_visit_count - pre_drop_visit_count_at_first_drop),
+                "dropper_left_watchers": dropper_left_watchers,
+                "dropper_returned_after_left_count": dropper_returned_after_left,
+                "dropper_return_rate_after_left": _round_rate(dropper_returned_after_left, max(1, dropper_left_watchers)),
+                "dropper_return_tick_hits_after_left": dropper_return_tick_hits,
+                "dropper_return_opportunities_after_left": dropper_return_opportunities,
+                "dropper_random_expected_return_hits": round(dropper_random_expected_hits, 3),
+                "dropper_return_lift_vs_random_control": dropper_return_lift,
+                "non_dropper_return_tick_hits": non_dropper_return_tick_hits,
+                "non_dropper_return_opportunities": non_dropper_return_opportunities,
+                "non_dropper_random_expected_return_hits": round(non_dropper_random_expected_hits, 3),
+                "non_dropper_return_lift_vs_random_control": non_dropper_return_lift,
+                "non_dropper_return_agents": len(non_dropper_return_agents),
+                "pre_fruit_return_agents": pre_fruit_agent_count,
+                "post_fruit_return_agents": post_fruit_agent_count,
+                "post_to_pre_fruit_return_agent_ratio": (
+                    round(post_fruit_agent_count / pre_fruit_agent_count, 3)
+                    if pre_fruit_agent_count > 0
+                    else None
+                ),
+                "control_mode": control_mode,
+                "control_seed_count": len(control_group),
+                "control_completed_seed_chains": len(completed_controls),
+                "patch_completed_chain_rate": moved_rate,
+                "control_completed_chain_rate": control_rate,
+                "productivity_lift_vs_control": productivity_lift,
+                "productivity_lift_unbounded": productivity_lift is None and moved_rate > 0 and control_rate == 0,
+                "seed_ids": sorted(member_seed_ids)[:16],
+            }
+
+        candidates: list[dict[str, object]] = []
+        seen_centers: set[tuple[int, int]] = set()
+        for record in agent_moved_records:
+            position = _seed_record_position(record)
+            if position is None or position in seen_centers:
+                continue
+            seen_centers.add(position)
+            candidate = summarize_center(position)
+            if int(candidate["moved_seed_drops"]) >= phase4_min_patch_moved_seed_drops:
+                candidates.append(candidate)
+        candidates.sort(
+            key=lambda candidate: (
+                int(candidate["completed_seed_chains"]),
+                int(candidate["moved_seed_drops"]),
+                int(candidate["return_agents"]),
+                int(candidate["food_consumed"]),
+            ),
+            reverse=True,
+        )
+        selected_patches: list[dict[str, object]] = []
+        for candidate in candidates:
+            center_values = candidate["center"]
+            if not isinstance(center_values, list) or len(center_values) != 2:
+                continue
+            center = (int(center_values[0]), int(center_values[1]))
+            if any(
+                _manhattan(center, (int(existing["center"][0]), int(existing["center"][1]))) <= phase4_patch_radius
+                for existing in selected_patches
+                if isinstance(existing.get("center"), list)
+            ):
+                continue
+            selected_patches.append(candidate)
+
+        repeated_patches = [
+            patch
+            for patch in selected_patches
+            if int(patch["moved_seed_drops"]) >= phase4_min_patch_moved_seed_drops
+        ]
+        best_patch = repeated_patches[0] if repeated_patches else None
+        best_productivity_lift = max(
+            (
+                float(patch["productivity_lift_vs_control"])
+                for patch in repeated_patches
+                if patch.get("productivity_lift_vs_control") is not None
+            ),
+            default=None,
+        )
+        best_return_lift = max(
+            (
+                float(patch["return_lift_vs_random_control"])
+                for patch in repeated_patches
+                if patch.get("return_lift_vs_random_control") is not None
+            ),
+            default=None,
+        )
+        best_dropper_return_lift = max(
+            (
+                float(patch["dropper_return_lift_vs_random_control"])
+                for patch in repeated_patches
+                if patch.get("dropper_return_lift_vs_random_control") is not None
+            ),
+            default=None,
+        )
+        best_non_dropper_return_lift = max(
+            (
+                float(patch["non_dropper_return_lift_vs_random_control"])
+                for patch in repeated_patches
+                if patch.get("non_dropper_return_lift_vs_random_control") is not None
+            ),
+            default=None,
+        )
+        dropper_left_watchers = sum(int(patch["dropper_left_watchers"]) for patch in repeated_patches)
+        dropper_returned_after_left = sum(
+            int(patch["dropper_returned_after_left_count"]) for patch in repeated_patches
+        )
+        patch_return_agents: set[int] = set()
+        for patch in repeated_patches:
+            patch_seed_ids = set(int(seed_id) for seed_id in patch.get("seed_ids", []))
+            for watcher in phase4_drop_watchers:
+                if watcher.get("seed_id") not in patch_seed_ids:
+                    continue
+                watcher_returned_agents = watcher.get("returned_agents", set())
+                if isinstance(watcher_returned_agents, set):
+                    patch_return_agents.update(int(agent_id) for agent_id in watcher_returned_agents)
+        contamination_events = event_counts["tend_food_patch"] + event_counts["food_patch_tended"]
+        return {
+            "patch_radius": phase4_patch_radius,
+            "min_patch_moved_seed_drops": phase4_min_patch_moved_seed_drops,
+            "drop_watchers": len(phase4_drop_watchers),
+            "agent_moved_seed_drop_records": len(agent_moved_records),
+            "control_seed_records": len(control_records),
+            "repeated_drop_patch_count": len(repeated_patches),
+            "patch_completed_seed_chains": sum(int(patch["completed_seed_chains"]) for patch in repeated_patches),
+            "patch_food_consumed": sum(int(patch["food_consumed"]) for patch in repeated_patches),
+            "patch_return_agents": len(patch_return_agents),
+            "max_patch_moved_seed_drops": max((int(patch["moved_seed_drops"]) for patch in repeated_patches), default=0),
+            "max_patch_completed_chains": max((int(patch["completed_seed_chains"]) for patch in repeated_patches), default=0),
+            "max_patch_food_consumed": max((int(patch["food_consumed"]) for patch in repeated_patches), default=0),
+            "best_patch_productivity_lift_vs_control": best_productivity_lift,
+            "best_patch_return_lift_vs_random_control": best_return_lift,
+            "patch_dropper_left_watchers": dropper_left_watchers,
+            "patch_dropper_returned_after_left_count": dropper_returned_after_left,
+            "patch_dropper_return_rate_after_left": _round_rate(dropper_returned_after_left, dropper_left_watchers),
+            "best_patch_dropper_return_lift_vs_random_control": best_dropper_return_lift,
+            "best_patch_non_dropper_return_lift_vs_random_control": best_non_dropper_return_lift,
+            "best_patch_dropper_return_rate_after_left": (
+                max(
+                    (float(patch["dropper_return_rate_after_left"]) for patch in repeated_patches),
+                    default=0.0,
+                )
+            ),
+            "best_patch_non_dropper_return_agents": (
+                max((int(patch["non_dropper_return_agents"]) for patch in repeated_patches), default=0)
+            ),
+            "best_patch_pre_drop_visit_count_at_first_drop": (
+                int(best_patch["pre_drop_visit_count_at_first_drop"]) if best_patch is not None else 0
+            ),
+            "best_patch_visit_delta_after_first_drop": (
+                int(best_patch["visit_delta_after_first_drop"]) if best_patch is not None else 0
+            ),
+            "best_patch_pre_fruit_return_agents": (
+                int(best_patch["pre_fruit_return_agents"]) if best_patch is not None else 0
+            ),
+            "best_patch_post_fruit_return_agents": (
+                int(best_patch["post_fruit_return_agents"]) if best_patch is not None else 0
+            ),
+            "best_patch_post_to_pre_fruit_return_agent_ratio": (
+                best_patch["post_to_pre_fruit_return_agent_ratio"] if best_patch is not None else None
+            ),
+            "contamination_events": contamination_events,
+            "contamination_event_counts": {
+                "tend_food_patch": event_counts["tend_food_patch"],
+                "food_patch_tended": event_counts["food_patch_tended"],
+            },
+            "best_patch": best_patch,
+            "top_patch_candidates": repeated_patches[:8],
+        }
+
+    def phase5_site_selection_metrics_summary() -> dict[str, object]:
+        records = [
+            record
+            for record in seed_records.values()
+            if bool(record.get("agent_moved"))
+            and isinstance(record.get("drop_site_quality"), dict)
+            and isinstance(record.get("current_position_control_quality"), dict)
+            and isinstance(record.get("nearby_control_quality"), dict)
+        ]
+
+        def quality(record: dict[str, object], key: str, field: str = "quality_score_total") -> float | None:
+            snapshot = record.get(key)
+            if not isinstance(snapshot, dict) or snapshot.get(field) is None:
+                return None
+            return float(snapshot[field])
+
+        def mean_field(group: list[dict[str, object]], key: str, field: str = "quality_score_total") -> float:
+            values = [value for record in group if (value := quality(record, key, field)) is not None]
+            if not values:
+                return 0.0
+            return round(sum(values) / len(values), 5)
+
+        def component_means(group: list[dict[str, object]], key: str) -> dict[str, float]:
+            return {
+                field: mean_field(group, key, field)
+                for field in (
+                    "quality_score_total",
+                    "moisture_fit",
+                    "light_fit",
+                    "nutrient_score",
+                    "danger_penalty",
+                    "temperature_penalty",
+                )
+            }
+
+        def future_snapshots(record: dict[str, object]) -> list[dict[str, float | int]]:
+            raw = record.get("future_path_control_qualities")
+            if not isinstance(raw, dict):
+                return []
+            return [snapshot for snapshot in raw.values() if isinstance(snapshot, dict)]
+
+        def future_quality(record: dict[str, object]) -> float | None:
+            snapshots = future_snapshots(record)
+            if not snapshots:
+                return None
+            return round(sum(float(snapshot["quality_score_total"]) for snapshot in snapshots) / len(snapshots), 5)
+
+        def mean_future_quality(group: list[dict[str, object]]) -> float:
+            values = [value for record in group if (value := future_quality(record)) is not None]
+            if not values:
+                return 0.0
+            return round(sum(values) / len(values), 5)
+
+        def component_means_from_snapshots(snapshots: list[dict[str, float | int]]) -> dict[str, float]:
+            if not snapshots:
+                return {
+                    "quality_score_total": 0.0,
+                    "moisture_fit": 0.0,
+                    "light_fit": 0.0,
+                    "nutrient_score": 0.0,
+                    "danger_penalty": 0.0,
+                    "temperature_penalty": 0.0,
+                }
+            return {
+                field: round(sum(float(snapshot[field]) for snapshot in snapshots) / len(snapshots), 5)
+                for field in (
+                    "quality_score_total",
+                    "moisture_fit",
+                    "light_fit",
+                    "nutrient_score",
+                    "danger_penalty",
+                    "temperature_penalty",
+                )
+            }
+
+        def top_record_positions(
+            group: list[dict[str, object]],
+            x_key: str,
+            y_key: str,
+            limit: int = 8,
+        ) -> list[dict[str, int]]:
+            counter: Counter[tuple[int, int]] = Counter()
+            for record in group:
+                x_value = record.get(x_key)
+                y_value = record.get(y_key)
+                if isinstance(x_value, int) and isinstance(y_value, int):
+                    counter[(x_value, y_value)] += 1
+            return [
+                {"x": position[0], "y": position[1], "count": count}
+                for position, count in counter.most_common(limit)
+            ]
+
+        def record_value_counts(field: str) -> dict[str, int]:
+            counter: Counter[str] = Counter()
+            for record in records:
+                value = record.get(field)
+                counter[str(value) if value is not None else "unknown"] += 1
+            return dict(counter)
+
+        def record_fraction(field: str, *values: str) -> float:
+            accepted = set(values)
+            return _round_rate(
+                sum(1 for record in records if str(record.get(field)) in accepted),
+                len(records),
+            )
+
+        def context_metrics(context: str) -> dict[str, object]:
+            context_records = [
+                record
+                for record in records
+                if record.get("last_drop_context") == context
+            ]
+            context_drop_quality = mean_field(context_records, "drop_site_quality")
+            context_current_quality = mean_field(context_records, "current_position_control_quality")
+            context_nearby_quality = mean_field(context_records, "nearby_control_quality")
+            context_visible_quality = mean_field(context_records, "visible_control_quality")
+            context_visible_best_quality = mean_field(context_records, "visible_best_control_quality")
+            context_future_records = [record for record in context_records if future_quality(record) is not None]
+            context_future_quality = mean_future_quality(context_future_records)
+            context_drop_for_future_quality = mean_field(context_future_records, "drop_site_quality")
+            return {
+                "count": len(context_records),
+                "fraction": _round_rate(len(context_records), len(records)),
+                "drop_quality": context_drop_quality,
+                "current_quality": context_current_quality,
+                "nearby_quality": context_nearby_quality,
+                "visible_quality": context_visible_quality,
+                "visible_best_quality": context_visible_best_quality,
+                "future_path_quality": context_future_quality,
+                "drop_vs_current_lift": _quality_lift(context_drop_quality, context_current_quality),
+                "drop_vs_nearby_lift": _quality_lift(context_drop_quality, context_nearby_quality),
+                "drop_vs_visible_lift": _quality_lift(context_drop_quality, context_visible_quality),
+                "drop_vs_visible_best_lift": _quality_lift(context_drop_quality, context_visible_best_quality),
+                "drop_vs_future_path_lift": _quality_lift(
+                    context_drop_for_future_quality,
+                    context_future_quality,
+                ),
+                "completed_chain_rate": completed_rate(context_records),
+                "high_quality_chain_rate": completed_rate(
+                    sorted(
+                        context_records,
+                        key=lambda record: quality(record, "drop_site_quality") or 0.0,
+                    )[-max(1, int(len(context_records) * 0.30)) :]
+                    if context_records
+                    else []
+                ),
+                "low_quality_chain_rate": completed_rate(
+                    sorted(
+                        context_records,
+                        key=lambda record: quality(record, "drop_site_quality") or 0.0,
+                    )[: max(1, int(len(context_records) * 0.30))]
+                    if context_records
+                    else []
+                ),
+            }
+
+        def completed_rate(group: list[dict[str, object]]) -> float:
+            return _round_rate(sum(1 for record in group if _seed_completed_chain(record)), len(group))
+
+        sorted_by_quality = sorted(
+            records,
+            key=lambda record: quality(record, "drop_site_quality") or 0.0,
+        )
+        band_count = max(1, int(len(sorted_by_quality) * 0.30)) if sorted_by_quality else 0
+        low_quality_records = sorted_by_quality[:band_count]
+        high_quality_records = sorted_by_quality[-band_count:] if band_count else []
+
+        sorted_by_drop_tick = sorted(
+            records,
+            key=lambda record: int(record.get("last_drop_tick", 0) or 0),
+        )
+        temporal_band_count = max(1, int(len(sorted_by_drop_tick) * 0.30)) if sorted_by_drop_tick else 0
+        early_records = sorted_by_drop_tick[:temporal_band_count]
+        late_records = sorted_by_drop_tick[-temporal_band_count:] if temporal_band_count else []
+
+        mean_drop_quality = mean_field(records, "drop_site_quality")
+        mean_current_quality = mean_field(records, "current_position_control_quality")
+        mean_nearby_quality = mean_field(records, "nearby_control_quality")
+        mean_random_quality = mean_field(records, "random_world_control_quality")
+        mean_visible_quality = mean_field(records, "visible_control_quality")
+        mean_visible_best_quality = mean_field(records, "visible_best_control_quality")
+        future_records = [record for record in records if future_quality(record) is not None]
+        mean_future_path_quality = mean_future_quality(future_records)
+        mean_drop_quality_for_future = mean_field(future_records, "drop_site_quality")
+        recovery_records = [
+            record
+            for record in records
+            if isinstance(record.get("hunger_recovery_control_quality"), dict)
+        ]
+        safe_window_control_records = [
+            record
+            for record in records
+            if isinstance(record.get("safe_window_control_quality"), dict)
+        ]
+        mean_hunger_recovery_quality = mean_field(recovery_records, "hunger_recovery_control_quality")
+        mean_drop_quality_for_recovery = mean_field(recovery_records, "drop_site_quality")
+        mean_safe_window_quality = mean_field(safe_window_control_records, "safe_window_control_quality")
+        mean_drop_quality_for_safe_window = mean_field(safe_window_control_records, "drop_site_quality")
+        early_quality = mean_field(early_records, "drop_site_quality")
+        late_quality = mean_field(late_records, "drop_site_quality")
+        high_rate = completed_rate(high_quality_records)
+        low_rate = completed_rate(low_quality_records)
+        all_future_snapshots = [
+            snapshot
+            for record in future_records
+            for snapshot in future_snapshots(record)
+        ]
+        future_by_offset: dict[str, dict[str, float | int | None]] = {}
+        for offset in phase5_future_control_offsets:
+            offset_records = [
+                record
+                for record in records
+                if isinstance(record.get("future_path_control_qualities"), dict)
+                and isinstance(record["future_path_control_qualities"].get(str(offset)), dict)
+            ]
+            offset_future_values = [
+                float(record["future_path_control_qualities"][str(offset)]["quality_score_total"])
+                for record in offset_records
+            ]
+            offset_future_quality = round(sum(offset_future_values) / len(offset_future_values), 5) if offset_future_values else 0.0
+            offset_drop_quality = mean_field(offset_records, "drop_site_quality")
+            future_by_offset[str(offset)] = {
+                "count": len(offset_records),
+                "mean_drop_quality": offset_drop_quality,
+                "mean_future_path_quality": offset_future_quality,
+                "drop_vs_future_path_lift": _quality_lift(offset_drop_quality, offset_future_quality),
+            }
+        return {
+            "agent_moved_drop_count": len(records),
+            "current_position_control_count": sum(
+                1 for record in records if isinstance(record.get("current_position_control_quality"), dict)
+            ),
+            "nearby_control_count": sum(
+                1 for record in records if isinstance(record.get("nearby_control_quality"), dict)
+            ),
+            "visible_control_count": sum(
+                1 for record in records if isinstance(record.get("visible_control_quality"), dict)
+            ),
+            "visible_best_control_count": sum(
+                1 for record in records if isinstance(record.get("visible_best_control_quality"), dict)
+            ),
+            "future_path_control_count": len(future_records),
+            "future_path_control_offsets": phase5_future_control_offsets,
+            "hunger_recovery_control_count": len(recovery_records),
+            "safe_window_control_count": len(safe_window_control_records),
+            "drop_quality_components": component_means(records, "drop_site_quality"),
+            "current_position_quality_components": component_means(records, "current_position_control_quality"),
+            "nearby_control_quality_components": component_means(records, "nearby_control_quality"),
+            "visible_control_quality_components": component_means(records, "visible_control_quality"),
+            "visible_best_control_quality_components": component_means(records, "visible_best_control_quality"),
+            "random_world_quality_components": component_means(records, "random_world_control_quality"),
+            "future_path_quality_components": component_means_from_snapshots(all_future_snapshots),
+            "hunger_recovery_quality_components": component_means(
+                recovery_records,
+                "hunger_recovery_control_quality",
+            ),
+            "safe_window_quality_components": component_means(
+                safe_window_control_records,
+                "safe_window_control_quality",
+            ),
+            "mean_drop_quality": mean_drop_quality,
+            "mean_current_position_quality": mean_current_quality,
+            "mean_nearby_control_quality": mean_nearby_quality,
+            "mean_visible_control_quality": mean_visible_quality,
+            "mean_visible_best_control_quality": mean_visible_best_quality,
+            "mean_random_world_quality": mean_random_quality,
+            "mean_future_path_control_quality": mean_future_path_quality,
+            "mean_drop_quality_for_future_path_records": mean_drop_quality_for_future,
+            "mean_hunger_recovery_position_quality": mean_hunger_recovery_quality,
+            "mean_drop_quality_for_hunger_recovery_records": mean_drop_quality_for_recovery,
+            "mean_safe_window_position_quality": mean_safe_window_quality,
+            "mean_drop_quality_for_safe_window_records": mean_drop_quality_for_safe_window,
+            "drop_quality_vs_current_position_lift": _quality_lift(mean_drop_quality, mean_current_quality),
+            "drop_quality_vs_nearby_control_lift": _quality_lift(mean_drop_quality, mean_nearby_quality),
+            "drop_quality_vs_visible_control_lift": _quality_lift(mean_drop_quality, mean_visible_quality),
+            "drop_quality_vs_visible_best_control_lift": _quality_lift(mean_drop_quality, mean_visible_best_quality),
+            "drop_quality_vs_random_world_lift": _quality_lift(mean_drop_quality, mean_random_quality),
+            "drop_quality_vs_hunger_recovery_position_lift": _quality_lift(
+                mean_drop_quality_for_recovery,
+                mean_hunger_recovery_quality,
+            ),
+            "drop_quality_vs_safe_window_position_lift": _quality_lift(
+                mean_drop_quality_for_safe_window,
+                mean_safe_window_quality,
+            ),
+            "drop_quality_vs_future_path_control_lift": _quality_lift(
+                mean_drop_quality_for_future,
+                mean_future_path_quality,
+            ),
+            "future_path_control_by_offset": future_by_offset,
+            "high_quality_drop_count": len(high_quality_records),
+            "low_quality_drop_count": len(low_quality_records),
+            "high_quality_completed_chain_rate": high_rate,
+            "low_quality_completed_chain_rate": low_rate,
+            "high_quality_chain_rate_gt_low": high_rate > low_rate,
+            "early_drop_count": len(early_records),
+            "late_drop_count": len(late_records),
+            "early_drop_quality": early_quality,
+            "late_drop_quality": late_quality,
+            "late_vs_early_drop_quality_lift": _quality_lift(late_quality, early_quality),
+            "late_drop_quality_gt_early_by_5pct": late_quality >= early_quality * 1.05 if early_quality > 0 else False,
+            "drop_quality_direction_vs_current": mean_drop_quality > mean_current_quality,
+            "drop_quality_direction_vs_nearby": mean_drop_quality > mean_nearby_quality,
+            "drop_quality_direction_vs_visible": mean_drop_quality > mean_visible_quality,
+            "drop_quality_direction_vs_visible_best": mean_drop_quality > mean_visible_best_quality,
+            "drop_quality_direction_vs_future_path": mean_drop_quality_for_future > mean_future_path_quality,
+            "drop_quality_direction_vs_hunger_recovery": (
+                mean_drop_quality_for_recovery > mean_hunger_recovery_quality
+            ),
+            "drop_quality_direction_vs_safe_window": (
+                mean_drop_quality_for_safe_window > mean_safe_window_quality
+            ),
+            "seed_drop_context_counts": record_value_counts("last_drop_context"),
+            "seed_drop_context_fractions": {
+                context: _round_rate(count, len(records))
+                for context, count in record_value_counts("last_drop_context").items()
+            },
+            "seed_drop_instinct_counts": record_value_counts("last_drop_instinct"),
+            "seed_drop_food_contact_counts": record_value_counts("last_drop_food_contact"),
+            "seed_drop_safe_window_counts": record_value_counts("last_drop_safe_window"),
+            "seed_drop_critical_hunger_counts": record_value_counts("last_drop_critical_hunger"),
+            "safe_window_drop_fraction": record_fraction("last_drop_safe_window", "1"),
+            "critical_hunger_drop_fraction": record_fraction("last_drop_critical_hunger", "1"),
+            "balanced_drop_fraction": record_fraction("last_drop_instinct", "balanced"),
+            "safe_or_balanced_drop_fraction": _round_rate(
+                sum(
+                    1
+                    for record in records
+                    if str(record.get("last_drop_safe_window")) == "1"
+                    or str(record.get("last_drop_instinct")) == "balanced"
+                ),
+                len(records),
+            ),
+            "had_hunger_while_carried_fraction": _round_rate(
+                sum(1 for record in records if bool(record.get("had_hunger_while_carried"))),
+                len(records),
+            ),
+            "seed_pick_instinct_counts": record_value_counts("last_pick_instinct"),
+            "seed_pick_food_contact_counts": record_value_counts("last_pick_food_contact"),
+            "context_matched_site_selection_metrics": {
+                context: context_metrics(context)
+                for context in ("hunger", "food_contact", "balanced_random")
+            },
+            "phase5_pathway_hotspots": {
+                "pickup_positions": top_record_positions(records, "last_pick_x", "last_pick_y"),
+                "drop_positions": top_record_positions(records, "last_drop_x", "last_drop_y"),
+                "completed_chain_drop_positions": top_record_positions(
+                    [record for record in records if _seed_completed_chain(record)],
+                    "last_drop_x",
+                    "last_drop_y",
+                ),
+                "completed_chain_pickup_positions": top_record_positions(
+                    [record for record in records if _seed_completed_chain(record)],
+                    "last_pick_x",
+                    "last_pick_y",
+                ),
+            },
+            "sample_site_selection_records": [
+                {
+                    "seed": record.get("seed_id"),
+                    "agent": record.get("moved_by_agent"),
+                    "drop_tick": record.get("last_drop_tick"),
+                    "drop_context": record.get("last_drop_context"),
+                    "drop_instinct": record.get("last_drop_instinct"),
+                    "drop": record.get("drop_site_quality"),
+                    "current_control": record.get("current_position_control_quality"),
+                    "nearby_control": record.get("nearby_control_quality"),
+                    "visible_control": record.get("visible_control_quality"),
+                    "visible_best_control": record.get("visible_best_control_quality"),
+                    "future_path_control_qualities": record.get("future_path_control_qualities"),
+                    "completed_chain": _seed_completed_chain(record),
+                }
+                for record in records[:8]
+            ],
+        }
+
     print(
         json.dumps(
             {
@@ -762,6 +1721,57 @@ def run_watch(args: argparse.Namespace) -> dict[str, object]:
         _update_social_groups(agents, tick_events, seen_groups)
         for agent in agents:
             agent.set_survival_context(env, agents)
+            if agent.alive and agent.carried_seed_id is not None:
+                effective_vision = agent.body.effective_vision
+                if hasattr(agent, "_effective_vision"):
+                    effective_vision = agent._effective_vision(env.is_night)
+                carried_key = (agent.agent_id, agent.carried_seed_id)
+                carried_snapshot = {
+                    "tick": current_tick,
+                    "x": agent.x,
+                    "y": agent.y,
+                    "vision_radius": max(1, min(5, int(effective_vision))),
+                    "instinct": agent.instinct_state,
+                    "energy": round(agent.energy, 3),
+                    "hunger": round(agent.hunger_level, 3),
+                    "fear": round(agent.fear_level, 3),
+                    "cold": round(agent.cold_level, 3),
+                    "comfort": round(agent.comfort_level, 3),
+                    "safety": round(agent.safety_feeling, 3),
+                    "quality": _site_quality_snapshot(env, agent.x, agent.y),
+                }
+                carried_seed_position_controls[carried_key] = carried_snapshot
+                state_window = carried_seed_state_windows.setdefault(
+                    carried_key,
+                    {
+                        "had_hunger": False,
+                        "first_hunger_tick": None,
+                        "hunger_recovery_control": None,
+                        "first_hunger_recovery_tick": None,
+                        "safe_window_control": None,
+                        "first_safe_window_tick": None,
+                        "carry_ticks": 0,
+                    },
+                )
+                state_window["carry_ticks"] = int(state_window.get("carry_ticks", 0)) + 1
+                is_hunger_window = agent.instinct_state == "hunger"
+                if is_hunger_window:
+                    state_window["had_hunger"] = True
+                    if state_window.get("first_hunger_tick") is None:
+                        state_window["first_hunger_tick"] = current_tick
+                elif bool(state_window.get("had_hunger")) and state_window.get("hunger_recovery_control") is None:
+                    state_window["hunger_recovery_control"] = carried_snapshot
+                    state_window["first_hunger_recovery_tick"] = current_tick
+                is_safe_window = (
+                    agent.instinct_state == "balanced"
+                    and agent.hunger_level <= getattr(args, "seed_drop_safe_hunger_max", 0.55)
+                    and agent.fear_level <= getattr(args, "seed_drop_safe_fear_max", 0.45)
+                    and agent.cold_level <= getattr(args, "seed_drop_safe_cold_max", 0.45)
+                    and agent.safety_feeling >= getattr(args, "seed_drop_safe_safety_min", 0.45)
+                )
+                if is_safe_window and state_window.get("safe_window_control") is None:
+                    state_window["safe_window_control"] = carried_snapshot
+                    state_window["first_safe_window_tick"] = current_tick
 
         newborns: list[Agent] = []
         for agent in list(agents):
@@ -809,6 +1819,123 @@ def run_watch(args: argparse.Namespace) -> dict[str, object]:
             for agent in agents
             if agent.alive
         }
+        active_phase5_future_watchers: list[dict[str, object]] = []
+        for watcher in phase5_future_path_watchers:
+            drop_tick = int(watcher.get("drop_tick", current_tick))
+            agent_id = watcher.get("agent")
+            seed_id_for_watcher = watcher.get("seed_id")
+            sampled_offsets = watcher.get("sampled_offsets")
+            if not isinstance(sampled_offsets, set):
+                sampled_offsets = set()
+                watcher["sampled_offsets"] = sampled_offsets
+            if not isinstance(agent_id, int) or not isinstance(seed_id_for_watcher, int):
+                continue
+            record = seed_records.get(seed_id_for_watcher)
+            if record is None:
+                continue
+            future_qualities = record.get("future_path_control_qualities")
+            if not isinstance(future_qualities, dict):
+                future_qualities = {}
+                record["future_path_control_qualities"] = future_qualities
+            for offset in phase5_future_control_offsets:
+                if offset in sampled_offsets or current_tick < drop_tick + offset:
+                    continue
+                sampled_offsets.add(offset)
+                agent_position = alive_positions_by_agent.get(agent_id)
+                if agent_position is None:
+                    future_qualities[str(offset)] = None
+                    continue
+                future_qualities[str(offset)] = _site_quality_snapshot(env, agent_position[0], agent_position[1])
+            if len(sampled_offsets) < len(phase5_future_control_offsets):
+                active_phase5_future_watchers.append(watcher)
+        phase5_future_path_watchers = active_phase5_future_watchers
+
+        world_area = max(1, env.width * env.height)
+        for watcher in phase4_drop_watchers:
+            drop_tick = int(watcher.get("drop_tick", current_tick))
+            watcher_age = current_tick - drop_tick
+            if watcher_age < phase4_patch_return_min_delay_ticks:
+                continue
+            if watcher_age > phase4_patch_return_max_age_ticks:
+                continue
+            watcher_x = watcher.get("x")
+            watcher_y = watcher.get("y")
+            if not isinstance(watcher_x, int) or not isinstance(watcher_y, int):
+                continue
+            expected_hit_rate = (
+                _bounded_manhattan_area(env.width, env.height, watcher_x, watcher_y, phase4_patch_radius)
+                / world_area
+            )
+            for agent_id, agent_position in alive_positions_by_agent.items():
+                distance_to_drop = _manhattan(agent_position, (watcher_x, watcher_y))
+                seed_id_for_watcher = watcher.get("seed_id")
+                seed_for_watcher = seed_records.get(seed_id_for_watcher) if isinstance(seed_id_for_watcher, int) else None
+                fruit_tick = None
+                if seed_for_watcher is not None and isinstance(seed_for_watcher.get("first_fruited_tick"), int):
+                    fruit_tick = int(seed_for_watcher["first_fruited_tick"])
+                return_phase = "post_fruit" if fruit_tick is not None and current_tick >= fruit_tick else "pre_fruit"
+                watcher["return_opportunities"] = int(watcher.get("return_opportunities", 0)) + 1
+                watcher["random_expected_return_hits"] = (
+                    float(watcher.get("random_expected_return_hits", 0.0)) + expected_hit_rate
+                )
+                if agent_id == watcher.get("agent"):
+                    if watcher.get("dropper_left_tick") is None and watcher_age > 0 and distance_to_drop > phase4_patch_radius:
+                        watcher["dropper_left_tick"] = current_tick
+                    left_tick = watcher.get("dropper_left_tick")
+                    if isinstance(left_tick, int) and current_tick - left_tick >= phase4_patch_return_min_delay_ticks:
+                        watcher["dropper_return_opportunities_after_left"] = int(
+                            watcher.get("dropper_return_opportunities_after_left", 0)
+                        ) + 1
+                        watcher["dropper_random_expected_return_hits"] = (
+                            float(watcher.get("dropper_random_expected_return_hits", 0.0)) + expected_hit_rate
+                        )
+                        if distance_to_drop <= phase4_patch_radius:
+                            watcher["dropper_return_tick_hits_after_left"] = int(
+                                watcher.get("dropper_return_tick_hits_after_left", 0)
+                            ) + 1
+                            watcher["dropper_returned_after_left"] = True
+                            if watcher.get("dropper_first_return_tick_after_left") is None:
+                                watcher["dropper_first_return_tick_after_left"] = current_tick
+                            if return_phase == "post_fruit":
+                                watcher["dropper_post_fruit_returned"] = True
+                            else:
+                                watcher["dropper_pre_fruit_returned"] = True
+                    if distance_to_drop <= phase4_patch_radius:
+                        watcher["return_tick_hits"] = int(watcher.get("return_tick_hits", 0)) + 1
+                        returned_agents = watcher.get("returned_agents")
+                        if isinstance(returned_agents, set):
+                            returned_agents.add(agent_id)
+                        if watcher.get("first_return_tick") is None:
+                            watcher["first_return_tick"] = current_tick
+                    continue
+
+                watcher["non_dropper_return_opportunities"] = int(
+                    watcher.get("non_dropper_return_opportunities", 0)
+                ) + 1
+                watcher["non_dropper_random_expected_return_hits"] = (
+                    float(watcher.get("non_dropper_random_expected_return_hits", 0.0)) + expected_hit_rate
+                )
+                if distance_to_drop <= phase4_patch_radius:
+                    watcher["non_dropper_return_tick_hits"] = int(watcher.get("non_dropper_return_tick_hits", 0)) + 1
+                    non_dropper_agents = watcher.get("non_dropper_returned_agents")
+                    if isinstance(non_dropper_agents, set):
+                        non_dropper_agents.add(agent_id)
+                    if return_phase == "post_fruit":
+                        post_fruit_agents = watcher.get("post_fruit_returned_agents")
+                        if isinstance(post_fruit_agents, set):
+                            post_fruit_agents.add(agent_id)
+                    else:
+                        pre_fruit_agents = watcher.get("pre_fruit_returned_agents")
+                        if isinstance(pre_fruit_agents, set):
+                            pre_fruit_agents.add(agent_id)
+
+                if distance_to_drop <= phase4_patch_radius:
+                    watcher["return_tick_hits"] = int(watcher.get("return_tick_hits", 0)) + 1
+                    returned_agents = watcher.get("returned_agents")
+                    if isinstance(returned_agents, set):
+                        returned_agents.add(agent_id)
+                    if watcher.get("first_return_tick") is None:
+                        watcher["first_return_tick"] = current_tick
         active_reward_records: list[dict[str, int]] = []
         for reward_record in reward_records:
             reward_age = current_tick - reward_record["tick"]
@@ -921,6 +2048,17 @@ def run_watch(args: argparse.Namespace) -> dict[str, object]:
                 agent_id = _event_int(event, "agent")
                 if seed_id is not None:
                     record = seed_record(seed_id)
+                    pick_instinct = _event_field(event, "instinct") or "unknown"
+                    pick_food_contact = _event_field(event, "food_contact") or "unknown"
+                    event_attribute_counts["seed_pick_instinct"][pick_instinct] += 1
+                    event_attribute_counts["seed_pick_food_contact"][pick_food_contact] += 1
+                    record["last_pick_instinct"] = pick_instinct
+                    record["last_pick_food_contact"] = pick_food_contact
+                    for field_name in ("energy", "hunger", "fear", "cold", "comfort"):
+                        value = _event_float(event, field_name)
+                        if value is not None:
+                            record[f"last_pick_{field_name}"] = value
+                            event_numeric_values[f"seed_pick_{field_name}"].append(value)
                     record["pick_count"] = int(record.get("pick_count", 0)) + 1
                     if record.get("first_pick_tick") is None:
                         record["first_picked_by_agent"] = agent_id
@@ -938,6 +2076,28 @@ def run_watch(args: argparse.Namespace) -> dict[str, object]:
                 agent_id = _event_int(event, "agent")
                 if seed_id is not None:
                     record = seed_record(seed_id)
+                    drop_context = _event_field(event, "context") or "unknown"
+                    drop_instinct = _event_field(event, "instinct") or "unknown"
+                    drop_food_contact = _event_field(event, "food_contact") or "unknown"
+                    drop_safe_window = _event_field(event, "safe_window") or "unknown"
+                    drop_critical_hunger = _event_field(event, "critical_hunger") or "unknown"
+                    event_attribute_counts["seed_drop_context"][drop_context] += 1
+                    event_attribute_counts["seed_drop_instinct"][drop_instinct] += 1
+                    event_attribute_counts["seed_drop_food_contact"][drop_food_contact] += 1
+                    event_attribute_counts["seed_drop_safe_window"][drop_safe_window] += 1
+                    event_attribute_counts["seed_drop_critical_hunger"][drop_critical_hunger] += 1
+                    record["last_drop_context"] = drop_context
+                    record["last_drop_instinct"] = drop_instinct
+                    record["last_drop_food_contact"] = drop_food_contact
+                    record["last_drop_safe_window"] = drop_safe_window
+                    record["last_drop_critical_hunger"] = drop_critical_hunger
+                    for field_name in ("energy", "hunger", "fear", "cold", "comfort", "safety", "drop_chance"):
+                        value = _event_float(event, field_name)
+                        if value is not None:
+                            record_key = "last_drop_chance" if field_name == "drop_chance" else f"last_drop_{field_name}"
+                            numeric_key = "seed_drop_chance" if field_name == "drop_chance" else f"seed_drop_{field_name}"
+                            record[record_key] = value
+                            event_numeric_values[numeric_key].append(value)
                     record["drop_count"] = int(record.get("drop_count", 0)) + 1
                     if record.get("first_drop_tick") is None:
                         record["first_dropped_by_agent"] = agent_id
@@ -950,6 +2110,88 @@ def run_watch(args: argparse.Namespace) -> dict[str, object]:
                     if position is not None:
                         record["last_drop_x"] = position[0]
                         record["last_drop_y"] = position[1]
+                        drop_quality = _site_quality_snapshot(env, position[0], position[1])
+                        record["drop_site_quality"] = drop_quality
+                        current_control = None
+                        if agent_id is not None:
+                            carried_control = carried_seed_position_controls.get((agent_id, seed_id))
+                            if isinstance(carried_control, dict) and isinstance(carried_control.get("quality"), dict):
+                                current_control = carried_control["quality"]
+                            state_window = carried_seed_state_windows.get((agent_id, seed_id))
+                            if isinstance(state_window, dict):
+                                recovery_control = state_window.get("hunger_recovery_control")
+                                safe_window_control = state_window.get("safe_window_control")
+                                if isinstance(recovery_control, dict) and isinstance(recovery_control.get("quality"), dict):
+                                    record["hunger_recovery_control_quality"] = recovery_control["quality"]
+                                if isinstance(safe_window_control, dict) and isinstance(safe_window_control.get("quality"), dict):
+                                    record["safe_window_control_quality"] = safe_window_control["quality"]
+                                record["had_hunger_while_carried"] = bool(state_window.get("had_hunger", False))
+                                record["carry_ticks_observed"] = int(state_window.get("carry_ticks", 0) or 0)
+                                record["first_hunger_tick_while_carried"] = state_window.get("first_hunger_tick")
+                                record["first_hunger_recovery_tick"] = state_window.get("first_hunger_recovery_tick")
+                                record["first_safe_window_tick"] = state_window.get("first_safe_window_tick")
+                        if current_control is None:
+                            pick_x = record.get("last_pick_x")
+                            pick_y = record.get("last_pick_y")
+                            if isinstance(pick_x, int) and isinstance(pick_y, int):
+                                current_control = _site_quality_snapshot(env, pick_x, pick_y)
+                        nearby_control = _nearby_quality_control(env, position[0], position[1], radius=3)
+                        visible_radius = 3
+                        if agent_id is not None:
+                            carried_control = carried_seed_position_controls.get((agent_id, seed_id))
+                            if isinstance(carried_control, dict) and isinstance(carried_control.get("vision_radius"), int):
+                                visible_radius = int(carried_control["vision_radius"])
+                        visible_control, visible_best_control = _visible_quality_controls(
+                            env,
+                            position[0],
+                            position[1],
+                            radius=visible_radius,
+                        )
+                        random_control = _deterministic_world_control(env, seed_id, current_tick)
+                        record["current_position_control_quality"] = current_control
+                        record["nearby_control_quality"] = nearby_control
+                        record["visible_control_quality"] = visible_control
+                        record["visible_best_control_quality"] = visible_best_control
+                        record["random_world_control_quality"] = random_control
+                        if isinstance(current_control, dict):
+                            record["drop_vs_current_position_lift"] = _quality_lift(
+                                float(drop_quality["quality_score_total"]),
+                                float(current_control["quality_score_total"]),
+                            )
+                        if isinstance(nearby_control, dict):
+                            record["drop_vs_nearby_control_lift"] = _quality_lift(
+                                float(drop_quality["quality_score_total"]),
+                                float(nearby_control["quality_score_total"]),
+                            )
+                        if isinstance(visible_control, dict):
+                            record["drop_vs_visible_control_lift"] = _quality_lift(
+                                float(drop_quality["quality_score_total"]),
+                                float(visible_control["quality_score_total"]),
+                            )
+                        if isinstance(visible_best_control, dict):
+                            record["drop_vs_visible_best_control_lift"] = _quality_lift(
+                                float(drop_quality["quality_score_total"]),
+                                float(visible_best_control["quality_score_total"]),
+                            )
+                        recovery_quality = record.get("hunger_recovery_control_quality")
+                        if isinstance(recovery_quality, dict):
+                            record["drop_vs_hunger_recovery_position_lift"] = _quality_lift(
+                                float(drop_quality["quality_score_total"]),
+                                float(recovery_quality["quality_score_total"]),
+                            )
+                        safe_window_quality = record.get("safe_window_control_quality")
+                        if isinstance(safe_window_quality, dict):
+                            record["drop_vs_safe_window_position_lift"] = _quality_lift(
+                                float(drop_quality["quality_score_total"]),
+                                float(safe_window_quality["quality_score_total"]),
+                            )
+                        record["drop_vs_random_world_lift"] = _quality_lift(
+                            float(drop_quality["quality_score_total"]),
+                            float(random_control["quality_score_total"]),
+                        )
+                        if agent_id is not None:
+                            carried_seed_position_controls.pop((agent_id, seed_id), None)
+                            carried_seed_state_windows.pop((agent_id, seed_id), None)
                         pick_x = record.get("last_pick_x")
                         pick_y = record.get("last_pick_y")
                         if isinstance(pick_x, int) and isinstance(pick_y, int):
@@ -961,6 +2203,50 @@ def run_watch(args: argparse.Namespace) -> dict[str, object]:
                                 agent_moved_seed_ids.add(seed_id)
                                 if agent_id is not None:
                                     moved_seed_agents.add(agent_id)
+                                phase4_drop_watchers.append(
+                                    {
+                                        "seed_id": seed_id,
+                                        "agent": agent_id,
+                                        "x": position[0],
+                                        "y": position[1],
+                                        "drop_tick": current_tick,
+                                        "pre_drop_visit_count_near": _visit_count_near(
+                                            visit_counter,
+                                            position[0],
+                                            position[1],
+                                            phase4_patch_radius,
+                                        ),
+                                        "return_tick_hits": 0,
+                                        "return_opportunities": 0,
+                                        "random_expected_return_hits": 0.0,
+                                        "returned_agents": set(),
+                                        "first_return_tick": None,
+                                        "dropper_left_tick": None,
+                                        "dropper_returned_after_left": False,
+                                        "dropper_return_tick_hits_after_left": 0,
+                                        "dropper_return_opportunities_after_left": 0,
+                                        "dropper_random_expected_return_hits": 0.0,
+                                        "dropper_first_return_tick_after_left": None,
+                                        "dropper_pre_fruit_returned": False,
+                                        "dropper_post_fruit_returned": False,
+                                        "non_dropper_return_tick_hits": 0,
+                                        "non_dropper_return_opportunities": 0,
+                                        "non_dropper_random_expected_return_hits": 0.0,
+                                        "non_dropper_returned_agents": set(),
+                                        "pre_fruit_returned_agents": set(),
+                                        "post_fruit_returned_agents": set(),
+                                    }
+                                )
+                                phase5_future_path_watchers.append(
+                                    {
+                                        "seed_id": seed_id,
+                                        "agent": agent_id,
+                                        "x": position[0],
+                                        "y": position[1],
+                                        "drop_tick": current_tick,
+                                        "sampled_offsets": set(),
+                                    }
+                                )
             elif kind == "seed_buried_by_disturbance":
                 seed_id = _event_int(event, "seed")
                 if seed_id is not None:
@@ -1014,13 +2300,26 @@ def run_watch(args: argparse.Namespace) -> dict[str, object]:
                     ):
                         control_seed_chain_ids.add(plant_id)
                 if agent_id is not None and position is not None and args.learning_reward_memory_limit > 0:
+                    reward_x, reward_y = position
+                    shuffle_radius = max(0, int(getattr(args, "reward_memory_shuffle_radius", 0) or 0))
+                    if shuffle_radius > 0:
+                        for _ in range(max(8, shuffle_radius * shuffle_radius * 2)):
+                            dx = rng.randint(-shuffle_radius, shuffle_radius)
+                            dy = rng.randint(-shuffle_radius, shuffle_radius)
+                            if abs(dx) + abs(dy) > shuffle_radius:
+                                continue
+                            candidate_x = max(0, min(env.width - 1, position[0] + dx))
+                            candidate_y = max(0, min(env.height - 1, position[1] + dy))
+                            if env.is_walkable(candidate_x, candidate_y):
+                                reward_x, reward_y = candidate_x, candidate_y
+                                break
                     reward_counts_by_agent[agent_id] += 1
                     reward_records.append(
                         {
                             "id": next_reward_record_id,
                             "agent": agent_id,
-                            "x": position[0],
-                            "y": position[1],
+                            "x": reward_x,
+                            "y": reward_y,
                             "tick": current_tick,
                             "left_tick": -1,
                         }
@@ -1065,9 +2364,12 @@ def run_watch(args: argparse.Namespace) -> dict[str, object]:
                 "plant_lifecycle_food": _plant_lifecycle_food_summary(env, event_counts),
                 "learning_metrics": learning_metrics_summary(),
                 "seed_causality_metrics": seed_causality_metrics_summary(),
+                "phase4_patch_metrics": phase4_patch_metrics_summary(),
+                "phase5_site_selection_metrics": phase5_site_selection_metrics_summary(),
                 "events": {
                     "build_nest": event_counts["build_nest"],
                     "tend_food_patch": event_counts["tend_food_patch"],
+                    "food_patch_tended": event_counts["food_patch_tended"],
                     "plant_matured": event_counts["plant_matured"],
                     "plant_fruited": event_counts["plant_fruited"],
                     "plant_lifecycle_food_consumed": event_counts["plant_lifecycle_food_consumed"],
@@ -1106,6 +2408,8 @@ def run_watch(args: argparse.Namespace) -> dict[str, object]:
         "plant_lifecycle_food": _plant_lifecycle_food_summary(env, event_counts),
         "learning_metrics": learning_metrics_summary(),
         "seed_causality_metrics": seed_causality_metrics_summary(),
+        "phase4_patch_metrics": phase4_patch_metrics_summary(),
+        "phase5_site_selection_metrics": phase5_site_selection_metrics_summary(),
         "event_location_hotspots": _top_event_locations(event_location_counts),
         "mean_photosynthetic_light": round(env.mean_photosynthetic_light(), 3),
         "mean_soil_nutrients": round(env.mean_soil_nutrients(), 3),
@@ -1182,6 +2486,22 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--learning-revisit-max-age-ticks", type=int, default=2000)
     parser.add_argument("--learning-reward-memory-limit", type=int, default=1200)
     parser.add_argument("--phase3-min-seed-move-distance", type=int, default=1)
+    parser.add_argument("--phase4-patch-radius", type=int, default=4)
+    parser.add_argument("--phase4-min-patch-moved-seed-drops", type=int, default=3)
+    parser.add_argument("--phase4-patch-return-min-delay-ticks", type=int, default=20)
+    parser.add_argument("--phase4-patch-return-max-age-ticks", type=int, default=2000)
+    parser.add_argument("--phase4-min-matched-control-seeds", type=int, default=5)
+    parser.add_argument("--phase5-future-control-offsets", type=_int_list, default=[10, 25, 50])
+    parser.add_argument("--food-signal-radius-cap", type=int, default=None)
+    parser.add_argument("--plant-lifecycle-food-signal-weight", type=float, default=1.35)
+    parser.add_argument("--seed-hunger-drop-bonus", type=float, default=0.06)
+    parser.add_argument("--seed-drop-block-critical-hunger", action=argparse.BooleanOptionalAction, default=False)
+    parser.add_argument("--seed-drop-safe-window-only", action=argparse.BooleanOptionalAction, default=False)
+    parser.add_argument("--seed-drop-safe-hunger-max", type=float, default=0.55)
+    parser.add_argument("--seed-drop-safe-fear-max", type=float, default=0.45)
+    parser.add_argument("--seed-drop-safe-cold-max", type=float, default=0.45)
+    parser.add_argument("--seed-drop-safe-safety-min", type=float, default=0.45)
+    parser.add_argument("--reward-memory-shuffle-radius", type=int, default=0)
     return parser.parse_args()
 
 

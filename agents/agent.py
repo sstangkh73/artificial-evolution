@@ -776,19 +776,44 @@ class Agent:
         if self.carried_seed_id is not None and self.carried_seed_id not in env.plant_seeds:
             self.carried_seed_id = None
         if self.carried_seed_id is not None:
+            critical_hunger = self.instinct_state == "hunger" and self.energy <= HUNGER_CRITICAL_ENERGY
+            drop_safe_window = (
+                self.instinct_state == "balanced"
+                and self.hunger_level <= getattr(env, "seed_drop_safe_hunger_max", 0.55)
+                and self.fear_level <= getattr(env, "seed_drop_safe_fear_max", 0.45)
+                and self.cold_level <= getattr(env, "seed_drop_safe_cold_max", 0.45)
+                and self.safety_feeling >= getattr(env, "seed_drop_safe_safety_min", 0.45)
+            )
+            if getattr(env, "seed_drop_block_critical_hunger", False) and critical_hunger:
+                return
+            if getattr(env, "seed_drop_safe_window_only", False) and not drop_safe_window:
+                return
             drop_chance = 0.08 + (self.body.curiosity * 0.04)
             if self.instinct_state in {"fear", "cold"}:
                 drop_chance += 0.12
             if self.instinct_state == "hunger":
-                drop_chance += 0.06
+                drop_chance += getattr(env, "seed_hunger_drop_bonus", 0.06)
             if rng.random() > drop_chance:
                 return
             burial_depth = 0.0
             if env.drop_seed(self.carried_seed_id, self.x, self.y, burial_depth_cm=burial_depth):
                 if hasattr(env, "disturb_surface"):
                     env.disturb_surface(self.x, self.y, force=0.08 + (self.body.curiosity * 0.04), agent_id=self.agent_id)
+                if food_contact:
+                    drop_context = "food_contact"
+                elif self.instinct_state in {"hunger", "fear", "cold"}:
+                    drop_context = self.instinct_state
+                else:
+                    drop_context = "balanced_random"
                 self.recent_events.append(
-                    f"seed_dropped -> agent={self.agent_id} seed={self.carried_seed_id} x={self.x} y={self.y} depth_cm={burial_depth:.2f}"
+                    f"seed_dropped -> agent={self.agent_id} seed={self.carried_seed_id} "
+                    f"x={self.x} y={self.y} depth_cm={burial_depth:.2f} "
+                    f"context={drop_context} instinct={self.instinct_state} "
+                    f"food_contact={int(food_contact)} drop_chance={drop_chance:.3f} "
+                    f"safe_window={int(drop_safe_window)} critical_hunger={int(critical_hunger)} "
+                    f"energy={self.energy:.2f} hunger={self.hunger_level:.3f} "
+                    f"fear={self.fear_level:.3f} cold={self.cold_level:.3f} "
+                    f"comfort={self.comfort_level:.3f} safety={self.safety_feeling:.3f}"
                 )
                 self.carried_seed_id = None
             return
@@ -804,7 +829,11 @@ class Agent:
         if env.pick_seed(loose_seed.seed_id, self.agent_id):
             self.carried_seed_id = loose_seed.seed_id
             self.recent_events.append(
-                f"seed_picked -> agent={self.agent_id} seed={loose_seed.seed_id} x={self.x} y={self.y}"
+                f"seed_picked -> agent={self.agent_id} seed={loose_seed.seed_id} "
+                f"x={self.x} y={self.y} food_contact={int(food_contact)} "
+                f"instinct={self.instinct_state} energy={self.energy:.2f} "
+                f"hunger={self.hunger_level:.3f} fear={self.fear_level:.3f} "
+                f"cold={self.cold_level:.3f} comfort={self.comfort_level:.3f}"
             )
 
     def _wander(self, env, rng: Random) -> None:

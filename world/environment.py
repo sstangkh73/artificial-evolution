@@ -360,6 +360,9 @@ class FoodResource:
     source: str = "ambient_spawn"
     plant_id: int | None = None
     created_tick: int = 0
+    # Metabolism Physics v2: seed carried inside fruit (used by gut/excretion in
+    # v2.2). Default None keeps v1 behavior. See metabolism_physics_v2 design doc.
+    seed_payload: int | None = None
 
 
 @dataclass(frozen=True)
@@ -536,6 +539,18 @@ class Environment:
     scaffolded_social_support_enabled: bool = False
     legacy_scaffold_nest_enabled: bool = False
     legacy_oracle_perception_enabled: bool = False
+    food_signal_radius_cap: int | None = None
+    plant_lifecycle_food_signal_weight: float = 1.35
+    seed_hunger_drop_bonus: float = 0.06
+    seed_drop_block_critical_hunger: bool = False
+    seed_drop_safe_window_only: bool = False
+    seed_drop_safe_hunger_max: float = 0.55
+    seed_drop_safe_fear_max: float = 0.45
+    seed_drop_safe_cold_max: float = 0.45
+    seed_drop_safe_safety_min: float = 0.45
+    # Metabolism Physics v2 selector: "v1" = legacy FOOD_ENERGY (default, no
+    # behavior change); "v2" reserved for composition-based digestion (v2.1+).
+    metabolism_model: str = "v1"
     ambient_food_decay_chance: float = 0.006
     plant_food_decay_chance: float = 0.003
     tick_count: int = 0
@@ -707,11 +722,13 @@ class Environment:
     def food_signal_at(self, x: int, y: int, radius: int) -> float:
         signal = 0.0
         radius = max(0, radius)
+        if self.food_signal_radius_cap is not None:
+            radius = min(radius, max(0, self.food_signal_radius_cap))
         for (food_x, food_y), resource in self.food_positions.items():
             distance = abs(food_x - x) + abs(food_y - y)
             if distance > radius:
                 continue
-            source_weight = 1.35 if resource.source == "plant_lifecycle" else 1.0
+            source_weight = self.plant_lifecycle_food_signal_weight if resource.source == "plant_lifecycle" else 1.0
             signal += (resource.energy * source_weight) / ((distance + 1) ** 2)
         return signal
 
