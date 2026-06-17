@@ -120,6 +120,8 @@ class Agent:
     cold_stress_ticks: int = 0
     fear_stress_ticks: int = 0
     carried_seed_id: int | None = None
+    # Metabolism v2 endozoochory: seeds swallowed with fruit, as (seed_id, entry_tick).
+    gut_seeds: list[tuple[int, int]] = field(default_factory=list)
     body_temperature_k: float = AMBIENT_TEMPERATURE_K
     wetness: float = 0.0
     hunger_level: float = 0.0
@@ -172,6 +174,8 @@ class Agent:
         consumed_food = self._consume_current_food(env)
         if consumed_food or self.carried_seed_id is not None:
             self._handle_seed_primitive(env, rng, food_contact=consumed_food)
+
+        self._process_gut(env)
 
         self._apply_environmental_danger(env, rng)
 
@@ -749,7 +753,9 @@ class Agent:
         return self._move(env, scored_steps[0][1][0], scored_steps[0][1][1])
 
     def _consume_current_food(self, env) -> bool:
-        resource = env.consume_food(self.x, self.y)
+        if not self._fits_mouth(env):
+            return False
+        resource = env.consume_food(self.x, self.y, eater=self)
         if resource is None:
             return False
         restored_energy = self._process_food_resource(env, resource)
@@ -770,6 +776,33 @@ class Agent:
         self.hunger_stress_ticks = 0
         self.instinct_state = "balanced"
         return True
+
+    def _process_gut(self, env) -> None:
+        """v2 endozoochory: advance the gut and excrete seeds whose transit time
+        has elapsed, at the agent's current (post-movement) position. Dispersal
+        distance > 0 emerges from the agent having moved during transit — it is
+        NOT scripted (contrast with the removed seed_hunger_drop_bonus)."""
+        if getattr(env, "metabolism_model", "v1") != "v2" or not self.gut_seeds:
+            return
+        transit = max(1, self.body.gut_transit_ticks)
+        remaining: list[tuple[int, int]] = []
+        for seed_id, entry_tick in self.gut_seeds:
+            if env.tick_count - entry_tick >= transit:
+                env.excrete_gut_seed(seed_id, self.agent_id, self.x, self.y, self.body.acid_strength)
+            else:
+                remaining.append((seed_id, entry_tick))
+        self.gut_seeds = remaining
+
+    def _fits_mouth(self, env) -> bool:
+        """v2 ingestion gate: an object can be eaten only if it fits the mouth
+        (object size <= gape). v1 always allows it. Unknown food kinds (size 0)
+        fit by default."""
+        if getattr(env, "metabolism_model", "v1") != "v2":
+            return True
+        pending = env.food_positions.get((self.x, self.y))
+        if pending is None:
+            return True
+        return metabolism.can_ingest(metabolism.FOOD_SIZE.get(pending.kind, 0.0), self.body.gape)
 
     def _handle_seed_primitive(self, env, rng: Random, food_contact: bool = False) -> None:
         if self.energy <= HUNGER_CRITICAL_ENERGY and not food_contact and self.carried_seed_id is None:
@@ -792,7 +825,10 @@ class Agent:
             drop_chance = 0.08 + (self.body.curiosity * 0.04)
             if self.instinct_state in {"fear", "cold"}:
                 drop_chance += 0.12
-            if self.instinct_state == "hunger":
+            # v1 only: legacy hand-coded hunger bias. v2 removes it — seed
+            # dispersal is meant to emerge from gut transit (endozoochory), not
+            # from a scripted hunger rule.
+            if self.instinct_state == "hunger" and getattr(env, "metabolism_model", "v1") != "v2":
                 drop_chance += getattr(env, "seed_hunger_drop_bonus", 0.06)
             if rng.random() > drop_chance:
                 return

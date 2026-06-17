@@ -72,3 +72,18 @@ def digestible_energy(
 def can_ingest(object_size: float, gape: float) -> bool:
     """An object can enter the mouth iff it is no larger than the gape."""
     return object_size <= gape
+
+
+def toxin_load(composition: Mapping[str, float], mass: float) -> float:
+    """Total toxin ingested from one object (mass x its toxin fraction).
+
+    v2.3 scaffold — not yet wired into the eating path. Real toxin selection
+    pressure switches on with mortality in Phase 6 (see design doc layer 4)."""
+    return max(0.0, mass * composition.get("toxin", 0.0))
+
+
+def toxin_penalty(ingested_toxin: float, toxin_tolerance: float) -> float:
+    """Health/energy penalty from toxin exceeding the body's tolerance.
+
+    Zero while within tolerance; otherwise the excess. v2.3 scaffold."""
+    return max(0.0, ingested_toxin - max(0.0, toxin_tolerance))

@@ -21,6 +21,8 @@ from world.metabolism import (
     FOOD_SIZE,
     can_ingest,
     digestible_energy,
+    toxin_load,
+    toxin_penalty,
 )
 
 
@@ -88,6 +90,98 @@ class TestMetabolismV21Wiring(unittest.TestCase):
 
     def test_v2_unknown_kind_falls_back_to_legacy(self):
         self.assertEqual(self._base(self.env_v2, "mystery_food", 99), 99)
+
+
+class TestMetabolismV22Endozoochory(unittest.TestCase):
+    """v2.2: gut transit deposits seeds at a NEW position (endozoochory)."""
+
+    def _env_with_seed(self, sx, sy):
+        from world.environment import Environment
+
+        env = Environment(width=20, height=20, metabolism_model="v2")
+        seed = env._deposit_seed(
+            species="wild_grain", x=sx, y=sy, burial_depth_cm=0.0, dispersal_mode="gut_transit"
+        )
+        seed.carried_by_agent_id = 1
+        return env, seed
+
+    def test_excrete_survives_when_acid_below_shell(self):
+        env, seed = self._env_with_seed(5, 5)
+        ok = env.excrete_gut_seed(seed.seed_id, agent_id=1, x=9, y=9, acid_strength=0.4)
+        self.assertTrue(ok)
+        self.assertEqual((seed.x, seed.y), (9, 9))
+        self.assertIsNone(seed.carried_by_agent_id)
+        self.assertEqual(seed.dispersal_mode, "gut_passed")
+        self.assertGreater(seed.viability, 0.0)
+
+    def test_excrete_kills_when_acid_exceeds_shell(self):
+        env, seed = self._env_with_seed(5, 5)
+        ok = env.excrete_gut_seed(seed.seed_id, agent_id=1, x=9, y=9, acid_strength=0.9)
+        self.assertFalse(ok)
+        self.assertEqual(seed.viability, 0.0)
+
+    def test_process_gut_waits_for_transit_then_excretes(self):
+        env, seed = self._env_with_seed(5, 5)
+        body = BodyPlan(
+            sensor_units=1, muscle_units=1, armor_units=0, brain_units=1,
+            gut_transit_ticks=6, acid_strength=0.4,
+        )
+        fake = types.SimpleNamespace(gut_seeds=[(seed.seed_id, 0)], body=body, agent_id=1, x=9, y=9)
+        # Before transit elapses: seed stays in the gut.
+        env.tick_count = 3
+        Agent._process_gut(fake, env)
+        self.assertEqual(len(fake.gut_seeds), 1)
+        self.assertEqual(seed.carried_by_agent_id, 1)
+        # After transit elapses: excreted at the agent's current position.
+        env.tick_count = 6
+        Agent._process_gut(fake, env)
+        self.assertEqual(len(fake.gut_seeds), 0)
+        self.assertEqual((seed.x, seed.y), (9, 9))
+        self.assertIsNone(seed.carried_by_agent_id)
+
+
+class TestMetabolismV21GapeGate(unittest.TestCase):
+    """v2.1 layer 1: Agent._fits_mouth gates ingestion by object size vs gape."""
+
+    def _fits(self, model, kind, gape):
+        env = types.SimpleNamespace(
+            metabolism_model=model, food_positions={(0, 0): types.SimpleNamespace(kind=kind)}
+        )
+        body = BodyPlan(sensor_units=1, muscle_units=1, armor_units=0, brain_units=1, gape=gape)
+        me = types.SimpleNamespace(x=0, y=0, body=body)
+        return Agent._fits_mouth(me, env)
+
+    def test_v1_always_fits(self):
+        self.assertTrue(self._fits("v1", "raw_meat", 1.0))
+
+    def test_v2_blocks_object_bigger_than_gape(self):
+        self.assertFalse(self._fits("v2", "raw_meat", 1.0))  # meat size 5 > gape 1
+
+    def test_v2_allows_fitting_object(self):
+        self.assertTrue(self._fits("v2", "raw_meat", 5.0))   # 5 <= 5
+        self.assertTrue(self._fits("v2", "raw_plant", 5.0))
+
+    def test_v2_empty_cell_fits(self):
+        env = types.SimpleNamespace(metabolism_model="v2", food_positions={})
+        body = BodyPlan(sensor_units=1, muscle_units=1, armor_units=0, brain_units=1)
+        me = types.SimpleNamespace(x=0, y=0, body=body)
+        self.assertTrue(Agent._fits_mouth(me, env))
+
+
+class TestMetabolismV23Toxin(unittest.TestCase):
+    """v2.3 scaffold: toxin load/penalty pure functions (not yet wired in)."""
+
+    def test_toxin_load_zero_for_clean_food(self):
+        self.assertEqual(toxin_load(COMPOSITION["raw_plant"], 1.0), 0.0)
+
+    def test_toxin_load_scales_with_mass(self):
+        self.assertAlmostEqual(toxin_load({"toxin": 0.5}, 2.0), 1.0)
+
+    def test_toxin_penalty_zero_within_tolerance(self):
+        self.assertEqual(toxin_penalty(0.1, 0.2), 0.0)
+
+    def test_toxin_penalty_excess_above_tolerance(self):
+        self.assertAlmostEqual(toxin_penalty(1.0, 0.2), 0.8)
 
 
 if __name__ == "__main__":

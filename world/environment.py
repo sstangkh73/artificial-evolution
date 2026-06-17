@@ -385,6 +385,8 @@ class PlantSpeciesSpec:
     natural_seed_drop_chance: float
     natural_seed_drop_radius: int
     natural_seed_drop_max_count: int
+    # Metabolism v2 (endozoochory): resistance of the seed coat to gut acid.
+    shell_hardness: float = 0.6
 
 
 PLANT_SPECIES = {
@@ -407,6 +409,7 @@ PLANT_SPECIES = {
         natural_seed_drop_chance=0.38,
         natural_seed_drop_radius=3,
         natural_seed_drop_max_count=3,
+        shell_hardness=0.6,
     )
 }
 
@@ -709,14 +712,18 @@ class Environment:
             or abs(x - vertical_boundary) <= self.frontier_band
         )
 
-    def consume_food(self, x: int, y: int) -> FoodResource | None:
+    def consume_food(self, x: int, y: int, eater=None) -> FoodResource | None:
         resource = self.food_positions.pop((x, y), None)
         if resource is not None:
             self._deplete_fertility(x, y, self.fertility_harvest_cost)
             if resource.plant_id is not None:
                 self._harvest_plant(resource.plant_id)
             if resource.kind == FOOD_RAW_PLANT:
-                self._drop_harvest_seed(x, y, resource)
+                seed = self._drop_harvest_seed(x, y, resource)
+                # v2 endozoochory: the harvested seed travels in the eater's gut
+                # instead of being dropped at the eating spot.
+                if seed is not None and eater is not None and self.metabolism_model == "v2":
+                    self._route_seed_to_gut(seed, eater)
         return resource
 
     def food_signal_at(self, x: int, y: int, radius: int) -> float:
@@ -1986,13 +1993,13 @@ class Environment:
         self.next_seed_id += 1
         return plant
 
-    def _drop_harvest_seed(self, x: int, y: int, resource: FoodResource) -> None:
+    def _drop_harvest_seed(self, x: int, y: int, resource: FoodResource) -> PlantSeed | None:
         if not self.plant_lifecycle_enabled:
-            return
+            return None
         if len(self.plant_seeds) >= self.max_plant_seeds:
-            return
+            return None
         if self.ground_material_map[y][x] == MATERIAL_WATER:
-            return
+            return None
         seed = self._deposit_seed(
             species="wild_grain",
             x=x,
@@ -2005,6 +2012,58 @@ class Environment:
             f"harvest_seed_dropped -> seed={seed.seed_id} x={x} y={y} source={resource.source} "
             f"parent={resource.plant_id if resource.plant_id is not None else -1} mode={seed.dispersal_mode}"
         )
+        return seed
+
+    def _route_seed_to_gut(self, seed: PlantSeed, eater) -> None:
+        """v2 endozoochory: move a just-harvested seed into the eater's gut.
+
+        The seed leaves the open world (carried_by_agent_id set, so the plant
+        lifecycle skips germination) and travels with the agent until excreted
+        at a later position by Agent._process_gut.
+        """
+        seed.carried_by_agent_id = eater.agent_id
+        seed.dropped_by_agent_id = eater.agent_id
+        seed.dispersal_mode = "gut_transit"
+        eater.gut_seeds.append((seed.seed_id, self.tick_count))
+        self.physics_events.append(
+            f"gut_seed_ingested -> agent={eater.agent_id} seed={seed.seed_id} "
+            f"x={seed.x} y={seed.y} tick={self.tick_count}"
+        )
+
+    def excrete_gut_seed(self, seed_id: int, agent_id: int, x: int, y: int, acid_strength: float) -> bool:
+        """v2 endozoochory: deposit a gut-carried seed at the agent's current
+        position. Returns True if a live (dispersed) seed was deposited.
+
+        If the body's acid cracks the seed coat (acid_strength >= the species'
+        shell_hardness) the seed is killed (viability 0); otherwise it survives,
+        with a small scarification boost to germination speed.
+        """
+        plant = self.plant_seeds.get(seed_id)
+        if plant is None:
+            return False
+        if not self.is_walkable(x, y):
+            return False
+        spec = PLANT_SPECIES[plant.species]
+        shell = spec.shell_hardness
+        plant.carried_by_agent_id = None
+        plant.x = x
+        plant.y = y
+        plant.burial_depth_cm = 0.0
+        plant.dispersal_mode = "gut_passed"
+        if acid_strength >= shell:
+            plant.viability = 0.0
+            self.physics_events.append(
+                f"gut_seed_killed -> agent={agent_id} seed={seed_id} x={x} y={y} "
+                f"acid={acid_strength:.2f} shell={shell:.2f}"
+            )
+            return False
+        good_ticks = max(1, int(round(spec.germination_good_ticks * self.germination_good_ticks_multiplier)))
+        plant.accumulated_good_ticks += int(round(acid_strength * good_ticks * 0.5))
+        self.physics_events.append(
+            f"gut_seed_excreted -> agent={agent_id} seed={seed_id} x={x} y={y} "
+            f"acid={acid_strength:.2f} shell={shell:.2f} scarified=1"
+        )
+        return True
 
     def _update_plant_lifecycle(self, rng: Random) -> None:
         if not self.plant_lifecycle_enabled:
