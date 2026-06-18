@@ -121,6 +121,11 @@ class Agent:
     immortal: bool = False
     instinct_state: str = "balanced"
     hunger_stress_ticks: int = 0
+    # Energy-economy diagnostics: clamp_energy_injected_total = total energy the
+    # immortal floor adds to keep the agent alive (= the true accumulated deficit
+    # the food economy failed to cover); energy_gained_total = total energy eaten.
+    clamp_energy_injected_total: float = 0.0
+    energy_gained_total: float = 0.0
     cold_stress_ticks: int = 0
     fear_stress_ticks: int = 0
     carried_seed_id: int | None = None
@@ -776,6 +781,7 @@ class Agent:
         restored_energy = self._process_food_resource(env, resource)
         self._learn_food_value(env, resource.kind, restored_energy)
         self.energy += restored_energy
+        self.energy_gained_total += restored_energy
         self.food_eaten += 1
         self._remember_food(self.x, self.y)
         if resource.source == "plant_lifecycle":
@@ -2294,6 +2300,8 @@ class Agent:
 
     def _resolve_life_state(self) -> bool:
         if self.immortal:
+            if self.energy < 1:
+                self.clamp_energy_injected_total += (1 - self.energy)
             self.energy = max(1, self.energy)
             self.durability = max(1, self.durability)
             return True

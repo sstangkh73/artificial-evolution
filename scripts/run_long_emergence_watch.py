@@ -264,6 +264,29 @@ def _diet_by_kind(agents) -> dict[str, int]:
     return dict(totals)
 
 
+def _energy_economy(agents, env) -> dict[str, object]:
+    """Energy-economy diagnostics (is starvation real / supply vs metabolism)."""
+    if not agents:
+        return {}
+    n = len(agents)
+    ticks = max(1, env.tick_count)
+    energies = [a.energy for a in agents]
+    clamp = sum(getattr(a, "clamp_energy_injected_total", 0.0) for a in agents)
+    gained = sum(getattr(a, "energy_gained_total", 0.0) for a in agents)
+    standing = Counter(r.kind for r in env.food_positions.values())
+    return {
+        "mean_energy": round(sum(energies) / n, 2),
+        "min_energy": round(min(energies), 2),
+        "max_energy": round(max(energies), 2),
+        # per-agent per-tick: deficit the immortal floor had to cover (true gap),
+        # vs energy actually eaten. If injection >> 0, the economy can't sustain
+        # the population; if injection ~ 0, starvation is an artifact.
+        "deficit_per_agent_tick": round(clamp / (n * ticks), 4),
+        "intake_per_agent_tick": round(gained / (n * ticks), 4),
+        "standing_food_by_kind": dict(standing),
+    }
+
+
 def _learned_food_value(agents) -> dict[str, float]:
     """Mean learned per-kind food value across agents that have tasted it
     (food-value study B). Confirms whether agents learned seed < plant."""
@@ -2498,6 +2521,7 @@ def run_watch(args: argparse.Namespace) -> dict[str, object]:
         "nests": len(env.nests),
         "plant_counts": env.plant_state_counts(),
         "diet_by_kind": _diet_by_kind(agents),
+        "energy_economy": _energy_economy(agents, env),
         "learned_food_value": _learned_food_value(agents),
         "food_spawned_by_kind": dict(env.food_spawned_by_kind),
         "plant_origins": _plant_origin_summary(env),
