@@ -39,6 +39,11 @@ SAMPLED_EVENT_KINDS = {
     "harvest_seed_dropped",
     "seed_picked",
     "seed_dropped",
+    # v2 endozoochory (Fix 2): without these, gut-dispersed seeds were left with
+    # agent_moved=False and miscounted into the agent-independent control group.
+    "gut_seed_ingested",
+    "gut_seed_excreted",
+    "gut_seed_killed",
     "technology_emerged",
     "materialized_scaffold_nest",
 }
@@ -2044,6 +2049,70 @@ def run_watch(args: argparse.Namespace) -> dict[str, object]:
                         record["origin_x"] = position[0]
                         record["origin_y"] = position[1]
                 event_attribute_counts["natural_seed_distance"][_event_field(event, "distance") or "unknown"] += 1
+            elif kind == "gut_seed_ingested":
+                # v2 endozoochory: a harvested seed entered the eater's gut. From
+                # this point the seed is agent-handled, so retag it out of the
+                # agent-independent control group (it was tagged harvest_seed_dropped
+                # at the eating spot just before being routed to the gut).
+                seed_id = _event_int(event, "seed")
+                agent_id = _event_int(event, "agent")
+                if seed_id is not None:
+                    record = seed_record(seed_id)
+                    record["source_kind"] = "gut_transit"
+                    record["gut_ingested_tick"] = current_tick
+                    record["gut_ingested_by_agent"] = agent_id
+                    if position is not None:
+                        record["gut_ingest_x"] = position[0]
+                        record["gut_ingest_y"] = position[1]
+                        if record.get("origin_x") is None:
+                            record["origin_x"] = position[0]
+                            record["origin_y"] = position[1]
+            elif kind == "gut_seed_excreted":
+                # v2 endozoochory: the seed survived transit and was deposited at
+                # the agent's later position. This is real agent dispersal, so mark
+                # it agent_moved with the EXCRETION coords as the drop site.
+                seed_id = _event_int(event, "seed")
+                agent_id = _event_int(event, "agent")
+                if seed_id is not None:
+                    record = seed_record(seed_id)
+                    record["source_kind"] = "gut_transit"
+                    record["gut_excreted_tick"] = current_tick
+                    record["gut_excreted_by_agent"] = agent_id
+                    record["agent_moved"] = True
+                    record["moved_by_agent"] = agent_id
+                    agent_moved_seed_ids.add(seed_id)
+                    if agent_id is not None:
+                        moved_seed_agents.add(agent_id)
+                    if position is not None:
+                        record["last_drop_x"] = position[0]
+                        record["last_drop_y"] = position[1]
+                        record["last_dropped_by_agent"] = agent_id
+                        record["last_drop_tick"] = current_tick
+                        ingest_x = record.get("gut_ingest_x")
+                        ingest_y = record.get("gut_ingest_y")
+                        if isinstance(ingest_x, int) and isinstance(ingest_y, int):
+                            move_distance = abs(position[0] - ingest_x) + abs(position[1] - ingest_y)
+                            record["max_move_distance"] = max(int(record.get("max_move_distance", 0)), move_distance)
+            elif kind == "gut_seed_killed":
+                # v2 seed predation: gut acid cracked the coat. The seed is
+                # agent-handled (so excluded from control) but destroyed, so it can
+                # never complete a chain. This is the seed-predator outcome.
+                seed_id = _event_int(event, "seed")
+                agent_id = _event_int(event, "agent")
+                if seed_id is not None:
+                    record = seed_record(seed_id)
+                    record["source_kind"] = "gut_transit"
+                    record["agent_moved"] = True
+                    record["moved_by_agent"] = agent_id
+                    agent_moved_seed_ids.add(seed_id)
+                    if agent_id is not None:
+                        moved_seed_agents.add(agent_id)
+                    record["gut_killed_tick"] = current_tick
+                    record["death_tick"] = current_tick
+                    record["death_reason"] = "gut_acid"
+                    if position is not None:
+                        record["last_drop_x"] = position[0]
+                        record["last_drop_y"] = position[1]
             elif kind == "seed_picked":
                 seed_id = _event_int(event, "seed")
                 agent_id = _event_int(event, "agent")
@@ -2391,6 +2460,7 @@ def run_watch(args: argparse.Namespace) -> dict[str, object]:
         stop_signals = [signal for signal in final_signals if bool(signal.get("stop_candidate"))]
     result = {
         "seed": args.seed,
+        "metabolism_model": getattr(args, "metabolism_model", "v1"),
         "body_index": body_index,
         "body": body.short_description,
         "stop_reason": stop_reason,
@@ -2431,6 +2501,9 @@ def run_watch(args: argparse.Namespace) -> dict[str, object]:
         "event_samples": event_samples,
         "event_samples_by_kind": {kind: samples for kind, samples in sorted(event_samples_by_kind.items()) if samples},
         "sample_harvest_seed_dropped": event_samples_by_kind["harvest_seed_dropped"],
+        "sample_gut_seed_ingested": event_samples_by_kind.get("gut_seed_ingested", []),
+        "sample_gut_seed_excreted": event_samples_by_kind.get("gut_seed_excreted", []),
+        "sample_gut_seed_killed": event_samples_by_kind.get("gut_seed_killed", []),
         "sample_build_nest": event_samples_by_kind["build_nest"],
         "sample_tend_food_patch": event_samples_by_kind["tend_food_patch"],
         "sample_plant_fruited": event_samples_by_kind["plant_fruited"],
