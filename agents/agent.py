@@ -105,6 +105,10 @@ class Agent:
     growth_progress: int = 0
     child_stress: int = 0
     meals_by_type: dict[str, int] = field(default_factory=dict)
+    # Food-value learning study B: learned net energy per food kind (EMA over the
+    # energy actually gained when eating it). Drives an optimal-diet eat decision
+    # when env.food_value_learning_enabled. Empty by default = no effect.
+    food_value_memory: dict[str, float] = field(default_factory=dict)
     stored_food_contributions: int = 0
     equipped_object_id: int | None = None
     gathered_materials: dict[str, int] = field(default_factory=dict)
@@ -764,10 +768,13 @@ class Agent:
     def _consume_current_food(self, env) -> bool:
         if not self._fits_mouth(env):
             return False
+        if getattr(env, "food_value_learning_enabled", False) and not self._food_worth_eating(env):
+            return False
         resource = env.consume_food(self.x, self.y, eater=self)
         if resource is None:
             return False
         restored_energy = self._process_food_resource(env, resource)
+        self._learn_food_value(env, resource.kind, restored_energy)
         self.energy += restored_energy
         self.food_eaten += 1
         self._remember_food(self.x, self.y)
@@ -785,6 +792,43 @@ class Agent:
         self.hunger_stress_ticks = 0
         self.instinct_state = "balanced"
         return True
+
+    def _food_worth_eating(self, env) -> bool:
+        """Study B optimal-diet decision: should I eat the food under me?
+
+        Always eat an unfamiliar kind once (you must taste it to learn its
+        value), and always eat at true starvation. Otherwise skip a kind whose
+        LEARNED value is below `diet_pickiness` x the best value learned so far —
+        i.e. don't waste a bite on low-value food when a better food is known.
+        The value is learned from experienced energy, not hand-coded, so any
+        avoidance is emergent. Deliberately NOT gated on the saturated hunger
+        flag (mean hunger ~0.98 here would force-eat everything and mask
+        learning); a true-starvation floor keeps it from being absurd."""
+        pending = env.food_positions.get((self.x, self.y))
+        if pending is None:
+            return True
+        kind = pending.kind
+        if kind not in self.food_value_memory:
+            return True
+        if self.energy <= getattr(env, "diet_starvation_energy", 6):
+            return True
+        known_values = [v for v in self.food_value_memory.values()]
+        best_known = max(known_values) if known_values else 0.0
+        if best_known <= 0.0:
+            return True
+        pickiness = getattr(env, "diet_pickiness", 0.5)
+        return self.food_value_memory[kind] >= pickiness * best_known
+
+    def _learn_food_value(self, env, kind: str, gained_energy: float) -> None:
+        """EMA update of the learned per-kind food value (study B)."""
+        if not getattr(env, "food_value_learning_enabled", False):
+            return
+        alpha = getattr(env, "diet_learning_rate", 0.3)
+        prev = self.food_value_memory.get(kind)
+        if prev is None:
+            self.food_value_memory[kind] = float(gained_energy)
+        else:
+            self.food_value_memory[kind] = prev + alpha * (float(gained_energy) - prev)
 
     def _process_gut(self, env) -> None:
         """v2 endozoochory: advance the gut and excrete seeds whose transit time

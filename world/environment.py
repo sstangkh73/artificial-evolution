@@ -560,6 +560,12 @@ class Environment:
     # (0 = off, default -> world unchanged). The agent must walk over and choose to
     # eat them; we then measure whether it learns they are not worth eating.
     low_value_food_spawn_per_tick: float = 0.0
+    # Food-value-learning study B (default off = no behavior change): agents learn
+    # net energy per food kind and skip low-value food via an optimal-diet rule.
+    food_value_learning_enabled: bool = False
+    diet_pickiness: float = 0.5          # skip kind whose value < pickiness x best known
+    diet_learning_rate: float = 0.3      # EMA alpha for learned food value
+    diet_starvation_energy: int = 6      # below this, eat anything (true-starvation floor)
     ambient_food_decay_chance: float = 0.006
     plant_food_decay_chance: float = 0.003
     tick_count: int = 0

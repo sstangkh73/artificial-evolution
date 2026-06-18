@@ -264,6 +264,18 @@ def _diet_by_kind(agents) -> dict[str, int]:
     return dict(totals)
 
 
+def _learned_food_value(agents) -> dict[str, float]:
+    """Mean learned per-kind food value across agents that have tasted it
+    (food-value study B). Confirms whether agents learned seed < plant."""
+    sums: dict[str, float] = {}
+    counts: dict[str, int] = {}
+    for agent in agents:
+        for kind, value in getattr(agent, "food_value_memory", {}).items():
+            sums[kind] = sums.get(kind, 0.0) + float(value)
+            counts[kind] = counts.get(kind, 0) + 1
+    return {kind: round(sums[kind] / counts[kind], 3) for kind in sums}
+
+
 def _clamp01(value: float) -> float:
     return max(0.0, min(1.0, value))
 
@@ -604,6 +616,9 @@ def run_watch(args: argparse.Namespace) -> dict[str, object]:
         seed_drop_safe_safety_min=getattr(args, "seed_drop_safe_safety_min", 0.45),
         metabolism_model=getattr(args, "metabolism_model", "v1"),
         low_value_food_spawn_per_tick=getattr(args, "low_value_food_spawn_per_tick", 0.0),
+        food_value_learning_enabled=getattr(args, "food_value_learning_enabled", False),
+        diet_pickiness=getattr(args, "diet_pickiness", 0.5),
+        diet_starvation_energy=getattr(args, "diet_starvation_energy", 6),
     )
     founder_sexes = ["male"] * (args.initial_population // 2) + ["female"] * (
         args.initial_population - (args.initial_population // 2)
@@ -2483,6 +2498,7 @@ def run_watch(args: argparse.Namespace) -> dict[str, object]:
         "nests": len(env.nests),
         "plant_counts": env.plant_state_counts(),
         "diet_by_kind": _diet_by_kind(agents),
+        "learned_food_value": _learned_food_value(agents),
         "food_spawned_by_kind": dict(env.food_spawned_by_kind),
         "plant_origins": _plant_origin_summary(env),
         "affect": _affect_summary(agents),
