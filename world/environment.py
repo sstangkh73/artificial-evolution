@@ -2020,7 +2020,14 @@ class Environment:
         The seed leaves the open world (carried_by_agent_id set, so the plant
         lifecycle skips germination) and travels with the agent until excreted
         at a later position by Agent._process_gut.
+
+        v2 (Fix 3): the gut holds at most gut_capacity seeds. When full the seed
+        is NOT ingested; it stays on the ground as a normal harvest_drop (already
+        deposited by _drop_harvest_seed before routing), so a full gut becomes a
+        surface drop rather than vanishing.
         """
+        if len(eater.gut_seeds) >= int(eater.body.gut_capacity):
+            return
         seed.carried_by_agent_id = eater.agent_id
         seed.dropped_by_agent_id = eater.agent_id
         seed.dispersal_mode = "gut_transit"

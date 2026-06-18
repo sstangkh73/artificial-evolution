@@ -416,7 +416,16 @@ class Agent:
         return candidates[0]
 
     def spawn_child(self, child_id: int, rng: Random, env, mate: "Agent" | None = None) -> Agent:
-        child_body = inherit_body_plan(self.body, mate.body if mate is not None else self.body, rng)
+        # v2 (Fix 3): metabolism genes are heritable only under the v2 model. In v1
+        # the flag stays False so inherit_body_plan consumes zero extra RNG draws
+        # and the Phase 1-5 stream is byte-identical.
+        draw_metabolism_genes = getattr(env, "metabolism_model", "v1") == "v2"
+        child_body = inherit_body_plan(
+            self.body,
+            mate.body if mate is not None else self.body,
+            rng,
+            draw_metabolism_genes=draw_metabolism_genes,
+        )
         self.children_count += 1
         self.children_ids.append(child_id)
         self.current_role = "caretaker"

@@ -184,5 +184,75 @@ class TestMetabolismV23Toxin(unittest.TestCase):
         self.assertAlmostEqual(toxin_penalty(1.0, 0.2), 0.8)
 
 
+class TestMetabolismV2Heritability(unittest.TestCase):
+    """Fix 3: digestion genes are heritable ONLY under v2 (draw_metabolism_genes),
+    and the v1 path consumes zero extra RNG draws (byte-identity guarantee)."""
+
+    from random import Random as _Random
+
+    class _CountingRandom(_Random):
+        """random.Random that counts random() calls (uniform() routes through it)."""
+
+        def __init__(self, seed):
+            super().__init__(seed)
+            self.draws = 0
+
+        def random(self):
+            self.draws += 1
+            return super().random()
+
+    @staticmethod
+    def _parents():
+        # Two parents with distinct, non-default metabolism genes so inheritance
+        # is observable (defaults are gape=5, gut_capacity=8, acid=0.4, ...).
+        from agents.body import BodyPlan
+        pa = BodyPlan(sensor_units=1, muscle_units=1, armor_units=0, brain_units=1,
+                      gape=4.0, gut_capacity=6.0, gut_transit_ticks=4,
+                      acid_strength=0.3, cellulose_efficiency=0.2, toxin_tolerance=0.1)
+        pb = BodyPlan(sensor_units=1, muscle_units=1, armor_units=0, brain_units=1,
+                      gape=8.0, gut_capacity=14.0, gut_transit_ticks=12,
+                      acid_strength=0.8, cellulose_efficiency=0.6, toxin_tolerance=0.5)
+        return pa, pb
+
+    def test_v1_genes_stay_default(self):
+        from agents.body import inherit_body_plan
+        pa, pb = self._parents()
+        child = inherit_body_plan(pa, pb, self._Random(7), draw_metabolism_genes=False)
+        # v1: not inherited -> BodyPlan dataclass defaults.
+        self.assertEqual(child.gape, 5.0)
+        self.assertEqual(child.gut_capacity, 8.0)
+        self.assertEqual(child.gut_transit_ticks, 6)
+        self.assertEqual(child.acid_strength, 0.4)
+
+    def test_v1_consumes_no_metabolism_rng_draws(self):
+        from agents.body import inherit_body_plan
+        pa, pb = self._parents()
+        r_false = self._CountingRandom(7)
+        inherit_body_plan(pa, pb, r_false, draw_metabolism_genes=False)
+        r_true = self._CountingRandom(7)
+        inherit_body_plan(pa, pb, r_true, draw_metabolism_genes=True)
+        # v2 must consume strictly more draws; the extra draws are the metabolism
+        # block at the tail, so the v1 prefix is untouched.
+        self.assertGreater(r_true.draws, r_false.draws)
+
+    def test_v2_genes_inherited_and_bounded(self):
+        from agents.body import TRAIT_BOUNDS, inherit_body_plan
+        pa, pb = self._parents()
+        seen = set()
+        for seed in range(40):
+            child = inherit_body_plan(pa, pb, self._Random(seed), draw_metabolism_genes=True)
+            for field in ("gape", "gut_capacity", "acid_strength", "cellulose_efficiency", "toxin_tolerance"):
+                low, high = TRAIT_BOUNDS[field]
+                value = getattr(child, field)
+                self.assertGreaterEqual(value, low)
+                self.assertLessEqual(value, high)
+            self.assertIsInstance(child.gut_transit_ticks, int)
+            seen.add(round(child.acid_strength, 4))
+        # Inheritance + mutation must produce variation across offspring, and the
+        # values must not collapse to the dataclass default (0.4).
+        self.assertGreater(len(seen), 1)
+        self.assertTrue(any(v != 0.4 for v in seen))
+
+
 if __name__ == "__main__":
     unittest.main()

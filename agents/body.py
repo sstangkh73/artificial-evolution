@@ -90,6 +90,21 @@ TRAIT_FIELDS = (
     "reproduction_investment",
 )
 
+# Metabolism Physics v2 genes are inherited SEPARATELY from TRAIT_FIELDS and only
+# when explicitly requested (v2). They are NOT appended to TRAIT_FIELDS on purpose:
+# the inherit_body_plan RNG prefix (morphology + the 13 classic traits) must stay
+# byte-identical so v1/Phase 1-5 reproducibility is preserved. The draws for these
+# genes happen at the TAIL of inherit_body_plan, gated by draw_metabolism_genes.
+# See reports/metabolism_physics_v2_tier1_protocol_2026-06-15.th.md (Fix 3).
+METABOLISM_TRAIT_FIELDS = (
+    "gape",
+    "gut_capacity",
+    "gut_transit_ticks",
+    "acid_strength",
+    "cellulose_efficiency",
+    "toxin_tolerance",
+)
+
 MORPHOLOGY_FIELDS = (
     "sensor_units",
     "muscle_units",
@@ -111,6 +126,15 @@ TRAIT_BOUNDS = {
     "meat_efficiency": (0.6, 1.6),
     "reproduction_drive": (0.0, 1.5),
     "reproduction_investment": (0.0, 1.5),
+    # Metabolism Physics v2 genes. acid_strength deliberately straddles the
+    # wild_grain shell_hardness (0.6) so both seed-disperser (acid < shell) and
+    # seed-predator (acid > shell) lineages can arise under selection (Phase 6).
+    "gape": (2.0, 9.0),
+    "gut_capacity": (2.0, 16.0),
+    "gut_transit_ticks": (2.0, 20.0),
+    "acid_strength": (0.1, 0.9),
+    "cellulose_efficiency": (0.0, 1.0),
+    "toxin_tolerance": (0.0, 1.0),
 }
 
 TRAIT_MUTATION_STEPS = {
@@ -127,6 +151,13 @@ TRAIT_MUTATION_STEPS = {
     "meat_efficiency": 0.05,
     "reproduction_drive": 0.05,
     "reproduction_investment": 0.05,
+    # Metabolism Physics v2 genes (see METABOLISM_TRAIT_FIELDS).
+    "gape": 0.4,
+    "gut_capacity": 0.6,
+    "gut_transit_ticks": 1.0,
+    "acid_strength": 0.06,
+    "cellulose_efficiency": 0.05,
+    "toxin_tolerance": 0.05,
 }
 
 
@@ -431,6 +462,7 @@ def inherit_body_plan(
     trait_mutation_rate: float = 0.35,
     major_trait_mutation_rate: float = 0.06,
     morphology_mutation_rate: float = 0.10,
+    draw_metabolism_genes: bool = False,
 ) -> BodyPlan:
     morphology = _inherit_morphology(parent_a, parent_b, rng)
     morphology_mutations = 0
@@ -454,6 +486,29 @@ def inherit_body_plan(
         low, high = TRAIT_BOUNDS[field]
         traits[field] = _clamp(mutated_value, low, high)
 
+    # Metabolism Physics v2 (Fix 3): draw the digestion genes AFTER all classic
+    # draws above so the RNG prefix consumed in v1 is unchanged. Gated by
+    # draw_metabolism_genes (set only in v2) so v1 consumes ZERO extra draws and
+    # stays byte-identical; v2 inherits + mutates these genes so diet trade-offs
+    # become heritable. When the flag is False, metabolism_genes stays empty and
+    # BodyPlan falls back to its defaults (the prior, non-heritable behavior).
+    metabolism_genes: dict[str, float] = {}
+    if draw_metabolism_genes:
+        for field in METABOLISM_TRAIT_FIELDS:
+            base_value = _inherit_trait_value(getattr(parent_a, field), getattr(parent_b, field), rng)
+            mutated_value = base_value
+            if rng.random() < trait_mutation_rate:
+                step = TRAIT_MUTATION_STEPS[field]
+                mutated_value += rng.uniform(-step, step)
+                trait_mutations += 1
+            if rng.random() < major_trait_mutation_rate:
+                step = TRAIT_MUTATION_STEPS[field] * 1.8
+                mutated_value += rng.uniform(-step, step)
+                trait_mutations += 1
+            low, high = TRAIT_BOUNDS[field]
+            metabolism_genes[field] = _clamp(mutated_value, low, high)
+        metabolism_genes["gut_transit_ticks"] = int(round(metabolism_genes["gut_transit_ticks"]))
+
     parent_profile = parent_a.trait_profile if parent_a.trait_profile == parent_b.trait_profile else "hybrid"
     return BodyPlan(
         sensor_units=morphology["sensor_units"],
@@ -465,6 +520,7 @@ def inherit_body_plan(
         trait_mutation_count=trait_mutations,
         morphology_mutation_count=morphology_mutations,
         **traits,
+        **metabolism_genes,
     )
 
 
