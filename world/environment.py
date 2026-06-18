@@ -23,6 +23,7 @@ ZONE_DANGER_LOW_FOOD = "danger_low_food"
 
 FOOD_RAW_PLANT = "raw_plant"
 FOOD_RAW_MEAT = "raw_meat"
+FOOD_RAW_SEED = "raw_seed"  # edible low-value food for the food-value-learning study
 
 SEASON_SPRING = "spring"
 SEASON_SUMMER = "summer"
@@ -69,6 +70,7 @@ SEASON_FOOD_MULTIPLIER = {
 FOOD_ENERGY = {
     FOOD_RAW_PLANT: 6,
     FOOD_RAW_MEAT: 18,
+    FOOD_RAW_SEED: 1,  # v1 fallback only; the study runs under v2 composition energy
 }
 
 AMBIENT_TEMPERATURE_K = 293.15
@@ -554,10 +556,15 @@ class Environment:
     # Metabolism Physics v2 selector: "v1" = legacy FOOD_ENERGY (default, no
     # behavior change); "v2" reserved for composition-based digestion (v2.1+).
     metabolism_model: str = "v1"
+    # Food-value-learning study: spawn this many low-value raw_seed items per tick
+    # (0 = off, default -> world unchanged). The agent must walk over and choose to
+    # eat them; we then measure whether it learns they are not worth eating.
+    low_value_food_spawn_per_tick: float = 0.0
     ambient_food_decay_chance: float = 0.006
     plant_food_decay_chance: float = 0.003
     tick_count: int = 0
     food_positions: dict[tuple[int, int], FoodResource] = field(default_factory=dict)
+    food_spawned_by_kind: dict[str, int] = field(default_factory=dict)
     large_animals: dict[int, LargeAnimal] = field(default_factory=dict)
     nests: dict[int, Nest] = field(default_factory=dict)
     objects: dict[int, PhysicalObject] = field(default_factory=dict)
@@ -620,6 +627,7 @@ class Environment:
         self._natural_seed_rain(rng)
         self._update_plant_lifecycle(rng)
         self._spawn_food(rng)
+        self._spawn_low_value_food(rng)
         self._spawn_large_animals(rng)
         self._move_large_animals(rng)
         if self.scaffolded_nest_support_enabled:
@@ -2267,6 +2275,7 @@ class Environment:
             plant_id=plant.seed_id,
             created_tick=self.tick_count,
         )
+        self.food_spawned_by_kind[FOOD_RAW_PLANT] = self.food_spawned_by_kind.get(FOOD_RAW_PLANT, 0) + 1
         plant.last_food_tick = self.tick_count
         plant.biomass = max(spec.maturity_biomass * 0.72, plant.biomass - 0.18)
         self.physics_events.append(
@@ -2377,7 +2386,39 @@ class Environment:
                     source="wild_plant",
                     created_tick=self.tick_count,
                 )
+                self.food_spawned_by_kind[FOOD_RAW_PLANT] = self.food_spawned_by_kind.get(FOOD_RAW_PLANT, 0) + 1
                 self._deplete_fertility(x, y, self.fertility_spawn_cost)
+
+    def _spawn_low_value_food(self, rng: Random) -> None:
+        """Food-value-learning study: scatter edible low-value raw_seed food.
+
+        Off by default (rate 0 returns before drawing any RNG, so existing worlds
+        and v1 reproducibility are untouched). When on, agents must walk over the
+        seed-food and decide whether to eat it; ingestion is size-only so they
+        physically can. Decay (_decay_food_resources) bounds accumulation."""
+        rate = self.low_value_food_spawn_per_tick
+        if rate <= 0.0:
+            return
+        count = int(rate)
+        if rng.random() < (rate - count):
+            count += 1
+        hard_cap = self.max_food * 3
+        for _ in range(count):
+            if len(self.food_positions) >= hard_cap:
+                return
+            x = rng.randrange(self.width)
+            y = rng.randrange(self.height)
+            if (x, y) in self.food_positions:
+                continue
+            if not self.is_walkable(x, y):
+                continue
+            self.food_positions[(x, y)] = FoodResource(
+                kind=FOOD_RAW_SEED,
+                energy=FOOD_ENERGY[FOOD_RAW_SEED],
+                source="low_value_study",
+                created_tick=self.tick_count,
+            )
+            self.food_spawned_by_kind[FOOD_RAW_SEED] = self.food_spawned_by_kind.get(FOOD_RAW_SEED, 0) + 1
 
     def _spawn_large_animals(self, rng: Random) -> None:
         for _ in range(self.large_animal_spawn_per_tick):

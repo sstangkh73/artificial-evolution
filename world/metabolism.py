@@ -42,11 +42,18 @@ ENERGY_DENSITY: dict[str, float] = {
 COMPOSITION: dict[str, dict[str, float]] = {
     "raw_plant": {"sugar": 0.20, "protein": 0.05, "fiber": 0.30, "shell": 0.10, "water": 0.35},
     "raw_meat": {"sugar": 0.00, "protein": 0.55, "fiber": 0.00, "shell": 0.00, "water": 0.45},
+    # raw_seed: edible-but-low-value food for the food-value-learning study.
+    # Mostly indigestible shell -> tiny net energy (~1 vs raw_plant ~5), and a
+    # small size so it fits any mouth (the ingestion gate is size-only). It is a
+    # genuine FOOD here (a deliberate diet choice), distinct from the plant_seeds
+    # that ride through the gut as an endozoochory byproduct. Spawned only when
+    # low_value_food_spawn_per_tick > 0, so default worlds are unchanged.
+    "raw_seed": {"sugar": 0.10, "protein": 0.00, "fiber": 0.25, "shell": 0.60, "water": 0.05},
 }
 
 # Default mass and physical size per food kind (abstract units).
-FOOD_MASS: dict[str, float] = {"raw_plant": 1.0, "raw_meat": 1.5}
-FOOD_SIZE: dict[str, float] = {"raw_plant": 2.0, "raw_meat": 5.0}
+FOOD_MASS: dict[str, float] = {"raw_plant": 1.0, "raw_meat": 1.5, "raw_seed": 0.4}
+FOOD_SIZE: dict[str, float] = {"raw_plant": 2.0, "raw_meat": 5.0, "raw_seed": 1.0}
 
 
 def digestible_energy(

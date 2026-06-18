@@ -254,5 +254,21 @@ class TestMetabolismV2Heritability(unittest.TestCase):
         self.assertTrue(any(v != 0.4 for v in seen))
 
 
+class TestLowValueSeedFood(unittest.TestCase):
+    """Food-value study: raw_seed is edible (fits any mouth) but low-value."""
+
+    def test_raw_seed_is_low_value_but_positive(self):
+        body = _default_body()
+        seed_e = digestible_energy(COMPOSITION["raw_seed"], FOOD_MASS["raw_seed"], body.enzyme_profile)
+        plant_e = digestible_energy(COMPOSITION["raw_plant"], FOOD_MASS["raw_plant"], body.enzyme_profile)
+        self.assertGreater(seed_e, 0.0)          # edible: yields some energy
+        self.assertLess(seed_e, 0.3 * plant_e)   # but "not worth it" vs fruit
+
+    def test_raw_seed_fits_any_mouth(self):
+        # size-only ingestion gate: small seed fits the default gape (5.0)
+        self.assertTrue(can_ingest(FOOD_SIZE["raw_seed"], 5.0))
+        self.assertTrue(can_ingest(FOOD_SIZE["raw_seed"], 2.0))
+
+
 if __name__ == "__main__":
     unittest.main()

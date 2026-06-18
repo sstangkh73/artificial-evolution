@@ -255,6 +255,15 @@ def _seed_completed_chain(record: dict[str, object]) -> bool:
     )
 
 
+def _diet_by_kind(agents) -> dict[str, int]:
+    """Total meals eaten per food kind, summed across agents (food-value study)."""
+    totals: Counter = Counter()
+    for agent in agents:
+        for kind, count in getattr(agent, "meals_by_type", {}).items():
+            totals[kind] += int(count)
+    return dict(totals)
+
+
 def _clamp01(value: float) -> float:
     return max(0.0, min(1.0, value))
 
@@ -594,6 +603,7 @@ def run_watch(args: argparse.Namespace) -> dict[str, object]:
         seed_drop_safe_cold_max=getattr(args, "seed_drop_safe_cold_max", 0.45),
         seed_drop_safe_safety_min=getattr(args, "seed_drop_safe_safety_min", 0.45),
         metabolism_model=getattr(args, "metabolism_model", "v1"),
+        low_value_food_spawn_per_tick=getattr(args, "low_value_food_spawn_per_tick", 0.0),
     )
     founder_sexes = ["male"] * (args.initial_population // 2) + ["female"] * (
         args.initial_population - (args.initial_population // 2)
@@ -2472,6 +2482,8 @@ def run_watch(args: argparse.Namespace) -> dict[str, object]:
         "births": total_births,
         "nests": len(env.nests),
         "plant_counts": env.plant_state_counts(),
+        "diet_by_kind": _diet_by_kind(agents),
+        "food_spawned_by_kind": dict(env.food_spawned_by_kind),
         "plant_origins": _plant_origin_summary(env),
         "affect": _affect_summary(agents),
         "agent_state": _agent_state_summary(agents),
