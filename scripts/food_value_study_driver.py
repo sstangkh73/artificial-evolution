@@ -28,8 +28,13 @@ def make_args(seed: int, model: str, max_ticks: int, output: str,
               body_index: int = 37, founder_age_spread: int = 0,
               repro_safety: float = 0.66, repro_comfort: float = 0.58,
               repro_safety_streak: int = 10, repro_pair_bond_streak: int = 14,
-              repro_max_age: int = 200, repro_litter_min: int = 1) -> SimpleNamespace:
+              repro_max_age: int = 200, repro_litter_min: int = 1,
+              scaffolded_actions: bool = False) -> SimpleNamespace:
     return SimpleNamespace(
+        scaffolded_agent_actions_enabled=scaffolded_actions,
+        scaffolded_nest_support_enabled=scaffolded_actions,
+        scaffolded_social_support_enabled=scaffolded_actions,
+        legacy_scaffold_nest_enabled=scaffolded_actions,
         food_energy_multiplier=food_energy_mult,
         metabolic_drain_multiplier=drain_mult,
         founder_age_spread=founder_age_spread,
@@ -122,6 +127,8 @@ if __name__ == "__main__":
     p.add_argument("--repro-pair-bond-streak", type=int, default=14, help="ticks of pair-bond needed (default 14)")
     p.add_argument("--repro-max-age", type=int, default=200, help="lifespan / max age (default 200)")
     p.add_argument("--repro-litter-min", type=int, default=1, help="minimum litter size (default 1)")
+    p.add_argument("--scaffolded", action="store_true",
+                   help="enable the settlement/social layer (nest building, nest support, food sharing)")
     p.add_argument("--dump", default=None, help="write full result JSON here for regression diff")
     a = p.parse_args()
     summary = R.run_watch(make_args(a.seed, a.model, a.ticks, a.output,
@@ -134,7 +141,8 @@ if __name__ == "__main__":
                                     repro_safety=a.repro_safety, repro_comfort=a.repro_comfort,
                                     repro_safety_streak=a.repro_safety_streak,
                                     repro_pair_bond_streak=a.repro_pair_bond_streak,
-                                    repro_max_age=a.repro_max_age, repro_litter_min=a.repro_litter_min))
+                                    repro_max_age=a.repro_max_age, repro_litter_min=a.repro_litter_min,
+                                    scaffolded_actions=a.scaffolded))
     if a.dump:
         Path(a.dump).write_text(json.dumps(summary, ensure_ascii=False, indent=2), encoding="utf-8")
     print(json.dumps(summarize(summary), ensure_ascii=False))

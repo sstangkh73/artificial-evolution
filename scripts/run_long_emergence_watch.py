@@ -660,6 +660,10 @@ def run_watch(args: argparse.Namespace) -> dict[str, object]:
         repro_max_age=getattr(args, "repro_max_age", 200),
         repro_litter_min=getattr(args, "repro_litter_min", 1),
         repro_litter_max=getattr(args, "repro_litter_max", 3),
+        scaffolded_agent_actions_enabled=getattr(args, "scaffolded_agent_actions_enabled", False),
+        scaffolded_nest_support_enabled=getattr(args, "scaffolded_nest_support_enabled", False),
+        scaffolded_social_support_enabled=getattr(args, "scaffolded_social_support_enabled", False),
+        legacy_scaffold_nest_enabled=getattr(args, "legacy_scaffold_nest_enabled", False),
     )
     founder_sexes = ["male"] * (args.initial_population // 2) + ["female"] * (
         args.initial_population - (args.initial_population // 2)
