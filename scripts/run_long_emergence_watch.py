@@ -735,6 +735,7 @@ def run_watch(args: argparse.Namespace) -> dict[str, object]:
     reward_records: list[dict[str, int]] = []
     next_reward_record_id = 0
     agent_death_reasons: Counter[str] = Counter()
+    population_trajectory: list[dict[str, object]] = []
     reward_counts_by_agent: Counter[int] = Counter()
     owner_revisit_tick_hits = 0
     owner_revisit_opportunities = 0
@@ -1874,6 +1875,14 @@ def run_watch(args: argparse.Namespace) -> dict[str, object]:
 
         agents.extend(newborns)
         peak_population = max(peak_population, len(agents))
+        if current_tick % 200 == 0:
+            population_trajectory.append({
+                "tick": current_tick,
+                "population": len(agents),
+                "births": total_births,
+                "deaths": sum(agent_death_reasons.values()),
+                "mean_energy": round(sum(a.energy for a in agents) / len(agents), 1) if agents else 0,
+            })
         tick_events.extend(env.pop_physics_events())
         tick_events.extend(_detect_emergent_technology_events(env, current_tick, current_day))
 
@@ -2535,6 +2544,7 @@ def run_watch(args: argparse.Namespace) -> dict[str, object]:
         "plant_counts": env.plant_state_counts(),
         "diet_by_kind": _diet_by_kind(agents),
         "agent_death_reasons": dict(agent_death_reasons),
+        "population_trajectory": population_trajectory,
         "energy_economy": _energy_economy(agents, env),
         "learned_food_value": _learned_food_value(agents),
         "food_spawned_by_kind": dict(env.food_spawned_by_kind),
