@@ -1876,12 +1876,18 @@ def run_watch(args: argparse.Namespace) -> dict[str, object]:
         agents.extend(newborns)
         peak_population = max(peak_population, len(agents))
         if current_tick % 200 == 0:
+            diet_snap: Counter[str] = Counter()
+            for _a in agents:
+                for _k, _c in getattr(_a, "meals_by_type", {}).items():
+                    diet_snap[_k] += int(_c)
             population_trajectory.append({
                 "tick": current_tick,
                 "population": len(agents),
                 "births": total_births,
                 "deaths": sum(agent_death_reasons.values()),
                 "mean_energy": round(sum(a.energy for a in agents) / len(agents), 1) if agents else 0,
+                "raw_seed_meals": diet_snap.get("raw_seed", 0),
+                "raw_plant_meals": diet_snap.get("raw_plant", 0),
             })
         tick_events.extend(env.pop_physics_events())
         tick_events.extend(_detect_emergent_technology_events(env, current_tick, current_day))
