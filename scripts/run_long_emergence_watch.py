@@ -754,6 +754,8 @@ def run_watch(args: argparse.Namespace) -> dict[str, object]:
     reward_records: list[dict[str, int]] = []
     next_reward_record_id = 0
     agent_death_reasons: Counter[str] = Counter()
+    repro_funnel: Counter[str] = Counter()
+    repro_funnel_checks = [0]
     population_trajectory: list[dict[str, object]] = []
     reward_counts_by_agent: Counter[int] = Counter()
     owner_revisit_tick_hits = 0
@@ -1862,6 +1864,15 @@ def run_watch(args: argparse.Namespace) -> dict[str, object]:
         newborns: list[Agent] = []
         for agent in list(agents):
             wants_reproduction = agent.tick(env, rng)
+            # Reproduction funnel: tally which gate(s) block each adult female that
+            # reached the reproduction check this tick (sex == female, balanced).
+            if agent.alive and agent.sex == "female" and agent.current_stage == "adult":
+                _dbg = getattr(agent, "reproduction_debug", {})
+                _reasons = _dbg.get("reasons")
+                if _reasons is not None:
+                    repro_funnel_checks[0] += 1
+                    for _r in _reasons:
+                        repro_funnel[_r] += 1
             tick_events.extend(agent.pop_recent_events())
             if wants_reproduction and len(agents) + len(newborns) < args.max_population:
                 mate = next(
@@ -2573,6 +2584,13 @@ def run_watch(args: argparse.Namespace) -> dict[str, object]:
         "plant_counts": env.plant_state_counts(),
         "diet_by_kind": _diet_by_kind(agents),
         "agent_death_reasons": dict(agent_death_reasons),
+        "reproduction_funnel": {
+            "adult_female_checks": repro_funnel_checks[0],
+            "block_rate_by_gate": {
+                gate: round(cnt / repro_funnel_checks[0], 3)
+                for gate, cnt in repro_funnel.most_common()
+            } if repro_funnel_checks[0] else {},
+        },
         "population_trajectory": population_trajectory,
         "energy_economy": _energy_economy(agents, env),
         "learned_food_value": _learned_food_value(agents),
