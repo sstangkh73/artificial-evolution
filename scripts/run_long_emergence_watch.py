@@ -12,7 +12,7 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
-from agents.agent import Agent
+from agents.agent import ADULT_AGE, MAX_AGE, Agent
 from agents.body import generate_candidate_body_plans
 from simulation.runner import (
     FOUNDER_START_AGE,
@@ -664,13 +664,25 @@ def run_watch(args: argparse.Namespace) -> dict[str, object]:
         body,
         strategy=args.spawn_strategy,
     )
+    # Founder ages: all FOUNDER_START_AGE by default (byte-identical). With
+    # founder_age_spread > 0, spread deterministically across [ADULT_AGE, MAX_AGE)
+    # so the cohort does not all hit the lifespan cap on the same tick (avoids the
+    # synchronized mass die-off that confounds sustained-reproduction studies).
+    _spread = getattr(args, "founder_age_spread", 0)
+    _npop = max(1, args.initial_population)
+
+    def _founder_age(idx: int) -> int:
+        if not _spread:
+            return FOUNDER_START_AGE
+        return ADULT_AGE + int(idx / max(1, _npop - 1) * (MAX_AGE - ADULT_AGE - 1))
+
     agents = [
         Agent(
             agent_id=agent_id,
             body=body,
             x=spawn_x,
             y=spawn_y,
-            age=FOUNDER_START_AGE,
+            age=_founder_age(agent_id),
             lineage_id=_lineage_label(agent_id),
             sex=founder_sexes[agent_id],
             generation=0,
@@ -1877,9 +1889,11 @@ def run_watch(args: argparse.Namespace) -> dict[str, object]:
         peak_population = max(peak_population, len(agents))
         if current_tick % 200 == 0:
             diet_snap: Counter[str] = Counter()
+            gen_snap: Counter[int] = Counter()
             for _a in agents:
                 for _k, _c in getattr(_a, "meals_by_type", {}).items():
                     diet_snap[_k] += int(_c)
+                gen_snap[int(getattr(_a, "generation", 0))] += 1
             population_trajectory.append({
                 "tick": current_tick,
                 "population": len(agents),
@@ -1888,6 +1902,8 @@ def run_watch(args: argparse.Namespace) -> dict[str, object]:
                 "mean_energy": round(sum(a.energy for a in agents) / len(agents), 1) if agents else 0,
                 "raw_seed_meals": diet_snap.get("raw_seed", 0),
                 "raw_plant_meals": diet_snap.get("raw_plant", 0),
+                "max_generation": max(gen_snap) if gen_snap else 0,
+                "generation_counts": dict(sorted(gen_snap.items())),
             })
         tick_events.extend(env.pop_physics_events())
         tick_events.extend(_detect_emergent_technology_events(env, current_tick, current_day))

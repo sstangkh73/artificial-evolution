@@ -25,10 +25,11 @@ def make_args(seed: int, model: str, max_ticks: int, output: str,
               pickiness: float = 0.5, starvation_energy: int = 6,
               immortal: bool = True, population: int = 50,
               food_energy_mult: float = 1.0, drain_mult: float = 1.0,
-              body_index: int = 37) -> SimpleNamespace:
+              body_index: int = 37, founder_age_spread: int = 0) -> SimpleNamespace:
     return SimpleNamespace(
         food_energy_multiplier=food_energy_mult,
         metabolic_drain_multiplier=drain_mult,
+        founder_age_spread=founder_age_spread,
         low_value_food_spawn_per_tick=low_value_food,
         food_value_learning_enabled=value_learning,
         diet_pickiness=pickiness,
@@ -104,6 +105,8 @@ if __name__ == "__main__":
     p.add_argument("--food-energy-mult", type=float, default=1.0, help="scale all food energy (energy study)")
     p.add_argument("--drain-mult", type=float, default=1.0, help="scale metabolic drain (energy study)")
     p.add_argument("--body", type=int, default=37, help="body index (37=armor0/dur10; 38=armor2/dur26)")
+    p.add_argument("--founder-age-spread", type=int, default=0,
+                   help="1 = spread founder ages across [ADULT_AGE, MAX_AGE) to avoid synchronized lifespan death")
     p.add_argument("--dump", default=None, help="write full result JSON here for regression diff")
     a = p.parse_args()
     summary = R.run_watch(make_args(a.seed, a.model, a.ticks, a.output,
@@ -112,7 +115,7 @@ if __name__ == "__main__":
                                     starvation_energy=a.starvation_energy,
                                     immortal=not a.mortal, population=a.population,
                                     food_energy_mult=a.food_energy_mult, drain_mult=a.drain_mult,
-                                    body_index=a.body))
+                                    body_index=a.body, founder_age_spread=a.founder_age_spread))
     if a.dump:
         Path(a.dump).write_text(json.dumps(summary, ensure_ascii=False, indent=2), encoding="utf-8")
     print(json.dumps(summarize(summary), ensure_ascii=False))
