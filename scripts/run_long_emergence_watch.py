@@ -273,7 +273,11 @@ def _energy_economy(agents, env) -> dict[str, object]:
     energies = [a.energy for a in agents]
     clamp = sum(getattr(a, "clamp_energy_injected_total", 0.0) for a in agents)
     gained = sum(getattr(a, "energy_gained_total", 0.0) for a in agents)
+    d_base = sum(getattr(a, "drain_base_total", 0.0) for a in agents)
+    d_brain = sum(getattr(a, "drain_brain_total", 0.0) for a in agents)
+    d_move = sum(getattr(a, "drain_move_total", 0.0) for a in agents)
     standing = Counter(r.kind for r in env.food_positions.values())
+    denom = n * ticks
     return {
         "mean_energy": round(sum(energies) / n, 2),
         "min_energy": round(min(energies), 2),
@@ -281,8 +285,13 @@ def _energy_economy(agents, env) -> dict[str, object]:
         # per-agent per-tick: deficit the immortal floor had to cover (true gap),
         # vs energy actually eaten. If injection >> 0, the economy can't sustain
         # the population; if injection ~ 0, starvation is an artifact.
-        "deficit_per_agent_tick": round(clamp / (n * ticks), 4),
-        "intake_per_agent_tick": round(gained / (n * ticks), 4),
+        "deficit_per_agent_tick": round(clamp / denom, 4),
+        "intake_per_agent_tick": round(gained / denom, 4),
+        # drain decomposition (per agent per tick): where the energy goes.
+        "drain_base_per_tick": round(d_base / denom, 4),
+        "drain_brain_per_tick": round(d_brain / denom, 4),
+        "drain_move_per_tick": round(d_move / denom, 4),
+        "drain_total_per_tick": round((d_base + d_brain + d_move) / denom, 4),
         "standing_food_by_kind": dict(standing),
     }
 
@@ -639,6 +648,8 @@ def run_watch(args: argparse.Namespace) -> dict[str, object]:
         seed_drop_safe_safety_min=getattr(args, "seed_drop_safe_safety_min", 0.45),
         metabolism_model=getattr(args, "metabolism_model", "v1"),
         low_value_food_spawn_per_tick=getattr(args, "low_value_food_spawn_per_tick", 0.0),
+        food_energy_multiplier=getattr(args, "food_energy_multiplier", 1.0),
+        metabolic_drain_multiplier=getattr(args, "metabolic_drain_multiplier", 1.0),
         food_value_learning_enabled=getattr(args, "food_value_learning_enabled", False),
         diet_pickiness=getattr(args, "diet_pickiness", 0.5),
         diet_starvation_energy=getattr(args, "diet_starvation_energy", 6),
@@ -723,6 +734,7 @@ def run_watch(args: argparse.Namespace) -> dict[str, object]:
     }
     reward_records: list[dict[str, int]] = []
     next_reward_record_id = 0
+    agent_death_reasons: Counter[str] = Counter()
     reward_counts_by_agent: Counter[int] = Counter()
     owner_revisit_tick_hits = 0
     owner_revisit_opportunities = 0
@@ -1857,6 +1869,7 @@ def run_watch(args: argparse.Namespace) -> dict[str, object]:
                 )
 
             if not agent.alive:
+                agent_death_reasons[getattr(agent, "death_reason", None) or "unknown"] += 1
                 agents.remove(agent)
 
         agents.extend(newborns)
@@ -2521,6 +2534,7 @@ def run_watch(args: argparse.Namespace) -> dict[str, object]:
         "nests": len(env.nests),
         "plant_counts": env.plant_state_counts(),
         "diet_by_kind": _diet_by_kind(agents),
+        "agent_death_reasons": dict(agent_death_reasons),
         "energy_economy": _energy_economy(agents, env),
         "learned_food_value": _learned_food_value(agents),
         "food_spawned_by_kind": dict(env.food_spawned_by_kind),

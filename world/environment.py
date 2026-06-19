@@ -560,6 +560,11 @@ class Environment:
     # (0 = off, default -> world unchanged). The agent must walk over and choose to
     # eat them; we then measure whether it learns they are not worth eating.
     low_value_food_spawn_per_tick: float = 0.0
+    # Energy-economy study (default 1.0 = byte-identical): scale all food energy
+    # up and/or all metabolic drain (base + brain + movement) down to find a
+    # viable regime where intake can exceed drain.
+    food_energy_multiplier: float = 1.0
+    metabolic_drain_multiplier: float = 1.0
     # Food-value-learning study B (default off = no behavior change): agents learn
     # net energy per food kind and skip low-value food via an optimal-diet rule.
     food_value_learning_enabled: bool = False

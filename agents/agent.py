@@ -126,6 +126,10 @@ class Agent:
     # the food economy failed to cover); energy_gained_total = total energy eaten.
     clamp_energy_injected_total: float = 0.0
     energy_gained_total: float = 0.0
+    # Per-component drain accumulators (energy-economy decomposition).
+    drain_base_total: float = 0.0
+    drain_brain_total: float = 0.0
+    drain_move_total: float = 0.0
     cold_stress_ticks: int = 0
     fear_stress_ticks: int = 0
     carried_seed_id: int | None = None
@@ -154,8 +158,16 @@ class Agent:
         self.age += 1
         if self.reproduction_cooldown > 0:
             self.reproduction_cooldown -= 1
-        self.energy -= self._base_energy_drain()
-        self.energy -= self._brain_energy_drain()
+        drain_mult = getattr(env, "metabolic_drain_multiplier", 1.0)
+        base_drain = self._base_energy_drain()
+        brain_drain = self._brain_energy_drain()
+        if drain_mult != 1.0:
+            base_drain = base_drain * drain_mult
+            brain_drain = brain_drain * drain_mult
+        self.energy -= base_drain
+        self.energy -= brain_drain
+        self.drain_base_total += base_drain
+        self.drain_brain_total += brain_drain
         self._withdraw_nest_food_if_needed(env)
 
         if not self._resolve_life_state():
@@ -1126,7 +1138,11 @@ class Agent:
         movement_penalty = max(1, traveled)
         if self.current_stage == "child" and not self.nearby_support:
             movement_penalty += 1
+        drain_mult = getattr(env, "metabolic_drain_multiplier", 1.0)
+        if drain_mult != 1.0:
+            movement_penalty = movement_penalty * drain_mult
         self.energy -= movement_penalty
+        self.drain_move_total += movement_penalty
         if hasattr(env, "disturb_surface"):
             env.disturb_surface(self.x, self.y, force=min(0.22, 0.04 * max(1, traveled)), agent_id=self.agent_id)
         return True
@@ -1330,14 +1346,23 @@ class Agent:
         (see world/metabolism.py). Gated by env.metabolism_model so v1 behavior
         is unchanged. Note: v2 uses a fixed per-kind mass, so fruit-biomass
         variation is not yet reflected (a later v2.x refinement).
+
+        food_energy_multiplier (default 1.0) scales all food energy for the
+        energy-economy study; at 1.0 the value is byte-identical to before.
         """
+        mult = getattr(env, "food_energy_multiplier", 1.0)
         if getattr(env, "metabolism_model", "v1") != "v2":
-            return resource.energy
-        composition = metabolism.COMPOSITION.get(resource.kind)
-        if composition is None:
-            return resource.energy
-        mass = metabolism.FOOD_MASS.get(resource.kind, 1.0)
-        return int(round(metabolism.digestible_energy(composition, mass, self.body.enzyme_profile)))
+            base = resource.energy
+        else:
+            composition = metabolism.COMPOSITION.get(resource.kind)
+            if composition is None:
+                base = resource.energy
+            else:
+                mass = metabolism.FOOD_MASS.get(resource.kind, 1.0)
+                base = int(round(metabolism.digestible_energy(composition, mass, self.body.enzyme_profile)))
+        if mult != 1.0:
+            base = int(round(base * mult))
+        return base
 
     def _consume_processed_food(self, env, food_kind: str, base_energy: int) -> int:
         cooked_kind = food_kind
