@@ -571,6 +571,16 @@ class Environment:
     diet_pickiness: float = 0.5          # skip kind whose value < pickiness x best known
     diet_learning_rate: float = 0.3      # EMA alpha for learned food value
     diet_starvation_energy: int = 6      # below this, eat anything (true-starvation floor)
+    # Reproduction-rate study (defaults = the agent.py constants -> byte-identical):
+    # loosen these to test whether a self-sustaining multi-generation population
+    # is reachable.
+    repro_safety_threshold: float = 0.66
+    repro_comfort_threshold: float = 0.58
+    repro_safety_streak: int = 10
+    repro_pair_bond_streak: int = 14
+    repro_max_age: int = 200
+    repro_litter_min: int = 1
+    repro_litter_max: int = 3
     ambient_food_decay_chance: float = 0.006
     plant_food_decay_chance: float = 0.003
     tick_count: int = 0

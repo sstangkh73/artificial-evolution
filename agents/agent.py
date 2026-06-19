@@ -203,7 +203,7 @@ class Agent:
         if not self._resolve_life_state():
             return False
 
-        if self.age >= MAX_AGE and not self.immortal:
+        if self.age >= getattr(env, "repro_max_age", MAX_AGE) and not self.immortal:
             self.completed_lifespan = True
             self.alive = False
             self.death_reason = "lifespan_completed"
@@ -212,6 +212,12 @@ class Agent:
         if instinct != "balanced":
             return False
         return self.can_reproduce()
+
+    def _rc(self, key: str, default):
+        """Read a reproduction-gate knob from the env (default = current constant).
+        Lets the reproduction-rate study loosen gates without code edits; defaults
+        keep behaviour byte-identical. See reports food-value / energy studies."""
+        return getattr(getattr(self, "_last_env", None), key, default)
 
     def can_reproduce(self) -> bool:
         if self.sex != "female":
@@ -260,11 +266,11 @@ class Agent:
             "adult_stage": self.current_stage == "adult",
             "energy_ok": self.energy >= reproduction_threshold,
             "durability_ok": self.durability >= MINIMUM_REPRODUCTION_HEALTH,
-            "safety_ok": self.safety_feeling >= REPRODUCTION_SAFETY_THRESHOLD,
-            "comfort_ok": self.comfort_level >= REPRODUCTION_COMFORT_THRESHOLD,
+            "safety_ok": self.safety_feeling >= self._rc("repro_safety_threshold", REPRODUCTION_SAFETY_THRESHOLD),
+            "comfort_ok": self.comfort_level >= self._rc("repro_comfort_threshold", REPRODUCTION_COMFORT_THRESHOLD),
             "attachment_ok": self.attachment_level >= REPRODUCTION_ATTACHMENT_THRESHOLD,
-            "safe_duration_ok": self.safety_streak_ticks >= REPRODUCTION_SAFETY_STREAK,
-            "pair_bond_ok": self.pair_bond_ticks >= REPRODUCTION_PAIR_BOND_STREAK,
+            "safe_duration_ok": self.safety_streak_ticks >= self._rc("repro_safety_streak", REPRODUCTION_SAFETY_STREAK),
+            "pair_bond_ok": self.pair_bond_ticks >= self._rc("repro_pair_bond_streak", REPRODUCTION_PAIR_BOND_STREAK),
             "hunger_ok": self.hunger_level < 0.35,
             "fear_ok": self.fear_level < 0.50,
             "cold_ok": self.cold_level < 0.60,
@@ -519,7 +525,9 @@ class Agent:
             and rng.random() < 0.45
         ):
             litter_size += 1
-        return min(3, litter_size)
+        litter_min = int(getattr(env, "repro_litter_min", 1))
+        litter_cap = int(getattr(env, "repro_litter_max", 3))
+        return min(litter_cap, max(litter_min, litter_size))
 
     def _choose_child_sex(self, rng: Random, mate: "Agent" | None) -> str:
         female_count = 0
@@ -627,15 +635,17 @@ class Agent:
             - (self.cold_level * 0.34)
             - (self.wetness * 0.16)
         )
-        if self.safety_feeling >= REPRODUCTION_SAFETY_THRESHOLD and self.comfort_level >= REPRODUCTION_COMFORT_THRESHOLD:
+        _safety_thr = getattr(env, "repro_safety_threshold", REPRODUCTION_SAFETY_THRESHOLD)
+        _comfort_thr = getattr(env, "repro_comfort_threshold", REPRODUCTION_COMFORT_THRESHOLD)
+        if self.safety_feeling >= _safety_thr and self.comfort_level >= _comfort_thr:
             self.safety_streak_ticks += 1
         else:
             self.safety_streak_ticks = max(0, self.safety_streak_ticks - 1)
 
         if (
             partner_near
-            and self.safety_feeling >= REPRODUCTION_SAFETY_THRESHOLD
-            and self.comfort_level >= REPRODUCTION_COMFORT_THRESHOLD
+            and self.safety_feeling >= _safety_thr
+            and self.comfort_level >= _comfort_thr
             and self.hunger_level < 0.35
             and self.fear_level < 0.42
         ):

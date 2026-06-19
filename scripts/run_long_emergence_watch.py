@@ -653,6 +653,13 @@ def run_watch(args: argparse.Namespace) -> dict[str, object]:
         food_value_learning_enabled=getattr(args, "food_value_learning_enabled", False),
         diet_pickiness=getattr(args, "diet_pickiness", 0.5),
         diet_starvation_energy=getattr(args, "diet_starvation_energy", 6),
+        repro_safety_threshold=getattr(args, "repro_safety_threshold", 0.66),
+        repro_comfort_threshold=getattr(args, "repro_comfort_threshold", 0.58),
+        repro_safety_streak=getattr(args, "repro_safety_streak", 10),
+        repro_pair_bond_streak=getattr(args, "repro_pair_bond_streak", 14),
+        repro_max_age=getattr(args, "repro_max_age", 200),
+        repro_litter_min=getattr(args, "repro_litter_min", 1),
+        repro_litter_max=getattr(args, "repro_litter_max", 3),
     )
     founder_sexes = ["male"] * (args.initial_population // 2) + ["female"] * (
         args.initial_population - (args.initial_population // 2)

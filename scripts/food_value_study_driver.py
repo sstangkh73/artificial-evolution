@@ -25,11 +25,20 @@ def make_args(seed: int, model: str, max_ticks: int, output: str,
               pickiness: float = 0.5, starvation_energy: int = 6,
               immortal: bool = True, population: int = 50,
               food_energy_mult: float = 1.0, drain_mult: float = 1.0,
-              body_index: int = 37, founder_age_spread: int = 0) -> SimpleNamespace:
+              body_index: int = 37, founder_age_spread: int = 0,
+              repro_safety: float = 0.66, repro_comfort: float = 0.58,
+              repro_safety_streak: int = 10, repro_pair_bond_streak: int = 14,
+              repro_max_age: int = 200, repro_litter_min: int = 1) -> SimpleNamespace:
     return SimpleNamespace(
         food_energy_multiplier=food_energy_mult,
         metabolic_drain_multiplier=drain_mult,
         founder_age_spread=founder_age_spread,
+        repro_safety_threshold=repro_safety,
+        repro_comfort_threshold=repro_comfort,
+        repro_safety_streak=repro_safety_streak,
+        repro_pair_bond_streak=repro_pair_bond_streak,
+        repro_max_age=repro_max_age,
+        repro_litter_min=repro_litter_min,
         low_value_food_spawn_per_tick=low_value_food,
         food_value_learning_enabled=value_learning,
         diet_pickiness=pickiness,
@@ -107,6 +116,12 @@ if __name__ == "__main__":
     p.add_argument("--body", type=int, default=37, help="body index (37=armor0/dur10; 38=armor2/dur26)")
     p.add_argument("--founder-age-spread", type=int, default=0,
                    help="1 = spread founder ages across [ADULT_AGE, MAX_AGE) to avoid synchronized lifespan death")
+    p.add_argument("--repro-safety", type=float, default=0.66, help="reproduction safety_feeling threshold (default 0.66)")
+    p.add_argument("--repro-comfort", type=float, default=0.58, help="reproduction comfort threshold (default 0.58)")
+    p.add_argument("--repro-safety-streak", type=int, default=10, help="ticks of safety needed (default 10)")
+    p.add_argument("--repro-pair-bond-streak", type=int, default=14, help="ticks of pair-bond needed (default 14)")
+    p.add_argument("--repro-max-age", type=int, default=200, help="lifespan / max age (default 200)")
+    p.add_argument("--repro-litter-min", type=int, default=1, help="minimum litter size (default 1)")
     p.add_argument("--dump", default=None, help="write full result JSON here for regression diff")
     a = p.parse_args()
     summary = R.run_watch(make_args(a.seed, a.model, a.ticks, a.output,
@@ -115,7 +130,11 @@ if __name__ == "__main__":
                                     starvation_energy=a.starvation_energy,
                                     immortal=not a.mortal, population=a.population,
                                     food_energy_mult=a.food_energy_mult, drain_mult=a.drain_mult,
-                                    body_index=a.body, founder_age_spread=a.founder_age_spread))
+                                    body_index=a.body, founder_age_spread=a.founder_age_spread,
+                                    repro_safety=a.repro_safety, repro_comfort=a.repro_comfort,
+                                    repro_safety_streak=a.repro_safety_streak,
+                                    repro_pair_bond_streak=a.repro_pair_bond_streak,
+                                    repro_max_age=a.repro_max_age, repro_litter_min=a.repro_litter_min))
     if a.dump:
         Path(a.dump).write_text(json.dumps(summary, ensure_ascii=False, indent=2), encoding="utf-8")
     print(json.dumps(summarize(summary), ensure_ascii=False))
