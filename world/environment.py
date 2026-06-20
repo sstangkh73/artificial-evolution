@@ -585,7 +585,7 @@ class Environment:
     # stochastic reproduction (logistic) instead of the synchronized gate pulse.
     continuous_reproduction_enabled: bool = False
     continuous_repro_base_rate: float = 0.05
-    continuous_repro_local_cap: float = 6.0
+    continuous_repro_local_cap: float = 30.0
     # Home/breeding-site fidelity (opt-in): balanced agents return to home_anchor
     # and stay within home_radius instead of dispersing -> stable breeding clusters.
     home_fidelity_enabled: bool = False

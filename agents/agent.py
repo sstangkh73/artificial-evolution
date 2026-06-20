@@ -259,10 +259,15 @@ class Agent:
         if mate is None:
             return False
         readiness = max(0.0, self.safety_feeling) * max(0.0, self.comfort_level)
-        local_cap = max(1.0, getattr(env, "continuous_repro_local_cap", 6.0))
+        # Density regulation comes from the natural energy brake: this method only
+        # runs when BALANCED (not hungry), and overpopulation -> food competition
+        # -> hunger -> not balanced -> no reproduction. So a light crowding term
+        # only as a safety valve at extreme local packing (local_cap large), NOT
+        # the main brake (tying it tightly to local allies kills clustered breeding).
+        local_cap = max(1.0, getattr(env, "continuous_repro_local_cap", 30.0))
         crowding = min(1.0, getattr(self, "_nearby_ally_count", 0) / local_cap)
         base = getattr(env, "continuous_repro_base_rate", 0.05)
-        prob = base * readiness * (1.0 - crowding)
+        prob = base * readiness * (1.0 - 0.5 * crowding)
         decided = rng.random() < prob
         self.reproduction_debug = {
             "eligible": decided, "reason": "continuous",
