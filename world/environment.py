@@ -73,6 +73,12 @@ FOOD_ENERGY = {
     FOOD_RAW_SEED: 1,  # v1 fallback only; the study runs under v2 composition energy
 }
 
+# Spatial-index speedup for food proximity scans. Below the threshold the scans
+# iterate food_positions directly (dict order -> bit-identical to the old code);
+# at/above it a per-tick spatial grid is used so dense-food runs are tractable.
+_FOOD_GRID_CELL = 6
+_FOOD_GRID_DENSE_MIN = 400
+
 AMBIENT_TEMPERATURE_K = 293.15
 IGNITION_OXYGEN_MIN = 0.12
 WATER_HEAT_DAMPING = 0.18
@@ -604,6 +610,8 @@ class Environment:
     tick_count: int = 0
     food_positions: dict[tuple[int, int], FoodResource] = field(default_factory=dict)
     food_spawned_by_kind: dict[str, int] = field(default_factory=dict)
+    _food_grid: dict[tuple[int, int], list[tuple[int, int]]] = field(default_factory=dict, repr=False)
+    _food_grid_tick: int = -1
     large_animals: dict[int, LargeAnimal] = field(default_factory=dict)
     nests: dict[int, Nest] = field(default_factory=dict)
     objects: dict[int, PhysicalObject] = field(default_factory=dict)
@@ -773,12 +781,40 @@ class Environment:
                     self._route_seed_to_gut(seed, eater)
         return resource
 
+    def _ensure_food_grid(self) -> None:
+        if self._food_grid_tick == self.tick_count:
+            return
+        grid: dict[tuple[int, int], list[tuple[int, int]]] = {}
+        cell = _FOOD_GRID_CELL
+        for fx, fy in self.food_positions:
+            grid.setdefault((fx // cell, fy // cell), []).append((fx, fy))
+        self._food_grid = grid
+        self._food_grid_tick = self.tick_count
+
+    def _food_candidates(self, x: int, y: int, radius: int):
+        """Yield (pos, resource) candidates near (x, y). Sparse food -> the full
+        dict in insertion order (bit-identical to the old scans); dense food ->
+        spatial-grid candidates near the query (fast). Grid entries for food
+        consumed earlier this tick are skipped via the live dict lookup."""
+        if len(self.food_positions) <= _FOOD_GRID_DENSE_MIN:
+            yield from self.food_positions.items()
+            return
+        self._ensure_food_grid()
+        cell = _FOOD_GRID_CELL
+        grid = self._food_grid
+        for cx in range((x - radius) // cell, (x + radius) // cell + 1):
+            for cy in range((y - radius) // cell, (y + radius) // cell + 1):
+                for pos in grid.get((cx, cy), ()):
+                    resource = self.food_positions.get(pos)
+                    if resource is not None:
+                        yield pos, resource
+
     def food_signal_at(self, x: int, y: int, radius: int) -> float:
         signal = 0.0
         radius = max(0, radius)
         if self.food_signal_radius_cap is not None:
             radius = min(radius, max(0, self.food_signal_radius_cap))
-        for (food_x, food_y), resource in self.food_positions.items():
+        for (food_x, food_y), resource in self._food_candidates(x, y, radius):
             distance = abs(food_x - x) + abs(food_y - y)
             if distance > radius:
                 continue
@@ -960,9 +996,15 @@ class Environment:
         return abs(nest.x - x) + abs(nest.y - y) <= nest.safe_radius
 
     def nearby_food_count(self, x: int, y: int, radius: int) -> int:
+        if len(self.food_positions) <= _FOOD_GRID_DENSE_MIN:
+            return sum(
+                1
+                for food_x, food_y in self.food_positions
+                if abs(food_x - x) + abs(food_y - y) <= radius
+            )
         return sum(
             1
-            for food_x, food_y in self.food_positions
+            for (food_x, food_y), _ in self._food_candidates(x, y, radius)
             if abs(food_x - x) + abs(food_y - y) <= radius
         )
 
