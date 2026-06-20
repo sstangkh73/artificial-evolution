@@ -125,6 +125,9 @@ class Agent:
     immortal: bool = False
     instinct_state: str = "balanced"
     hunger_stress_ticks: int = 0
+    # Realistic starvation: consecutive ticks at zero energy (death when it exceeds
+    # tolerance, if starvation_death_enabled). Resets when the agent eats.
+    starvation_ticks: int = 0
     # Energy-economy diagnostics: clamp_energy_injected_total = total energy the
     # immortal floor adds to keep the agent alive (= the true accumulated deficit
     # the food economy failed to cover); energy_gained_total = total energy eaten.
@@ -2415,7 +2418,23 @@ class Agent:
             self.energy = max(1, self.energy)
             self.durability = max(1, self.durability)
             return True
-        if self.energy <= 0:
+        _env = getattr(self, "_last_env", None)
+        if getattr(_env, "starvation_death_enabled", False):
+            # Realistic: zero energy is survivable only briefly (body reserves);
+            # prolonged starvation kills, so FOOD regulates the population (no
+            # artificial cap needed). Eating resets the starvation clock.
+            if self.energy <= 0:
+                self.energy = 0
+                self.starvation_ticks += 1
+                self.hunger_stress_ticks += 1
+                self.instinct_state = "hunger"
+                if self.starvation_ticks >= getattr(_env, "starvation_tolerance", 15):
+                    self.alive = False
+                    self.death_reason = "starvation"
+                    return False
+                return True
+            self.starvation_ticks = 0
+        elif self.energy <= 0:
             self.energy = 1
             self.hunger_stress_ticks += 1
             self.instinct_state = "hunger"

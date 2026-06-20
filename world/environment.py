@@ -595,6 +595,10 @@ class Environment:
     # with an age-rising hazard so deaths spread out across ages.
     stochastic_mortality_enabled: bool = False
     mortality_hazard: float = 0.03
+    # Realistic starvation death (opt-in): prolonged zero-energy kills, so food
+    # availability regulates carrying capacity (no artificial population cap).
+    starvation_death_enabled: bool = False
+    starvation_tolerance: int = 15
     ambient_food_decay_chance: float = 0.006
     plant_food_decay_chance: float = 0.003
     tick_count: int = 0
