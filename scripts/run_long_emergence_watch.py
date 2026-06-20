@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import argparse
-from collections import Counter
+from collections import Counter, defaultdict
 import json
 from pathlib import Path
 from random import Random
@@ -776,6 +776,7 @@ def run_watch(args: argparse.Namespace) -> dict[str, object]:
     reward_records: list[dict[str, int]] = []
     next_reward_record_id = 0
     agent_death_reasons: Counter[str] = Counter()
+    fecundity_by_generation: dict[int, list[int]] = defaultdict(list)
     repro_funnel: Counter[str] = Counter()
     repro_funnel_checks = [0]
     population_trajectory: list[dict[str, object]] = []
@@ -1923,6 +1924,10 @@ def run_watch(args: argparse.Namespace) -> dict[str, object]:
 
             if not agent.alive:
                 agent_death_reasons[getattr(agent, "death_reason", None) or "unknown"] += 1
+                # R0 structural analysis: lifetime fecundity of dead females that
+                # reached adulthood (children_count), bucketed by their generation.
+                if agent.sex == "female" and agent.age >= ADULT_AGE:
+                    fecundity_by_generation[int(agent.generation)].append(int(agent.children_count))
                 agents.remove(agent)
 
         agents.extend(newborns)
@@ -2606,6 +2611,17 @@ def run_watch(args: argparse.Namespace) -> dict[str, object]:
         "plant_counts": env.plant_state_counts(),
         "diet_by_kind": _diet_by_kind(agents),
         "agent_death_reasons": dict(agent_death_reasons),
+        "female_fecundity": {
+            "overall_mean_children": (
+                round(sum(sum(v) for v in fecundity_by_generation.values())
+                      / max(1, sum(len(v) for v in fecundity_by_generation.values())), 3)
+            ),
+            "dead_adult_females": sum(len(v) for v in fecundity_by_generation.values()),
+            "mean_children_by_generation": {
+                g: round(sum(v) / len(v), 2) for g, v in sorted(fecundity_by_generation.items()) if v
+            },
+            "count_by_generation": {g: len(v) for g, v in sorted(fecundity_by_generation.items())},
+        },
         "reproduction_funnel": {
             "adult_female_checks": repro_funnel_checks[0],
             "block_rate_by_gate": {
