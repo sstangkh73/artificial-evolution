@@ -590,6 +590,11 @@ class Environment:
     # and stay within home_radius instead of dispersing -> stable breeding clusters.
     home_fidelity_enabled: bool = False
     home_radius: int = 3
+    # Stochastic mortality (opt-in): instead of every agent dying exactly at
+    # repro_max_age (synchronized cohort death -> crash), die probabilistically
+    # with an age-rising hazard so deaths spread out across ages.
+    stochastic_mortality_enabled: bool = False
+    mortality_hazard: float = 0.03
     ambient_food_decay_chance: float = 0.006
     plant_food_decay_chance: float = 0.003
     tick_count: int = 0

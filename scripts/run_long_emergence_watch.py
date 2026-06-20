@@ -669,6 +669,8 @@ def run_watch(args: argparse.Namespace) -> dict[str, object]:
         continuous_repro_local_cap=getattr(args, "continuous_repro_local_cap", 6.0),
         home_fidelity_enabled=getattr(args, "home_fidelity_enabled", False),
         home_radius=getattr(args, "home_radius", 3),
+        stochastic_mortality_enabled=getattr(args, "stochastic_mortality_enabled", False),
+        mortality_hazard=getattr(args, "mortality_hazard", 0.03),
     )
     founder_sexes = ["male"] * (args.initial_population // 2) + ["female"] * (
         args.initial_population - (args.initial_population // 2)

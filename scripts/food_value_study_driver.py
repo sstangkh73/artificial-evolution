@@ -32,10 +32,13 @@ def make_args(seed: int, model: str, max_ticks: int, output: str,
               scaffolded_actions: bool = False,
               continuous_repro: bool = False, continuous_repro_rate: float = 0.05,
               continuous_repro_local_cap: float = 6.0, world: int = 100,
-              home_fidelity: bool = False, home_radius: int = 3) -> SimpleNamespace:
+              home_fidelity: bool = False, home_radius: int = 3,
+              stochastic_mortality: bool = False, mortality_hazard: float = 0.03) -> SimpleNamespace:
     return SimpleNamespace(
         home_fidelity_enabled=home_fidelity,
         home_radius=home_radius,
+        stochastic_mortality_enabled=stochastic_mortality,
+        mortality_hazard=mortality_hazard,
         scaffolded_agent_actions_enabled=scaffolded_actions,
         scaffolded_nest_support_enabled=scaffolded_actions,
         scaffolded_social_support_enabled=scaffolded_actions,
@@ -144,6 +147,8 @@ if __name__ == "__main__":
     p.add_argument("--world", type=int, default=100, help="world width=height (smaller = denser = more clustered)")
     p.add_argument("--home-fidelity", action="store_true", help="balanced agents return to/stay at the home anchor (clustering)")
     p.add_argument("--home-radius", type=int, default=3, help="how far from the anchor agents stay")
+    p.add_argument("--stochastic-mortality", action="store_true", help="age-rising hazard death (spreads deaths) instead of hard max-age")
+    p.add_argument("--mortality-hazard", type=float, default=0.03, help="base per-tick death hazard")
     p.add_argument("--dump", default=None, help="write full result JSON here for regression diff")
     a = p.parse_args()
     summary = R.run_watch(make_args(a.seed, a.model, a.ticks, a.output,
@@ -161,7 +166,8 @@ if __name__ == "__main__":
                                     continuous_repro=a.continuous_repro,
                                     continuous_repro_rate=a.continuous_repro_rate,
                                     continuous_repro_local_cap=a.continuous_repro_cap, world=a.world,
-                                    home_fidelity=a.home_fidelity, home_radius=a.home_radius))
+                                    home_fidelity=a.home_fidelity, home_radius=a.home_radius,
+                                    stochastic_mortality=a.stochastic_mortality, mortality_hazard=a.mortality_hazard))
     if a.dump:
         Path(a.dump).write_text(json.dumps(summary, ensure_ascii=False, indent=2), encoding="utf-8")
     print(json.dumps(summarize(summary), ensure_ascii=False))

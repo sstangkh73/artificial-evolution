@@ -216,11 +216,25 @@ class Agent:
         if not self._resolve_life_state():
             return False
 
-        if self.age >= getattr(env, "repro_max_age", MAX_AGE) and not self.immortal:
-            self.completed_lifespan = True
-            self.alive = False
-            self.death_reason = "lifespan_completed"
-            return False
+        _max_age = getattr(env, "repro_max_age", MAX_AGE)
+        if not self.immortal:
+            if getattr(env, "stochastic_mortality_enabled", False):
+                # age-rising hazard from half of max_age; hard backstop at 1.5x.
+                _old_t = _max_age * 0.5
+                if self.age >= _max_age * 1.5 or (
+                    self.age >= _old_t
+                    and rng.random() < getattr(env, "mortality_hazard", 0.03)
+                    * (self.age - _old_t) / max(1.0, _max_age - _old_t)
+                ):
+                    self.completed_lifespan = True
+                    self.alive = False
+                    self.death_reason = "lifespan_completed"
+                    return False
+            elif self.age >= _max_age:
+                self.completed_lifespan = True
+                self.alive = False
+                self.death_reason = "lifespan_completed"
+                return False
 
         if instinct != "balanced":
             return False
