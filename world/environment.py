@@ -581,6 +581,11 @@ class Environment:
     repro_max_age: int = 200
     repro_litter_min: int = 1
     repro_litter_max: int = 3
+    # Structural alternative (opt-in, default off): continuous density-dependent
+    # stochastic reproduction (logistic) instead of the synchronized gate pulse.
+    continuous_reproduction_enabled: bool = False
+    continuous_repro_base_rate: float = 0.05
+    continuous_repro_local_cap: float = 6.0
     ambient_food_decay_chance: float = 0.006
     plant_food_decay_chance: float = 0.003
     tick_count: int = 0

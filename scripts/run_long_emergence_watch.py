@@ -664,6 +664,9 @@ def run_watch(args: argparse.Namespace) -> dict[str, object]:
         scaffolded_nest_support_enabled=getattr(args, "scaffolded_nest_support_enabled", False),
         scaffolded_social_support_enabled=getattr(args, "scaffolded_social_support_enabled", False),
         legacy_scaffold_nest_enabled=getattr(args, "legacy_scaffold_nest_enabled", False),
+        continuous_reproduction_enabled=getattr(args, "continuous_reproduction_enabled", False),
+        continuous_repro_base_rate=getattr(args, "continuous_repro_base_rate", 0.05),
+        continuous_repro_local_cap=getattr(args, "continuous_repro_local_cap", 6.0),
     )
     founder_sexes = ["male"] * (args.initial_population // 2) + ["female"] * (
         args.initial_population - (args.initial_population // 2)

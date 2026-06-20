@@ -211,6 +211,8 @@ class Agent:
 
         if instinct != "balanced":
             return False
+        if getattr(env, "continuous_reproduction_enabled", False):
+            return self._continuous_reproduction_decision(env, rng)
         return self.can_reproduce()
 
     def _rc(self, key: str, default):
@@ -218,6 +220,44 @@ class Agent:
         Lets the reproduction-rate study loosen gates without code edits; defaults
         keep behaviour byte-identical. See reports food-value / energy studies."""
         return getattr(getattr(self, "_last_env", None), key, default)
+
+    def _continuous_reproduction_decision(self, env, rng: Random) -> bool:
+        """Opt-in structural alternative to the all-or-nothing affective gate.
+
+        The gated model fires only when ~13 conditions align at once, so eligible
+        agents breed in synchronized pulses -> same-age cohorts -> synchronized
+        lifespan death -> boom/bust. This replaces the soft gates with a LOGISTIC
+        per-tick probability: a few hard requirements, then a rate that rises with
+        affective readiness and FALLS with local crowding. Stochastic timing
+        de-synchronizes births; the crowding term self-limits the population.
+        Records reproduction_debug so the funnel still works."""
+        if self.sex != "female" or self.current_stage != "adult":
+            self.reproduction_partner_id = None
+            return False
+        if self.reproduction_cooldown > 0 or self.durability < MINIMUM_REPRODUCTION_HEALTH:
+            return False
+        if self.energy < REPRODUCTION_COST:
+            return False
+        # actively starving / terrified still overrides (survival first)
+        if self.hunger_level >= 0.5 or self.fear_level >= 0.6:
+            return False
+        mate = self._find_reproduction_partner()
+        self.reproduction_partner_id = mate.agent_id if mate is not None else None
+        if mate is None:
+            return False
+        readiness = max(0.0, self.safety_feeling) * max(0.0, self.comfort_level)
+        local_cap = max(1.0, getattr(env, "continuous_repro_local_cap", 6.0))
+        crowding = min(1.0, getattr(self, "_nearby_ally_count", 0) / local_cap)
+        base = getattr(env, "continuous_repro_base_rate", 0.05)
+        prob = base * readiness * (1.0 - crowding)
+        decided = rng.random() < prob
+        self.reproduction_debug = {
+            "eligible": decided, "reason": "continuous",
+            "reasons": ["ready"] if decided else ["continuous_roll"],
+            "readiness": round(readiness, 3), "crowding": round(crowding, 3),
+            "prob": round(prob, 4), "energy": self.energy,
+        }
+        return decided
 
     def can_reproduce(self) -> bool:
         if self.sex != "female":
@@ -578,6 +618,7 @@ class Agent:
             for member in self.local_group_members
             if abs(member.x - self.x) + abs(member.y - self.y) <= SAFE_RADIUS
         )
+        self._nearby_ally_count = nearby_allies
         nearby_food = env.nearby_food_count(self.x, self.y, radius=3)
         partner_near = self._nearby_reproductive_partner_present()
 

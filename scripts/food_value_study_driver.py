@@ -29,12 +29,17 @@ def make_args(seed: int, model: str, max_ticks: int, output: str,
               repro_safety: float = 0.66, repro_comfort: float = 0.58,
               repro_safety_streak: int = 10, repro_pair_bond_streak: int = 14,
               repro_max_age: int = 200, repro_litter_min: int = 1,
-              scaffolded_actions: bool = False) -> SimpleNamespace:
+              scaffolded_actions: bool = False,
+              continuous_repro: bool = False, continuous_repro_rate: float = 0.05,
+              continuous_repro_local_cap: float = 6.0) -> SimpleNamespace:
     return SimpleNamespace(
         scaffolded_agent_actions_enabled=scaffolded_actions,
         scaffolded_nest_support_enabled=scaffolded_actions,
         scaffolded_social_support_enabled=scaffolded_actions,
         legacy_scaffold_nest_enabled=scaffolded_actions,
+        continuous_reproduction_enabled=continuous_repro,
+        continuous_repro_base_rate=continuous_repro_rate,
+        continuous_repro_local_cap=continuous_repro_local_cap,
         food_energy_multiplier=food_energy_mult,
         metabolic_drain_multiplier=drain_mult,
         founder_age_spread=founder_age_spread,
@@ -129,6 +134,10 @@ if __name__ == "__main__":
     p.add_argument("--repro-litter-min", type=int, default=1, help="minimum litter size (default 1)")
     p.add_argument("--scaffolded", action="store_true",
                    help="enable the settlement/social layer (nest building, nest support, food sharing)")
+    p.add_argument("--continuous-repro", action="store_true",
+                   help="use logistic density-dependent stochastic reproduction instead of the gate")
+    p.add_argument("--continuous-repro-rate", type=float, default=0.05, help="per-tick base reproduction rate")
+    p.add_argument("--continuous-repro-cap", type=float, default=6.0, help="local crowding cap (allies)")
     p.add_argument("--dump", default=None, help="write full result JSON here for regression diff")
     a = p.parse_args()
     summary = R.run_watch(make_args(a.seed, a.model, a.ticks, a.output,
@@ -142,7 +151,10 @@ if __name__ == "__main__":
                                     repro_safety_streak=a.repro_safety_streak,
                                     repro_pair_bond_streak=a.repro_pair_bond_streak,
                                     repro_max_age=a.repro_max_age, repro_litter_min=a.repro_litter_min,
-                                    scaffolded_actions=a.scaffolded))
+                                    scaffolded_actions=a.scaffolded,
+                                    continuous_repro=a.continuous_repro,
+                                    continuous_repro_rate=a.continuous_repro_rate,
+                                    continuous_repro_local_cap=a.continuous_repro_cap))
     if a.dump:
         Path(a.dump).write_text(json.dumps(summary, ensure_ascii=False, indent=2), encoding="utf-8")
     print(json.dumps(summarize(summary), ensure_ascii=False))
