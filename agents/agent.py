@@ -219,8 +219,9 @@ class Agent:
         _max_age = getattr(env, "repro_max_age", MAX_AGE)
         if not self.immortal:
             if getattr(env, "stochastic_mortality_enabled", False):
-                # age-rising hazard from half of max_age; hard backstop at 1.5x.
-                _old_t = _max_age * 0.5
+                # age-rising hazard starting late (preserve mean lifespan, just
+                # spread the death pulse); hard backstop at 1.5x max_age.
+                _old_t = _max_age * getattr(env, "mortality_onset_fraction", 0.85)
                 if self.age >= _max_age * 1.5 or (
                     self.age >= _old_t
                     and rng.random() < getattr(env, "mortality_hazard", 0.03)
