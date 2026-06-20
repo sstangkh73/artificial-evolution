@@ -667,6 +667,8 @@ def run_watch(args: argparse.Namespace) -> dict[str, object]:
         continuous_reproduction_enabled=getattr(args, "continuous_reproduction_enabled", False),
         continuous_repro_base_rate=getattr(args, "continuous_repro_base_rate", 0.05),
         continuous_repro_local_cap=getattr(args, "continuous_repro_local_cap", 6.0),
+        home_fidelity_enabled=getattr(args, "home_fidelity_enabled", False),
+        home_radius=getattr(args, "home_radius", 3),
     )
     founder_sexes = ["male"] * (args.initial_population // 2) + ["female"] * (
         args.initial_population - (args.initial_population // 2)
@@ -704,6 +706,15 @@ def run_watch(args: argparse.Namespace) -> dict[str, object]:
         )
         for agent_id, (spawn_x, spawn_y) in enumerate(spawn_positions)
     ]
+
+    # Home/breeding-site fidelity: founders share the spawn centroid as their home
+    # anchor (offspring inherit it via spawn_child). Only read when the env flag is
+    # on, so this assignment is behaviourally inert otherwise.
+    if agents:
+        _hx = int(round(sum(a.x for a in agents) / len(agents)))
+        _hy = int(round(sum(a.y for a in agents) / len(agents)))
+        for _a in agents:
+            _a.home_anchor = (_hx, _hy)
 
     next_agent_id = len(agents)
     seen_groups: set[frozenset[int]] = set()

@@ -31,8 +31,11 @@ def make_args(seed: int, model: str, max_ticks: int, output: str,
               repro_max_age: int = 200, repro_litter_min: int = 1,
               scaffolded_actions: bool = False,
               continuous_repro: bool = False, continuous_repro_rate: float = 0.05,
-              continuous_repro_local_cap: float = 6.0) -> SimpleNamespace:
+              continuous_repro_local_cap: float = 6.0, world: int = 100,
+              home_fidelity: bool = False, home_radius: int = 3) -> SimpleNamespace:
     return SimpleNamespace(
+        home_fidelity_enabled=home_fidelity,
+        home_radius=home_radius,
         scaffolded_agent_actions_enabled=scaffolded_actions,
         scaffolded_nest_support_enabled=scaffolded_actions,
         scaffolded_social_support_enabled=scaffolded_actions,
@@ -58,7 +61,7 @@ def make_args(seed: int, model: str, max_ticks: int, output: str,
         evaluate_every_ticks=100_000_000, event_sample_limit=80,
         output=Path(output),
         spawn_strategy="frontier_safe_high_food", immortal=immortal,
-        width=100, height=100, max_food=2000, base_food_spawn_per_tick=4,
+        width=world, height=world, max_food=2000, base_food_spawn_per_tick=4,
         food_spawn_multiplier=0.70, bootstrap_food_spawn_ticks=300,
         wild_food_spawn_after_bootstrap_multiplier=0.10, natural_seed_rain_per_tick=0,
         max_plant_seeds=7600, large_animal_spawn_per_tick=2, max_large_animals=28,
@@ -138,6 +141,9 @@ if __name__ == "__main__":
                    help="use logistic density-dependent stochastic reproduction instead of the gate")
     p.add_argument("--continuous-repro-rate", type=float, default=0.05, help="per-tick base reproduction rate")
     p.add_argument("--continuous-repro-cap", type=float, default=6.0, help="local crowding cap (allies)")
+    p.add_argument("--world", type=int, default=100, help="world width=height (smaller = denser = more clustered)")
+    p.add_argument("--home-fidelity", action="store_true", help="balanced agents return to/stay at the home anchor (clustering)")
+    p.add_argument("--home-radius", type=int, default=3, help="how far from the anchor agents stay")
     p.add_argument("--dump", default=None, help="write full result JSON here for regression diff")
     a = p.parse_args()
     summary = R.run_watch(make_args(a.seed, a.model, a.ticks, a.output,
@@ -154,7 +160,8 @@ if __name__ == "__main__":
                                     scaffolded_actions=a.scaffolded,
                                     continuous_repro=a.continuous_repro,
                                     continuous_repro_rate=a.continuous_repro_rate,
-                                    continuous_repro_local_cap=a.continuous_repro_cap))
+                                    continuous_repro_local_cap=a.continuous_repro_cap, world=a.world,
+                                    home_fidelity=a.home_fidelity, home_radius=a.home_radius))
     if a.dump:
         Path(a.dump).write_text(json.dumps(summary, ensure_ascii=False, indent=2), encoding="utf-8")
     print(json.dumps(summarize(summary), ensure_ascii=False))

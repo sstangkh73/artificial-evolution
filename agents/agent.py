@@ -97,6 +97,10 @@ class Agent:
     near_parent: bool = False
     near_nest: bool = False
     nest_position: tuple[int, int] | None = None
+    # Home/breeding-site fidelity (opt-in): when balanced, return to and stay near
+    # this anchor instead of dispersing, so agents stay clustered (mates + safety).
+    # Founders share the spawn centroid; offspring inherit the family's anchor.
+    home_anchor: tuple[int, int] | None = None
     is_safe_area: bool = False
     care_target: tuple[int, int] | None = None
     settlement_target: tuple[int, int] | None = None
@@ -187,9 +191,18 @@ class Agent:
                 self._maintain_hearth(env)
                 self._experiment_with_objects(env, rng)
 
-            hunted = self._try_hunt_large_animal(env, rng)
-            if not hunted and not self._move_toward_food_signal(env, rng):
-                self._wander(env, rng)
+            homed = False
+            if getattr(env, "home_fidelity_enabled", False) and self.home_anchor is not None:
+                home_radius = getattr(env, "home_radius", 3)
+                home_dist = abs(self.home_anchor[0] - self.x) + abs(self.home_anchor[1] - self.y)
+                if home_dist > home_radius:
+                    self._move_toward(env, self.home_anchor[0], self.home_anchor[1])
+                # within home radius: stay put (cluster) instead of dispersing
+                homed = True
+            if not homed:
+                hunted = self._try_hunt_large_animal(env, rng)
+                if not hunted and not self._move_toward_food_signal(env, rng):
+                    self._wander(env, rng)
             self._handle_seed_primitive(env, rng)
 
         consumed_food = self._consume_current_food(env)
@@ -517,6 +530,7 @@ class Agent:
             other_parent_id=mate.agent_id if mate is not None else None,
             lineage_id=self.lineage_id,
             shared_home_owner_id=home_owner_id,
+            home_anchor=self.home_anchor,
             remembered_nest_locations=remembered_nests,
             bond_strength={
                 self.agent_id: 8.0,

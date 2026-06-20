@@ -586,6 +586,10 @@ class Environment:
     continuous_reproduction_enabled: bool = False
     continuous_repro_base_rate: float = 0.05
     continuous_repro_local_cap: float = 6.0
+    # Home/breeding-site fidelity (opt-in): balanced agents return to home_anchor
+    # and stay within home_radius instead of dispersing -> stable breeding clusters.
+    home_fidelity_enabled: bool = False
+    home_radius: int = 3
     ambient_food_decay_chance: float = 0.006
     plant_food_decay_chance: float = 0.003
     tick_count: int = 0
