@@ -14,7 +14,11 @@ import sys
 
 from agents.agent import ADULT_AGE, Agent, INITIAL_ENERGY, MAX_AGE
 from agents.body import BodyPlan, create_trait_variant, generate_candidate_body_plans
-from simulation.publication_artifacts import write_publication_artifacts
+from simulation.publication_artifacts import (
+    MIN_JOURNAL_REPLICATES,
+    RECOMMENDED_JOURNAL_REPLICATES,
+    write_publication_artifacts,
+)
 from simulation.research_artifacts import write_research_artifacts
 from visualization.dashboard import build_dashboard_artifacts
 from world.environment import Environment, ZONE_SAFE_HIGH_FOOD
@@ -859,6 +863,7 @@ def _run_publication_conditions_batch(
     failure_reason_rows: list[dict[str, object]] = []
     lineage_rows: list[dict[str, object]] = []
     event_rows: list[dict[str, object]] = []
+    agent_outcome_rows: list[dict[str, object]] = []
 
     log(experiment, headline)
     log(experiment, "=" * max(49, len(headline)))
@@ -981,6 +986,14 @@ def _run_publication_conditions_batch(
                 normalized["seed"] = seed
                 tick_metrics_long.append(normalized)
 
+            for agent in agent_rows:
+                enriched_agent = dict(agent)
+                enriched_agent["condition_id"] = condition.condition_id
+                enriched_agent["condition_label"] = condition.label
+                enriched_agent["replicate_id"] = replicate_id
+                enriched_agent["seed"] = seed
+                agent_outcome_rows.append(enriched_agent)
+
             for event in events:
                 enriched_event = dict(event)
                 enriched_event["condition_id"] = condition.condition_id
@@ -1037,6 +1050,7 @@ def _run_publication_conditions_batch(
             "failure_reasons": failure_reason_rows,
             "lineage_rows": lineage_rows,
             "event_rows": event_rows,
+            "agent_outcome_rows": agent_outcome_rows,
             "runtime_provenance": {
                 "experiment_number": experiment.experiment_number,
                 "started_at": experiment.started_at,
@@ -1046,6 +1060,16 @@ def _run_publication_conditions_batch(
                 "git_revision": _git_revision(),
                 "seed_start": start_seed,
                 "seed_count_per_condition": seed_count,
+                "snapshot_interval": snapshot_interval,
+                "min_journal_replicates_per_condition": MIN_JOURNAL_REPLICATES,
+                "recommended_journal_replicates_per_condition": RECOMMENDED_JOURNAL_REPLICATES,
+                "sample_size_status": (
+                    "recommended_journal_grade"
+                    if seed_count >= RECOMMENDED_JOURNAL_REPLICATES
+                    else "minimum_journal_grade"
+                    if seed_count >= MIN_JOURNAL_REPLICATES
+                    else "underpowered"
+                ),
             },
         },
     )
@@ -3042,6 +3066,8 @@ def run_single_body_trial(
                     "final_x": agent.x,
                     "final_y": agent.y,
                     "meals_by_type_json": agent.meals_by_type,
+                    "skipped_food_by_type_json": agent.skipped_food_by_type,
+                    "food_value_memory_json": agent.food_value_memory,
                     "gathered_materials_json": agent.gathered_materials,
                     "technology_constructions_json": agent.technology_constructions,
                     "technology_uses_json": agent.technology_uses,

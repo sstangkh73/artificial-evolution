@@ -1,199 +1,282 @@
 # Artificial Evolution
 
+Artificial Evolution is an artificial life research project centered on one
+primary question: can unlabeled agents learn how their world works on their
+own, and can that learning compound into the emergence of technology?
+
+The repository has moved beyond a minimal survival prototype. The current code
+already includes ecological zones, family and nest systems, hidden behavioral
+traits, food processing, material gathering, coordinated hunting, Tier 1 tools,
+and multiple experiment pipelines for research capture.
+
 ## ภาษาไทย
 
-โครงการนี้เป็นการจำลองสิ่งมีชีวิตประดิษฐ์ที่มุ่งศึกษาเรื่องการเอาชีวิตรอด
-การแลกเปลี่ยนข้อดีข้อเสียของโครงสร้างร่างกาย และการเกิดพฤติกรรมซับซ้อนในระยะยาว
+### โปรเจ็กต์นี้คืออะไร
 
-### ขอบเขตปัจจุบัน
+Artificial Evolution เป็นโปรเจ็กต์ artificial life ที่ตั้งคำถามหลักใหม่ว่า
+เอเจนต์ที่ไม่ได้ถูกปักป้ายบอกความหมายของสิ่งต่าง ๆ ในโลก
+จะเรียนรู้กติกา คุณค่าของทรัพยากร ความเสี่ยง และโอกาสได้เองหรือไม่
+และเมื่อเรียนรู้ได้แล้ว ความรู้นั้นจะค่อย ๆ สะสมไปสู่การเกิดเทคโนโลยีได้หรือไม่
+เช่น การใช้เครื่องมือ การแปรรูปอาหาร การจัดการทรัพยากร
+และการสร้างระบบร่วมมือที่ซับซ้อนขึ้น
 
-รีโพซิทอรีนี้เริ่มต้นด้วยซิมเอาชีวิตรอดแบบพื้นฐาน:
+กล่าวอีกแบบ โปรเจ็กต์นี้ไม่ได้โฟกัสแค่ว่า "ใครรอด"
+แต่โฟกัสว่า "การเรียนรู้แบบไม่มีป้ายบอกจะพาไปสู่ความสามารถใหม่ระดับเทคโนโลยีได้ไหม"
 
-- โลกขนาด `100x100`
-- อาหารเกิดแบบสุ่มและมีจำนวนจำกัด
-- เอเจนต์เสียพลังงานทุก tick
-- ร่างกายถูกสร้างภายใต้งบต้นทุนคงที่
-- ระบบกลางวัน/กลางคืนที่ทำให้การมองเห็นลดลงตอนกลางคืน
-- ตัวรันซิมสำหรับเปรียบเทียบผลการอยู่รอดของแต่ละแบบ
+### คำถามวิจัยหลัก
 
-### ทิศทางการวิจัย
+- เอเจนต์จะเรียนรู้โลกโดยไม่มี label หรือ scripted strategy ได้มากแค่ไหน
+- การเรียนรู้จากประสบการณ์จะสร้างพฤติกรรมที่ใช้ซ้ำและถ่ายทอดต่อได้หรือไม่
+- เมื่อมีความจำ การร่วมมือ และข้อจำกัดด้านพลังงาน เทคโนโลยีอย่างง่ายจะเกิดขึ้นเองหรือไม่
+- เทคโนโลยีที่เกิดขึ้นช่วยเพิ่มความอยู่รอด การสืบพันธุ์ หรือความต่อเนื่องของประชากรจริงหรือไม่
 
-เป้าหมายระยะยาวคือศึกษาว่าโครงสร้างร่างกายที่มีประสิทธิภาพ
-และพฤติกรรมทางสังคมที่ซับซ้อนมากขึ้น
-สามารถเกิดขึ้นเองได้หรือไม่ภายใต้แรงกดดันจากสิ่งแวดล้อมและข้อจำกัดด้านพลังงาน
+### สถานะปัจจุบัน
 
-### วิธีรัน
+ระบบที่มีอยู่แล้วในโค้ด:
+
+- โลกแบบกริด `100x100`
+- เขตนิเวศ 4 แบบพร้อมความเสี่ยงและความหนาแน่นอาหารต่างกัน
+- กลางวัน/กลางคืน และฤดูกาลที่กระทบการมองเห็นและการเกิดอาหาร
+- โครงสร้างร่างกายภายใต้งบต้นทุนคงที่ พร้อมทั้ง morphology และ hidden traits
+- วงจรชีวิตของเอเจนต์: เด็ก เยาวชน ผู้ใหญ่ และวัยชรา
+- ระบบพ่อแม่ ลูก เครือญาติ ความผูกพัน และการเลี้ยงดู
+- nest สำหรับความปลอดภัย การเก็บอาหาร และการเก็บวัสดุ
+- ความจำเกี่ยวกับอาหาร อันตราย เขตปลอดภัย และตำแหน่ง nest
+- การกินพืชและเนื้อแบบดิบ/สุก
+- การเก็บวัสดุ เช่น `wood`, `stone`, `fiber`
+- การล่าแบบร่วมมือ และเครื่องมือ Tier 1 เช่น `knife`, `spear`, `sickle`
+- โหมดการทดลองหลายแบบสำหรับงานสำรวจ งานเก็บข้อมูล และงานทำ publication
+
+ข้อจำกัดสำคัญตอนนี้:
+
+- ยังไม่มี mutation-and-selection loop ที่เกิดขึ้นเองครบวงจรระหว่างการสืบพันธุ์
+- ความหลากหลายเชิง morphology ยังแคบกว่าความหลากหลายใน trait space
+- ระบบเศรษฐกิจ การแลกเปลี่ยน และ infrastructure ยังอยู่ในช่วงต้น
+
+### การติดตั้ง
+
+โปรเจ็กต์นี้รันได้ด้วย Python และตอนนี้ `requirements.txt` ระบุว่าใช้
+standard library เป็นหลัก
+
+```powershell
+python --version
+```
+
+### วิธีรันแบบเร็ว
+
+รันโหมดต้นแบบพื้นฐาน:
 
 ```powershell
 python main.py
 ```
 
-### โหมดแสดงผลโลก
+ดูตัวเลือกทั้งหมด:
 
-สามารถสร้าง dashboard แบบ replay ได้ด้วย:
+```powershell
+python main.py --help
+```
+
+### โหมดที่ใช้บ่อย
+
+แดชบอร์ดแบบ replay:
 
 ```powershell
 python main.py --mode dashboard --seed 7 --dashboard-ticks 800 --snapshot-interval 10
 ```
 
-ผลลัพธ์จะถูกสร้างใน `data/dashboards/...` เป็นทั้ง:
-
-- `index.html` สำหรับดู world map, timeline, heatmap, lineage, alerts, replay
-- `telemetry.json` สำหรับวิเคราะห์ต่อหรือทำ visualization เพิ่ม
-
-### โหมดเก็บข้อมูลระดับงานวิจัย
-
-สำหรับเก็บข้อมูลแบบพร้อมเขียน paper:
+เก็บข้อมูลแบบ research bundle:
 
 ```powershell
 python main.py --mode paper --seed 7 --paper-body-index 8 --dashboard-ticks 2000 --snapshot-interval 10
 ```
 
-ผลลัพธ์จะอยู่ใน `data/research_runs/...` และประกอบด้วย:
-
-- `metadata.json`
-- `summary.json`
-- `tick_metrics.csv`
-- `events.jsonl`
-- `lineages.csv`
-- `agent_outcomes.csv`
-- `methods.md`
-- `dashboard/`
-
-### โหมด publication batch
-
-สำหรับเก็บข้อมูลหลายเงื่อนไข หลาย seed พร้อมตารางสถิติและ source data สำหรับ figure:
+รันหลายเงื่อนไขหลาย seed เพื่อทำ publication package:
 
 ```powershell
 python main.py --mode publication-batch --seed 7 --study-seeds 6 --dashboard-ticks 1200 --snapshot-interval 10
 ```
 
-ผลลัพธ์จะกระจายเป็น 2 ชั้น:
-
-- `data/research_runs/...` สำหรับ raw replicate bundles
-- `data/publication_packages/...` สำหรับ `conditions.csv`, `replicate_index.csv`, `primary_outcomes.csv`, `condition_level_statistics.csv`, `figure_source_data/`, และไฟล์ methods / analysis plan
-
-### โครงสร้างโปรเจกต์
-
-- `docs/` บันทึกงานวิจัย แผนแต่ละเฟซ และกฎของโลก
-- `agents/` ระบบร่างกายและตรรกะของเอเจนต์
-- `world/` กฎของสภาพแวดล้อมและระบบเกิดอาหาร
-- `simulation/` ลูปการทดลองและตัวจัดการซิม
-- `data/` ผลลัพธ์จากการทดลอง
-- `visualization/` ตัวช่วยแสดงผลและแดชบอร์ดในอนาคต
-
-## English
-
-This project is an artificial life simulation focused on survival, body
-structure trade-offs, and long-term emergent behavior.
-
-### Current Scope
-
-This repository starts with a minimal survival simulation:
-
-- A `100x100` world
-- Random food spawning with a limited cap
-- Agents that lose energy every tick
-- Body structures built from a fixed cost budget
-- Day/night cycles that reduce vision at night
-- A simulation runner for comparing survival outcomes
-
-### Research Direction
-
-The long-term goal is to explore whether efficient body structures and more
-complex social behaviors can emerge under environmental pressure and energy
-constraints.
-
-### Run
-
-```powershell
-python main.py
-```
-
-### World Dashboard Mode
-
-You can generate a replayable dashboard with:
-
-```powershell
-python main.py --mode dashboard --seed 7 --dashboard-ticks 800 --snapshot-interval 10
-```
-
-This writes output into `data/dashboards/...` as:
-
-- `index.html` for world-map replay, timeline, heatmap, lineage, and alert viewing
-- `telemetry.json` for further analysis or custom visualization
-
-### Research-Grade Paper Mode
-
-For paper-ready data capture:
-
-```powershell
-python main.py --mode paper --seed 7 --paper-body-index 8 --dashboard-ticks 2000 --snapshot-interval 10
-```
-
-This writes a research bundle into `data/research_runs/...` including:
-
-- `metadata.json`
-- `summary.json`
-- `tick_metrics.csv`
-- `events.jsonl`
-- `lineages.csv`
-- `agent_outcomes.csv`
-- `methods.md`
-- `dashboard/`
-
-### Publication Batch Mode
-
-For multi-condition, multi-seed capture with aggregate statistics and figure-ready source data:
-
-```powershell
-python main.py --mode publication-batch --seed 7 --study-seeds 6 --dashboard-ticks 1200 --snapshot-interval 10
-```
-
-This writes two layers of outputs:
-
-- `data/research_runs/...` for raw replicate bundles
-- `data/publication_packages/...` for `conditions.csv`, `replicate_index.csv`, `primary_outcomes.csv`, `condition_level_statistics.csv`, `figure_source_data/`, and methods / analysis-plan files
-
-### Robustness Batch Mode
-
-For robustness sweeps across harsher technology-emergence and lower-food sexed conditions:
+สำรวจความทนทานของระบบในหลายเงื่อนไข:
 
 ```powershell
 python main.py --mode robustness-batch --seed 7 --study-seeds 4 --dashboard-ticks 1600 --snapshot-interval 20
 ```
 
-### World Discovery Phase Mode
-
-For the phase-separated study of embodied, collective, and material world discovery:
+ศึกษาการค้นพบโลกแบบแบ่งเฟส:
 
 ```powershell
 python main.py --mode world-discovery --seed 7 --study-seeds 4 --dashboard-ticks 1600 --snapshot-interval 20
 ```
 
-### Immortal Discovery Single Run
-
-For one long open-ended run with 50 immortal, reproductive founders:
+รันระยะยาวแบบ founder เป็นอมตะเพื่อดู emergence:
 
 ```powershell
 python main.py --mode immortal-discovery --seed 7 --paper-body-index 8 --dashboard-ticks 8000 --snapshot-interval 25
 ```
 
-### Render Publication Figures
-
-To render PNG figures from any publication package:
+ค้นหา body type ที่อยู่รอดได้:
 
 ```powershell
-python scripts/render_publication_figures.py data/publication_packages/experiment_047_publication_batch
+python main.py --mode distinct-search --seed 7 --target-body-types 50
 ```
 
-This creates `figures/` and `rendered_figures_manifest.json` inside the target package.
+### ผลลัพธ์จะถูกเก็บไว้ที่ไหน
+
+- `data/dashboards/` สำหรับ replay dashboard
+- `data/research_runs/` สำหรับ research bundles รายรัน
+- `data/publication_packages/` สำหรับ aggregate statistics และ figure source data
+- `data/experiment_history.json` สำหรับประวัติการทดลอง
+- `reports/` สำหรับบันทึกวิเคราะห์ รายงาน และ manuscript
+
+### โครงสร้างโปรเจ็กต์
+
+- `agents/` ตรรกะเอเจนต์ โครงสร้างร่างกาย และพฤติกรรม
+- `world/` ฟิสิกส์โลก เขตนิเวศ เมแทบอลิซึม และสิ่งแวดล้อม
+- `simulation/` ตัวรันการทดลองและระบบสร้าง artifacts
+- `visualization/` ตัวช่วยสำหรับ dashboard และงานแสดงผล
+- `scripts/` สคริปต์สำหรับ batch runs, figure rendering, และงานรายงาน
+- `docs/` เอกสารสถานะ สถาปัตยกรรม คำถามวิจัย และกติกาของโลก
+- `data/` ข้อมูลผลลัพธ์จากการทดลอง
+- `reports/` รายงานสรุปและเอกสารประกอบงานวิจัย
+
+### เอกสารที่ควรอ่านต่อ
+
+- `docs/CURRENT_STATE.md` สรุประบบที่ implement แล้ว, บางส่วน, และแผนในอนาคต
+- `docs/PROJECT_OVERVIEW.md` ภาพรวมคำถามวิจัยและ roadmap
+- `docs/WORLD_RULES.md` กติกาหลักของโลกจำลอง
+- `docs/PAPER_DATA_PROTOCOL.md` รูปแบบข้อมูลสำหรับงานวิจัย
+
+## English
+
+### What This Project Does
+
+Artificial Evolution is an artificial life simulation built around one primary
+research question: can agents learn the structure of their world without
+labels, hand-authored meaning, or pre-scripted strategies, and can that
+learning accumulate into technology emergence?
+
+In this repository, "technology" includes practical capabilities such as tool
+use, food processing, resource handling, coordinated roles, and other reusable
+behavioral structures that extend what agents can do.
+
+### Primary Research Question
+
+- How much can agents learn from experience alone without labeled concepts?
+- Can repeated successful behavior become stable, reusable, and transmissible?
+- Under memory, cooperation, and energy constraints, do simple technologies emerge?
+- Do those technologies measurably improve survival, reproduction, or continuity?
+
+### Current Implementation
+
+Systems already present in the codebase:
+
+- A `100x100` grid world
+- Four ecological zones with different food density and danger profiles
+- Day/night and seasonal dynamics
+- Fixed-budget body construction with morphology plus hidden traits
+- Agent life stages: child, juvenile, adult, and old
+- Parent-child lineage, bonding, and caretaker behavior
+- Nests for safety, food storage, and material storage
+- Memory for danger, food, safe zones, and nest locations
+- Raw/cooked plant and meat food processing
+- Material gathering using `wood`, `stone`, and `fiber`
+- Coordinated hunting and Tier 1 tools: `knife`, `spear`, `sickle`
+- Multiple experiment modes for search, dashboards, research capture, and publication packaging
+
+Important current limitations:
+
+- There is not yet a fully endogenous mutation-and-selection loop during reproduction.
+- Morphological diversity is still narrower than trait-space diversity.
+- Economy, exchange, and infrastructure systems are still early-stage.
+
+### Setup
+
+The repository currently uses Python with only standard-library requirements.
+
+```powershell
+python --version
+```
+
+### Quick Start
+
+Run the default prototype experiment:
+
+```powershell
+python main.py
+```
+
+Show all CLI options:
+
+```powershell
+python main.py --help
+```
+
+### Common Modes
+
+Replayable dashboard:
+
+```powershell
+python main.py --mode dashboard --seed 7 --dashboard-ticks 800 --snapshot-interval 10
+```
+
+Research-grade capture bundle:
+
+```powershell
+python main.py --mode paper --seed 7 --paper-body-index 8 --dashboard-ticks 2000 --snapshot-interval 10
+```
+
+Multi-condition publication package:
+
+```powershell
+python main.py --mode publication-batch --seed 7 --study-seeds 6 --dashboard-ticks 1200 --snapshot-interval 10
+```
+
+Robustness sweep:
+
+```powershell
+python main.py --mode robustness-batch --seed 7 --study-seeds 4 --dashboard-ticks 1600 --snapshot-interval 20
+```
+
+Phase-separated world discovery study:
+
+```powershell
+python main.py --mode world-discovery --seed 7 --study-seeds 4 --dashboard-ticks 1600 --snapshot-interval 20
+```
+
+Long open-ended immortal founder run:
+
+```powershell
+python main.py --mode immortal-discovery --seed 7 --paper-body-index 8 --dashboard-ticks 8000 --snapshot-interval 25
+```
+
+Search for viable survivor body types:
+
+```powershell
+python main.py --mode distinct-search --seed 7 --target-body-types 50
+```
+
+### Output Locations
+
+- `data/dashboards/` for replay dashboards
+- `data/research_runs/` for per-run research bundles
+- `data/publication_packages/` for aggregate statistics and figure-ready source data
+- `data/experiment_history.json` for experiment history
+- `reports/` for analyses, summaries, and manuscript artifacts
 
 ### Project Layout
 
-- `docs/` research notes, phase plans, and world rules
-- `agents/` body design and agent logic
-- `world/` environment rules and food spawning
-- `simulation/` execution loop and experiment orchestration
-- `data/` generated experiment outputs
-- `visualization/` simple render helpers and later dashboards
+- `agents/` agent logic, body construction, and behavioral systems
+- `world/` world rules, metabolism, ecology, and environment
+- `simulation/` experiment runners and research artifact generation
+- `visualization/` dashboard helpers and visualization support
+- `scripts/` batch runners, figure rendering, and report utilities
+- `docs/` architecture, status notes, research framing, and world rules
+- `data/` generated experimental output
+- `reports/` research reports and publication-oriented documents
+
+### Recommended Docs
+
+- `docs/CURRENT_STATE.md` for the most accurate implementation snapshot
+- `docs/PROJECT_OVERVIEW.md` for research framing and roadmap
+- `docs/WORLD_RULES.md` for simulation rules
+- `docs/PAPER_DATA_PROTOCOL.md` for research artifact structure

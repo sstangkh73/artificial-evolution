@@ -1,8 +1,10 @@
 from __future__ import annotations
 
+import math
 from dataclasses import dataclass, field
 from random import Random
 
+from agents import neural_brain
 from agents.body import BodyPlan, inherit_body_plan
 from world.environment import (
     AMBIENT_TEMPERATURE_K,
@@ -109,6 +111,7 @@ class Agent:
     growth_progress: int = 0
     child_stress: int = 0
     meals_by_type: dict[str, int] = field(default_factory=dict)
+    skipped_food_by_type: dict[str, int] = field(default_factory=dict)
     # Food-value learning study B: learned net energy per food kind (EMA over the
     # energy actually gained when eating it). Drives an optimal-diet eat decision
     # when env.food_value_learning_enabled. Empty by default = no effect.
@@ -152,10 +155,17 @@ class Agent:
     attachment_level: float = 0.0
     safety_streak_ticks: int = 0
     pair_bond_ticks: int = 0
+    # Neuroevolution controller (opt-in): the flat genome (weights+biases) of this
+    # agent's neural brain. None = no neural brain -> the agent uses the classic
+    # heuristic controller (default, byte-identical to v1). The shared architecture
+    # lives on the env as env.neural_brain_spec; only weights are heritable here.
+    neural_genome: list[float] | None = field(default=None, repr=False)
 
     def __post_init__(self) -> None:
         self.durability = self.body.durability
         self.preferred_role = self._infer_preferred_role()
+        # Per-tick neural intent (set by _neural_decision; read by consume gate).
+        self._neural_eat_intent = False
 
     def tick(self, env, rng: Random) -> bool:
         if not self.alive or self.completed_lifespan:
@@ -184,7 +194,17 @@ class Agent:
         instinct = self._dominant_instinct(env)
         self._apply_instinct_pressure(env, instinct)
 
-        if instinct != "balanced":
+        neural_active = (
+            getattr(env, "neural_controller_enabled", False)
+            and self.neural_genome is not None
+            and getattr(env, "neural_brain_spec", None) is not None
+        )
+        if neural_active:
+            # The neural network fully owns movement and object actions; the
+            # heuristic/instinct actor is bypassed. Affective state above still
+            # feeds the network's scalar inputs (hunger/fear/safety...).
+            self._neural_decision(env, rng)
+        elif instinct != "balanced":
             self._act_on_instinct(env, rng, instinct)
         else:
             if getattr(env, "scaffolded_agent_actions_enabled", False):
@@ -199,7 +219,7 @@ class Agent:
                 home_radius = getattr(env, "home_radius", 3)
                 home_dist = abs(self.home_anchor[0] - self.x) + abs(self.home_anchor[1] - self.y)
                 if home_dist > home_radius:
-                    self._move_toward(env, self.home_anchor[0], self.home_anchor[1])
+                    self._move_toward(env, self.home_anchor[0], self.home_anchor[1], rng)
                 # within home radius: stay put (cluster) instead of dispersing
                 homed = True
             if not homed:
@@ -541,6 +561,23 @@ class Agent:
         remembered_nests: list[tuple[int, int]] = []
         if self.nest_position is not None:
             remembered_nests.append(self.nest_position)
+        # Neuroevolution: the child inherits a recombined + mutated copy of the
+        # parents' brain genomes. Guarded so it draws ZERO extra RNG off the neural
+        # path (v1 byte-identical). See agents/neural_brain.py.
+        child_genome = None
+        if getattr(env, "neural_controller_enabled", False) and self.neural_genome is not None:
+            mate_genome = (
+                mate.neural_genome
+                if mate is not None and mate.neural_genome is not None
+                else self.neural_genome
+            )
+            base_genome = neural_brain.crossover(self.neural_genome, mate_genome, rng)
+            child_genome = neural_brain.mutate(
+                base_genome,
+                rng,
+                rate=getattr(env, "neural_mutation_rate", 0.1),
+                sigma=getattr(env, "neural_mutation_sigma", 0.2),
+            )
         return Agent(
             agent_id=child_id,
             body=child_body,
@@ -553,6 +590,7 @@ class Agent:
             other_parent_id=mate.agent_id if mate is not None else None,
             lineage_id=self.lineage_id,
             shared_home_owner_id=home_owner_id,
+            neural_genome=child_genome,
             home_anchor=self.home_anchor,
             remembered_nest_locations=remembered_nests,
             bond_strength={
@@ -797,7 +835,7 @@ class Agent:
             return
         remembered_food = self._best_remembered_target(self.remembered_food_sources)
         if remembered_food is not None:
-            self._move_toward(env, remembered_food[0], remembered_food[1])
+            self._move_toward(env, remembered_food[0], remembered_food[1], rng)
             return
         self._move_by_instinct_score(
             env,
@@ -870,11 +908,87 @@ class Agent:
             return False
         return self._move(env, scored_steps[0][1][0], scored_steps[0][1][1])
 
+    def _neural_observation(self, env) -> tuple[list[float], list[float]]:
+        """Build the two input streams for the neural brain from raw world state.
+
+        Stream 1 (vision): a (2r+1)x(2r+1) egocentric window. Each cell carries
+        three RAW physical channels with NO semantic label -- a food-energy signal,
+        the local danger level, and a walkable/out-of-bounds flag -- so the network
+        must discover what matters. Stream 2 (scalars): the agent's internal and
+        environmental state. All values are squashed to a bounded range.
+        """
+        spec = env.neural_brain_spec
+        r = spec.vision_radius
+        vision: list[float] = []
+        for dy in range(-r, r + 1):
+            for dx in range(-r, r + 1):
+                cx = self.x + dx
+                cy = self.y + dy
+                if env.is_walkable(cx, cy):
+                    food = env.food_signal_at(cx, cy, radius=0)
+                    danger = env.get_danger_level(cx, cy)
+                    walk = 1.0
+                else:
+                    food = 0.0
+                    danger = 1.0  # treat the edge of the world as dangerous/blocked
+                    walk = 0.0
+                vision.append(math.tanh(food * 0.25))
+                vision.append(min(1.0, max(0.0, danger)))
+                vision.append(walk)
+
+        own_radius = max(1, min(5, getattr(self.body, "effective_vision", 3)))
+        scalars = [
+            math.tanh(self.energy / 150.0),
+            min(1.0, max(0.0, self.hunger_level)),
+            min(1.0, max(0.0, self.fear_level)),
+            min(1.0, max(0.0, self.cold_level)),
+            min(1.0, max(0.0, self.safety_feeling)),
+            min(1.0, max(0.0, self.comfort_level)),
+            min(1.0, self.age / float(MAX_AGE)),
+            1.0 if env.is_night else 0.0,
+            math.tanh(env.food_signal_at(self.x, self.y, radius=own_radius) * 0.1),
+            min(1.0, max(0.0, env.get_danger_level(self.x, self.y))),
+            1.0 if self.carried_seed_id is not None else 0.0,
+            1.0,  # constant bias input
+        ]
+        return vision, scalars
+
+    def _neural_decision(self, env, rng: Random) -> None:
+        """Run the neural brain and apply its movement + object action this tick."""
+        spec = env.neural_brain_spec
+        vision, scalars = self._neural_observation(env)
+        temperature = getattr(env, "neural_temperature", 0.0)
+        move_idx, action_idx = neural_brain.decide(
+            spec, self.neural_genome, vision, scalars, rng=rng, temperature=temperature
+        )
+
+        dx, dy = neural_brain.MOVE_ACTIONS[move_idx]
+        if dx != 0 or dy != 0:
+            self._move(env, dx, dy)
+
+        action = neural_brain.OBJECT_ACTIONS[action_idx]
+        self._neural_eat_intent = action == "eat"
+        if action in ("pick_seed", "drop_seed"):
+            # Reuse the tested seed-primitive logic, but only on the network's
+            # initiative. Eating is applied later by _consume_current_food.
+            self._handle_seed_primitive(env, rng)
+
     def _consume_current_food(self, env) -> bool:
         if not self._fits_mouth(env):
             return False
-        if getattr(env, "food_value_learning_enabled", False) and not self._food_worth_eating(env):
+        # Under the neural controller, eating is a network decision: only eat when
+        # the action head asked to this tick. (No effect off the neural path.)
+        if (
+            getattr(env, "neural_controller_enabled", False)
+            and self.neural_genome is not None
+            and not getattr(self, "_neural_eat_intent", False)
+        ):
             return False
+        if getattr(env, "food_value_learning_enabled", False):
+            pending_food = env.food_positions.get((self.x, self.y))
+            if pending_food is not None and not self._food_worth_eating(env):
+                self._record_skipped_food(env, pending_food)
+                return False
         resource = env.consume_food(self.x, self.y, eater=self)
         if resource is None:
             return False
@@ -924,6 +1038,19 @@ class Agent:
             return True
         pickiness = getattr(env, "diet_pickiness", 0.5)
         return self.food_value_memory[kind] >= pickiness * best_known
+
+    def _record_skipped_food(self, env, resource) -> None:
+        kind = resource.kind
+        self.skipped_food_by_type[kind] = self.skipped_food_by_type.get(kind, 0) + 1
+        learned_value = self.food_value_memory.get(kind, 0.0)
+        best_known = max(self.food_value_memory.values()) if self.food_value_memory else 0.0
+        pickiness = getattr(env, "diet_pickiness", 0.5)
+        self.recent_events.append(
+            f"food_skipped -> agent={self.agent_id} source={resource.source} "
+            f"x={self.x} y={self.y} kind={kind} energy={resource.energy} "
+            f"learned_value={learned_value:.3f} best_known={best_known:.3f} "
+            f"pickiness={pickiness:.3f} reason=low_value"
+        )
 
     def _learn_food_value(self, env, kind: str, gained_energy: float) -> None:
         """EMA update of the learned per-kind food value (study B)."""
@@ -1052,11 +1179,11 @@ class Agent:
             if self._move(env, dx, dy):
                 return
 
-    def _move_toward(self, env, target_x: int, target_y: int) -> None:
+    def _move_toward(self, env, target_x: int, target_y: int, rng: Random) -> None:
         target = (target_x, target_y)
 
         if self.body.cognition_score >= 1.4:
-            best_step = self._choose_best_step(env, Random(self.agent_id + self.age), target=target)
+            best_step = self._choose_best_step(env, rng, target=target)
             if best_step is not None and self._move(env, best_step[0], best_step[1]):
                 return
 
@@ -1085,7 +1212,7 @@ class Agent:
             if self._move(env, step_dx, step_dy):
                 return
 
-        self._wander(env, Random(self.agent_id + self.age))
+        self._wander(env, rng)
 
     def _choose_best_step(
         self,

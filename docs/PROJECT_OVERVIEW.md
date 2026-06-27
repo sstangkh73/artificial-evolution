@@ -4,62 +4,77 @@
 
 ### แนวคิดหลัก
 
-โครงการนี้ศึกษาว่าโครงสร้างร่างกายที่มีประสิทธิภาพ
-และพฤติกรรมที่ซับซ้อนมากขึ้น
-สามารถเกิดขึ้นเองได้หรือไม่ในเอเจนต์ประดิษฐ์ที่อยู่ในโลกซึ่งมีทรัพยากรจำกัด
+โครงการนี้เปลี่ยนจุดศูนย์กลางของคำถามวิจัยมาเป็นเรื่อง
+"การเรียนรู้โดยไม่มีป้ายบอก" และ "การเกิดของเทคโนโลยี"
+ในเอเจนต์ประดิษฐ์ที่อยู่ในโลกซึ่งมีทรัพยากรจำกัด
 
-การจำลองจะเริ่มจากความหลากหลายของร่างกาย
-จากนั้นจึงทดสอบการอยู่รอดภายใต้แรงกดดันของสิ่งแวดล้อม
-และต่อยอดไปสู่การศึกษาการเกิดของพฤติกรรมแบบ open-ended ในระยะยาว
+คำถามหลักคือ:
+- ถ้าเอเจนต์ไม่ได้ถูกบอกว่าอะไรคืออาหาร อะไรคืออันตราย อะไรคือเครื่องมือ
+  เอเจนต์จะเรียนรู้ความหมายของสิ่งเหล่านี้จากประสบการณ์ได้หรือไม่
+- เมื่อมีความจำ การลองผิดลองถูก การร่วมมือ และแรงกดดันจากสิ่งแวดล้อม
+  การเรียนรู้นั้นจะสะสมไปเป็น "เทคโนโลยี" ได้หรือไม่
 
-### เฟซ 1: สร้างร่างกาย 50 แบบ
+ในบริบทของโปรเจ็กต์นี้ เทคโนโลยีไม่ได้หมายถึงแค่วัตถุ
+แต่หมายถึงความสามารถที่ใช้ซ้ำได้และเพิ่มขีดความสามารถของเอเจนต์
+เช่น การใช้เครื่องมือ การแปรรูปอาหาร การเก็บสะสมทรัพยากร
+การแบ่งบทบาท และรูปแบบการประสานงานที่ช่วยให้ประชากรต่อเนื่องขึ้น
+
+### เฟซ 1: สร้างฐานร่างกายและแรงกดดันพื้นฐาน
 
 เป้าหมาย:
-สร้างโครงสร้างร่างกายที่แตกต่างกัน 50 แบบภายใต้งบต้นทุนรวมเท่ากัน
+สร้างความหลากหลายของร่างกายและข้อจำกัดพื้นฐานของโลก
+เพื่อให้เกิดฐานสำหรับการเรียนรู้ที่แตกต่างกัน
 
 คำถาม:
-- องค์ประกอบร่างกายแบบใดที่สามารถใช้งานได้จริง
+- ร่างกายแบบใดเปิดโอกาสให้เรียนรู้โลกได้ดีขึ้น
 - มี trade-off อะไรบ้างระหว่างการรับรู้ การเคลื่อนที่ การป้องกัน และการคิด
+- โครงสร้างร่างกายแบบใดเอื้อต่อการเกิดการใช้เครื่องมือในระยะต่อมา
 
 ผลลัพธ์:
 - คลัง body archetype จำนวน 50 แบบ
 - ข้อมูลกำกับของแต่ละแบบ เช่น cost, vision, speed, durability และ brain drain
 
-### เฟซ 2: อยู่รอดโดยไม่มีความรู้ล่วงหน้า
+### เฟซ 2: การเรียนรู้โดยไม่มีป้ายบอก
 
 เป้าหมาย:
-ปล่อย body ทุกแบบลงในโลกโดยให้มีเพียงความสามารถในการกระทำขั้นพื้นฐาน
-และไม่มี strategy การเอาชีวิตรอดที่ใส่ไว้ล่วงหน้า
+ปล่อยเอเจนต์ลงในโลกโดยไม่มี label, ontology, หรือ scripted strategy
+ให้เอเจนต์ต้องเรียนรู้จากผลลัพธ์ของการกระทำเอง
 
 คำถาม:
-- ต้องใช้เวลานานแค่ไหนกว่าจะค้นพบพฤติกรรมที่ช่วยให้รอด
-- body แบบไหนอยู่รอดได้นานกว่า
-- body แบบไหนสูญพันธุ์ และสูญพันธุ์เพราะอะไร
+- เอเจนต์ต้องใช้เวลานานแค่ไหนกว่าจะเรียนรู้ว่าอะไรมีประโยชน์หรือเป็นอันตราย
+- การเรียนรู้แบบไม่มีป้ายบอกจะเสถียรพอที่จะนำกลับมาใช้ซ้ำได้หรือไม่
+- body แบบไหนเรียนรู้ได้เร็วกว่า ลึกกว่า หรือยืดหยุ่นกว่า
+- การเรียนรู้แบบนี้เพียงพอจะพาไปสู่การใช้ทรัพยากรเชิงเครื่องมือหรือไม่
 
 ตัวชี้วัด:
 - เวลาในการอยู่รอด
 - ปริมาณอาหารที่กินได้
 - จำนวนประชากรที่เหลือ
 - สาเหตุการตาย
-- เวลาที่ใช้ก่อนกินอาหารสำเร็จครั้งแรก
+- เวลาที่ใช้ก่อนค้นพบพฤติกรรมสำเร็จครั้งแรก
+- ความคงทนของพฤติกรรมที่ค้นพบ
+- สัญญาณของการใช้ทรัพยากรแบบมีหน้าที่หรือแบบเครื่องมือ
 
-### เฟซ 3: การเกิดของพฤติกรรมระยะยาว
+### เฟซ 3: การเกิดของเทคโนโลยี
 
 เป้าหมาย:
-ปล่อยสายพันธุ์ที่อยู่รอดได้ดีที่สุดให้ดำเนินต่อไป
-แล้วสังเกตว่าพฤติกรรมขั้นสูงกว่าจะเกิดขึ้นเองหรือไม่เมื่อเวลาผ่านไป
+ปล่อยประชากรที่มีฐานการเรียนรู้แล้วให้ดำเนินต่อไป
+แล้วสังเกตว่าการเรียนรู้นั้นจะสะสมไปสู่เทคโนโลยีและโครงสร้างสังคมที่ซับซ้อนขึ้นหรือไม่
 
 คำถาม:
-- จะเกิดความเชี่ยวชาญเฉพาะด้านหรือไม่
-- จะเกิดความร่วมมือหรือความขัดแย้งหรือไม่
-- เอเจนต์จะเริ่มสะสมทรัพยากร สร้างอาณาเขต หรือประสานงานกันได้หรือไม่
-- ภายใต้เงื่อนไขที่ซับซ้อนขึ้น จะเกิดพฤติกรรมคล้ายอารยธรรมหรือไม่
+- จะเกิดการใช้เครื่องมือที่เสถียรและเกิดซ้ำได้หรือไม่
+- จะเกิดการแปรรูปอาหาร การเก็บทรัพยากร หรือการแบ่งบทบาทหรือไม่
+- ความร่วมมือมีบทบาทจำเป็นต่อการเกิดเทคโนโลยีหรือไม่
+- เทคโนโลยีที่เกิดขึ้นช่วยเพิ่มความต่อเนื่องของประชากรได้จริงหรือไม่
 
 พฤติกรรมระยะท้ายที่อาจเกิดขึ้น:
+- การใช้เครื่องมือ
+- การแปรรูปอาหาร
+- การสะสมและจัดการทรัพยากร
+- การแบ่งบทบาท
 - ความร่วมมือ
 - การแข่งขัน
 - การป้องกันอาณาเขต
-- การสะสมทรัพยากร
 - การเพาะปลูก
 - การก่อสร้าง
 - การแลกเปลี่ยน
@@ -67,9 +82,9 @@
 
 ### ขอบเขตต้นแบบปัจจุบัน
 
-โค้ดปัจจุบันเป็นซิมเอาชีวิตรอดขั้นต่ำ
-ที่ออกแบบมาเพื่อรองรับเฟซ 1
-และเวอร์ชันเริ่มต้นของเฟซ 2
+โค้ดปัจจุบันไม่ใช่แค่ซิมเอาชีวิตรอดขั้นต่ำแล้ว
+แต่เป็นฐานทดลองสำหรับคำถามเรื่องการเรียนรู้แบบไม่มีป้ายบอก
+และการเกิดของเทคโนโลยีระยะแรก
 
 สิ่งที่มีแล้วในต้นแบบ:
 - โลกขนาดคงที่
@@ -78,66 +93,82 @@
 - ผลกระทบจากกลางวัน/กลางคืนต่อการมองเห็น
 - trade-off ของโครงสร้างร่างกาย
 - ลูปเปรียบเทียบหลายเอเจนต์
+- ระบบความจำและการเรียนรู้จากประสบการณ์บางส่วน
+- การแปรรูปอาหารและเครื่องมือระดับต้น
 
 ## English
 
 ### Core Idea
 
-This project explores whether efficient body structures and increasingly
-complex behavior can emerge naturally in artificial agents placed inside a
-resource-limited world.
+This project is now centered on two linked questions: unlabeled learning and
+technology emergence in artificial agents living inside a resource-limited
+world.
 
-The simulation begins with body diversity, then tests survival under pressure,
-and eventually studies long-term open-ended emergence.
+The primary research question is:
+- If agents are not told what is food, danger, tool, or opportunity, can they
+  learn those meanings from experience?
+- If they can learn, can that learning accumulate into technology?
 
-### Phase 1: Generate 50 Body Types
+In this project, "technology" means reusable capability that extends what
+agents can do, including tool use, food processing, resource storage, role
+specialization, and coordination patterns that improve continuity.
+
+### Phase 1: Build the Body and Constraint Base
 
 Goal:
-Create 50 distinct body structures under the same total body budget.
+Create body diversity and environmental constraints that produce different
+learning opportunities.
 
 Questions:
-- Which body compositions are even viable?
+- Which body compositions are viable for world learning?
 - What trade-offs appear between sensing, movement, defense, and cognition?
+- Which body structures are most likely to support later technology use?
 
 Output:
 - A library of 50 body archetypes
 - Per-body metadata such as cost, vision, speed, durability, and brain drain
 
-### Phase 2: Survival Without Prior Knowledge
+### Phase 2: Learning Without Labels
 
 Goal:
-Drop all body types into the world with only basic action capability and no
-preloaded survival strategy.
+Place agents into the world without labels, hand-authored meaning, or
+pre-scripted survival strategy, and force learning from outcomes alone.
 
 Questions:
-- How long does it take to discover useful survival behavior?
-- Which bodies survive longer?
-- Which bodies go extinct and why?
+- How long does it take to learn what is useful or dangerous?
+- Can unlabeled learning become stable and reusable?
+- Which bodies learn faster, deeper, or more flexibly?
+- Is unlabeled learning enough to produce tool-like resource use?
 
 Metrics:
 - Survival time
 - Food consumption
 - Population remaining
 - Death reason
-- Time to first successful food capture
+- Time to first successful discovered behavior
+- Stability of discovered behavior
+- Evidence of functional or tool-like resource use
 
-### Phase 3: Long-Term Emergence
+### Phase 3: Technology Emergence
 
 Goal:
-Continue the simulation with the strongest surviving lineages and observe
-whether more advanced behavior emerges over time.
+Continue simulations with populations that already show learning, then observe
+whether that learning compounds into technology and richer social structure.
 
 Questions:
-- Does specialization appear?
-- Do cooperation or conflict emerge?
-- Can agents begin storing resources, forming territories, or coordinating?
-- Under richer conditions, can proto-civilization behaviors emerge?
+- Does stable tool use emerge?
+- Do food processing, resource storage, or role specialization appear?
+- Is cooperation necessary for technology emergence?
+- Do emerging technologies improve population continuity?
 
 Possible Late Behaviors:
+- Tool use
+- Food processing
+- Resource storage and management
+- Role specialization
 - Cooperation
 - Competition
 - Territory defense
-- Resource storage
 - Farming
 - Construction
 - Trade
@@ -145,8 +176,8 @@ Possible Late Behaviors:
 
 ### Immediate Prototype Scope
 
-The current codebase implements a minimal survival simulation intended to
-support Phase 1 and an early version of Phase 2.
+The current codebase is no longer only a minimal survival prototype. It is an
+experimental base for unlabeled learning and early technology-emergence work.
 
 Current prototype includes:
 - Fixed-size world
@@ -155,3 +186,5 @@ Current prototype includes:
 - Day/night vision penalty
 - Body trade-offs
 - Multi-agent body comparison loop
+- Partial experience-based memory and learning systems
+- Early food-processing and tool systems

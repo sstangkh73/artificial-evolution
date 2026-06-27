@@ -28,6 +28,8 @@ SAMPLED_EVENT_KINDS = {
     "build_nest",
     "tend_food_patch",
     "food_patch_tended",
+    "food_consumed",
+    "food_skipped",
     "plant_lifecycle_food_consumed",
     "plant_lifecycle_food_decayed",
     "natural_seed_dropped",
@@ -306,6 +308,144 @@ def _learned_food_value(agents) -> dict[str, float]:
             sums[kind] = sums.get(kind, 0.0) + float(value)
             counts[kind] = counts.get(kind, 0) + 1
     return {kind: round(sums[kind] / counts[kind], 3) for kind in sums}
+
+
+def _agent_food_value_state(
+    raw_seed_meals: int,
+    plant_meals: int,
+    raw_seed_skips: int,
+    memory: dict[str, float],
+) -> str:
+    tasted_seed = raw_seed_meals > 0 or "raw_seed" in memory
+    tasted_plant = plant_meals > 0 or "raw_plant" in memory
+    if raw_seed_skips > 0 and not tasted_seed:
+        return "skipped_seed_without_recorded_taste"
+    if raw_seed_skips > 0 and tasted_seed and tasted_plant:
+        return "self_tasted_both_then_skipped_seed"
+    if tasted_seed and tasted_plant:
+        return "self_tasted_both"
+    if tasted_plant:
+        return "plant_only_no_seed_taste"
+    if tasted_seed:
+        return "seed_only_no_plant_taste"
+    return "no_food_value_taste"
+
+
+def _agent_diet_rows(
+    agents: list[Agent],
+    tick: int | None = None,
+    include_details: bool = True,
+    event_timing_by_agent: dict[int, dict[str, int]] | None = None,
+) -> list[dict[str, object]]:
+    rows: list[dict[str, object]] = []
+    for agent in sorted(agents, key=lambda item: item.agent_id):
+        meals = {
+            str(kind): int(count)
+            for kind, count in sorted(getattr(agent, "meals_by_type", {}).items())
+        }
+        skipped = {
+            str(kind): int(count)
+            for kind, count in sorted(getattr(agent, "skipped_food_by_type", {}).items())
+        }
+        memory = {
+            str(kind): round(float(value), 3)
+            for kind, value in sorted(getattr(agent, "food_value_memory", {}).items())
+        }
+        raw_seed_meals = int(meals.get("raw_seed", 0))
+        raw_plant_meals = int(meals.get("raw_plant", 0))
+        cooked_plant_meals = int(meals.get("cooked_plant", 0))
+        plant_meals = raw_plant_meals + cooked_plant_meals
+        raw_seed_skips = int(skipped.get("raw_seed", 0))
+        learned_seed = memory.get("raw_seed")
+        learned_plant = memory.get("raw_plant")
+        timing = event_timing_by_agent.get(agent.agent_id, {}) if event_timing_by_agent is not None else {}
+        first_raw_seed_tick = timing.get("first_raw_seed_tick")
+        first_raw_plant_tick = timing.get("first_raw_plant_tick")
+        first_raw_seed_skip_tick = timing.get("first_raw_seed_skip_tick")
+        delta_learning_ticks = (
+            first_raw_seed_skip_tick - first_raw_plant_tick
+            if first_raw_seed_skip_tick is not None and first_raw_plant_tick is not None
+            else None
+        )
+        seed_to_plant_gap_ticks = (
+            first_raw_plant_tick - first_raw_seed_tick
+            if first_raw_plant_tick is not None and first_raw_seed_tick is not None
+            else None
+        )
+        row: dict[str, object] = {
+            "agent_id": agent.agent_id,
+            "lineage_id": agent.lineage_id,
+            "parent_id": agent.parent_id,
+            "generation": agent.generation,
+            "sex": agent.sex,
+            "alive": agent.alive,
+            "age": agent.age,
+            "energy": round(agent.energy, 3),
+            "x": agent.x,
+            "y": agent.y,
+            "food_eaten": agent.food_eaten,
+            "raw_seed_meals": raw_seed_meals,
+            "raw_plant_meals": raw_plant_meals,
+            "cooked_plant_meals": cooked_plant_meals,
+            "plant_meals": plant_meals,
+            "raw_seed_skips": raw_seed_skips,
+            "tasted_raw_seed": raw_seed_meals > 0 or "raw_seed" in memory,
+            "tasted_raw_plant": plant_meals > 0 or "raw_plant" in memory,
+            "learned_raw_seed_value": learned_seed,
+            "learned_raw_plant_value": learned_plant,
+            "seed_to_plant_value_ratio": (
+                round(float(learned_seed) / float(learned_plant), 4)
+                if learned_seed is not None and learned_plant not in (None, 0)
+                else None
+            ),
+            "first_raw_seed_tick": first_raw_seed_tick,
+            "first_raw_plant_tick": first_raw_plant_tick,
+            "first_raw_seed_skip_tick": first_raw_seed_skip_tick,
+            "seed_to_plant_gap_ticks": seed_to_plant_gap_ticks,
+            "delta_learning_ticks": delta_learning_ticks,
+            "food_value_learning_state": _agent_food_value_state(
+                raw_seed_meals,
+                plant_meals,
+                raw_seed_skips,
+                memory,
+            ),
+        }
+        if tick is not None:
+            row["tick"] = tick
+        if include_details:
+            row["meals_by_type"] = meals
+            row["skipped_food_by_type"] = skipped
+            row["food_value_memory"] = memory
+        rows.append(row)
+    return rows
+
+
+def _agent_diet_metrics(agent_diet_rows: list[dict[str, object]]) -> dict[str, object]:
+    state_counts = Counter(str(row["food_value_learning_state"]) for row in agent_diet_rows)
+    learning_speeds = [
+        int(row["delta_learning_ticks"])
+        for row in agent_diet_rows
+        if row.get("delta_learning_ticks") is not None
+    ]
+    return {
+        "agents_observed": len(agent_diet_rows),
+        "agents_tasted_raw_seed": sum(1 for row in agent_diet_rows if bool(row["tasted_raw_seed"])),
+        "agents_tasted_raw_plant": sum(1 for row in agent_diet_rows if bool(row["tasted_raw_plant"])),
+        "agents_skipped_raw_seed": sum(1 for row in agent_diet_rows if int(row["raw_seed_skips"]) > 0),
+        "agents_skipped_seed_without_recorded_taste": sum(
+            1
+            for row in agent_diet_rows
+            if int(row["raw_seed_skips"]) > 0 and not bool(row["tasted_raw_seed"])
+        ),
+        "total_raw_seed_meals": sum(int(row["raw_seed_meals"]) for row in agent_diet_rows),
+        "total_plant_meals": sum(int(row["plant_meals"]) for row in agent_diet_rows),
+        "total_raw_seed_skips": sum(int(row["raw_seed_skips"]) for row in agent_diet_rows),
+        "agents_with_learning_speed": len(learning_speeds),
+        "mean_delta_learning_ticks": round(sum(learning_speeds) / len(learning_speeds), 3) if learning_speeds else None,
+        "min_delta_learning_ticks": min(learning_speeds) if learning_speeds else None,
+        "max_delta_learning_ticks": max(learning_speeds) if learning_speeds else None,
+        "food_value_learning_state_counts": dict(sorted(state_counts.items())),
+    }
 
 
 def _clamp01(value: float) -> float:
@@ -733,6 +873,8 @@ def run_watch(args: argparse.Namespace) -> dict[str, object]:
         "plant_matured": Counter(),
         "plant_fruited": Counter(),
         "plant_died": Counter(),
+        "food_consumed": Counter(),
+        "food_skipped": Counter(),
         "plant_lifecycle_food_consumed": Counter(),
         "plant_lifecycle_food_decayed": Counter(),
     }
@@ -776,10 +918,19 @@ def run_watch(args: argparse.Namespace) -> dict[str, object]:
     reward_records: list[dict[str, int]] = []
     next_reward_record_id = 0
     agent_death_reasons: Counter[str] = Counter()
+    archived_agents: list[Agent] = []
     fecundity_by_generation: dict[int, list[int]] = defaultdict(list)
     repro_funnel: Counter[str] = Counter()
     repro_funnel_checks = [0]
     population_trajectory: list[dict[str, object]] = []
+    capture_agent_diet_trajectory = (
+        bool(getattr(args, "food_value_learning_enabled", False))
+        or float(getattr(args, "low_value_food_spawn_per_tick", 0.0) or 0.0) > 0.0
+    )
+    agent_diet_sample_interval = max(1, int(getattr(args, "agent_diet_sample_interval", 200)))
+    agent_diet_max_rows = max(0, int(getattr(args, "agent_diet_max_rows", 20_000)))
+    agent_diet_trajectory: list[dict[str, object]] = []
+    agent_food_event_timing: dict[int, dict[str, int]] = defaultdict(dict)
     reward_counts_by_agent: Counter[int] = Counter()
     owner_revisit_tick_hits = 0
     owner_revisit_opportunities = 0
@@ -833,6 +984,27 @@ def run_watch(args: argparse.Namespace) -> dict[str, object]:
     phase5_future_path_watchers: list[dict[str, object]] = []
     carried_seed_position_controls: dict[tuple[int, int], dict[str, object]] = {}
     carried_seed_state_windows: dict[tuple[int, int], dict[str, object]] = {}
+
+    def append_agent_diet_snapshot(tick: int) -> None:
+        if not capture_agent_diet_trajectory or agent_diet_max_rows <= 0:
+            return
+        remaining_rows = agent_diet_max_rows - len(agent_diet_trajectory)
+        if remaining_rows <= 0:
+            return
+        rows = _agent_diet_rows(
+            agents,
+            tick=tick,
+            include_details=False,
+            event_timing_by_agent=agent_food_event_timing,
+        )
+        agent_diet_trajectory.extend(rows[:remaining_rows])
+
+    append_agent_diet_snapshot(0)
+
+    def record_agent_food_timing(agent_id: int | None, field: str, tick: int) -> None:
+        if agent_id is None:
+            return
+        agent_food_event_timing[agent_id].setdefault(field, tick)
 
     def seed_record(seed_id: int) -> dict[str, object]:
         record = seed_records.get(seed_id)
@@ -1928,6 +2100,7 @@ def run_watch(args: argparse.Namespace) -> dict[str, object]:
                 # reached adulthood (children_count), bucketed by their generation.
                 if agent.sex == "female" and agent.age >= ADULT_AGE:
                     fecundity_by_generation[int(agent.generation)].append(int(agent.children_count))
+                archived_agents.append(agent)
                 agents.remove(agent)
 
         agents.extend(newborns)
@@ -1950,6 +2123,8 @@ def run_watch(args: argparse.Namespace) -> dict[str, object]:
                 "max_generation": max(gen_snap) if gen_snap else 0,
                 "generation_counts": dict(sorted(gen_snap.items())),
             })
+        if current_tick % agent_diet_sample_interval == 0:
+            append_agent_diet_snapshot(current_tick)
         tick_events.extend(env.pop_physics_events())
         tick_events.extend(_detect_emergent_technology_events(env, current_tick, current_day))
 
@@ -2151,6 +2326,18 @@ def run_watch(args: argparse.Namespace) -> dict[str, object]:
             position = _event_position(event)
             if position is not None and kind in event_location_counts:
                 event_location_counts[kind][position] += 1
+            if kind in {"food_consumed", "plant_lifecycle_food_consumed"}:
+                agent_id = _event_int(event, "agent")
+                food_kind = _event_field(event, "kind") or "unknown"
+                if food_kind == "raw_seed":
+                    record_agent_food_timing(agent_id, "first_raw_seed_tick", current_tick)
+                elif food_kind in {"raw_plant", "cooked_plant"}:
+                    record_agent_food_timing(agent_id, "first_raw_plant_tick", current_tick)
+            if kind == "food_skipped":
+                agent_id = _event_int(event, "agent")
+                food_kind = _event_field(event, "kind") or "unknown"
+                if food_kind == "raw_seed":
+                    record_agent_food_timing(agent_id, "first_raw_seed_skip_tick", current_tick)
             if kind == "plant_died":
                 seed_id = _event_int(event, "seed")
                 if seed_id is not None:
@@ -2577,6 +2764,8 @@ def run_watch(args: argparse.Namespace) -> dict[str, object]:
                     "build_nest": event_counts["build_nest"],
                     "tend_food_patch": event_counts["tend_food_patch"],
                     "food_patch_tended": event_counts["food_patch_tended"],
+                    "food_consumed": event_counts["food_consumed"],
+                    "food_skipped": event_counts["food_skipped"],
                     "plant_matured": event_counts["plant_matured"],
                     "plant_fruited": event_counts["plant_fruited"],
                     "plant_lifecycle_food_consumed": event_counts["plant_lifecycle_food_consumed"],
@@ -2595,6 +2784,12 @@ def run_watch(args: argparse.Namespace) -> dict[str, object]:
     final_signals = _evaluate_signals(env, visit_counter, event_counts)
     if not stop_signals:
         stop_signals = [signal for signal in final_signals if bool(signal.get("stop_candidate"))]
+    observed_agents = archived_agents + agents
+    agent_diet_summary = _agent_diet_rows(
+        observed_agents,
+        event_timing_by_agent=agent_food_event_timing,
+    )
+    agent_diet_metrics = _agent_diet_metrics(agent_diet_summary)
     result = {
         "seed": args.seed,
         "metabolism_model": getattr(args, "metabolism_model", "v1"),
@@ -2610,6 +2805,10 @@ def run_watch(args: argparse.Namespace) -> dict[str, object]:
         "nests": len(env.nests),
         "plant_counts": env.plant_state_counts(),
         "diet_by_kind": _diet_by_kind(agents),
+        "diet_by_kind_all_agents": _diet_by_kind(observed_agents),
+        "agent_diet_metrics": agent_diet_metrics,
+        "agent_diet_summary": agent_diet_summary,
+        "agent_diet_trajectory": agent_diet_trajectory,
         "agent_death_reasons": dict(agent_death_reasons),
         "female_fecundity": {
             "overall_mean_children": (
@@ -2661,6 +2860,8 @@ def run_watch(args: argparse.Namespace) -> dict[str, object]:
         "stop_signals": stop_signals,
         "event_samples": event_samples,
         "event_samples_by_kind": {kind: samples for kind, samples in sorted(event_samples_by_kind.items()) if samples},
+        "sample_food_consumed": event_samples_by_kind.get("food_consumed", []),
+        "sample_food_skipped": event_samples_by_kind.get("food_skipped", []),
         "sample_harvest_seed_dropped": event_samples_by_kind["harvest_seed_dropped"],
         "sample_gut_seed_ingested": event_samples_by_kind.get("gut_seed_ingested", []),
         "sample_gut_seed_excreted": event_samples_by_kind.get("gut_seed_excreted", []),

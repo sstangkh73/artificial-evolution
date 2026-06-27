@@ -361,12 +361,26 @@ def markdown_table(lines: list[str], styles: dict[str, ParagraphStyle]) -> Table
             continue
         parsed.append(cells)
 
+    if not parsed:
+        return Table([[]])
+
+    n_cols = len(parsed[0])
+    if n_cols == 2:
+        col_widths = [CONTENT_WIDTH * 0.40, CONTENT_WIDTH * 0.60]
+    elif n_cols == 3:
+        w = CONTENT_WIDTH / 3
+        col_widths = [w, w, w]
+    else:
+        w = CONTENT_WIDTH / max(1, n_cols)
+        col_widths = [w] * n_cols
+
     data = []
     for row_idx, row in enumerate(parsed):
         style = styles["table_header"] if row_idx == 0 else styles["table"]
-        data.append([para(cell, style) for cell in row])
+        padded = row + [""] * max(0, n_cols - len(row))
+        data.append([para(cell, style) for cell in padded[:n_cols]])
 
-    table = Table(data, colWidths=[2.45 * cm, 6.35 * cm, CONTENT_WIDTH - 8.8 * cm], repeatRows=1)
+    table = Table(data, colWidths=col_widths, repeatRows=1)
     table.setStyle(
         TableStyle(
             [
@@ -415,12 +429,12 @@ def variable_table(rows_in: list[tuple[str, list[str]]], styles: dict[str, Parag
 
 def concept_diagram(styles: dict[str, ParagraphStyle]) -> Table:
     steps = [
-        ("โลกจำลองที่ไม่ให้ความหมายสำเร็จรูป", ""),
-        ("กฎพื้นฐานของโลก", "พลังงาน พืช เมล็ด แสง น้ำ อุณหภูมิ ดิน อาหาร"),
-        ("เอเจนต์ปฏิสัมพันธ์กับโลก", "เดิน กิน จำตำแหน่ง หยิบ/ปล่อยเมล็ด"),
-        ("ตัวชี้วัดความรู้จากประสบการณ์", "return lift, seed causal chain, patch productivity"),
-        ("การทดสอบด้วย control", "current-position, nearby, visible, random, low-food signal, world-size stress"),
-        ("ข้อสรุปแบบไม่เกินหลักฐาน", "emergent ecological interaction / ยังไม่ใช่ intentional farming หรือ full technology"),
+        ("สภาพแวดล้อมจำลองที่ไม่มีข้อมูลตั้งต้น (Uninformed Simulated World)", ""),
+        ("กฎพื้นฐานของโลก", "พลังงาน  พืช  เมล็ด  แสง  น้ำ  อุณหภูมิ  ดิน"),
+        ("ตัวแทน Deep Learning (Multi-Input / Multi-Output)", "เดิน  กิน  จำตำแหน่ง  หยิบและปล่อยเมล็ด"),
+        ("วัดร่องรอยการเรียนรู้", "SLI  |  Causal Chain  |  PPV"),
+        ("ทดสอบด้วย Random Agent Baseline + Control Zone", ""),
+        ("สรุปผลตามหลักฐานที่วัดได้", "พฤติกรรมเชิงนิเวศที่เกิดขึ้นเอง"),
     ]
     rows = []
     box_rows = []
@@ -525,13 +539,17 @@ def add_markdown_body(body: str, story: list, styles: dict[str, ParagraphStyle])
             flush_paragraph(paragraph_buffer, story, styles)
             idx += 1
             continue
+        if line.startswith("### "):
+            flush_paragraph(paragraph_buffer, story, styles)
+            story.append(para(line[4:], styles["h2"]))
+            idx += 1
+            continue
         if line.startswith("|"):
             flush_paragraph(paragraph_buffer, story, styles)
             table_lines: list[str] = []
             while idx < len(lines) and lines[idx].strip().startswith("|"):
                 table_lines.append(lines[idx].strip())
                 idx += 1
-            story.append(para("ตารางสรุปหลักฐานเบื้องต้นจากการทดลองในโครงการ", styles["caption"]))
             story.append(markdown_table(table_lines, styles))
             story.append(spacer(5))
             continue
@@ -605,29 +623,20 @@ def build() -> None:
     story.append(para("Concept Proposal | Triam Udom Research Challenge 2026", styles["kicker"]))
     story.append(spacer(2))
     story.append(para("1) ชื่อโครงงาน", styles["h1"]))
-    story.append(
-        para_lines(
-            [
-                "การศึกษาการเกิดความรู้จากประสบการณ์",
-                "ของเอเจนต์ปัญญาประดิษฐ์ในโลกจำลอง",
-                "ที่ไม่ให้ความรู้ล่วงหน้า",
-            ],
-            styles["title"],
-        )
-    )
+    story.append(para(info["thai_title"], styles["title"]))
     story.append(para(info["english_title"], styles["subtitle"]))
     story.append(para(f'ประเภทโครงงาน: {info["category"]}', styles["meta"]))
     story.append(para(f'คำสำคัญ: {info["keywords"]}', styles["meta"]))
     story.append(spacer(6))
 
-    story.append(para("2) สมาชิก", styles["h1"]))
+    story.append(para("2) สมาชิกและอาจารย์ที่ปรึกษา", styles["h1"]))
     story.append(member_table(info, styles))
     story.append(spacer(5))
 
     for title, body in section_bodies(markdown):
         if title.startswith(("1)", "2)")):
             continue
-        if title.startswith(("4)", "6)")):
+        if title.startswith("4)"):
             story.append(PageBreak())
         story.append(para(title, styles["h1"]))
         add_markdown_body(body, story, styles)

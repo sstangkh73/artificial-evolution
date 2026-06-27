@@ -20,6 +20,39 @@ sys.stdout.reconfigure(encoding="utf-8")
 import run_long_emergence_watch as R
 
 
+def _top_agent_diet_rows(summary: dict, limit: int = 12) -> list[dict]:
+    rows = list(summary.get("agent_diet_summary") or [])
+    rows.sort(
+        key=lambda row: (
+            -int(row.get("raw_seed_skips", 0) or 0),
+            -int(row.get("raw_seed_meals", 0) or 0),
+            -int(row.get("plant_meals", 0) or 0),
+            int(row.get("agent_id", 0) or 0),
+        )
+    )
+    keep_fields = [
+        "agent_id",
+        "generation",
+        "sex",
+        "alive",
+        "raw_seed_meals",
+        "plant_meals",
+        "raw_seed_skips",
+        "learned_raw_seed_value",
+        "learned_raw_plant_value",
+        "seed_to_plant_value_ratio",
+        "first_raw_seed_tick",
+        "first_raw_plant_tick",
+        "first_raw_seed_skip_tick",
+        "delta_learning_ticks",
+        "food_value_learning_state",
+    ]
+    return [
+        {field: row.get(field) for field in keep_fields}
+        for row in rows[:limit]
+    ]
+
+
 def make_args(seed: int, model: str, max_ticks: int, output: str,
               low_value_food: float = 0.0, value_learning: bool = False,
               pickiness: float = 0.5, starvation_energy: int = 6,
@@ -115,6 +148,9 @@ def summarize(s: dict) -> dict:
     out["energy_economy"] = s.get("energy_economy")
     out["learned_food_value"] = s.get("learned_food_value")
     out["food_spawned_by_kind"] = s.get("food_spawned_by_kind")
+    out["agent_diet_metrics"] = s.get("agent_diet_metrics")
+    out["agent_diet_trajectory_rows"] = len(s.get("agent_diet_trajectory") or [])
+    out["top_agent_diet"] = _top_agent_diet_rows(s)
     return out
 
 

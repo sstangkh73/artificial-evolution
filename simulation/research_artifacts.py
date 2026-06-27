@@ -167,6 +167,8 @@ def write_research_artifacts(output_dir: Path, payload: dict[str, object]) -> di
             "final_x",
             "final_y",
             "meals_by_type_json",
+            "skipped_food_by_type_json",
+            "food_value_memory_json",
             "gathered_materials_json",
             "technology_constructions_json",
             "technology_uses_json",

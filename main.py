@@ -90,8 +90,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--study-seeds",
         type=int,
-        default=12,
-        help="Number of seeds to run for study and batch modes.",
+        default=30,
+        help="Number of seeds to run for study and batch modes; journal-oriented default is 30.",
     )
     return parser.parse_args()
 
