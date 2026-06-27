@@ -219,6 +219,32 @@ def run(args: argparse.Namespace) -> dict:
                 mutation_sigma=args.mutation_sigma,
             )
 
+    # The final population's best genome (elitism guarantees it is the overall
+    # best). Save it so the demo/visualiser can replay its behaviour.
+    best_idx = max(range(len(genomes)), key=lambda i: fitnesses[i])
+    if getattr(args, "save_best", None):
+        Path(args.save_best).parent.mkdir(parents=True, exist_ok=True)
+        Path(args.save_best).write_text(
+            json.dumps(
+                {
+                    "spec": neural_brain.spec_to_dict(spec),
+                    "genome": genomes[best_idx],
+                    "fitness": fitnesses[best_idx],
+                    "config": {
+                        "world": args.world,
+                        "ticks": args.ticks,
+                        "max_food": args.max_food,
+                        "food_spawn": args.food_spawn,
+                        "eval_seeds": eval_seeds,
+                        "seed": args.seed,
+                    },
+                },
+                ensure_ascii=False,
+            ),
+            encoding="utf-8",
+        )
+        print(f"saved best genome -> {args.save_best}")
+
     baseline_mean = history[0]["mean_fitness"]
     final_mean = history[-1]["mean_fitness"]
     final_best = history[-1]["best_fitness"]
@@ -271,6 +297,7 @@ def main() -> None:
     p.add_argument("--temperature", type=float, default=0.0,
                    help="action-sampling temperature (0 = deterministic argmax)")
     p.add_argument("--dump", default=None, help="write the full summary+history JSON here")
+    p.add_argument("--save-best", default=None, help="write the best evolved genome JSON here (for the demo/visualiser)")
     args = p.parse_args()
 
     summary = run(args)
