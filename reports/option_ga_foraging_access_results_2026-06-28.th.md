@@ -127,6 +127,15 @@
 - **home ON → กระจุก → local food depletion → energy ต่ำ/อดตาย แม้อาหารทั้งโลกเหลือ ~1000**
 - ทุกชุดยังสูญพันธุ์: home OFF ตายเพราะ **Allee** (หาคู่ไม่ได้ → births น้อย → fade ตาม lifespan); home ON ตายเพราะ local depletion + boom-bust
 
+**5.4 continuous vision (ก.3b) ใน mortal — access แก้หมดจด, เหลือ demographic ล้วน:**
+| config (drain 0.1) | survival | starvation | ตายหลัก | energy |
+|---|---|---:|---|---|
+| home ON, hard cutoff (5.3) | t400 | 88 | starvation+lifespan | ตก |
+| home ON, **continuous** | t600 | **28** | **lifespan 138** | 71→50 |
+| home OFF, **continuous** | t400 | **1** | **lifespan 104** | 150→**267** |
+
+continuous vision **ลด starvation ของ home-ON 88→28** (เห็นแหล่งไกล→ออกไปกินได้ ไม่ติดที่ cluster) และ home-OFF เหลือ starvation = 1 (energy 267) → **access แก้หมดจริง**. แต่ยังสูญพันธุ์ และตอนนี้ตายเพราะ **synchronized lifespan death เป็นหลัก ไม่ใช่ starvation** → ยืนยันว่าคอขวดที่เหลือเป็น **demographic ล้วน** (death-wave + Allee, R₀≈1 knife-edge) ในโลกที่ access แก้แล้ว + อาหารจริง depletable
+
 **สรุป ก.4 (decision gate):** ❌ ประชากรยังไม่รอด — **แต่เป็น honest negative ที่ทรงคุณค่า**: access ไม่ใช่คอขวดอีกต่อไป (พิสูจน์ด้วย energy surplus 200–550 บนพืชล้วน) คอขวดเลื่อนไปชั้น **spatial-demographic** = clustering(หาคู่) ⟂ dispersal(หากิน) tension + synchronized lifespan death. body14 brain แพง (drain 5.0) ทำให้ช่วง drain ที่รอดได้แคบ (≤~0.2 หรือต้องลด brain/ใช้ nest-hearth)
 
 ---
@@ -173,6 +182,7 @@ harness วิเคราะห์ batch (scratchpad ชั่วคราว):
 1. plant ecology เคยดับสนิทเพราะ seed rain=0 + ไม่ seed โลก — แคมเปญ extinction ทั้งหมดจึงรันในโลกที่อาหารเป็น ambient uniform + crutch ล้วน (ไม่มี plant economy จริง)
 2. seed rain + sensing radius (กลิ่น) ทำให้ agent เข้าถึงอาหารพืชล้วนได้จริง → **energy surplus 200–550** (เกินดุลชัด) โดยไม่มี uniform crutch
 3. **foraging access ไม่ใช่ binding constraint อีกต่อไป** — ข้อสรุปนี้กลับทิศจาก 5 เส้นทางเดิม เพราะตอนนี้วัด surplus ได้จริง
+4. **vision ฟิสิกส์ (ก.3b, ข้อสังเกตผู้ใช้) คือรูปแบบที่ถูกต้อง** — ลบ hard cutoff → mean_food_dist 24→3, ใน mortal ลด starvation 88→28 (home ON) / →1 (home OFF) → access แก้**หมดจด**, residual extinction กลายเป็น **synchronized lifespan death เป็นหลัก** (ไม่ใช่ starvation)
 
 **คอขวดชั้นใหม่ (หลักฐานชัด, = งานถัดไป):**
 - **clustering ⟂ dispersal tension:** หาคู่ต้องกระจุก (home-fidelity) แต่กระจุกทำให้ local food depletion → อดตาย; กระจายแก้ depletion แต่ทำให้ Allee (หาคู่ไม่ได้)
@@ -185,6 +195,6 @@ harness วิเคราะห์ batch (scratchpad ชั่วคราว):
 3. ลด brain cost (cheaper body) หรือใช้ nest+hearth drain reduction (กลไกจริงในโค้ด: near_nest+hearth ลด drain ~2-4) เพื่อให้ drain สมจริงรอดได้
 4. แก้ synchronized death ควบคู่ K จริง (constant-hazard + food-K พร้อมกัน)
 
-**กลไกที่เก็บเป็นเครื่องมือ (opt-in, byte-identical):** `food_sensing_radius`, `memory_return_enabled`, `initial_plant_population`, multi-radius sensing telemetry — เพิ่มเข้าคลังเดียวกับ home-fidelity/continuous-repro/density-brake/stochastic-mortality
+**กลไกที่เก็บเป็นเครื่องมือ (opt-in, byte-identical):** `food_sensing_radius`, `food_detection_threshold` (+`vision_horizon`), `memory_return_enabled`, `initial_plant_population`, multi-radius sensing telemetry — เพิ่มเข้าคลังเดียวกับ home-fidelity/continuous-repro/density-brake/stochastic-mortality
 
 **นัยต่อ TURC2026/ISEF:** access fix + การเลื่อน root cause เป็น honest structural progress (มีคุณค่าวิทยาศาสตร์) ผลหลัก food-value learning + neuroevolution ยังไม่กระทบ ([[ysc-to-isef-roadmap]])
