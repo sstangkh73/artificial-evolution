@@ -872,10 +872,11 @@ class Agent:
             return
         if self._move_toward_food_signal(env, rng, urgency=1.3):
             return
-        remembered_food = self._best_remembered_target(self.remembered_food_sources)
-        if remembered_food is not None:
-            self._move_toward(env, remembered_food[0], remembered_food[1], rng)
-            return
+        if getattr(env, "memory_return_enabled", True):
+            remembered_food = self._best_remembered_target(self.remembered_food_sources)
+            if remembered_food is not None:
+                self._move_toward(env, remembered_food[0], remembered_food[1], rng)
+                return
         self._move_by_instinct_score(
             env,
             rng,
@@ -908,7 +909,11 @@ class Agent:
         )
 
     def _move_toward_food_signal(self, env, rng: Random, urgency: float = 1.0) -> bool:
-        radius = max(1, min(5, self._effective_vision(env.is_night)))
+        sensing_radius = getattr(env, "food_sensing_radius", 0)
+        if sensing_radius and sensing_radius > 0:
+            radius = max(1, sensing_radius)
+        else:
+            radius = max(1, min(5, self._effective_vision(env.is_night)))
         current_signal = env.food_signal_at(self.x, self.y, radius=radius)
         moved = self._move_by_instinct_score(
             env,

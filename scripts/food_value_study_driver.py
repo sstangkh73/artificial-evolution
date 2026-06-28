@@ -71,7 +71,10 @@ def make_args(seed: int, model: str, max_ticks: int, output: str,
               mortality_onset_fraction: float = 0.85,
               mortality_constant_hazard: float = 0.0,
               starvation_death: bool = False, starvation_tolerance: int = 15,
-              max_population: int = 250) -> SimpleNamespace:
+              max_population: int = 250,
+              natural_seed_rain: int = 0, food_sensing_radius: int = 0,
+              memory_return_enabled: bool = True,
+              initial_plant_population: int = 0) -> SimpleNamespace:
     return SimpleNamespace(
         home_fidelity_enabled=home_fidelity,
         home_radius=home_radius,
@@ -109,7 +112,7 @@ def make_args(seed: int, model: str, max_ticks: int, output: str,
         spawn_strategy="frontier_safe_high_food", immortal=immortal,
         width=world, height=world, max_food=2000, base_food_spawn_per_tick=4,
         food_spawn_multiplier=0.70, bootstrap_food_spawn_ticks=300,
-        wild_food_spawn_after_bootstrap_multiplier=0.10, natural_seed_rain_per_tick=0,
+        wild_food_spawn_after_bootstrap_multiplier=0.10, natural_seed_rain_per_tick=natural_seed_rain,
         max_plant_seeds=7600, large_animal_spawn_per_tick=2, max_large_animals=28,
         nest_support_food_chance=0.05, nest_support_spawn_chance=0.03, frontier_band=10,
         global_food_decline_per_day=0.012, minimum_global_food_multiplier=0.24,
@@ -124,7 +127,10 @@ def make_args(seed: int, model: str, max_ticks: int, output: str,
         phase4_min_patch_moved_seed_drops=3, phase4_patch_return_min_delay_ticks=20,
         phase4_patch_return_max_age_ticks=2000, phase4_min_matched_control_seeds=5,
         phase5_future_control_offsets=[10, 25, 50],
-        food_signal_radius_cap=None, plant_lifecycle_food_signal_weight=1.35,
+        food_signal_radius_cap=None, food_sensing_radius=food_sensing_radius,
+        memory_return_enabled=memory_return_enabled,
+        initial_plant_population=initial_plant_population,
+        plant_lifecycle_food_signal_weight=1.35,
         seed_hunger_drop_bonus=0.06, seed_drop_block_critical_hunger=False,
         seed_drop_safe_window_only=False, seed_drop_safe_hunger_max=0.55,
         seed_drop_safe_fear_max=0.45, seed_drop_safe_cold_max=0.45,
@@ -204,6 +210,15 @@ if __name__ == "__main__":
     p.add_argument("--starvation-death", action="store_true", help="prolonged zero-energy kills (food regulates K; realistic)")
     p.add_argument("--starvation-tolerance", type=int, default=15, help="ticks at zero energy before starving to death")
     p.add_argument("--max-pop", type=int, default=250, help="population cap (set high to let food regulate K)")
+    # Option GA foraging-access knobs (all default-off = byte-identical)
+    p.add_argument("--natural-seed-rain", type=int, default=0,
+                   help="GA.1: seeds rained into the world per tick (>0 bootstraps a standing plant crop; 0 = barren default)")
+    p.add_argument("--food-sensing-radius", type=int, default=0,
+                   help="GA.3: decouple food sensing (smell) from vision; agents sense food within this radius (0 = legacy min(5,vision))")
+    p.add_argument("--no-memory-return", action="store_true",
+                   help="GA.2 control: disable return-to-remembered-food-source foraging")
+    p.add_argument("--initial-plants", type=int, default=0,
+                   help="GA.4: seed this many mature plants at tick 0 (a pre-existing grassland -> real K from the start; 0 = off)")
     p.add_argument("--dump", default=None, help="write full result JSON here for regression diff")
     a = p.parse_args()
     summary = R.run_watch(make_args(a.seed, a.model, a.ticks, a.output,
@@ -227,7 +242,11 @@ if __name__ == "__main__":
                                     mortality_onset_fraction=a.mortality_onset_fraction,
                                     mortality_constant_hazard=a.mortality_constant_hazard,
                                     starvation_death=a.starvation_death, starvation_tolerance=a.starvation_tolerance,
-                                    max_population=a.max_pop))
+                                    max_population=a.max_pop,
+                                    natural_seed_rain=a.natural_seed_rain,
+                                    food_sensing_radius=a.food_sensing_radius,
+                                    memory_return_enabled=not a.no_memory_return,
+                                    initial_plant_population=a.initial_plants))
     if a.dump:
         Path(a.dump).write_text(json.dumps(summary, ensure_ascii=False, indent=2), encoding="utf-8")
     print(json.dumps(summarize(summary), ensure_ascii=False))

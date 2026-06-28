@@ -551,6 +551,17 @@ class Environment:
     legacy_scaffold_nest_enabled: bool = False
     legacy_oracle_perception_enabled: bool = False
     food_signal_radius_cap: int | None = None
+    # Foraging-access study (Option GA.3): let agents sense food beyond their
+    # eyesight radius (a "smell" range), decoupled from vision. 0 = off ->
+    # _move_toward_food_signal keeps the legacy min(5, vision) radius
+    # (byte-identical). When > 0 it overrides that radius so meal rate can rise
+    # at realistic-sparse food. See reports/PLAN_option_ga_foraging_access_fix.
+    food_sensing_radius: int = 0
+    # Memory-return foraging toggle (Option GA.2 control). Default True =
+    # current behavior (hungry agents fall back to the nearest remembered food
+    # source when the live food gradient is flat). Set False to isolate how much
+    # the return-to-patch behavior contributes to meal rate.
+    memory_return_enabled: bool = True
     plant_lifecycle_food_signal_weight: float = 1.35
     seed_hunger_drop_bonus: float = 0.06
     seed_drop_block_critical_hunger: bool = False
@@ -2166,6 +2177,46 @@ class Environment:
         self.plant_seeds[plant.seed_id] = plant
         self.next_seed_id += 1
         return plant
+
+    def seed_initial_plants(self, rng: Random, count: int) -> None:
+        """Establish a pre-existing mature plant population (Option GA.4).
+
+        Without this the world starts barren: seed rain takes hundreds of ticks
+        to germinate+mature a standing crop, so a mortal founder cohort either
+        starves during the gap or overshoots an empty larder and crashes (Allee).
+        Seeding mature plants at tick 0 means agents arrive into an existing
+        grassland, so a real carrying capacity exists immediately. This is an
+        ecological initial condition, not a uniform food crutch: food still
+        appears only at fixed plant cells, is depletable, and regrows on the
+        plant fruiting cycle. count <= 0 draws no RNG (byte-identical)."""
+        if count <= 0 or not self.plant_lifecycle_enabled:
+            return
+        spec = PLANT_SPECIES["wild_grain"]
+        interval = max(1, int(round(spec.fruiting_interval_ticks * self.plant_fruiting_interval_multiplier)))
+        placed = 0
+        attempts = 0
+        max_attempts = count * 20
+        while placed < count and attempts < max_attempts and len(self.plant_seeds) < self.max_plant_seeds:
+            attempts += 1
+            x = rng.randrange(self.width)
+            y = rng.randrange(self.height)
+            if self.ground_material_map[y][x] == MATERIAL_WATER or not self.is_walkable(x, y):
+                continue
+            # establish where plants can actually grow (fertile, nutrient-bearing)
+            if rng.random() > max(0.1, self.get_fertility(x, y) * self.get_cell_soil_nutrients(x, y)):
+                continue
+            plant = self._deposit_seed(
+                species="wild_grain",
+                x=x,
+                y=y,
+                burial_depth_cm=rng.uniform(spec.burial_depth_min_cm, spec.burial_depth_max_cm),
+                dispersal_mode="initial_seed",
+            )
+            plant.state = "mature"
+            plant.biomass = spec.maturity_biomass * 1.4
+            # stagger first-fruit timing so the grassland does not pulse-fruit in lockstep
+            plant.last_food_tick = -rng.randrange(0, interval)
+            placed += 1
 
     def _drop_harvest_seed(self, x: int, y: int, resource: FoodResource) -> PlantSeed | None:
         if not self.plant_lifecycle_enabled:

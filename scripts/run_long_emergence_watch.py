@@ -778,6 +778,8 @@ def run_watch(args: argparse.Namespace) -> dict[str, object]:
         plant_fruiting_chance_multiplier=args.plant_fruiting_chance_multiplier,
         natural_seed_drop_chance_multiplier=args.natural_seed_drop_chance_multiplier,
         food_signal_radius_cap=getattr(args, "food_signal_radius_cap", None),
+        food_sensing_radius=getattr(args, "food_sensing_radius", 0),
+        memory_return_enabled=getattr(args, "memory_return_enabled", True),
         plant_lifecycle_food_signal_weight=getattr(args, "plant_lifecycle_food_signal_weight", 1.35),
         seed_hunger_drop_bonus=getattr(args, "seed_hunger_drop_bonus", 0.06),
         seed_drop_block_critical_hunger=getattr(args, "seed_drop_block_critical_hunger", False),
@@ -817,6 +819,12 @@ def run_watch(args: argparse.Namespace) -> dict[str, object]:
         starvation_death_enabled=getattr(args, "starvation_death_enabled", False),
         starvation_tolerance=getattr(args, "starvation_tolerance", 15),
     )
+    # GA.4: optionally establish a mature plant population before founders arrive
+    # (a pre-existing grassland -> real carrying capacity at tick 0). 0 = off,
+    # draws no RNG so existing runs are byte-identical.
+    _initial_plants = getattr(args, "initial_plant_population", 0)
+    if _initial_plants and _initial_plants > 0:
+        env.seed_initial_plants(rng, int(_initial_plants))
     founder_sexes = ["male"] * (args.initial_population // 2) + ["female"] * (
         args.initial_population - (args.initial_population // 2)
     )
@@ -2126,13 +2134,22 @@ def run_watch(args: argparse.Namespace) -> dict[str, object]:
             # Pure telemetry (no behaviour/RNG change).
             _food_xy = list(env.food_positions.keys())
             _sample = agents[:40]
+            # Multi-radius sensing (GA diagnostic): tally the fraction of sampled
+            # agents whose nearest food is within radius r, for several r. If
+            # frac jumps as r grows past vision (4), food is "near but beyond
+            # eyesight" (GA.3 helps); if it stays flat even at r=20, food is
+            # genuinely far / in another zone (a spatial-mismatch problem).
             _dists, _sensing = [], 0
+            _sensing_r = {8: 0, 12: 0, 20: 0}
             for _a in _sample:
                 if _food_xy:
                     _nd = min(abs(fx - _a.x) + abs(fy - _a.y) for fx, fy in _food_xy)
                     _dists.append(_nd)
                     if _nd <= 4:
                         _sensing += 1
+                    for _r in _sensing_r:
+                        if _nd <= _r:
+                            _sensing_r[_r] += 1
             population_trajectory.append({
                 "tick": current_tick,
                 "population": len(agents),
@@ -2143,6 +2160,9 @@ def run_watch(args: argparse.Namespace) -> dict[str, object]:
                 "food_per_capita": round(env.food_per_capita, 2),
                 "mean_food_dist": round(sum(_dists) / len(_dists), 1) if _dists else None,
                 "frac_sensing_food": round(_sensing / len(_sample), 2) if _sample else None,
+                "frac_sensing_r8": round(_sensing_r[8] / len(_sample), 2) if _sample else None,
+                "frac_sensing_r12": round(_sensing_r[12] / len(_sample), 2) if _sample else None,
+                "frac_sensing_r20": round(_sensing_r[20] / len(_sample), 2) if _sample else None,
                 "raw_seed_meals": diet_snap.get("raw_seed", 0),
                 "raw_plant_meals": diet_snap.get("raw_plant", 0),
                 "max_generation": max(gen_snap) if gen_snap else 0,
