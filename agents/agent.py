@@ -909,17 +909,23 @@ class Agent:
         )
 
     def _move_toward_food_signal(self, env, rng: Random, urgency: float = 1.0) -> bool:
-        sensing_radius = getattr(env, "food_sensing_radius", 0)
-        if sensing_radius and sensing_radius > 0:
-            radius = max(1, sensing_radius)
+        # Physical continuous vision (opt-in): no hard radius cutoff, range set by
+        # the source's apparent brightness vs the detection threshold.
+        continuous = getattr(env, "food_detection_threshold", 0.0) > 0.0
+        if continuous:
+            radius = 0  # ignored by the continuous model
         else:
-            radius = max(1, min(5, self._effective_vision(env.is_night)))
-        current_signal = env.food_signal_at(self.x, self.y, radius=radius)
+            sensing_radius = getattr(env, "food_sensing_radius", 0)
+            if sensing_radius and sensing_radius > 0:
+                radius = max(1, sensing_radius)
+            else:
+                radius = max(1, min(5, self._effective_vision(env.is_night)))
+        current_signal = env.food_signal_at(self.x, self.y, radius=radius, continuous=continuous)
         moved = self._move_by_instinct_score(
             env,
             rng,
             lambda next_x, next_y: (
-                env.food_signal_at(next_x, next_y, radius=radius) * urgency
+                env.food_signal_at(next_x, next_y, radius=radius, continuous=continuous) * urgency
                 - env.get_danger_level(next_x, next_y) * (0.7 + self.body.danger_avoidance)
                 + (self.body.gather_drive * 0.05)
             ),

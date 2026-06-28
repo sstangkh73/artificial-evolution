@@ -34,6 +34,7 @@
 | กลไก/telemetry | ไฟล์ | knob (default) | จุดประสงค์ |
 |---|---|---|---|
 | **food_sensing_radius** (ก.3) | `world/environment.py`, `agents/agent.py` `_move_toward_food_signal` | `food_sensing_radius=0` (0=ใช้ min(5,vision) เดิม) | แยกการรับรู้อาหาร (กลิ่น) จากสายตา |
+| **food_detection_threshold** (ก.3b) | env `food_signal_at`, `agents/agent.py` `_move_toward_food_signal` | `food_detection_threshold=0.0` (0=hard cutoff เดิม) | vision ต่อเนื่อง 1/d² ไม่มี cutoff (ระยะ=ความสว่าง/threshold); `vision_horizon` = เพดานความโค้งโลก |
 | **memory_return_enabled** (ก.2 control) | env, `agents/agent.py` `_act_on_hunger_instinct` | `memory_return_enabled=True` (เดิม) | ปิดเพื่อแยกผล memory-return |
 | **initial_plant_population** (ก.4) | env `seed_initial_plants`, runner | `initial_plant_population=0` | วางทุ่งหญ้าโตเต็มวัยที่ t=0 → มี K ตั้งแต่ต้น |
 | **multi-radius sensing telemetry** | runner trajectory | (auto) | frac_sensing ที่ r=4/8/12/20 — วินิจฉัย "ใกล้แต่เกินสายตา" |
@@ -78,6 +79,19 @@
 - **ก.2 (memory-return) รอง** — เปิด/ปิดต่างกัน <15% (ที่สายตาล้วน ≈0%) → **falsify** สมมติฐานเดิมว่า memory เป็นตัวหลัก (Phase 2 พิสูจน์ memory return ในงานวางเมล็ด แต่ที่ foraging ทั่วไป gradient ของ sensing สำคัญกว่า)
 
 **Gate ก.1–ก.3: ผ่าน** — frac_sensing > 0.5 บนอาหารพืชล้วน ไม่มี uniform crutch (ผ่าน seed rain + sensing radius)
+
+### 4b. ก.3b — โมเดล vision ฟิสิกส์ (ข้อสังเกตผู้ใช้): ต่อเนื่อง ไม่มี hard cutoff
+**ข้อสังเกต:** การมองจริงไม่ตัดหายที่รัศมี — ไกลขึ้นแค่เล็ก/จางลง (intensity ~ 1/d²) จนถึง horizon (ความโค้งโลก). โค้ดเดิมมี 1/d² อยู่แล้ว **แต่** ใส่ **hard cutoff** ที่รัศมีสายตา (เกิน = signal 0 ทันที) = ส่วนที่ไม่เป็นฟิสิกส์ และเป็นต้นเหตุ "gradient แบน → เดินสุ่ม". horizon ที่สเกลโลก (ช่อง~1ม.) = √(2Rh) ~1000+ ช่อง » แมพ → ความโค้งไม่ binding; ตัวจำกัดจริงคือ **detection threshold** (ความคมสายตา) ซึ่งทำให้ระยะเห็น**โผล่จากความสว่างของแหล่งเอง**
+
+**ผล (immortal, rain12, พืชล้วน — เทียบ legacy/radius/continuous):**
+| โมเดล | meal_rate | intake/tick | frac_r4 | **mean_food_dist** |
+|---|---:|---:|---:|---:|
+| legacy hard cutoff (สายตา ~4) | 0.035 | 0.176 | 0.04 | **24.0** |
+| food_sensing_radius 20 (เลื่อน cutoff) | 0.229 | 1.147 | 0.77 | (สูง) |
+| **ต่อเนื่อง threshold 0.025** | 0.210 | 1.048 | 0.84 | **3.1** |
+| **ต่อเนื่อง threshold 0.01** | **0.249** | **1.245** | **0.93** | **2.7** |
+
+**จุดชี้ขาด:** `mean_food_dist` ทรุดจาก **24 → ~3** — ลบ hard cutoff → ไม่มีจุดที่ signal = 0 สนิท → agent ที่อยู่ไกลได้ gradient จางๆ ชี้ทางเสมอ → เดินไปยืนติดอาหาร. **ดีกว่า radius knob** (intake 1.245 > 1.147 = 64% ของ crutch) และระยะเห็นเป็น emergent จากความสว่างแหล่ง (กองใหญ่เห็นไกล) — ตรง thesis "ปล่อยฟิสิกส์ตัดสิน". knob: `food_detection_threshold` (0=off byte-identical), `vision_horizon`; perf ช้ากว่า ~2× (O(n_food)/perception). โมเดลนี้เป็น**รูปแบบที่ถูกต้องเชิงฟิสิกส์ของ ก.3** (radius knob เป็น proxy หยาบ)
 
 ---
 

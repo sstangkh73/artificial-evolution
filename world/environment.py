@@ -557,6 +557,20 @@ class Environment:
     # (byte-identical). When > 0 it overrides that radius so meal rate can rise
     # at realistic-sparse food. See reports/PLAN_option_ga_foraging_access_fix.
     food_sensing_radius: int = 0
+    # Physical vision falloff (Option GA.3b, user insight): real sight does not
+    # cut off at a hard radius -- distant things just look smaller/fainter
+    # (intensity ~ 1/d^2) until the horizon (Earth curvature). This replaces the
+    # hard radius cutoff in the FORAGING gradient with continuous 1/d^2 falloff
+    # limited by a detection threshold (acuity): an agent perceives a food source
+    # only while its apparent signal energy/(d+1)^2 exceeds the threshold, so the
+    # detection RANGE emerges from the source's brightness (a big cluster is seen
+    # farther than a lone fruit) instead of a fixed number. 0.0 = off (legacy hard
+    # cutoff, byte-identical). Only the foraging call uses it (continuous=True);
+    # the neural per-cell observation keeps radius semantics.
+    food_detection_threshold: float = 0.0
+    # Absolute geometric sight ceiling (curvature horizon). 0 -> width+height
+    # (effectively the whole map; curvature is negligible at this world scale).
+    vision_horizon: int = 0
     # Memory-return foraging toggle (Option GA.2 control). Default True =
     # current behavior (hungry agents fall back to the nearest remembered food
     # source when the live food gradient is flat). Set False to isolate how much
@@ -854,8 +868,26 @@ class Environment:
                     if resource is not None:
                         yield pos, resource
 
-    def food_signal_at(self, x: int, y: int, radius: int) -> float:
+    def food_signal_at(self, x: int, y: int, radius: int, continuous: bool = False) -> float:
         signal = 0.0
+        # Physical vision (opt-in): no hard radius cutoff -- 1/d^2 falloff out to
+        # the horizon, with perception limited by a detection threshold (acuity),
+        # so range emerges from source brightness. Only the foraging gradient
+        # passes continuous=True; default keeps the legacy hard-radius behavior so
+        # neural per-cell reads (radius=0) and saved runs stay byte-identical.
+        threshold = self.food_detection_threshold
+        if continuous and threshold > 0.0:
+            horizon = self.vision_horizon if self.vision_horizon > 0 else (self.width + self.height)
+            for (food_x, food_y), resource in self.food_positions.items():
+                distance = abs(food_x - x) + abs(food_y - y)
+                if distance > horizon:
+                    continue
+                source_weight = self.plant_lifecycle_food_signal_weight if resource.source == "plant_lifecycle" else 1.0
+                contribution = (resource.energy * source_weight) / ((distance + 1) ** 2)
+                if contribution < threshold:
+                    continue
+                signal += contribution
+            return signal
         radius = max(0, radius)
         if self.food_signal_radius_cap is not None:
             radius = min(radius, max(0, self.food_signal_radius_cap))

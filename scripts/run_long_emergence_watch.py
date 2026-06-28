@@ -779,6 +779,8 @@ def run_watch(args: argparse.Namespace) -> dict[str, object]:
         natural_seed_drop_chance_multiplier=args.natural_seed_drop_chance_multiplier,
         food_signal_radius_cap=getattr(args, "food_signal_radius_cap", None),
         food_sensing_radius=getattr(args, "food_sensing_radius", 0),
+        food_detection_threshold=getattr(args, "food_detection_threshold", 0.0),
+        vision_horizon=getattr(args, "vision_horizon", 0),
         memory_return_enabled=getattr(args, "memory_return_enabled", True),
         plant_lifecycle_food_signal_weight=getattr(args, "plant_lifecycle_food_signal_weight", 1.35),
         seed_hunger_drop_bonus=getattr(args, "seed_hunger_drop_bonus", 0.06),

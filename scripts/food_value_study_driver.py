@@ -74,7 +74,9 @@ def make_args(seed: int, model: str, max_ticks: int, output: str,
               max_population: int = 250,
               natural_seed_rain: int = 0, food_sensing_radius: int = 0,
               memory_return_enabled: bool = True,
-              initial_plant_population: int = 0) -> SimpleNamespace:
+              initial_plant_population: int = 0,
+              food_detection_threshold: float = 0.0,
+              vision_horizon: int = 0) -> SimpleNamespace:
     return SimpleNamespace(
         home_fidelity_enabled=home_fidelity,
         home_radius=home_radius,
@@ -130,6 +132,7 @@ def make_args(seed: int, model: str, max_ticks: int, output: str,
         food_signal_radius_cap=None, food_sensing_radius=food_sensing_radius,
         memory_return_enabled=memory_return_enabled,
         initial_plant_population=initial_plant_population,
+        food_detection_threshold=food_detection_threshold, vision_horizon=vision_horizon,
         plant_lifecycle_food_signal_weight=1.35,
         seed_hunger_drop_bonus=0.06, seed_drop_block_critical_hunger=False,
         seed_drop_safe_window_only=False, seed_drop_safe_hunger_max=0.55,
@@ -219,6 +222,10 @@ if __name__ == "__main__":
                    help="GA.2 control: disable return-to-remembered-food-source foraging")
     p.add_argument("--initial-plants", type=int, default=0,
                    help="GA.4: seed this many mature plants at tick 0 (a pre-existing grassland -> real K from the start; 0 = off)")
+    p.add_argument("--food-detection-threshold", type=float, default=0.0,
+                   help="GA.3b physical vision: replace the hard sight cutoff with continuous 1/d^2 falloff; perceive food while energy/(d+1)^2 >= this threshold (range emerges from brightness). 0 = off (legacy hard cutoff)")
+    p.add_argument("--vision-horizon", type=int, default=0,
+                   help="absolute sight ceiling (curvature horizon) for the continuous model; 0 = width+height")
     p.add_argument("--dump", default=None, help="write full result JSON here for regression diff")
     a = p.parse_args()
     summary = R.run_watch(make_args(a.seed, a.model, a.ticks, a.output,
@@ -246,7 +253,9 @@ if __name__ == "__main__":
                                     natural_seed_rain=a.natural_seed_rain,
                                     food_sensing_radius=a.food_sensing_radius,
                                     memory_return_enabled=not a.no_memory_return,
-                                    initial_plant_population=a.initial_plants))
+                                    initial_plant_population=a.initial_plants,
+                                    food_detection_threshold=a.food_detection_threshold,
+                                    vision_horizon=a.vision_horizon))
     if a.dump:
         Path(a.dump).write_text(json.dumps(summary, ensure_ascii=False, indent=2), encoding="utf-8")
     print(json.dumps(summarize(summary), ensure_ascii=False))
