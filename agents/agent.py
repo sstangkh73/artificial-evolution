@@ -58,6 +58,22 @@ REPRODUCTION_SAFETY_STREAK = 10
 REPRODUCTION_PAIR_BOND_STREAK = 14
 
 
+def _continuous_repro_food_brake(food_per_capita: float, food_target: float) -> float:
+    """Proportional density brake for continuous reproduction.
+
+    Returns a multiplier in [0, 1] applied to the per-tick reproduction
+    probability. When the brake is off (food_target <= 0) or standing food is
+    at/above the per-capita target it returns 1.0 (no throttle, byte-identical);
+    below the target it falls linearly toward 0, so reproduction throttles as the
+    population approaches carrying capacity -- BEFORE overshoot, which damps the
+    delayed-logistic boom-bust. See continuous_repro_food_target in the env and
+    reports/r0_fecundity_analysis_2026-06-20.th.md.
+    """
+    if food_target <= 0.0:
+        return 1.0
+    return min(1.0, max(0.0, food_per_capita) / food_target)
+
+
 @dataclass
 class Agent:
     agent_id: int
@@ -160,6 +176,7 @@ class Agent:
     # heuristic controller (default, byte-identical to v1). The shared architecture
     # lives on the env as env.neural_brain_spec; only weights are heritable here.
     neural_genome: list[float] | None = field(default=None, repr=False)
+    neural_signal_value: float = 0.0
 
     def __post_init__(self) -> None:
         self.durability = self.body.durability
@@ -242,14 +259,27 @@ class Agent:
         _max_age = getattr(env, "repro_max_age", MAX_AGE)
         if not self.immortal:
             if getattr(env, "stochastic_mortality_enabled", False):
-                # age-rising hazard starting late (preserve mean lifespan, just
-                # spread the death pulse); hard backstop at 1.5x max_age.
-                _old_t = _max_age * getattr(env, "mortality_onset_fraction", 0.85)
-                if self.age >= _max_age * 1.5 or (
-                    self.age >= _old_t
-                    and rng.random() < getattr(env, "mortality_hazard", 0.03)
-                    * (self.age - _old_t) / max(1.0, _max_age - _old_t)
-                ):
+                _const_h = getattr(env, "mortality_constant_hazard", 0.0)
+                if _const_h > 0.0:
+                    # Memoryless CONSTANT hazard from adulthood -> exponential
+                    # lifespan (mean adult lifespan ~= 1/hazard), MAXIMALLY
+                    # de-synchronized: death age is independent of cohort, so no
+                    # age-locked die-off wave. Tests whether the lifespan-physics
+                    # synchronized-wave is the extinction driver, isolated from
+                    # mean-lifespan length. Backstop at 1.5x max_age.
+                    _die = self.age >= _max_age * 1.5 or (
+                        self.age >= ADULT_AGE and rng.random() < _const_h
+                    )
+                else:
+                    # age-rising hazard starting late (preserve mean lifespan,
+                    # just spread the death pulse); hard backstop at 1.5x max_age.
+                    _old_t = _max_age * getattr(env, "mortality_onset_fraction", 0.85)
+                    _die = self.age >= _max_age * 1.5 or (
+                        self.age >= _old_t
+                        and rng.random() < getattr(env, "mortality_hazard", 0.03)
+                        * (self.age - _old_t) / max(1.0, _max_age - _old_t)
+                    )
+                if _die:
                     self.completed_lifespan = True
                     self.alive = False
                     self.death_reason = "lifespan_completed"
@@ -305,12 +335,21 @@ class Agent:
         local_cap = max(1.0, getattr(env, "continuous_repro_local_cap", 30.0))
         crowding = min(1.0, getattr(self, "_nearby_ally_count", 0) / local_cap)
         base = getattr(env, "continuous_repro_base_rate", 0.05)
-        prob = base * readiness * (1.0 - 0.5 * crowding)
+        # Proportional food-per-capita density brake (opt-in). As the population
+        # nears carrying capacity the standing food-per-capita falls, so the brake
+        # throttles reproduction BEFORE overshoot -> damps the delayed-logistic
+        # boom-bust. Off (target <= 0) returns 1.0, so prob is byte-identical.
+        food_brake = _continuous_repro_food_brake(
+            getattr(env, "food_per_capita", 0.0),
+            getattr(env, "continuous_repro_food_target", 0.0),
+        )
+        prob = base * readiness * (1.0 - 0.5 * crowding) * food_brake
         decided = rng.random() < prob
         self.reproduction_debug = {
             "eligible": decided, "reason": "continuous",
             "reasons": ["ready"] if decided else ["continuous_roll"],
             "readiness": round(readiness, 3), "crowding": round(crowding, 3),
+            "food_brake": round(food_brake, 3),
             "prob": round(prob, 4), "energy": self.energy,
         }
         return decided
@@ -912,10 +951,10 @@ class Agent:
         """Build the two input streams for the neural brain from raw world state.
 
         Stream 1 (vision): a (2r+1)x(2r+1) egocentric window. Each cell carries
-        three RAW physical channels with NO semantic label -- a food-energy signal,
-        the local danger level, and a walkable/out-of-bounds flag -- so the network
-        must discover what matters. Stream 2 (scalars): the agent's internal and
-        environmental state. All values are squashed to a bounded range.
+        raw physical channels with NO semantic label: food-energy signal, local
+        danger, walkability, and (for newer specs) previous-tick neural signal.
+        Stream 2 (scalars): the agent's internal and environmental state. All
+        values are squashed to a bounded range.
         """
         spec = env.neural_brain_spec
         r = spec.vision_radius
@@ -932,9 +971,24 @@ class Agent:
                     food = 0.0
                     danger = 1.0  # treat the edge of the world as dangerous/blocked
                     walk = 0.0
-                vision.append(math.tanh(food * 0.25))
-                vision.append(min(1.0, max(0.0, danger)))
-                vision.append(walk)
+                channels = [
+                    math.tanh(food * 0.25),
+                    min(1.0, max(0.0, danger)),
+                    walk,
+                ]
+                if spec.vision_channels >= 4:
+                    signal = 0.0
+                    if walk > 0.0:
+                        signal = env.agent_signal_at(
+                            cx,
+                            cy,
+                            radius=0,
+                            exclude_agent_id=self.agent_id,
+                        )
+                    channels.append(max(-1.0, min(1.0, signal)))
+                while len(channels) < spec.vision_channels:
+                    channels.append(0.0)
+                vision.extend(channels[:spec.vision_channels])
 
         own_radius = max(1, min(5, getattr(self.body, "effective_vision", 3)))
         scalars = [
@@ -958,13 +1012,19 @@ class Agent:
         spec = env.neural_brain_spec
         vision, scalars = self._neural_observation(env)
         temperature = getattr(env, "neural_temperature", 0.0)
-        move_idx, action_idx = neural_brain.decide(
+        move_idx, action_idx, signal_idx = neural_brain.decide(
             spec, self.neural_genome, vision, scalars, rng=rng, temperature=temperature
         )
 
         dx, dy = neural_brain.MOVE_ACTIONS[move_idx]
         if dx != 0 or dy != 0:
             self._move(env, dx, dy)
+
+        signal_value = 0.0
+        if 0 <= signal_idx < len(neural_brain.SIGNAL_ACTIONS):
+            signal_value = neural_brain.SIGNAL_ACTIONS[signal_idx]
+        self.neural_signal_value = signal_value
+        env.emit_agent_signal(self.agent_id, self.x, self.y, signal_value)
 
         action = neural_brain.OBJECT_ACTIONS[action_idx]
         self._neural_eat_intent = action == "eat"

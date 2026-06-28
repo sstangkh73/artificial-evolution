@@ -577,6 +577,13 @@ class Environment:
     diet_pickiness: float = 0.5          # skip kind whose value < pickiness x best known
     diet_learning_rate: float = 0.3      # EMA alpha for learned food value
     diet_starvation_energy: int = 6      # below this, eat anything (true-starvation floor)
+    # Neural communication study (opt-in): agents can emit a signed local signal
+    # through the neural controller. Receivers read the previous tick's buffer so
+    # observation is not biased by same-tick agent iteration order.
+    neural_signal_enabled: bool = False
+    neural_signal_radius: int = 4
+    neural_signal_receiver_blind: bool = False
+    neural_signal_shuffle_enabled: bool = False
     # Reproduction-rate study (defaults = the agent.py constants -> byte-identical):
     # loosen these to test whether a self-sustaining multi-generation population
     # is reachable.
@@ -592,6 +599,14 @@ class Environment:
     continuous_reproduction_enabled: bool = False
     continuous_repro_base_rate: float = 0.05
     continuous_repro_local_cap: float = 30.0
+    # Proportional density brake (opt-in, default 0 = off -> byte-identical):
+    # scales the continuous-repro probability by (food_per_capita / target),
+    # capped at 1.0. As the population approaches carrying capacity the standing
+    # food-per-capita falls, so reproduction throttles smoothly BEFORE overshoot,
+    # damping the delayed-logistic boom-bust (the hunger gate only fires AFTER
+    # energy has already crashed -> too late). food_per_capita is recomputed each
+    # tick by the run loop. See reports/r0_fecundity_analysis_2026-06-20.th.md.
+    continuous_repro_food_target: float = 0.0
     # Home/breeding-site fidelity (opt-in): balanced agents return to home_anchor
     # and stay within home_radius instead of dispersing -> stable breeding clusters.
     home_fidelity_enabled: bool = False
@@ -601,6 +616,18 @@ class Environment:
     # with an age-rising hazard so deaths spread out across ages.
     stochastic_mortality_enabled: bool = False
     mortality_hazard: float = 0.03
+    # Fraction of max_age at which the age-rising death hazard begins. Default
+    # 0.85 bunches deaths near old age (a synchronized cohort still dies in a
+    # wave). Lowering it ramps the hazard from a younger adult age, spreading
+    # deaths across the whole adult lifespan -> de-synchronized continuous death
+    # to pair with the continuous-repro density brake. See agent.py _resolve.
+    mortality_onset_fraction: float = 0.85
+    # Memoryless constant per-tick death hazard from adulthood (opt-in, 0 = off).
+    # When > 0 it REPLACES the age-ramp with a flat hazard -> exponential lifespan
+    # (mean adult lifespan ~= 1/hazard), the maximally de-synchronized death
+    # physics (no age-locked cohort wave). Isolates "synchronized wave" from
+    # "mean lifespan length" as the extinction driver. See agent.py _resolve.
+    mortality_constant_hazard: float = 0.0
     # Realistic starvation death (opt-in): prolonged zero-energy kills, so food
     # availability regulates carrying capacity (no artificial population cap).
     starvation_death_enabled: bool = False
@@ -608,6 +635,10 @@ class Environment:
     ambient_food_decay_chance: float = 0.006
     plant_food_decay_chance: float = 0.003
     tick_count: int = 0
+    # Per-tick standing food / live population, recomputed by the run loop. Read
+    # by the continuous-repro density brake (continuous_repro_food_target). Inert
+    # telemetry when the brake is off.
+    food_per_capita: float = 0.0
     food_positions: dict[tuple[int, int], FoodResource] = field(default_factory=dict)
     food_spawned_by_kind: dict[str, int] = field(default_factory=dict)
     _food_grid: dict[tuple[int, int], list[tuple[int, int]]] = field(default_factory=dict, repr=False)
@@ -623,6 +654,8 @@ class Environment:
     active_nest_owner_ids: set[int] = field(default_factory=set)
     nest_owner_aliases: dict[int, int] = field(default_factory=dict)
     physics_events: list[str] = field(default_factory=list)
+    neural_signal_previous: dict[int, tuple[int, int, float]] = field(default_factory=dict)
+    neural_signal_current: dict[int, tuple[int, int, float]] = field(default_factory=dict)
     zone_map: list[list[str]] = field(init=False)
     fertility_map: list[list[float]] = field(init=False)
     ground_material_map: list[list[str]] = field(init=False)
@@ -665,6 +698,7 @@ class Environment:
     def step(self, rng: Random) -> None:
         self.tick_count += 1
         self.physics_events.clear()
+        self._rotate_neural_signals()
         self._recover_fertility()
         self._decay_managed_food()
         self._decay_soil_disturbance()
@@ -831,6 +865,57 @@ class Environment:
                 continue
             signal += animal.energy / ((distance + 1) ** 2)
         return signal
+
+    def _rotate_neural_signals(self) -> None:
+        if not self.neural_signal_enabled:
+            self.neural_signal_previous.clear()
+            self.neural_signal_current.clear()
+            return
+        self.neural_signal_previous = dict(self.neural_signal_current)
+        self.neural_signal_current.clear()
+
+    def emit_agent_signal(self, agent_id: int, x: int, y: int, value: float) -> None:
+        if not self.neural_signal_enabled:
+            return
+        if not self.is_walkable(x, y):
+            return
+        clamped = max(-1.0, min(1.0, float(value)))
+        if abs(clamped) < 1e-12:
+            self.neural_signal_current.pop(agent_id, None)
+            return
+        self.neural_signal_current[agent_id] = (x, y, clamped)
+
+    def _iter_neural_signal_previous(self):
+        items = sorted(self.neural_signal_previous.items())
+        if self.neural_signal_shuffle_enabled and len(items) > 1:
+            values = [payload[2] for _, payload in items]
+            rotated_values = values[1:] + values[:1]
+            for (agent_id, (x, y, _value)), shuffled_value in zip(items, rotated_values):
+                yield agent_id, x, y, shuffled_value
+            return
+        for agent_id, (x, y, value) in items:
+            yield agent_id, x, y, value
+
+    def agent_signal_at(
+        self,
+        x: int,
+        y: int,
+        radius: int,
+        exclude_agent_id: int | None = None,
+    ) -> float:
+        if not self.neural_signal_enabled or self.neural_signal_receiver_blind:
+            return 0.0
+        signal = 0.0
+        radius = max(0, radius)
+        radius = min(radius, max(0, self.neural_signal_radius))
+        for agent_id, signal_x, signal_y, value in self._iter_neural_signal_previous():
+            if exclude_agent_id is not None and agent_id == exclude_agent_id:
+                continue
+            distance = abs(signal_x - x) + abs(signal_y - y)
+            if distance > radius:
+                continue
+            signal += value / ((distance + 1) ** 2)
+        return max(-1.0, min(1.0, signal))
 
     def disturb_surface(self, x: int, y: int, force: float, agent_id: int | None = None) -> None:
         if not self.is_walkable(x, y) or force <= 0.0:

@@ -807,10 +807,13 @@ def run_watch(args: argparse.Namespace) -> dict[str, object]:
         continuous_reproduction_enabled=getattr(args, "continuous_reproduction_enabled", False),
         continuous_repro_base_rate=getattr(args, "continuous_repro_base_rate", 0.05),
         continuous_repro_local_cap=getattr(args, "continuous_repro_local_cap", 6.0),
+        continuous_repro_food_target=getattr(args, "continuous_repro_food_target", 0.0),
         home_fidelity_enabled=getattr(args, "home_fidelity_enabled", False),
         home_radius=getattr(args, "home_radius", 3),
         stochastic_mortality_enabled=getattr(args, "stochastic_mortality_enabled", False),
         mortality_hazard=getattr(args, "mortality_hazard", 0.03),
+        mortality_onset_fraction=getattr(args, "mortality_onset_fraction", 0.85),
+        mortality_constant_hazard=getattr(args, "mortality_constant_hazard", 0.0),
         starvation_death_enabled=getattr(args, "starvation_death_enabled", False),
         starvation_tolerance=getattr(args, "starvation_tolerance", 15),
     )
@@ -1998,6 +2001,10 @@ def run_watch(args: argparse.Namespace) -> dict[str, object]:
 
         env.set_active_nest_owners(_occupied_nest_owner_ids(env, agents))
         env.step(rng)
+        # Standing food per live agent this tick. Drives the optional proportional
+        # density brake on continuous reproduction (continuous_repro_food_target);
+        # inert telemetry when the brake is off.
+        env.food_per_capita = len(env.food_positions) / max(1, len(agents))
         current_tick = env.tick_count
         current_day = current_tick // env.day_length
         tick_events: list[str] = []
@@ -2112,12 +2119,30 @@ def run_watch(args: argparse.Namespace) -> dict[str, object]:
                 for _k, _c in getattr(_a, "meals_by_type", {}).items():
                     diet_snap[_k] += int(_c)
                 gen_snap[int(getattr(_a, "generation", 0))] += 1
+            # Foraging-access probe (keystone diagnosis): on a sample of agents,
+            # how far is the nearest food, and what fraction sense ANY food within
+            # a vision radius (4)? At realistic-sparse food, mean dist >> vision so
+            # the food signal is flat/zero -> agents wander -> intake collapses.
+            # Pure telemetry (no behaviour/RNG change).
+            _food_xy = list(env.food_positions.keys())
+            _sample = agents[:40]
+            _dists, _sensing = [], 0
+            for _a in _sample:
+                if _food_xy:
+                    _nd = min(abs(fx - _a.x) + abs(fy - _a.y) for fx, fy in _food_xy)
+                    _dists.append(_nd)
+                    if _nd <= 4:
+                        _sensing += 1
             population_trajectory.append({
                 "tick": current_tick,
                 "population": len(agents),
                 "births": total_births,
                 "deaths": sum(agent_death_reasons.values()),
                 "mean_energy": round(sum(a.energy for a in agents) / len(agents), 1) if agents else 0,
+                "standing_food": len(env.food_positions),
+                "food_per_capita": round(env.food_per_capita, 2),
+                "mean_food_dist": round(sum(_dists) / len(_dists), 1) if _dists else None,
+                "frac_sensing_food": round(_sensing / len(_sample), 2) if _sample else None,
                 "raw_seed_meals": diet_snap.get("raw_seed", 0),
                 "raw_plant_meals": diet_snap.get("raw_plant", 0),
                 "max_generation": max(gen_snap) if gen_snap else 0,

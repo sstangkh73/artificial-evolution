@@ -7,7 +7,7 @@ descent. It is written with the Python standard library only (``math`` +
 ``random``) so the project keeps its "standard library only" identity and stays
 byte-for-byte reproducible from a seeded RNG.
 
-Architecture (two input streams, two output heads):
+Architecture (two input streams, three output heads):
 
     stream 1  vision grid      (2r+1)x(2r+1) cells x C raw channels
               -> dense -> tanh -> vision features
@@ -15,7 +15,8 @@ Architecture (two input streams, two output heads):
               -> concatenated with the vision features
               -> dense -> tanh -> shared hidden representation
                                  |-> move head    (logits over 5 directions)
-                                 `-> action head  (logits over object actions)
+                                 |-> action head  (logits over object actions)
+                                 `-> signal head  (quiet / positive / negative)
 
 The network carries *no* labels about what each input means: the vision channels
 are raw physical measurements of the world and the meaning of every weight is
@@ -32,7 +33,7 @@ import math
 from dataclasses import dataclass
 from random import Random
 
-# Decoded action labels for the two output heads. Order is part of the genome
+# Decoded action labels for the output heads. Order is part of the genome
 # contract: index i in the head logits maps to entry i here. Do not reorder
 # without re-evolving, or saved genomes will mean something different.
 MOVE_ACTIONS: tuple[tuple[int, int], ...] = (
@@ -50,6 +51,12 @@ OBJECT_ACTIONS: tuple[str, ...] = (
     "drop_seed",  # drop a carried seed here
 )
 
+SIGNAL_ACTIONS: tuple[float, ...] = (
+    0.0,   # quiet
+    1.0,   # positive local signal
+    -1.0,  # negative local signal
+)
+
 
 @dataclass(frozen=True)
 class NeuralBrainSpec:
@@ -61,12 +68,13 @@ class NeuralBrainSpec:
     """
 
     vision_radius: int = 2
-    vision_channels: int = 3
+    vision_channels: int = 4
     scalar_inputs: int = 12
     vision_hidden: int = 10
     shared_hidden: int = 16
     move_outputs: int = len(MOVE_ACTIONS)
     action_outputs: int = len(OBJECT_ACTIONS)
+    signal_outputs: int = len(SIGNAL_ACTIONS)
 
     @property
     def vision_cells(self) -> int:
@@ -80,12 +88,15 @@ class NeuralBrainSpec:
     @property
     def _layers(self) -> tuple[tuple[int, int], ...]:
         """(in_dim, out_dim) for each dense layer, in forward order."""
-        return (
+        layers = [
             (self.vision_size, self.vision_hidden),                 # vision encoder
             (self.vision_hidden + self.scalar_inputs, self.shared_hidden),  # fusion
             (self.shared_hidden, self.move_outputs),                # move head
             (self.shared_hidden, self.action_outputs),             # action head
-        )
+        ]
+        if self.signal_outputs > 0:
+            layers.append((self.shared_hidden, self.signal_outputs))  # signal head
+        return tuple(layers)
 
     def genome_size(self) -> int:
         """Number of floats in a genome for this architecture.
@@ -147,8 +158,8 @@ def forward(
     genome: list[float],
     vision: list[float],
     scalars: list[float],
-) -> tuple[list[float], list[float]]:
-    """Run a forward pass. Returns ``(move_logits, action_logits)``.
+) -> tuple[list[float], list[float], list[float]]:
+    """Run a forward pass. Returns ``(move_logits, action_logits, signal_logits)``.
 
     ``vision`` must have length ``spec.vision_size`` and ``scalars`` length
     ``spec.scalar_inputs``. Raises ValueError on a mismatch so wiring bugs fail
@@ -180,7 +191,13 @@ def forward(
     action_logits, offset = _dense(
         genome, offset, shared, spec.shared_hidden, spec.action_outputs, "linear"
     )
-    return move_logits, action_logits
+    if spec.signal_outputs > 0:
+        signal_logits, offset = _dense(
+            genome, offset, shared, spec.shared_hidden, spec.signal_outputs, "linear"
+        )
+    else:
+        signal_logits = []
+    return move_logits, action_logits, signal_logits
 
 
 def _argmax(values: list[float]) -> int:
@@ -218,19 +235,24 @@ def decide(
     scalars: list[float],
     rng: Random | None = None,
     temperature: float = 0.0,
-) -> tuple[int, int]:
-    """Forward pass + decode to ``(move_index, action_index)``.
+) -> tuple[int, int, int]:
+    """Forward pass + decode to ``(move_index, action_index, signal_index)``.
 
     With ``temperature == 0`` the choice is deterministic argmax (reproducible).
     With ``temperature > 0`` and an ``rng`` the heads are sampled, giving
     exploration during evolution.
     """
-    move_logits, action_logits = forward(spec, genome, vision, scalars)
+    move_logits, action_logits, signal_logits = forward(spec, genome, vision, scalars)
     if temperature > 0.0 and rng is not None:
+        signal_idx = (
+            _sample(signal_logits, rng, temperature) if signal_logits else 0
+        )
         return _sample(move_logits, rng, temperature), _sample(
             action_logits, rng, temperature
-        )
-    return _argmax(move_logits), _argmax(action_logits)
+        ), signal_idx
+    return _argmax(move_logits), _argmax(action_logits), (
+        _argmax(signal_logits) if signal_logits else 0
+    )
 
 
 def mutate(
@@ -267,16 +289,20 @@ def spec_to_dict(spec: NeuralBrainSpec) -> dict:
         "shared_hidden": spec.shared_hidden,
         "move_outputs": spec.move_outputs,
         "action_outputs": spec.action_outputs,
+        "signal_outputs": spec.signal_outputs,
     }
 
 
 def spec_from_dict(data: dict) -> NeuralBrainSpec:
+    defaults = NeuralBrainSpec()
     return NeuralBrainSpec(
-        vision_radius=int(data["vision_radius"]),
-        vision_channels=int(data["vision_channels"]),
-        scalar_inputs=int(data["scalar_inputs"]),
-        vision_hidden=int(data["vision_hidden"]),
-        shared_hidden=int(data["shared_hidden"]),
-        move_outputs=int(data["move_outputs"]),
-        action_outputs=int(data["action_outputs"]),
+        vision_radius=int(data.get("vision_radius", defaults.vision_radius)),
+        vision_channels=int(data.get("vision_channels", defaults.vision_channels)),
+        scalar_inputs=int(data.get("scalar_inputs", defaults.scalar_inputs)),
+        vision_hidden=int(data.get("vision_hidden", defaults.vision_hidden)),
+        shared_hidden=int(data.get("shared_hidden", defaults.shared_hidden)),
+        move_outputs=int(data.get("move_outputs", defaults.move_outputs)),
+        action_outputs=int(data.get("action_outputs", defaults.action_outputs)),
+        # Missing value means an older saved genome without a signal head.
+        signal_outputs=int(data.get("signal_outputs", 0)),
     )

@@ -64,9 +64,12 @@ def make_args(seed: int, model: str, max_ticks: int, output: str,
               repro_max_age: int = 200, repro_litter_min: int = 1,
               scaffolded_actions: bool = False,
               continuous_repro: bool = False, continuous_repro_rate: float = 0.05,
-              continuous_repro_local_cap: float = 6.0, world: int = 100,
+              continuous_repro_local_cap: float = 6.0,
+              continuous_repro_food_target: float = 0.0, world: int = 100,
               home_fidelity: bool = False, home_radius: int = 3,
               stochastic_mortality: bool = False, mortality_hazard: float = 0.03,
+              mortality_onset_fraction: float = 0.85,
+              mortality_constant_hazard: float = 0.0,
               starvation_death: bool = False, starvation_tolerance: int = 15,
               max_population: int = 250) -> SimpleNamespace:
     return SimpleNamespace(
@@ -74,6 +77,8 @@ def make_args(seed: int, model: str, max_ticks: int, output: str,
         home_radius=home_radius,
         stochastic_mortality_enabled=stochastic_mortality,
         mortality_hazard=mortality_hazard,
+        mortality_onset_fraction=mortality_onset_fraction,
+        mortality_constant_hazard=mortality_constant_hazard,
         starvation_death_enabled=starvation_death,
         starvation_tolerance=starvation_tolerance,
         scaffolded_agent_actions_enabled=scaffolded_actions,
@@ -83,6 +88,7 @@ def make_args(seed: int, model: str, max_ticks: int, output: str,
         continuous_reproduction_enabled=continuous_repro,
         continuous_repro_base_rate=continuous_repro_rate,
         continuous_repro_local_cap=continuous_repro_local_cap,
+        continuous_repro_food_target=continuous_repro_food_target,
         food_energy_multiplier=food_energy_mult,
         metabolic_drain_multiplier=drain_mult,
         founder_age_spread=founder_age_spread,
@@ -184,11 +190,17 @@ if __name__ == "__main__":
                    help="use logistic density-dependent stochastic reproduction instead of the gate")
     p.add_argument("--continuous-repro-rate", type=float, default=0.05, help="per-tick base reproduction rate")
     p.add_argument("--continuous-repro-cap", type=float, default=6.0, help="local crowding cap (allies)")
+    p.add_argument("--continuous-repro-food-target", type=float, default=0.0,
+                   help="proportional density brake: food-per-capita reference; reproduction throttles as standing food/agent falls below this. 0 = off (byte-identical)")
     p.add_argument("--world", type=int, default=100, help="world width=height (smaller = denser = more clustered)")
     p.add_argument("--home-fidelity", action="store_true", help="balanced agents return to/stay at the home anchor (clustering)")
     p.add_argument("--home-radius", type=int, default=3, help="how far from the anchor agents stay")
     p.add_argument("--stochastic-mortality", action="store_true", help="age-rising hazard death (spreads deaths) instead of hard max-age")
     p.add_argument("--mortality-hazard", type=float, default=0.03, help="base per-tick death hazard")
+    p.add_argument("--mortality-onset-fraction", type=float, default=0.85,
+                   help="fraction of max_age where the death hazard starts ramping; lower = deaths spread across adult life (de-synchronize cohort death)")
+    p.add_argument("--mortality-constant-hazard", type=float, default=0.0,
+                   help="memoryless constant per-tick death hazard from adulthood (replaces the age ramp); exponential lifespan ~1/hazard, no synchronized wave. 0 = off")
     p.add_argument("--starvation-death", action="store_true", help="prolonged zero-energy kills (food regulates K; realistic)")
     p.add_argument("--starvation-tolerance", type=int, default=15, help="ticks at zero energy before starving to death")
     p.add_argument("--max-pop", type=int, default=250, help="population cap (set high to let food regulate K)")
@@ -208,9 +220,12 @@ if __name__ == "__main__":
                                     scaffolded_actions=a.scaffolded,
                                     continuous_repro=a.continuous_repro,
                                     continuous_repro_rate=a.continuous_repro_rate,
-                                    continuous_repro_local_cap=a.continuous_repro_cap, world=a.world,
+                                    continuous_repro_local_cap=a.continuous_repro_cap,
+                                    continuous_repro_food_target=a.continuous_repro_food_target, world=a.world,
                                     home_fidelity=a.home_fidelity, home_radius=a.home_radius,
                                     stochastic_mortality=a.stochastic_mortality, mortality_hazard=a.mortality_hazard,
+                                    mortality_onset_fraction=a.mortality_onset_fraction,
+                                    mortality_constant_hazard=a.mortality_constant_hazard,
                                     starvation_death=a.starvation_death, starvation_tolerance=a.starvation_tolerance,
                                     max_population=a.max_pop))
     if a.dump:

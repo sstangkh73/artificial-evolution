@@ -31,8 +31,9 @@ class TestGenomeShape(unittest.TestCase):
         )
         # vision_size = (2*1+1)^2 * 2 = 9*2 = 18
         self.assertEqual(spec.vision_size, 18)
-        # L1: 4*(18+1)=76 ; L2: 5*((4+3)+1)=40 ; move: 5*(5+1)=30 ; action: 4*(5+1)=24
-        self.assertEqual(spec.genome_size(), 76 + 40 + 30 + 24)
+        # L1: 4*(18+1)=76 ; L2: 5*((4+3)+1)=40 ; move: 5*(5+1)=30
+        # action: 4*(5+1)=24 ; signal: 3*(5+1)=18
+        self.assertEqual(spec.genome_size(), 76 + 40 + 30 + 24 + 18)
 
     def test_random_genome_length(self):
         spec = NeuralBrainSpec()
@@ -46,9 +47,10 @@ class TestForward(unittest.TestCase):
         rng = Random(7)
         genome = nb.random_genome(spec, rng)
         vision, scalars = _obs(spec, rng)
-        move, action = nb.forward(spec, genome, vision, scalars)
+        move, action, signal = nb.forward(spec, genome, vision, scalars)
         self.assertEqual(len(move), spec.move_outputs)
         self.assertEqual(len(action), spec.action_outputs)
+        self.assertEqual(len(signal), spec.signal_outputs)
 
     def test_forward_is_deterministic(self):
         spec = NeuralBrainSpec()
@@ -71,8 +73,8 @@ class TestForward(unittest.TestCase):
         rng = Random(5)
         genome = nb.random_genome(spec, rng)
         vision, scalars = _obs(spec, rng)
-        move, action = nb.forward(spec, genome, vision, scalars)
-        for v in move + action:
+        move, action, signal = nb.forward(spec, genome, vision, scalars)
+        for v in move + action + signal:
             self.assertEqual(v, v)  # not NaN
             self.assertTrue(abs(v) < 1e9)
 
@@ -83,9 +85,10 @@ class TestDecide(unittest.TestCase):
         rng = Random(11)
         genome = nb.random_genome(spec, rng)
         vision, scalars = _obs(spec, rng)
-        m, a = nb.decide(spec, genome, vision, scalars)
+        m, a, s = nb.decide(spec, genome, vision, scalars)
         self.assertTrue(0 <= m < spec.move_outputs)
         self.assertTrue(0 <= a < spec.action_outputs)
+        self.assertTrue(0 <= s < spec.signal_outputs)
 
     def test_argmax_is_deterministic(self):
         spec = NeuralBrainSpec()
@@ -133,6 +136,28 @@ class TestSerialization(unittest.TestCase):
         restored = nb.spec_from_dict(nb.spec_to_dict(spec))
         self.assertEqual(spec, restored)
         self.assertEqual(spec.genome_size(), restored.genome_size())
+
+    def test_legacy_spec_without_signal_outputs_loads(self):
+        legacy = {
+            "vision_radius": 2,
+            "vision_channels": 3,
+            "scalar_inputs": 12,
+            "vision_hidden": 10,
+            "shared_hidden": 16,
+            "move_outputs": len(nb.MOVE_ACTIONS),
+            "action_outputs": len(nb.OBJECT_ACTIONS),
+        }
+        spec = nb.spec_from_dict(legacy)
+        self.assertEqual(spec.vision_channels, 3)
+        self.assertEqual(spec.signal_outputs, 0)
+
+        genome = nb.random_genome(spec, Random(1))
+        vision, scalars = _obs(spec, Random(2))
+        move, action, signal = nb.forward(spec, genome, vision, scalars)
+        self.assertEqual(len(move), spec.move_outputs)
+        self.assertEqual(len(action), spec.action_outputs)
+        self.assertEqual(signal, [])
+        self.assertEqual(nb.decide(spec, genome, vision, scalars)[2], 0)
 
 
 if __name__ == "__main__":
