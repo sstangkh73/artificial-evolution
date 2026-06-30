@@ -7,8 +7,8 @@ previous advisor-materials PDF so EN and TH read as a consistent pair.
 Run:
     python scripts/build_research_summary_pdf.py
 Outputs:
-    output/pdf/Research_Summary_EN_2026-06-30.pdf
-    output/pdf/Research_Summary_TH_2026-06-30.pdf
+    reports/proposal/Research_Summary_EN_2026-06-30.pdf
+    reports/proposal/Research_Summary_TH_2026-06-30.pdf
 """
 from __future__ import annotations
 
@@ -37,7 +37,7 @@ from reportlab.pdfbase.ttfonts import TTFont
 
 
 ROOT = Path(__file__).resolve().parents[1]
-OUT_DIR = ROOT / "output" / "pdf"
+OUT_DIR = ROOT / "reports" / "proposal"
 FIG_DIR = ROOT / "reports" / "figures"
 FONT_DIR = ROOT / "assets" / "fonts"
 
