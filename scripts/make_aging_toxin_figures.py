@@ -21,6 +21,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from agents.agent import Agent
 from agents.body import BodyPlan, AGING_TRAIT_FIELDS, TRAIT_BOUNDS
 from world.environment import FOOD_ENERGY
+from world import metabolism
 
 OUT = Path(__file__).resolve().parent.parent / "reports" / "figures"
 OUT.mkdir(parents=True, exist_ok=True)
@@ -179,44 +180,55 @@ def fig_toxin_learning():
     fig.savefig(OUT / "toxin_fig1_learning.png"); plt.close(fig)
 
 
-def _run_diet_cumulative(acute, trials=60):
-    """Cumulative count of toxic-fruit meals over trials (real gate + physics)."""
-    env = _diet_env(acute)
-    a = Agent(agent_id=1, body=_body(), x=0, y=0)
-    cum, total = [], 0
-    for _ in range(trials):
-        a.energy = 100
-        for kind in ("raw_plant", "raw_fruit"):
-            res = SimpleNamespace(kind=kind, energy=FOOD_ENERGY[kind], source="s")
-            env.food_positions = {(a.x, a.y): res}
+def _p_toxic_curve(acute, N=400, trials=40, seed=20260701):
+    """Population P(choose toxic fruit) per trial — a learning curve (Option A).
+
+    Drives the REAL decision gate (_food_worth_eating) + REAL EMA learning
+    (_learn_food_value) + REAL metabolism/toxin formulas. Heterogeneity comes from
+    a realistic source: fruit SIZE varies per fruit (mass ~ U(0.6,1.5) x base),
+    scaling both its energy and its toxin, so different agents cross the avoidance
+    threshold at different trials -> a smooth population curve (a single
+    deterministic agent would give a step, which is why we use a population)."""
+    rng = Random(seed)
+    comp = metabolism.COMPOSITION["raw_fruit"]
+    base_mass = metabolism.FOOD_MASS["raw_fruit"]
+    counts = [0] * trials
+    for _ in range(N):
+        env = _diet_env(acute)
+        a = Agent(agent_id=1, body=_body(), x=0, y=0)
+        a.food_value_memory = {"raw_plant": 5.0}  # a good food is already known (the alternative)
+        res = SimpleNamespace(kind="raw_fruit", energy=FOOD_ENERGY["raw_fruit"], source="s")
+        env.food_positions = {(a.x, a.y): res}
+        for t in range(trials):
+            a.energy = 100  # well-fed: isolate PREFERENCE from the starvation floor
             if a._food_worth_eating(env):
-                net = a._apply_toxin(env, res, a._metabolic_base_energy(env, res))
-                a._learn_food_value(env, kind, net)
-                if kind == "raw_fruit":
-                    total += 1
-        cum.append(total)
-    return cum
+                counts[t] += 1
+                mass = base_mass * rng.uniform(0.6, 1.5)  # this fruit's size (varies)
+                gross = metabolism.digestible_energy(comp, mass, a.body.enzyme_profile)
+                excess = metabolism.toxin_penalty(metabolism.toxin_load(comp, mass), a.body.toxin_tolerance)
+                net = gross - excess * acute
+                a._learn_food_value(env, "raw_fruit", net)
+    return [c / N for c in counts]
 
 
-def fig_toxin_reduction():
-    trials = 60
-    off = _run_diet_cumulative(0.0, trials)
-    on = _run_diet_cumulative(50.0, trials)
+def fig_toxin_learning_curve():
+    trials = 40
+    off = _p_toxic_curve(0.0, trials=trials)
+    on = _p_toxic_curve(50.0, trials=trials)
     x = list(range(1, trials + 1))
     fig, ax = plt.subplots(figsize=(7.4, 4.5))
-    ax.plot(x, off, "-", color=C["old"], lw=2.5, label="no toxin mechanism (keeps eating)")
-    ax.plot(x, on, "-", color=C["new"], lw=2.5, label="with toxin mechanism (learns, stops)")
-    ax.fill_between(x, on, off, color=C["new"], alpha=0.12)
-    avoided = off[-1] - on[-1]
-    pct = round(100 * avoided / off[-1])
-    ax.annotate(f"{pct}% fewer toxic meals\n({avoided} avoided)",
-                xy=(trials * 0.62, (off[-1] + on[-1]) / 2), fontsize=11, color=C["new"],
-                ha="center", va="center")
-    ax.set_title("Toxic-food intake falls when the mechanism is present")
-    ax.set_xlabel("feeding trial"); ax.set_ylabel("cumulative toxic-fruit meals")
-    ax.legend(fontsize=9, loc="upper left")
-    ax.set_xlim(1, trials); ax.set_ylim(0, off[-1] + 3)
-    fig.savefig(OUT / "toxin_fig3_reduction.png"); plt.close(fig)
+    ax.plot(x, [100 * v for v in off], "-", color=C["old"], lw=2.5,
+            label="no toxin mechanism (fruit stays attractive)")
+    ax.plot(x, [100 * v for v in on], "o-", color=C["new"], ms=3, lw=2.2,
+            label="with toxin mechanism (learns to avoid)")
+    ax.set_title("Learning curve: probability of choosing the toxic fruit")
+    ax.set_xlabel("feeding trial"); ax.set_ylabel("P(choose toxic fruit)  (% of 400 agents)")
+    ax.legend(fontsize=9, loc="center right")
+    ax.set_xlim(1, trials); ax.set_ylim(-3, 105)
+    ax.annotate("population learns\nto avoid (~trial 9)", xy=(5, 100 * on[4]),
+                xytext=(11, 78), fontsize=10, color=C["new"], ha="left",
+                arrowprops=dict(arrowstyle="->", color=C["new"]))
+    fig.savefig(OUT / "toxin_fig3_learning_curve.png"); plt.close(fig)
 
 
 def fig_toxin_avoidance():
@@ -240,7 +252,7 @@ def main():
     fig_death_cause_shift()
     fig_toxin_learning()
     fig_toxin_avoidance()
-    fig_toxin_reduction()
+    fig_toxin_learning_curve()
     print("wrote figures to", OUT)
     for p in sorted(OUT.glob("aging_*.png")) + sorted(OUT.glob("toxin_*.png")):
         print("  ", p.name)
