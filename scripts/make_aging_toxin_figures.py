@@ -179,6 +179,46 @@ def fig_toxin_learning():
     fig.savefig(OUT / "toxin_fig1_learning.png"); plt.close(fig)
 
 
+def _run_diet_cumulative(acute, trials=60):
+    """Cumulative count of toxic-fruit meals over trials (real gate + physics)."""
+    env = _diet_env(acute)
+    a = Agent(agent_id=1, body=_body(), x=0, y=0)
+    cum, total = [], 0
+    for _ in range(trials):
+        a.energy = 100
+        for kind in ("raw_plant", "raw_fruit"):
+            res = SimpleNamespace(kind=kind, energy=FOOD_ENERGY[kind], source="s")
+            env.food_positions = {(a.x, a.y): res}
+            if a._food_worth_eating(env):
+                net = a._apply_toxin(env, res, a._metabolic_base_energy(env, res))
+                a._learn_food_value(env, kind, net)
+                if kind == "raw_fruit":
+                    total += 1
+        cum.append(total)
+    return cum
+
+
+def fig_toxin_reduction():
+    trials = 60
+    off = _run_diet_cumulative(0.0, trials)
+    on = _run_diet_cumulative(50.0, trials)
+    x = list(range(1, trials + 1))
+    fig, ax = plt.subplots(figsize=(7.4, 4.5))
+    ax.plot(x, off, "-", color=C["old"], lw=2.5, label="no toxin mechanism (keeps eating)")
+    ax.plot(x, on, "-", color=C["new"], lw=2.5, label="with toxin mechanism (learns, stops)")
+    ax.fill_between(x, on, off, color=C["new"], alpha=0.12)
+    avoided = off[-1] - on[-1]
+    pct = round(100 * avoided / off[-1])
+    ax.annotate(f"{pct}% fewer toxic meals\n({avoided} avoided)",
+                xy=(trials * 0.62, (off[-1] + on[-1]) / 2), fontsize=11, color=C["new"],
+                ha="center", va="center")
+    ax.set_title("Toxic-food intake falls when the mechanism is present")
+    ax.set_xlabel("feeding trial"); ax.set_ylabel("cumulative toxic-fruit meals")
+    ax.legend(fontsize=9, loc="upper left")
+    ax.set_xlim(1, trials); ax.set_ylim(0, off[-1] + 3)
+    fig.savefig(OUT / "toxin_fig3_reduction.png"); plt.close(fig)
+
+
 def fig_toxin_avoidance():
     _, eaten_off, _ = _run_diet(acute=0.0)
     _, eaten_on, _ = _run_diet(acute=50.0)
@@ -200,6 +240,7 @@ def main():
     fig_death_cause_shift()
     fig_toxin_learning()
     fig_toxin_avoidance()
+    fig_toxin_reduction()
     print("wrote figures to", OUT)
     for p in sorted(OUT.glob("aging_*.png")) + sorted(OUT.glob("toxin_*.png")):
         print("  ", p.name)
