@@ -24,6 +24,7 @@ ZONE_DANGER_LOW_FOOD = "danger_low_food"
 FOOD_RAW_PLANT = "raw_plant"
 FOOD_RAW_MEAT = "raw_meat"
 FOOD_RAW_SEED = "raw_seed"  # edible low-value food for the food-value-learning study
+FOOD_RAW_FRUIT = "raw_fruit"  # high-energy/high-toxin trade-off food (Toxicity study)
 
 SEASON_SPRING = "spring"
 SEASON_SUMMER = "summer"
@@ -71,6 +72,7 @@ FOOD_ENERGY = {
     FOOD_RAW_PLANT: 6,
     FOOD_RAW_MEAT: 18,
     FOOD_RAW_SEED: 1,  # v1 fallback only; the study runs under v2 composition energy
+    FOOD_RAW_FRUIT: 10,  # v1 fallback only; the toxin study runs under v2 composition energy
 }
 
 # Spatial-index speedup for food proximity scans. Below the threshold the scans
@@ -693,6 +695,21 @@ class Environment:
     # restricting food extends lifespan (CALERIE), while too little food still
     # kills via starvation -> an emergent hormetic optimum. See Ravussin/Waziry.
     aging_intake_damage_coeff: float = 0.0
+    # Toxicity study (opt-in, default OFF -> byte-identical). When an agent eats an
+    # object whose toxin load (composition x mass) exceeds its heritable
+    # toxin_tolerance, the excess causes two decoupled costs (no oracle -- the
+    # world never labels food "toxic"; agents learn/are-selected from consequences):
+    #   - toxin_acute_penalty: energy subtracted from THIS bite (acute sickness).
+    #     Because it lowers the net energy the bite is worth, it flows into
+    #     food_value_memory, so diet avoidance can be LEARNED individually.
+    #   - toxin_damage_coeff: chronic somatic `damage` added (needs aging physics
+    #     to affect death) -> a lifespan cost + selection on toxin_tolerance,
+    #     decoupled from the immediate energy signal (a "slow poison" learning
+    #     can't catch, only evolution can).
+    # toxic_food_spawn_per_tick scatters raw_fruit (high energy, high toxin).
+    toxin_acute_penalty: float = 0.0
+    toxin_damage_coeff: float = 0.0
+    toxic_food_spawn_per_tick: float = 0.0
     ambient_food_decay_chance: float = 0.006
     plant_food_decay_chance: float = 0.003
     tick_count: int = 0
@@ -770,6 +787,7 @@ class Environment:
         self._update_plant_lifecycle(rng)
         self._spawn_food(rng)
         self._spawn_low_value_food(rng)
+        self._spawn_toxic_food(rng)
         self._spawn_large_animals(rng)
         self._move_large_animals(rng)
         if self.scaffolded_nest_support_enabled:
@@ -2704,6 +2722,37 @@ class Environment:
                 created_tick=self.tick_count,
             )
             self.food_spawned_by_kind[FOOD_RAW_SEED] = self.food_spawned_by_kind.get(FOOD_RAW_SEED, 0) + 1
+
+    def _spawn_toxic_food(self, rng: Random) -> None:
+        """Toxicity study: scatter high-energy/high-toxin raw_fruit.
+
+        Off by default (rate 0 returns before drawing any RNG, so existing worlds
+        and reproducibility are untouched). Mirrors _spawn_low_value_food. The
+        fruit is a genuine diet choice: rich in energy but toxic beyond a body's
+        toxin_tolerance -> an emergent optimal-diet trade-off (see agent._apply_toxin)."""
+        rate = self.toxic_food_spawn_per_tick
+        if rate <= 0.0:
+            return
+        count = int(rate)
+        if rng.random() < (rate - count):
+            count += 1
+        hard_cap = self.max_food * 3
+        for _ in range(count):
+            if len(self.food_positions) >= hard_cap:
+                return
+            x = rng.randrange(self.width)
+            y = rng.randrange(self.height)
+            if (x, y) in self.food_positions:
+                continue
+            if not self.is_walkable(x, y):
+                continue
+            self.food_positions[(x, y)] = FoodResource(
+                kind=FOOD_RAW_FRUIT,
+                energy=FOOD_ENERGY[FOOD_RAW_FRUIT],
+                source="toxin_study",
+                created_tick=self.tick_count,
+            )
+            self.food_spawned_by_kind[FOOD_RAW_FRUIT] = self.food_spawned_by_kind.get(FOOD_RAW_FRUIT, 0) + 1
 
     def _spawn_large_animals(self, rng: Random) -> None:
         for _ in range(self.large_animal_spawn_per_tick):

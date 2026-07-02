@@ -49,11 +49,19 @@ COMPOSITION: dict[str, dict[str, float]] = {
     # that ride through the gut as an endozoochory byproduct. Spawned only when
     # low_value_food_spawn_per_tick > 0, so default worlds are unchanged.
     "raw_seed": {"sugar": 0.10, "protein": 0.00, "fiber": 0.25, "shell": 0.60, "water": 0.05},
+    # raw_fruit: the TOXIN trade-off food (Toxicity study). HIGH energy (lots of
+    # sugar -> ~2x a raw_plant) but a HIGH toxin fraction. Whether it is worth
+    # eating depends on the body's heritable toxin_tolerance and on the toxin
+    # knobs (acute energy penalty + chronic damage). The world never labels it
+    # "toxic": agents must LEARN its true (post-sickness) value from experience,
+    # or be selected on toxin_tolerance. Spawned only when
+    # toxic_food_spawn_per_tick > 0, so default worlds are unchanged.
+    "raw_fruit": {"sugar": 0.50, "protein": 0.02, "fiber": 0.08, "shell": 0.00, "water": 0.10, "toxin": 0.30},
 }
 
 # Default mass and physical size per food kind (abstract units).
-FOOD_MASS: dict[str, float] = {"raw_plant": 1.0, "raw_meat": 1.5, "raw_seed": 0.4}
-FOOD_SIZE: dict[str, float] = {"raw_plant": 2.0, "raw_meat": 5.0, "raw_seed": 1.0}
+FOOD_MASS: dict[str, float] = {"raw_plant": 1.0, "raw_meat": 1.5, "raw_seed": 0.4, "raw_fruit": 1.2}
+FOOD_SIZE: dict[str, float] = {"raw_plant": 2.0, "raw_meat": 5.0, "raw_seed": 1.0, "raw_fruit": 2.0}
 
 
 def digestible_energy(

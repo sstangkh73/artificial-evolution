@@ -165,6 +165,12 @@ class Agent:
     # and reports/physics_realism_audit_aging_2026-07-01.th.md.
     damage: float = 0.0
     drain_maintenance_total: float = 0.0
+    # Toxicity study telemetry (0 unless the toxin knobs are on). toxin_ingested_
+    # total = cumulative toxin EXCESS (over tolerance) actually ingested;
+    # toxin_damage_total = chronic somatic damage attributed to toxin. See
+    # _apply_toxin.
+    toxin_ingested_total: float = 0.0
+    toxin_damage_total: float = 0.0
     cold_stress_ticks: int = 0
     fear_stress_ticks: int = 0
     carried_seed_id: int | None = None
@@ -1111,6 +1117,10 @@ class Agent:
         if resource is None:
             return False
         restored_energy = self._process_food_resource(env, resource)
+        # Toxicity (opt-in; default off -> byte-identical). Applied BEFORE learning
+        # and energy credit so the acute penalty lowers this bite's LEARNED value
+        # (emergent avoidance, no oracle). Chronic damage is added inside.
+        restored_energy = self._apply_toxin(env, resource, restored_energy)
         self._learn_food_value(env, resource.kind, restored_energy)
         self.energy += restored_energy
         self.energy_gained_total += restored_energy
@@ -1180,6 +1190,50 @@ class Agent:
             self.food_value_memory[kind] = float(gained_energy)
         else:
             self.food_value_memory[kind] = prev + alpha * (float(gained_energy) - prev)
+
+    def _apply_toxin(self, env, resource, gained_energy: int) -> int:
+        """Toxin physics for one bite (opt-in; default coeffs 0 -> byte-identical).
+
+        Toxin load (composition x mass) beyond this body's heritable
+        toxin_tolerance costs the agent in two DECOUPLED ways -- and the world
+        never tells the agent a food is toxic (no oracle):
+          - ACUTE: `toxin_acute_penalty` x excess is subtracted from this bite's
+            net energy (sickness). Because the reduced value is what
+            _learn_food_value records, individual diet avoidance can be LEARNED.
+          - CHRONIC: `toxin_damage_coeff` x excess is added to somatic `damage`
+            (only affects death when aging physics is on) -> a lifespan cost and
+            selection pressure on toxin_tolerance, invisible to same-life learning
+            (a "slow poison").
+
+        Returns the net energy after the acute penalty (may go negative: a strong
+        enough poison costs more than it feeds)."""
+        acute_coeff = getattr(env, "toxin_acute_penalty", 0.0)
+        chronic_coeff = getattr(env, "toxin_damage_coeff", 0.0)
+        if acute_coeff <= 0.0 and chronic_coeff <= 0.0:
+            return gained_energy
+        composition = metabolism.COMPOSITION.get(resource.kind)
+        if composition is None:
+            return gained_energy
+        mass = metabolism.FOOD_MASS.get(resource.kind, 1.0)
+        excess = metabolism.toxin_penalty(
+            metabolism.toxin_load(composition, mass), self.body.toxin_tolerance
+        )
+        if excess <= 0.0:
+            return gained_energy
+        self.toxin_ingested_total += excess
+        if chronic_coeff > 0.0:
+            chronic = excess * chronic_coeff
+            self.damage += chronic
+            self.toxin_damage_total += chronic
+        net_energy = gained_energy
+        if acute_coeff > 0.0:
+            acute = excess * acute_coeff
+            net_energy = int(round(gained_energy - acute))
+            self.recent_events.append(
+                f"toxin_sickness -> agent={self.agent_id} kind={resource.kind} "
+                f"excess={excess:.3f} acute={acute:.2f} net_energy={net_energy}"
+            )
+        return net_energy
 
     def _process_gut(self, env) -> None:
         """v2 endozoochory: advance the gut and excrete seeds whose transit time

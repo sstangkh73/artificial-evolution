@@ -3070,6 +3070,8 @@ def run_single_body_trial(
                     "repair_efficiency": round(agent.body.repair_efficiency, 4),
                     "damage_resistance": round(agent.body.damage_resistance, 4),
                     "maintenance_energy_total": round(agent.drain_maintenance_total, 2),
+                    "toxin_ingested_total": round(agent.toxin_ingested_total, 3),
+                    "toxin_damage_total": round(agent.toxin_damage_total, 3),
                     "final_x": agent.x,
                     "final_y": agent.y,
                     "meals_by_type_json": agent.meals_by_type,
