@@ -156,6 +156,15 @@ class Agent:
     drain_base_total: float = 0.0
     drain_brain_total: float = 0.0
     drain_move_total: float = 0.0
+    # Aging Physics v1 (inert unless env.aging_physics_enabled). `damage` is the
+    # accumulated somatic damage that drives INTRINSIC death: the agent dies of
+    # "senescence" when damage >= env.aging_damage_threshold, instead of at a hard
+    # age timer. A float so the aging genome's selection signal is not quantized
+    # away the way the int energy drains are. drain_maintenance_total = total
+    # energy paid into somatic repair (the Disposable Soma price). See _apply_aging
+    # and reports/physics_realism_audit_aging_2026-07-01.th.md.
+    damage: float = 0.0
+    drain_maintenance_total: float = 0.0
     cold_stress_ticks: int = 0
     fear_stress_ticks: int = 0
     carried_seed_id: int | None = None
@@ -183,6 +192,13 @@ class Agent:
         self.preferred_role = self._infer_preferred_role()
         # Per-tick neural intent (set by _neural_decision; read by consume gate).
         self._neural_eat_intent = False
+        # Aging Physics accumulators (see _apply_aging). Kept off the dataclass
+        # fields (like _neural_eat_intent): _maintenance_debt carries the sub-1
+        # remainder of the fractional per-tick maintenance charge so energy stays
+        # an int without quantizing the cost; _aging_gained_mark snapshots
+        # energy_gained_total at tick start for the caloric-restriction term.
+        self._maintenance_debt = 0.0
+        self._aging_gained_mark = 0.0
 
     def tick(self, env, rng: Random) -> bool:
         if not self.alive or self.completed_lifespan:
@@ -190,6 +206,11 @@ class Agent:
 
         self._last_env = env
         self.age += 1
+        aging_on = getattr(env, "aging_physics_enabled", False) and not self.immortal
+        if aging_on:
+            # Snapshot cumulative intake so _apply_aging can price this tick's
+            # food absorption for the caloric-restriction damage term.
+            self._aging_gained_mark = self.energy_gained_total
         if self.reproduction_cooldown > 0:
             self.reproduction_cooldown -= 1
         drain_mult = getattr(env, "metabolic_drain_multiplier", 1.0)
@@ -202,6 +223,20 @@ class Agent:
         self.energy -= brain_drain
         self.drain_base_total += base_drain
         self.drain_brain_total += brain_drain
+        if aging_on:
+            # Disposable Soma PRICE: charge energy for somatic maintenance BEFORE
+            # the life-state resolve, so over-investing in repair can itself push an
+            # agent toward starvation (the repair<->reproduction trade-off has
+            # teeth). The fractional cost is accumulated and charged in whole units
+            # so self.energy stays an int without quantizing the per-tick cost.
+            self._maintenance_debt += (
+                self.body.somatic_maintenance * getattr(env, "aging_maintenance_cost", 2.0)
+            )
+            whole_cost = int(self._maintenance_debt)
+            if whole_cost > 0:
+                self.energy -= whole_cost
+                self._maintenance_debt -= whole_cost
+                self.drain_maintenance_total += whole_cost
         self._withdraw_nest_food_if_needed(env)
 
         if not self._resolve_life_state():
@@ -258,7 +293,13 @@ class Agent:
 
         _max_age = getattr(env, "repro_max_age", MAX_AGE)
         if not self.immortal:
-            if getattr(env, "stochastic_mortality_enabled", False):
+            if getattr(env, "aging_physics_enabled", False):
+                # Aging Physics: intrinsic death EMERGES from accumulated somatic
+                # damage crossing a threshold (senescence), not from an age timer.
+                # This replaces the age-based mortality below when enabled.
+                if self._apply_aging(env):
+                    return False
+            elif getattr(env, "stochastic_mortality_enabled", False):
                 _const_h = getattr(env, "mortality_constant_hazard", 0.0)
                 if _const_h > 0.0:
                     # Memoryless CONSTANT hazard from adulthood -> exponential
@@ -582,11 +623,17 @@ class Agent:
         # the flag stays False so inherit_body_plan consumes zero extra RNG draws
         # and the Phase 1-5 stream is byte-identical.
         draw_metabolism_genes = getattr(env, "metabolism_model", "v1") == "v2"
+        # Aging genome is heritable only when aging physics is on (Fix 3 pattern):
+        # off -> inherit_body_plan draws ZERO aging RNG, keeping v1/v2 streams
+        # byte-identical; on -> the aging genes are inherited + mutated so lifespan
+        # traits evolve and in-sim heritability becomes measurable.
+        draw_aging_genes = getattr(env, "aging_physics_enabled", False)
         child_body = inherit_body_plan(
             self.body,
             mate.body if mate is not None else self.body,
             rng,
             draw_metabolism_genes=draw_metabolism_genes,
+            draw_aging_genes=draw_aging_genes,
         )
         self.children_count += 1
         self.children_ids.append(child_id)
@@ -2608,6 +2655,54 @@ class Agent:
         self.recent_events.append(
             f"withdraw_food -> agent={self.agent_id} nest={owner_id} amount={withdrawn}"
         )
+
+    def _apply_aging(self, env) -> bool:
+        """Accumulate somatic damage; return True if the agent dies of senescence.
+
+        Faithful to the proven aging literature (see papers/longevity/ and the
+        audit report). All terms are floats, so the aging genome's selection
+        signal is preserved (unlike the int energy drains):
+
+            gross  = aging_damage_rate * mass_specific_metabolic_rate
+                                       / damage_resistance          # rate-of-living
+                     + aging_intake_damage_coeff * energy_absorbed  # caloric restriction
+            repair = min(aging_max_repair_fraction * gross,
+                         somatic_maintenance * repair_efficiency * aging_repair_gain)
+            damage += gross - repair            # always > 0: ageing is inevitable
+
+        - mass_specific_metabolic_rate ~ mass^-aging_mass_exponent (Kleiber /
+          Speakman 2005) -> larger mass ages slower -> lifespan ~ mass^+exponent.
+        - repair is bought with energy (charged in tick()) -> Disposable Soma
+          trade-off (Kirkwood 1977): energy to repair is energy not to reproduce.
+        - the max_repair_fraction cap means perfect repair is impossible, so
+          damage always creeps up and mortality is guaranteed (López-Otín: damage
+          accumulation is the substance of ageing).
+
+        Death (senescence) when damage >= aging_damage_threshold.
+        """
+        body = self.body
+        mass_exponent = getattr(env, "aging_mass_exponent", 0.25)
+        msr = body.mass_specific_metabolic_rate(mass_exponent)
+        resistance = max(0.01, body.damage_resistance)
+        gross = getattr(env, "aging_damage_rate", 0.4) * msr / resistance
+
+        intake_coeff = getattr(env, "aging_intake_damage_coeff", 0.0)
+        if intake_coeff > 0.0:
+            absorbed = max(0.0, self.energy_gained_total - self._aging_gained_mark)
+            gross += intake_coeff * absorbed
+
+        repair = body.somatic_maintenance * body.repair_efficiency * getattr(env, "aging_repair_gain", 0.5)
+        max_repair = getattr(env, "aging_max_repair_fraction", 0.95) * gross
+        if repair > max_repair:
+            repair = max_repair
+        self.damage += max(0.0, gross - repair)
+
+        if self.damage >= getattr(env, "aging_damage_threshold", 100.0):
+            self.completed_lifespan = True
+            self.alive = False
+            self.death_reason = "senescence"
+            return True
+        return False
 
     def _resolve_life_state(self) -> bool:
         if self.immortal:

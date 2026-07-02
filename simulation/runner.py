@@ -3063,6 +3063,13 @@ def run_single_body_trial(
                     "alive": agent.alive,
                     "completed_lifespan": agent.completed_lifespan,
                     "death_reason": agent.death_reason,
+                    # Aging Physics telemetry (0 / defaults unless aging enabled).
+                    "damage": round(agent.damage, 4),
+                    "body_mass": round(agent.body.body_mass, 4),
+                    "somatic_maintenance": round(agent.body.somatic_maintenance, 4),
+                    "repair_efficiency": round(agent.body.repair_efficiency, 4),
+                    "damage_resistance": round(agent.body.damage_resistance, 4),
+                    "maintenance_energy_total": round(agent.drain_maintenance_total, 2),
                     "final_x": agent.x,
                     "final_y": agent.y,
                     "meals_by_type_json": agent.meals_by_type,

@@ -105,6 +105,33 @@ METABOLISM_TRAIT_FIELDS = (
     "toxin_tolerance",
 )
 
+# Aging Physics v1 genes — the heritable "aging genome". Like the metabolism
+# genes above, these are inherited SEPARATELY and only when explicitly requested
+# (gated by draw_aging_genes), and are drawn at the TAIL of inherit_body_plan
+# AFTER the metabolism genes, so the RNG prefix consumed by v1/Phase 1-5 and by
+# metabolism-v2 runs stays byte-identical. Defaults keep the classic behavior:
+# when aging physics is off these genes are never read.
+#
+# Grounded in the longevity literature (see papers/longevity/ and
+# reports/physics_realism_audit_aging_2026-07-01.th.md):
+#   body_mass         -> allometric scaling (Speakman 2005): mass-specific
+#                        metabolic rate ~ mass^-0.25, so lifespan ~ mass^+0.25.
+#   somatic_maintenance-> Disposable Soma allocation (Kirkwood 1977): fraction of
+#                        the energy budget spent repairing damage instead of on
+#                        reproduction/growth. THE evolvable trade-off lever.
+#   repair_efficiency -> how effectively invested maintenance clears damage.
+#   damage_resistance -> membrane/mitochondrial quality (Hulbert 2007, Kitazoe
+#                        2017): damage accrued per unit metabolism scales as
+#                        1/damage_resistance. Decouples "damage rate" from
+#                        "metabolic rate" so a bird-like lineage (burns fast, ages
+#                        slow) can evolve.
+AGING_TRAIT_FIELDS = (
+    "body_mass",
+    "somatic_maintenance",
+    "repair_efficiency",
+    "damage_resistance",
+)
+
 MORPHOLOGY_FIELDS = (
     "sensor_units",
     "muscle_units",
@@ -135,6 +162,11 @@ TRAIT_BOUNDS = {
     "acid_strength": (0.1, 0.9),
     "cellulose_efficiency": (0.0, 1.0),
     "toxin_tolerance": (0.0, 1.0),
+    # Aging Physics v1 genes (see AGING_TRAIT_FIELDS).
+    "body_mass": (0.5, 4.0),
+    "somatic_maintenance": (0.0, 1.0),
+    "repair_efficiency": (0.0, 1.0),
+    "damage_resistance": (0.5, 2.0),
 }
 
 TRAIT_MUTATION_STEPS = {
@@ -158,6 +190,11 @@ TRAIT_MUTATION_STEPS = {
     "acid_strength": 0.06,
     "cellulose_efficiency": 0.05,
     "toxin_tolerance": 0.05,
+    # Aging Physics v1 genes (see AGING_TRAIT_FIELDS).
+    "body_mass": 0.10,
+    "somatic_maintenance": 0.05,
+    "repair_efficiency": 0.05,
+    "damage_resistance": 0.06,
 }
 
 
@@ -192,6 +229,13 @@ class BodyPlan:
     acid_strength: float = 0.4
     cellulose_efficiency: float = 0.25
     toxin_tolerance: float = 0.2
+    # Aging Physics v1 genes (heritable; defaults keep v1 behavior intact -> when
+    # aging physics is off these are never read). See AGING_TRAIT_FIELDS and
+    # reports/physics_realism_audit_aging_2026-07-01.th.md.
+    body_mass: float = 1.0
+    somatic_maintenance: float = 0.3
+    repair_efficiency: float = 0.5
+    damage_resistance: float = 1.0
 
     @classmethod
     def from_archetype(
@@ -361,6 +405,22 @@ class BodyPlan:
     def morphology_values(self) -> dict[str, int]:
         return {field: getattr(self, field) for field in MORPHOLOGY_FIELDS}
 
+    @property
+    def aging_values(self) -> dict[str, float]:
+        return {field: getattr(self, field) for field in AGING_TRAIT_FIELDS}
+
+    def mass_specific_metabolic_rate(self, mass_exponent: float) -> float:
+        """Metabolic rate per unit mass, following Kleiber-style allometry.
+
+        Whole-organism metabolic rate scales ~ mass^0.75 (Kleiber), so the
+        mass-specific (per-gram) rate scales ~ mass^-0.25 (Speakman 2005): larger
+        bodies burn — and therefore accrue oxidative damage — more slowly per unit
+        mass. The exponent is supplied by the caller (env.aging_mass_exponent) so
+        it can be swept. Aging physics reads this to make lifespan ~ mass^+exponent
+        EMERGE rather than be hand-set.
+        """
+        return self.metabolism_rate * (max(0.01, self.body_mass) ** -mass_exponent)
+
 
 BODY_LIBRARY = [
     BodyPlan.from_archetype(2, 2, 1, 1, "fierce_hunter"),
@@ -463,6 +523,7 @@ def inherit_body_plan(
     major_trait_mutation_rate: float = 0.06,
     morphology_mutation_rate: float = 0.10,
     draw_metabolism_genes: bool = False,
+    draw_aging_genes: bool = False,
 ) -> BodyPlan:
     morphology = _inherit_morphology(parent_a, parent_b, rng)
     morphology_mutations = 0
@@ -509,6 +570,27 @@ def inherit_body_plan(
             metabolism_genes[field] = _clamp(mutated_value, low, high)
         metabolism_genes["gut_transit_ticks"] = int(round(metabolism_genes["gut_transit_ticks"]))
 
+    # Aging Physics v1 (mirrors the metabolism-gene block above): draw the aging
+    # genome at the very TAIL of inheritance, AFTER the metabolism genes, gated by
+    # draw_aging_genes (set only when aging physics is on). When the flag is False
+    # this consumes ZERO extra RNG draws, so v1/Phase 1-5 and metabolism-v2 runs
+    # stay byte-identical; the BodyPlan then falls back to its aging-gene defaults.
+    aging_genes: dict[str, float] = {}
+    if draw_aging_genes:
+        for field in AGING_TRAIT_FIELDS:
+            base_value = _inherit_trait_value(getattr(parent_a, field), getattr(parent_b, field), rng)
+            mutated_value = base_value
+            if rng.random() < trait_mutation_rate:
+                step = TRAIT_MUTATION_STEPS[field]
+                mutated_value += rng.uniform(-step, step)
+                trait_mutations += 1
+            if rng.random() < major_trait_mutation_rate:
+                step = TRAIT_MUTATION_STEPS[field] * 1.8
+                mutated_value += rng.uniform(-step, step)
+                trait_mutations += 1
+            low, high = TRAIT_BOUNDS[field]
+            aging_genes[field] = _clamp(mutated_value, low, high)
+
     parent_profile = parent_a.trait_profile if parent_a.trait_profile == parent_b.trait_profile else "hybrid"
     return BodyPlan(
         sensor_units=morphology["sensor_units"],
@@ -521,6 +603,7 @@ def inherit_body_plan(
         morphology_mutation_count=morphology_mutations,
         **traits,
         **metabolism_genes,
+        **aging_genes,
     )
 
 

@@ -657,6 +657,42 @@ class Environment:
     # availability regulates carrying capacity (no artificial population cap).
     starvation_death_enabled: bool = False
     starvation_tolerance: int = 15
+    # Aging Physics v1 (opt-in, default OFF -> byte-identical). When enabled, an
+    # agent's INTRINSIC death is driven by accumulated somatic damage crossing a
+    # threshold (senescence) instead of by the hard age timer / age-hazard. Damage
+    # accrues from metabolism (rate-of-living / mitochondrial ROS), is repaired by
+    # energy invested in somatic maintenance (Disposable Soma), and scales
+    # allometrically with body mass (Kleiber). This makes real, proven aging
+    # results EMERGE: disposable-soma trade-off, lifespan ~ mass^0.15-0.3, and
+    # caloric-restriction lifespan extension. See the aging genome in
+    # agents/body.py (AGING_TRAIT_FIELDS) and the audit report
+    # reports/physics_realism_audit_aging_2026-07-01.th.md.
+    #   Papers: Kirkwood 1977; Speakman 2005; Hulbert 2007; Kitazoe 2017;
+    #           López-Otín 2013/2023; Ravussin 2015 / Waziry 2023 (CALERIE).
+    aging_physics_enabled: bool = False
+    # Damage accrued per tick per unit (mass-specific) metabolic activity, before
+    # the 1/damage_resistance factor. Sets the overall pace of aging.
+    aging_damage_rate: float = 0.4
+    # Scales how much a unit of somatic-maintenance effort repairs damage.
+    aging_repair_gain: float = 0.5
+    # Energy charged per tick per unit somatic_maintenance effort. This is the
+    # Disposable Soma PRICE: energy spent on repair is energy NOT available for
+    # reproduction/growth. Set 0 to study repair without the trade-off (unphysical).
+    aging_maintenance_cost: float = 2.0
+    # Intrinsic death fires when accumulated damage >= this threshold.
+    aging_damage_threshold: float = 100.0
+    # Allometric exponent for mass-specific metabolism (Kleiber -> ~0.25). Larger
+    # mass -> slower per-mass metabolism -> slower damage -> lifespan ~ mass^this.
+    aging_mass_exponent: float = 0.25
+    # Repair can offset at most this fraction of gross damage, so net damage is
+    # always > 0: no organism repairs perfectly, ageing is inevitable. This also
+    # guarantees mortality (prevents an evolved "immortal repair" degenerate).
+    aging_max_repair_fraction: float = 0.95
+    # Caloric-restriction lever (default 0 = off): extra damage per unit of energy
+    # ABSORBED from food this tick. > 0 makes higher intake accelerate aging, so
+    # restricting food extends lifespan (CALERIE), while too little food still
+    # kills via starvation -> an emergent hormetic optimum. See Ravussin/Waziry.
+    aging_intake_damage_coeff: float = 0.0
     ambient_food_decay_chance: float = 0.006
     plant_food_decay_chance: float = 0.003
     tick_count: int = 0
