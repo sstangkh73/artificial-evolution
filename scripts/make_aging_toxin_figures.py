@@ -211,6 +211,68 @@ def _p_toxic_curve(acute, N=400, trials=40, seed=20260701):
     return [c / N for c in counts]
 
 
+def _p_toxic_matrix_hetero(acute, N, trials, seed=20260702):
+    """Per-agent 'ate the toxic fruit' matrix, with HERITABLE toxin_tolerance
+    variation between individuals. Same real machinery (gate + EMA + toxin
+    formulas + per-fruit size noise); returns (rows, tolerances) so we can show
+    which individuals avoid and WHY."""
+    rng = Random(seed)
+    comp = metabolism.COMPOSITION["raw_fruit"]
+    base_mass = metabolism.FOOD_MASS["raw_fruit"]
+    rows, tols = [], []
+    for _ in range(N):
+        tol = rng.uniform(0.0, 0.45)  # heritable toxin_tolerance varies between agents
+        env = _diet_env(acute)
+        a = Agent(agent_id=1, body=_body(toxin_tolerance=tol), x=0, y=0)
+        a.food_value_memory = {"raw_plant": 5.0}
+        res = SimpleNamespace(kind="raw_fruit", energy=FOOD_ENERGY["raw_fruit"], source="s")
+        env.food_positions = {(a.x, a.y): res}
+        ate = []
+        for t in range(trials):
+            a.energy = 100
+            if a._food_worth_eating(env):
+                ate.append(True)
+                mass = base_mass * rng.uniform(0.6, 1.5)
+                gross = metabolism.digestible_energy(comp, mass, a.body.enzyme_profile)
+                excess = metabolism.toxin_penalty(metabolism.toxin_load(comp, mass), tol)
+                a._learn_food_value(env, "raw_fruit", gross - excess * acute)
+            else:
+                ate.append(False)
+        rows.append(ate); tols.append(tol)
+    return rows, tols
+
+
+def fig_toxin_individual_raster():
+    trials, N = 18, 60
+    rows, tols = _p_toxic_matrix_hetero(50.0, N, trials)
+
+    def last_ate(r):
+        idx = [i for i, v in enumerate(r) if v]
+        return idx[-1] if idx else -1
+
+    order = sorted(range(N), key=lambda i: last_ate(rows[i]))
+    fig, ax = plt.subplots(figsize=(7.8, 5.2))
+    xs, ys, cs = [], [], []
+    for yi, i in enumerate(order):
+        for t, v in enumerate(rows[i]):
+            if v:
+                xs.append(t + 1); ys.append(yi + 1); cs.append(tols[i])
+    sc = ax.scatter(xs, ys, s=20, marker="s", c=cs, cmap="YlOrBr", vmin=0.0, vmax=0.45)
+    cb = fig.colorbar(sc, ax=ax, pad=0.02)
+    cb.set_label("toxin_tolerance (gene)", fontsize=10)
+    ax.set_title("Individual diet trajectories: avoidance depends on the toxin_tolerance gene")
+    ax.set_xlabel("feeding trial"); ax.set_ylabel("agent (row) — sorted by when they quit")
+    ax.set_xlim(0.5, trials + 0.5); ax.set_ylim(0.5, N + 0.5)
+    never = sum(1 for r in rows if all(r))
+    ax.annotate("blank = avoided\n(low tolerance → quits fast)", xy=(11, 16),
+                fontsize=10, color=C["new"], ha="center")
+    ax.annotate(f"{never}/{N} tolerant agents\nnever avoid (keep eating)",
+                xy=(trials - 0.3, N - 3), xytext=(11.5, 34),
+                fontsize=9.5, color=C["old"], ha="center",
+                arrowprops=dict(arrowstyle="->", color=C["old"]))
+    fig.savefig(OUT / "toxin_fig4_individual_raster.png"); plt.close(fig)
+
+
 def fig_toxin_learning_curve():
     trials = 40
     off = _p_toxic_curve(0.0, trials=trials)
@@ -253,6 +315,7 @@ def main():
     fig_toxin_learning()
     fig_toxin_avoidance()
     fig_toxin_learning_curve()
+    fig_toxin_individual_raster()
     print("wrote figures to", OUT)
     for p in sorted(OUT.glob("aging_*.png")) + sorted(OUT.glob("toxin_*.png")):
         print("  ", p.name)
