@@ -716,6 +716,14 @@ class Environment:
     # sometimes safe (aged) -> a hidden-state test for the diet learner. See
     # reports/design_store_to_detoxify_2026-07-01.th.md and agent._apply_toxin.
     toxin_detox_ticks: int = 0
+    # Non-monotonic "safe window" (opt-in, 0 = off). When window_end > window_start,
+    # a food is toxic while young, SAFE for age in [start, end), then toxic AGAIN
+    # (unripe -> ripe/fermented -> spoiled). "Older" is no longer "safer", so a
+    # monotonic age heuristic fails -- the learner must know the whole value(age)
+    # curve. Overrides toxin_detox_ticks. See agent._apply_toxin /
+    # metabolism.toxin_age_potency and the age-dependent-toxicity design reports.
+    toxin_safe_window_start: int = 0
+    toxin_safe_window_end: int = 0
     ambient_food_decay_chance: float = 0.006
     plant_food_decay_chance: float = 0.003
     tick_count: int = 0

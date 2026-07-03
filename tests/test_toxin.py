@@ -170,5 +170,45 @@ class TestToxinDetoxByAge(unittest.TestCase):
         self.assertAlmostEqual(half.toxin_ingested_total, full.toxin_ingested_total / 2, places=6)
 
 
+class TestToxinSafeWindow(unittest.TestCase):
+    """Non-monotonic toxicity: toxic (young) -> safe (window) -> toxic again (old)."""
+
+    def test_potency_profile_toxic_safe_toxic(self):
+        f = metabolism.toxin_age_potency
+        # safe window [3, 7): potency 1 (toxic) before, 0 (safe) inside, 1 after.
+        self.assertEqual([f(a, window_start=3, window_end=7) for a in (0, 2)], [1.0, 1.0])
+        self.assertEqual([f(a, window_start=3, window_end=7) for a in (3, 5, 6)], [0.0, 0.0, 0.0])
+        self.assertEqual([f(a, window_start=3, window_end=7) for a in (7, 10)], [1.0, 1.0])
+
+    def test_window_overrides_detox_and_off_is_one(self):
+        f = metabolism.toxin_age_potency
+        self.assertEqual(f(5, detox_ticks=4, window_start=3, window_end=7), 0.0)  # window wins
+        self.assertEqual(f(1000), 1.0)  # nothing set -> never changes
+
+    def _env_win(self, tick_count, start=3, end=7, acute=20.0):
+        return types.SimpleNamespace(
+            toxin_acute_penalty=acute, toxin_damage_coeff=0.0,
+            toxin_detox_ticks=0, toxin_safe_window_start=start, toxin_safe_window_end=end,
+            tick_count=tick_count,
+        )
+
+    def _fruit_created(self, created_tick):
+        return types.SimpleNamespace(kind="raw_fruit", created_tick=created_tick)
+
+    def test_apply_toxin_across_the_three_phases(self):
+        young = _agent(_body(toxin_tolerance=0.2))
+        young._apply_toxin(self._env_win(1), self._fruit_created(0), 10)      # age 1 -> toxic
+        self.assertAlmostEqual(young.toxin_ingested_total, EXCESS_AT_DEFAULT_TOL, places=6)
+
+        safe = _agent(_body(toxin_tolerance=0.2))
+        out = safe._apply_toxin(self._env_win(5), self._fruit_created(0), 10)  # age 5 -> safe
+        self.assertEqual(out, 10)
+        self.assertEqual(safe.toxin_ingested_total, 0.0)
+
+        old = _agent(_body(toxin_tolerance=0.2))
+        old._apply_toxin(self._env_win(9), self._fruit_created(0), 10)         # age 9 -> toxic again
+        self.assertAlmostEqual(old.toxin_ingested_total, EXCESS_AT_DEFAULT_TOL, places=6)
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)

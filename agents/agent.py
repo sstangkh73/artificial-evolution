@@ -1215,19 +1215,21 @@ class Agent:
         if composition is None:
             return gained_energy
         mass = metabolism.FOOD_MASS.get(resource.kind, 1.0)
-        # Age-dependent detoxification (opt-in). A food's toxin loses potency as it
-        # ages: potency = 1 while fresh, ramps linearly to 0 at toxin_detox_ticks
-        # (the "store it a few days and the poison is gone"). detox_ticks <= 0 = off
-        # -> potency stays 1.0 so behaviour is byte-identical. No oracle: the world
-        # never tells the agent that age matters; only the REALISED toxin changes,
-        # so the SAME food kind is sometimes toxic (fresh) and sometimes safe (aged)
-        # -> a hidden-state problem for a learner keyed only on kind. See
+        # Age-dependent toxicity (opt-in; see metabolism.toxin_age_potency). The
+        # realised toxin depends on the food's AGE: either a monotonic linear detox
+        # (toxin_detox_ticks) or a NON-MONOTONIC safe window (toxin_safe_window_*:
+        # toxic -> safe -> toxic again). All off -> potency 1.0 -> byte-identical.
+        # No oracle: the world never tells the agent age matters; only the realised
+        # toxin changes, so the SAME kind is sometimes toxic, sometimes safe -> a
+        # hidden-state problem for a learner keyed only on kind. See
         # reports/design_store_to_detoxify_2026-07-01.th.md.
         detox_ticks = getattr(env, "toxin_detox_ticks", 0)
+        window_start = getattr(env, "toxin_safe_window_start", 0)
+        window_end = getattr(env, "toxin_safe_window_end", 0)
         potency = 1.0
-        if detox_ticks and detox_ticks > 0:
+        if (detox_ticks and detox_ticks > 0) or (window_end and window_end > window_start):
             age = max(0, getattr(env, "tick_count", 0) - getattr(resource, "created_tick", 0))
-            potency = max(0.0, 1.0 - age / float(detox_ticks))
+            potency = metabolism.toxin_age_potency(age, detox_ticks, window_start, window_end)
         excess = metabolism.toxin_penalty(
             metabolism.toxin_load(composition, mass) * potency, self.body.toxin_tolerance
         )

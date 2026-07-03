@@ -102,3 +102,29 @@ def toxin_penalty(ingested_toxin: float, toxin_tolerance: float) -> float:
 
     Zero while within tolerance; otherwise the excess. v2.3 scaffold."""
     return max(0.0, ingested_toxin - max(0.0, toxin_tolerance))
+
+
+def toxin_age_potency(
+    age: float,
+    detox_ticks: float = 0.0,
+    window_start: float = 0.0,
+    window_end: float = 0.0,
+) -> float:
+    """Fraction of a food's toxin still active at a given age, in [0, 1].
+
+    Three modes, checked in priority order (see the age-dependent-toxicity designs
+    in reports/):
+      - SAFE WINDOW (window_end > window_start): NON-MONOTONIC toxic -> safe ->
+        toxic again. Potency 0 while `window_start <= age < window_end` (safe),
+        else 1 (toxic). Models e.g. unripe(toxic) -> ripe/fermented(safe) ->
+        spoiled(toxic). "Older" is no longer "safer", so a monotonic age heuristic
+        cannot solve it.
+      - LINEAR DETOX (detox_ticks > 0): potency ramps 1 -> 0 by `detox_ticks`
+        (monotonic "store it and the poison fades").
+      - neither: potency 1.0 (toxin never changes -> byte-identical default).
+    """
+    if window_end and window_end > window_start:
+        return 0.0 if (window_start <= age < window_end) else 1.0
+    if detox_ticks and detox_ticks > 0:
+        return max(0.0, 1.0 - age / float(detox_ticks))
+    return 1.0
