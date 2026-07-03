@@ -1215,8 +1215,21 @@ class Agent:
         if composition is None:
             return gained_energy
         mass = metabolism.FOOD_MASS.get(resource.kind, 1.0)
+        # Age-dependent detoxification (opt-in). A food's toxin loses potency as it
+        # ages: potency = 1 while fresh, ramps linearly to 0 at toxin_detox_ticks
+        # (the "store it a few days and the poison is gone"). detox_ticks <= 0 = off
+        # -> potency stays 1.0 so behaviour is byte-identical. No oracle: the world
+        # never tells the agent that age matters; only the REALISED toxin changes,
+        # so the SAME food kind is sometimes toxic (fresh) and sometimes safe (aged)
+        # -> a hidden-state problem for a learner keyed only on kind. See
+        # reports/design_store_to_detoxify_2026-07-01.th.md.
+        detox_ticks = getattr(env, "toxin_detox_ticks", 0)
+        potency = 1.0
+        if detox_ticks and detox_ticks > 0:
+            age = max(0, getattr(env, "tick_count", 0) - getattr(resource, "created_tick", 0))
+            potency = max(0.0, 1.0 - age / float(detox_ticks))
         excess = metabolism.toxin_penalty(
-            metabolism.toxin_load(composition, mass), self.body.toxin_tolerance
+            metabolism.toxin_load(composition, mass) * potency, self.body.toxin_tolerance
         )
         if excess <= 0.0:
             return gained_energy

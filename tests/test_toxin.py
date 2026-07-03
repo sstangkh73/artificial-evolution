@@ -130,5 +130,45 @@ class TestToxinLearningLink(unittest.TestCase):
         self.assertTrue(a._food_worth_eating(env))
 
 
+class TestToxinDetoxByAge(unittest.TestCase):
+    """Age-dependent detoxification: fresh food is toxic, aged food is safe."""
+
+    def _env(self, detox_ticks, tick_count, acute=20.0, chronic=0.0):
+        return types.SimpleNamespace(
+            toxin_acute_penalty=acute, toxin_damage_coeff=chronic,
+            toxin_detox_ticks=detox_ticks, tick_count=tick_count,
+        )
+
+    def _fruit_created(self, created_tick):
+        return types.SimpleNamespace(kind="raw_fruit", created_tick=created_tick)
+
+    def test_detox_off_ignores_age(self):
+        # detox_ticks 0 -> age is ignored, toxin is full even for an "old" fruit.
+        a = _agent(_body(toxin_tolerance=0.2))
+        a._apply_toxin(self._env(0, 1000), self._fruit_created(0), 10)  # very old, but detox off
+        self.assertAlmostEqual(a.toxin_ingested_total, EXCESS_AT_DEFAULT_TOL, places=6)
+
+    def test_fresh_is_fully_toxic(self):
+        a = _agent(_body(toxin_tolerance=0.2))
+        a._apply_toxin(self._env(4, 10), self._fruit_created(10), 10)  # age 0
+        self.assertAlmostEqual(a.toxin_ingested_total, EXCESS_AT_DEFAULT_TOL, places=6)
+
+    def test_aged_is_safe(self):
+        # age >= detox_ticks -> potency 0 -> no toxin at all.
+        a = _agent(_body(toxin_tolerance=0.2))
+        out = a._apply_toxin(self._env(4, 4, chronic=10.0), self._fruit_created(0), 10)  # age 4
+        self.assertEqual(out, 10)              # no acute penalty
+        self.assertEqual(a.toxin_ingested_total, 0.0)
+        self.assertEqual(a.damage, 0.0)
+
+    def test_partial_age_scales_toxin_linearly(self):
+        # tolerance 0 so the raw scaling shows: age 2 of 4 -> half potency -> half load.
+        full = _agent(_body(toxin_tolerance=0.0))
+        full._apply_toxin(self._env(4, 0), self._fruit_created(0), 10)      # age 0, potency 1
+        half = _agent(_body(toxin_tolerance=0.0))
+        half._apply_toxin(self._env(4, 2), self._fruit_created(0), 10)      # age 2, potency 0.5
+        self.assertAlmostEqual(half.toxin_ingested_total, full.toxin_ingested_total / 2, places=6)
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)

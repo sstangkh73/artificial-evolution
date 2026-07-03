@@ -710,6 +710,12 @@ class Environment:
     toxin_acute_penalty: float = 0.0
     toxin_damage_coeff: float = 0.0
     toxic_food_spawn_per_tick: float = 0.0
+    # Age-dependent detoxification (opt-in, 0 = off -> byte-identical). When > 0, a
+    # food's toxin potency ramps linearly from full (fresh) to 0 at this age in
+    # ticks (store-to-detoxify). Makes a single food kind sometimes toxic (fresh),
+    # sometimes safe (aged) -> a hidden-state test for the diet learner. See
+    # reports/design_store_to_detoxify_2026-07-01.th.md and agent._apply_toxin.
+    toxin_detox_ticks: int = 0
     ambient_food_decay_chance: float = 0.006
     plant_food_decay_chance: float = 0.003
     tick_count: int = 0

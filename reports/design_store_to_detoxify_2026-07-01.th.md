@@ -3,7 +3,7 @@
 **Experiment design: does the agent go beyond avoidance to DEFERRED consumption — see the toxic fruit, choose not to eat it now, store it, wait for it to detoxify, then eat it safely?**
 
 ผู้ออกแบบ: Chisanupong · โครงการ Artificial Evolution (ALife → YSC/ISEF)
-วันที่: 2026-07-01 · สถานะ: **design เท่านั้น** · แก้ไข/ต่อยอดจาก `design_age_dependent_toxicity_2026-07-01` (H4)
+วันที่: 2026-07-01 · สถานะ: **design + ขั้นแรก implement แล้ว (detox-by-age) + ผลจริง** · แก้ไข/ต่อยอดจาก `design_age_dependent_toxicity_2026-07-01` (H4)
 
 > เอกสารนี้ยกระดับ "ไม่กิน" จาก **การเลี่ยงถาวร (avoid)** เป็น **การเลื่อน (defer): เห็น → ไม่กินตอนนี้ → เก็บ → รอหายพิษ → กินทีหลัง** ซึ่งเป็นการ **แปรรูปอาหาร (food processing)** ที่ควร emerge เอง ไม่ใช่ถูกสอน มีกราฟ 2 แบบ: (1) onset จริงจากharness, (2) predicted signature ของ deferral
 
@@ -121,4 +121,26 @@
 
 ---
 
-*รายงานออกแบบการทดลอง (store-to-detoxify) — ยกระดับ "ไม่กิน" เป็น "เห็นแต่เลื่อน→เก็บ→รอ→กินปลอดภัย", ชี้ว่าเป็นปัญหารางวัลล่าช้าที่ learning เดี่ยวทำไม่ได้ ต้อง storage ระดับชิ้น + selection, พร้อมกราฟ onset จริง + predicted deferral signature. ยังไม่ implement.*
+---
+
+## 10. ผลการรันจริงในซิม (first sim results — ลงมือขั้นแรกแล้ว)
+
+**สิ่งที่ implement:** ขั้นที่ 1 ของแผน §6 — **detox ตามอายุ** ใน core จริง (`_apply_toxin`): เพิ่ม knob `toxin_detox_ticks` (0 = ปิด → byte-identical). พิษของอาหารลดตามอายุแบบเชิงเส้น (potency = 1 ตอนสด → 0 ที่ `toxin_detox_ticks`) อายุคำนวณจาก `resource.created_tick` เทียบ `env.tick_count` ที่มีอยู่แล้ว · tests เพิ่ม 4 ตัว (สด=พิษเต็ม, เก่า=ปลอดภัย, ครึ่งอายุ=ครึ่งพิษ, ปิด=ไม่สนใจอายุ) · suite 90/90 ผ่าน
+
+**ยังไม่ implement:** larder ระดับชิ้น + action "defer-store" (ขั้น 2–4) — จึงยังวัด "การเลื่อน" ไม่ได้ ขั้นนี้วัดว่า **ระบบเรียนรู้ปัจจุบันรับมือพิษตามอายุได้ไหม** (ทดสอบ R1 ในโค้ดจริง)
+
+![Sim result — per-kind learner walks into the poison](figures/store_detox_sim_result.png)
+
+**ผล (ขับ `_apply_toxin` + อายุจริง + learner จริง, agent อิ่ม; `scripts/run_store_detox_sim.py`):**
+- **ค่าเรียนรู้ = blend 7.9** (เหวี่ยงระหว่างสด=2 กับ เก่า=10) — เหมือน PoC เป๊ะ แต่ตอนนี้จากโค้ดจริง
+- **P(เลือกกิน) แบน [1×8] ทุกอายุเท่ากัน** → **แยกสด/เก่าไม่ได้เลย** (key ด้วยชนิด ไม่ใช่สภาพ) → ยืนยัน **R1 = fail**
+- **53% ของมื้อผลไม้เป็นพิษ (สด)** — กินทุกลูกไม่เลือกอายุ
+- ซิมเต็ม (`--toxin-detox-ticks 20`) ให้ผลเดียวกัน: learned fruit = 5.95 (blend), กิน fruit 315 vs plant 93
+
+**ข้อค้นพบที่ไม่คาดคิด (สำคัญ):** การหายพิษตามอายุ **ทำให้อาหารพิษ "ดูดีขึ้นโดยเฉลี่ย"** (blend 7.9 > plant 5 เพราะครึ่งหนึ่งปลอดภัย+พลังงานสูง) → per-kind learner ถูก **ดึงดูดเข้าหาพิษมากขึ้น** ไม่ใช่น้อยลง — แย่กว่าพิษคงที่ด้วยซ้ำ
+
+**สรุป:** ผลจริงยืนยันคำทำนายหลักของ design — **การเรียนรู้ต่อชนิดรับมือพิษตามอายุไม่ได้** (แยกสภาพไม่ออก จึงเดินเข้าหาพิษ) ตอกย้ำว่าต้อง **cue + representation ต่อสภาพ (R3)** หรือ **larder + selection (R2)** ตามที่ออกแบบไว้ — ขั้นต่อไปคือสร้าง larder ระดับชิ้น
+
+---
+
+*รายงานออกแบบ + ผลขั้นแรก (store-to-detoxify) — ยกระดับ "ไม่กิน" เป็น "เห็นแต่เลื่อน→เก็บ→รอ→กินปลอดภัย" (ปัญหารางวัลล่าช้าที่ learning เดี่ยวทำไม่ได้). Implement detox-by-age จริงแล้ว (opt-in, 90/90 tests): ผลยืนยัน per-kind learner แยกสด/เก่าไม่ได้ → เดินเข้าหาพิษ (53% มื้อเป็นพิษ). ขั้นต่อไป: larder ระดับชิ้น + action defer-store + selection.*
