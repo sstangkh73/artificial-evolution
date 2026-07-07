@@ -1,9 +1,15 @@
 # -*- coding: utf-8 -*-
-"""Multi-seed replication with 95% CIs for the age-dependent-toxicity results
-(fixes red-team item A: no more deterministic n=1). Drives the REAL code
-(_apply_toxin with real food age, real _food_worth_eating gate, real EMA learning)
-across S seeds x N agents, and reports mean +/- 95% CI for every headline number
-used in the ALIFE abstract. Output: reports/figures/toxin_multiseed_ci.png
+"""Multi-seed replication with 95% CIs + optimal-gap, using a clean TWO-STATE model
+(fixes red-team A, I, and the model-consistency issue the lure sweep exposed).
+
+Two unambiguous hidden states: a fruit is FRESH (age 0 -> toxic, net ~2) with
+probability p, or AGED (age >= detox -> safe, net ~10). This avoids the linear-
+detox tolerance fuzz that mislabelled partially-aged fruit as toxic. Drives the
+real _apply_toxin + gate + EMA. Reports, with 95% CIs over seeds:
+  R1  lured% (learned fruit value > safe staple) vs fraction-toxic, plus the
+      gap to an age-aware optimal agent;
+  R2  discrimination inside vs outside a non-monotonic safe window.
+Output: reports/figures/toxin_multiseed_ci.png
 """
 import math
 import os
@@ -33,7 +39,7 @@ plt.rcParams.update({
 LINE, TOXIC, SAFE, IDEAL, OLD = "#BA7517", "#A32D2D", "#0F6E56", "#185FA5", "#888780"
 
 SEEDS, N, TRIALS = 30, 100, 40
-ACUTE, STAPLE, NOW = 50.0, 5.0, 100000
+ACUTE, STAPLE, NOW, T = 50.0, 5.0, 100000, 4
 COMP = metabolism.COMPOSITION["raw_fruit"]
 MASS = metabolism.FOOD_MASS["raw_fruit"]
 
@@ -42,8 +48,8 @@ def _body():
     return BodyPlan(sensor_units=1, muscle_units=1, armor_units=0, brain_units=1)
 
 
-def _gross(agent):
-    return metabolism.digestible_energy(COMP, MASS, agent.body.enzyme_profile)
+def _gross(body):
+    return metabolism.digestible_energy(COMP, MASS, body.enzyme_profile)
 
 
 def _fruit(age):
@@ -64,40 +70,39 @@ def _ci95(xs):
     m = statistics.mean(xs)
     if len(xs) < 2:
         return m, 0.0
-    sem = statistics.stdev(xs) / math.sqrt(len(xs))
-    return m, 1.96 * sem
+    return m, 1.96 * statistics.stdev(xs) / math.sqrt(len(xs))
 
 
-def result1_seed(seed, T=4):
-    """Monotonic detox: toxic (age<T) -> safe (age>=T). ages ~ U(0,2T): 50% fresh."""
+def result1_seed(seed, p_toxic):
+    """Two states: FRESH (age 0, toxic) w.p. p_toxic, else AGED (age T, safe)."""
     rng = Random(seed)
-    blends, lured, toxic_bites, total = [], 0, 0, 0
+    lured, toxic_bites, total, energy = 0, 0, 0, 0.0
     for _ in range(N):
         env = _env(toxin_detox_ticks=T)
         a = Agent(agent_id=1, body=_body(), x=0, y=0)
         a.food_value_memory = {"raw_plant": STAPLE}
         for _ in range(TRIALS):
             a.energy = 100
-            age = rng.randrange(0, 2 * T)
-            res = _fruit(age)
+            fresh = rng.random() < p_toxic
+            res = _fruit(0 if fresh else T)
             env.food_positions = {(a.x, a.y): res}
             if a._food_worth_eating(env):
-                a._learn_food_value(env, "raw_fruit", a._apply_toxin(env, res, int(round(_gross(a)))))
-                total += 1
-                if age < T:
+                net = a._apply_toxin(env, res, int(round(_gross(a.body))))
+                a._learn_food_value(env, "raw_fruit", net)
+                total += 1; energy += net
+                if fresh:
                     toxic_bites += 1
-        v = a.food_value_memory["raw_fruit"]
-        blends.append(v)
-        if v > STAPLE:
+        if a.food_value_memory["raw_fruit"] > STAPLE:
             lured += 1
-    return statistics.mean(blends), 100 * lured / N, 100 * toxic_bites / max(1, total)
+    pct_lured = 100 * lured / N
+    pct_toxic = 100 * toxic_bites / max(1, total)
+    energy_per = energy / max(1, total)
+    return pct_lured, pct_toxic, energy_per
 
 
 def result2_seed(seed, start=3, end=7, maxage=10):
-    """Non-monotonic window [start,end): toxic -> safe -> toxic. ages ~ U(0,maxage)."""
     rng = Random(seed)
-    eat_in, eat_out, seen_in, seen_out = 0, 0, 0, 0
-    toxic_bites, total = 0, 0
+    eat_in, eat_out, seen_in, seen_out, toxic, total = 0, 0, 0, 0, 0, 0
     for _ in range(N):
         env = _env(toxin_safe_window_start=start, toxin_safe_window_end=end)
         a = Agent(agent_id=1, body=_body(), x=0, y=0)
@@ -108,10 +113,10 @@ def result2_seed(seed, start=3, end=7, maxage=10):
             res = _fruit(age)
             env.food_positions = {(a.x, a.y): res}
             if a._food_worth_eating(env):
-                a._learn_food_value(env, "raw_fruit", a._apply_toxin(env, res, int(round(_gross(a)))))
+                a._learn_food_value(env, "raw_fruit", a._apply_toxin(env, res, int(round(_gross(a.body)))))
                 total += 1
                 if not (start <= age < end):
-                    toxic_bites += 1
+                    toxic += 1
         for age in range(maxage):
             a.energy = 100
             env.food_positions = {(a.x, a.y): _fruit(age)}
@@ -122,50 +127,63 @@ def result2_seed(seed, start=3, end=7, maxage=10):
                 seen_out += 1; eat_out += 1 if eat else 0
     p_in = 100 * eat_in / max(1, seen_in)
     p_out = 100 * eat_out / max(1, seen_out)
-    return p_in, p_out, (p_in - p_out), 100 * toxic_bites / max(1, total)
+    return p_in, p_out, p_in - p_out, 100 * toxic / max(1, total)
 
 
 def main():
-    r1 = [result1_seed(s) for s in range(SEEDS)]
-    blend = _ci95([x[0] for x in r1]); lured = _ci95([x[1] for x in r1]); tox1 = _ci95([x[2] for x in r1])
+    fracs = [0.2, 0.3, 0.4, 0.5, 0.6]
+    lured_curve = {f: _ci95([result1_seed(s, f)[0] for s in range(SEEDS)]) for f in fracs}
+
+    # headline point + optimal gap at a balanced-but-clear config (p=0.3 toxic)
+    P0 = 0.3
+    r1 = [result1_seed(s, P0) for s in range(SEEDS)]
+    lured0 = _ci95([x[0] for x in r1]); toxic0 = _ci95([x[1] for x in r1]); en0 = _ci95([x[2] for x in r1])
+    net_fresh = int(round(_gross(_body()))) - 0.16 * ACUTE
+    net_aged = int(round(_gross(_body())))
+    opt_energy = net_aged                 # age-aware optimal eats only aged/safe
+    opt_toxic = 0.0
+
     r2 = [result2_seed(s) for s in range(SEEDS)]
     pin = _ci95([x[0] for x in r2]); pout = _ci95([x[1] for x in r2])
     disc = _ci95([x[2] for x in r2]); tox2 = _ci95([x[3] for x in r2])
 
     print(f"=== {SEEDS} seeds x {N} agents x {TRIALS} trials (mean +/- 95% CI) ===")
-    print("RESULT 1 (monotonic detox, fresh toxic net~2 / aged safe net~10, staple 5):")
-    print(f"  blended learned value  = {blend[0]:.2f} +/- {blend[1]:.2f}   (> staple 5 => 'lure')")
-    print(f"  % agents lured (v>5)   = {lured[0]:.0f}% +/- {lured[1]:.0f}%")
-    print(f"  % of fruit meals toxic = {tox1[0]:.0f}% +/- {tox1[1]:.0f}%")
-    print("RESULT 2 (non-monotonic window [3,7]):")
-    print(f"  P(eat | in window)     = {pin[0]:.0f}% +/- {pin[1]:.0f}%")
-    print(f"  P(eat | out of window) = {pout[0]:.0f}% +/- {pout[1]:.0f}%")
-    print(f"  discrimination (in-out)= {disc[0]:.1f}pts +/- {disc[1]:.1f}   (~0 => cannot target window)")
-    print(f"  % of meals toxic       = {tox2[0]:.0f}% +/- {tox2[1]:.0f}%")
+    print(f"Two-state model: fresh net {net_fresh:.1f} (toxic) / aged net {net_aged:.1f} (safe), staple {STAPLE}")
+    print("R1 lured% vs fraction-toxic (acute 50):")
+    for f in fracs:
+        m, c = lured_curve[f]
+        print(f"   {int(f*100)}% toxic -> lured {m:.0f}% +/- {c:.0f}%")
+    print(f"R1 headline @ {int(P0*100)}% toxic: lured {lured0[0]:.0f}% +/- {lured0[1]:.0f}%, "
+          f"toxic meals {toxic0[0]:.0f}% +/- {toxic0[1]:.0f}%")
+    print(f"R1 gap vs optimal: learner {en0[0]:.1f} energy/meal @ {toxic0[0]:.0f}% toxic  |  "
+          f"optimal {opt_energy:.0f} @ 0% toxic  -> learner poisons itself {toxic0[0]:.0f}% "
+          f"to capture {100*en0[0]/opt_energy:.0f}% of optimal energy")
+    print("R2 non-monotonic window [3,7]:")
+    print(f"   P(eat|in) {pin[0]:.0f}% vs P(eat|out) {pout[0]:.0f}% -> discrimination {disc[0]:.1f} "
+          f"+/- {disc[1]:.1f} pts (ideal 100); {tox2[0]:.0f}% +/- {tox2[1]:.0f}% toxic")
 
-    fig, (axL, axR) = plt.subplots(1, 2, figsize=(11.0, 4.4))
-    # Left: Result 1 headline bars with CI
-    labels = ["blended\nvalue", "% agents\nlured", "% fruit\nmeals toxic"]
-    vals = [blend[0], lured[0], tox1[0]]; errs = [blend[1], lured[1], tox1[1]]
-    cols = [LINE, TOXIC, TOXIC]
-    bars = axL.bar(labels, vals, yerr=errs, capsize=5, color=cols, alpha=0.85)
-    axL.axhline(STAPLE, color=OLD, ls=":", lw=1.5)
-    axL.text(0.02, STAPLE + 0.3, "staple value 5", color=OLD, fontsize=8.5, transform=axL.get_yaxis_transform())
-    axL.set_title(f"Result 1: monotonic detox ({SEEDS} seeds, 95% CI)")
-    axL.set_ylabel("value  /  % of agents or meals")
-    axL.bar_label(bars, fmt="%.1f", padding=3, fontsize=9)
-    axL.set_ylim(0, max(vals) + max(errs) + 12)
-    # Right: Result 2 discrimination with CI (in vs out of window)
+    fig, (axL, axR) = plt.subplots(1, 2, figsize=(11.2, 4.5))
+    xs = [int(f * 100) for f in fracs]
+    ys = [lured_curve[f][0] for f in fracs]; es = [lured_curve[f][1] for f in fracs]
+    axL.errorbar(xs, ys, yerr=es, marker="o", color=LINE, lw=2.2, capsize=4)
+    axL.set_title("Result 1: the 'lure' vs how often the fruit is toxic")
+    axL.set_xlabel("% of fruit encounters that are toxic (fresh)")
+    axL.set_ylabel("% of agents LURED (rank fruit > safe staple)")
+    axL.set_ylim(-5, 108)
+    axL.annotate(f"even when {int(P0*100)}% of encounters are a real poison\n(net {net_fresh:.0f} < staple 5),"
+                 f" {lured0[0]:.0f}% still seek it",
+                 xy=(int(P0*100), lured0[0]), xytext=(38, 70), fontsize=8.6, color=OLD,
+                 arrowprops=dict(arrowstyle="->", color=OLD))
     b2 = axR.bar(["P(eat|in\nwindow)", "P(eat|out of\nwindow)"], [pin[0], pout[0]],
                  yerr=[pin[1], pout[1]], capsize=5, color=[SAFE, TOXIC], alpha=0.85)
     axR.bar_label(b2, fmt="%.0f%%", padding=3, fontsize=10)
-    axR.set_title(f"Result 2: safe window (discrimination = {disc[0]:.1f} pts, 95% CI)")
+    axR.set_title(f"Result 2: safe-window discrimination = {disc[0]:.1f} pts")
     axR.set_ylabel("P(choose to eat)  (%)")
-    axR.set_ylim(0, max(pin[0], pout[0]) + max(pin[1], pout[1]) + 10)
-    axR.annotate(f"ideal gap = 100 pts;\nlearner gap = {disc[0]:.1f} pts → age-blind",
-                 xy=(0.5, max(pin[0], pout[0])), xytext=(0.15, max(pin[0], pout[0]) + 4),
+    axR.set_ylim(0, max(pin[0], pout[0]) + max(pin[1], pout[1]) + 8)
+    axR.annotate(f"ideal gap 100 pts;\nlearner {disc[0]:.1f} pts -> age-blind",
+                 xy=(0.5, max(pin[0], pout[0])), xytext=(0.02, max(pin[0], pout[0]) + 2.5),
                  fontsize=9, color=OLD)
-    fig.suptitle(f"Multi-seed replication ({SEEDS} seeds x {N} agents x {TRIALS} trials): the failures are robust, not a single-seed artifact",
+    fig.suptitle(f"Multi-seed ({SEEDS} seeds x {N} agents, 95% CI): the failures are robust across the toxic-frequency axis",
                  fontsize=10.5)
     fig.savefig(OUT / "toxin_multiseed_ci.png"); plt.close(fig)
     print("wrote", OUT / "toxin_multiseed_ci.png")

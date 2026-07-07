@@ -125,6 +125,8 @@
 
 ## 10. ผลการรันจริงในซิม (first sim results — ลงมือขั้นแรกแล้ว)
 
+> **แก้ไขความสอดคล้อง (2026-07-01, จาก red-team E):** ตัวเลขในหัวข้อนี้เป็นแบบ **single-agent + linear detox** ซึ่งภายหลังพบว่านับ "มื้อพิษ" เกินจริง (age ที่ detox ไปครึ่งทางถูกนับว่าพิษทั้งที่ excess=0) — **ให้ใช้ตัวเลข canonical จาก `scripts/run_toxin_multiseed.py` (โมเดล two-state: fresh=พิษ net2 / aged=ปลอดภัย net10, 30 seeds × 100 agents, 95% CI) แทน:** lure 63% ที่ 30% พิษ (80% ที่ 20%), gap-vs-optimal 76% พลังงาน/30% พิษ, และ sweep (`run_toxin_lure_sweep.py`) ยืนยัน lure ครอบบริเวณกว้าง เลข blend 7.9/53% ด้านล่างเป็นภาพประกอบเชิงกลไก ไม่ใช่ตัวเลขรายงาน
+
 **สิ่งที่ implement:** ขั้นที่ 1 ของแผน §6 — **detox ตามอายุ** ใน core จริง (`_apply_toxin`): เพิ่ม knob `toxin_detox_ticks` (0 = ปิด → byte-identical). พิษของอาหารลดตามอายุแบบเชิงเส้น (potency = 1 ตอนสด → 0 ที่ `toxin_detox_ticks`) อายุคำนวณจาก `resource.created_tick` เทียบ `env.tick_count` ที่มีอยู่แล้ว · tests เพิ่ม 4 ตัว (สด=พิษเต็ม, เก่า=ปลอดภัย, ครึ่งอายุ=ครึ่งพิษ, ปิด=ไม่สนใจอายุ) · suite 90/90 ผ่าน
 
 **ยังไม่ implement:** larder ระดับชิ้น + action "defer-store" (ขั้น 2–4) — จึงยังวัด "การเลื่อน" ไม่ได้ ขั้นนี้วัดว่า **ระบบเรียนรู้ปัจจุบันรับมือพิษตามอายุได้ไหม** (ทดสอบ R1 ในโค้ดจริง)
