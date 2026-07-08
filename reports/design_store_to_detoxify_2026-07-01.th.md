@@ -127,19 +127,18 @@
 
 > **แก้ไขความสอดคล้อง (2026-07-01, จาก red-team E):** ตัวเลขในหัวข้อนี้เป็นแบบ **single-agent + linear detox** ซึ่งภายหลังพบว่านับ "มื้อพิษ" เกินจริง (age ที่ detox ไปครึ่งทางถูกนับว่าพิษทั้งที่ excess=0) — **ให้ใช้ตัวเลข canonical จาก `scripts/run_toxin_multiseed.py` (โมเดล two-state: fresh=พิษ net2 / aged=ปลอดภัย net10, 30 seeds × 100 agents, 95% CI) แทน:** lure 63% ที่ 30% พิษ (80% ที่ 20%), gap-vs-optimal 76% พลังงาน/30% พิษ, และ sweep (`run_toxin_lure_sweep.py`) ยืนยัน lure ครอบบริเวณกว้าง เลข blend 7.9/53% ด้านล่างเป็นภาพประกอบเชิงกลไก ไม่ใช่ตัวเลขรายงาน
 
-**สิ่งที่ implement:** ขั้นที่ 1 ของแผน §6 — **detox ตามอายุ** ใน core จริง (`_apply_toxin`): เพิ่ม knob `toxin_detox_ticks` (0 = ปิด → byte-identical). พิษของอาหารลดตามอายุแบบเชิงเส้น (potency = 1 ตอนสด → 0 ที่ `toxin_detox_ticks`) อายุคำนวณจาก `resource.created_tick` เทียบ `env.tick_count` ที่มีอยู่แล้ว · tests เพิ่ม 4 ตัว (สด=พิษเต็ม, เก่า=ปลอดภัย, ครึ่งอายุ=ครึ่งพิษ, ปิด=ไม่สนใจอายุ) · suite 90/90 ผ่าน
+**สิ่งที่ implement:** ขั้นที่ 1 ของแผน §6 — **detox ตามอายุ** ใน core จริง (`_apply_toxin`): เพิ่ม knob `toxin_detox_ticks` (0 = ปิด → byte-identical). พิษของอาหารลดตามอายุแบบเชิงเส้น (potency = 1 ตอนสด → 0 ที่ `toxin_detox_ticks`) อายุคำนวณจาก `resource.created_tick` เทียบ `env.tick_count` ที่มีอยู่แล้ว · tests เพิ่ม (detox 4 ตัว + safe-window 3 ตัว) · suite 93/93 ผ่าน
 
 **ยังไม่ implement:** larder ระดับชิ้น + action "defer-store" (ขั้น 2–4) — จึงยังวัด "การเลื่อน" ไม่ได้ ขั้นนี้วัดว่า **ระบบเรียนรู้ปัจจุบันรับมือพิษตามอายุได้ไหม** (ทดสอบ R1 ในโค้ดจริง)
 
-![Sim result — per-kind learner walks into the poison](figures/store_detox_sim_result.png)
+**ผล canonical (โมเดล two-state, 30 seeds × 100 agents, 95% CI; `run_toxin_multiseed.py` + `run_toxin_lure_sweep.py`) — ดูรูป `figures/toxin_multiseed_ci.png` + `toxin_lure_sweep.png`:**
+- **P(เลือกกิน) แบนทุกอายุ** → **แยกสด/เก่าไม่ได้เลย** (key ด้วยชนิด ไม่ใช่สภาพ) → R1 = fail *(discrimination = 0 เป็น analytic rule-independent)*
+- **% agent ถูก lure = 63% ที่พิษ 30% (80% ที่ 20%)** — sweep ยืนยันครอบบริเวณกว้าง (ไม่ cherry-pick)
+- **gap vs optimal:** learner กินพิษ 30% ของมื้อ ได้พลังงานแค่ 76% ของ optimal (ที่กินเฉพาะของเก่า 0% พิษ)
 
-**ผล (ขับ `_apply_toxin` + อายุจริง + learner จริง, agent อิ่ม; `scripts/run_store_detox_sim.py`):**
-- **ค่าเรียนรู้ = blend 7.9** (เหวี่ยงระหว่างสด=2 กับ เก่า=10) — เหมือน PoC เป๊ะ แต่ตอนนี้จากโค้ดจริง
-- **P(เลือกกิน) แบน [1×8] ทุกอายุเท่ากัน** → **แยกสด/เก่าไม่ได้เลย** (key ด้วยชนิด ไม่ใช่สภาพ) → ยืนยัน **R1 = fail**
-- **53% ของมื้อผลไม้เป็นพิษ (สด)** — กินทุกลูกไม่เลือกอายุ
-- ซิมเต็ม (`--toxin-detox-ticks 20`) ให้ผลเดียวกัน: learned fruit = 5.95 (blend), กิน fruit 315 vs plant 93
+**ข้อค้นพบที่ไม่คาดคิด (สำคัญ):** การหายพิษตามอายุ **ทำให้อาหารพิษ "ดูดีขึ้นโดยเฉลี่ย" (blend สูงกว่าอาหารปลอดภัย)** → per-kind learner ถูก **ดึงดูดเข้าหาพิษ** ไม่ใช่เลี่ยง — แย่กว่าพิษคงที่ (ในแง่ค่าที่รับรู้)
 
-**ข้อค้นพบที่ไม่คาดคิด (สำคัญ):** การหายพิษตามอายุ **ทำให้อาหารพิษ "ดูดีขึ้นโดยเฉลี่ย"** (blend 7.9 > plant 5 เพราะครึ่งหนึ่งปลอดภัย+พลังงานสูง) → per-kind learner ถูก **ดึงดูดเข้าหาพิษมากขึ้น** ไม่ใช่น้อยลง — แย่กว่าพิษคงที่ด้วยซ้ำ
+> ~~รูป/เลข single-agent เดิม (`store_detox_sim_result.png`, blend 7.9, "53% พิษ", full-sim 5.95/315vs93)~~ **ยกเลิก** (linear detox นับพิษเกินจริง — red-team E) อย่าใช้อ้างอิง
 
 **สรุป:** ผลจริงยืนยันคำทำนายหลักของ design — **การเรียนรู้ต่อชนิดรับมือพิษตามอายุไม่ได้** (แยกสภาพไม่ออก จึงเดินเข้าหาพิษ) ตอกย้ำว่าต้อง **cue + representation ต่อสภาพ (R3)** หรือ **larder + selection (R2)** ตามที่ออกแบบไว้ — ขั้นต่อไปคือสร้าง larder ระดับชิ้น
 
@@ -158,4 +157,4 @@
 
 ---
 
-*รายงานออกแบบ + ผลขั้นแรก (store-to-detoxify) — ยกระดับ "ไม่กิน" เป็น "เห็นแต่เลื่อน→เก็บ→รอ→กินปลอดภัย" (ปัญหารางวัลล่าช้าที่ learning เดี่ยวทำไม่ได้). Implement detox-by-age จริงแล้ว (opt-in, 90/90 tests): ผลยืนยัน per-kind learner แยกสด/เก่าไม่ได้ → เดินเข้าหาพิษ (53% มื้อเป็นพิษ). ขั้นต่อไป: larder ระดับชิ้น + action defer-store + selection.*
+*รายงานออกแบบ + ผลขั้นแรก (store-to-detoxify) — ยกระดับ "ไม่กิน" เป็น "เห็นแต่เลื่อน→เก็บ→รอ→กินปลอดภัย" (ปัญหารางวัลล่าช้าที่ learning เดี่ยวทำไม่ได้). Implement detox-by-age + safe-window จริงแล้ว (opt-in, 93/93 tests): ผลยืนยัน per-kind learner แยกสด/เก่าไม่ได้ → ถูกล่อเข้าหาพิษ (lure 63% ที่พิษ 30%, two-state multi-seed). ขั้นต่อไป: larder ระดับชิ้น + action defer-store + selection.*
