@@ -27,6 +27,7 @@ OUT = Path(__file__).resolve().parent.parent / "reports" / "figures"
 OUT.mkdir(parents=True, exist_ok=True)
 plt.rcParams.update({
     "figure.dpi": 150, "savefig.dpi": 150, "font.size": 11,
+    "font.family": "Tahoma", "axes.unicode_minus": False,
     "axes.spines.top": False, "axes.spines.right": False,
     "axes.grid": True, "grid.alpha": 0.25, "figure.autolayout": True,
 })
@@ -106,31 +107,31 @@ def make_figure():
     ages, net_curve, p_eat, blend, toxic_rate, total, trials = run()
     fig, (axL, axR) = plt.subplots(1, 2, figsize=(11.2, 4.5))
 
-    axL.axvspan(START - 0.5, END - 0.5, color=SAFE, alpha=0.12, label="safe window")
+    axL.axvspan(START - 0.5, END - 0.5, color=SAFE, alpha=0.12, label="ช่วงปลอดภัย")
     axL.plot(ages, net_curve, "o-", color=LINE, lw=2.3)
-    axL.axhline(5.0, color=OLD, ls=":", lw=1.5, label="raw_plant value (5)")
-    axL.set_title("The reward landscape: net value vs food age")
-    axL.set_xlabel("food age (ticks)"); axL.set_ylabel("true net energy if eaten")
+    axL.axhline(5.0, color=OLD, ls=":", lw=1.5, label="ค่า raw_plant (5)")
+    axL.set_title("ภูมิทัศน์รางวัล: พลังงานสุทธิเทียบกับอายุอาหาร")
+    axL.set_xlabel("อายุอาหาร (ticks)"); axL.set_ylabel("พลังงานสุทธิจริงถ้ากิน")
     axL.set_xlim(-0.3, MAXAGE - 0.7); axL.set_ylim(1.3, 10.6)
     axL.legend(fontsize=8.5, loc="upper left", framealpha=0.9)
-    axL.annotate("toxic\n(young)", xy=(1, net_curve[1]), xytext=(1, 3.1), fontsize=8.5, color=TOXIC, ha="center")
-    axL.annotate("toxic\n(old)", xy=(8, net_curve[8]), xytext=(8, 3.1), fontsize=8.5, color=TOXIC, ha="center")
-    axL.annotate("safe +\nrich", xy=(5, net_curve[5]), xytext=(5, 8.4), fontsize=8.5, color=SAFE, ha="center")
+    axL.annotate("พิษ\n(สด)", xy=(1, net_curve[1]), xytext=(1, 3.1), fontsize=8.5, color=TOXIC, ha="center")
+    axL.annotate("พิษ\n(เก่า)", xy=(8, net_curve[8]), xytext=(8, 3.1), fontsize=8.5, color=TOXIC, ha="center")
+    axL.annotate("ปลอดภัย +\nพลังงานสูง", xy=(5, net_curve[5]), xytext=(5, 8.4), fontsize=8.5, color=SAFE, ha="center")
 
     axR.axvspan(START - 0.5, END - 0.5, color=SAFE, alpha=0.12)
     axR.step(ages, [100 * v for v in p_eat], where="mid", color=LINE, lw=2.6,
-             label="current learner (per-kind)")
+             label="เอเจนต์ปัจจุบัน (เรียนต่อชนิด)")
     axR.step(ages, [100 if (START <= ag < END) else 0 for ag in ages], where="mid",
-             color=IDEAL, lw=2.4, ls="--", label="ideal (eat only in window)")
-    axR.set_title("Can it target the safe window by age?")
-    axR.set_xlabel("food age (ticks)"); axR.set_ylabel("P(choose to eat)  (% of agents)")
+             color=IDEAL, lw=2.4, ls="--", label="อุดมคติ (กินเฉพาะในหน้าต่าง)")
+    axR.set_title("แยกช่วงปลอดภัยตามอายุได้ไหม?")
+    axR.set_xlabel("อายุอาหาร (ticks)"); axR.set_ylabel("P(เลือกกิน)  (% เอเจนต์)")
     axR.set_yticks([0, 50, 100]); axR.set_ylim(-8, 135); axR.set_xlim(-0.3, MAXAGE - 0.7)
     axR.legend(fontsize=8.5, loc="center right", framealpha=0.9)
-    axR.annotate(f"flat across age (can't target window)\n→ {toxic_rate*100:.0f}% of all meals were TOXIC",
+    axR.annotate(f"แบนราบทุกอายุ (เล็งหน้าต่างไม่ได้)\n→ {toxic_rate*100:.0f}% ของมื้อทั้งหมดเป็นพิษ",
                  xy=(5, 100 * p_eat[5]), xytext=(1.3, 118), fontsize=8.8, color=OLD,
                  arrowprops=dict(arrowstyle="->", color=OLD))
 
-    fig.suptitle("SIM RESULT (non-monotonic toxic→safe→toxic): one blended value cannot target a mid-life safe window",
+    fig.suptitle("ผลซิม (พิษ→ปลอดภัย→พิษ ไม่โมโนโทนิก): ค่าเฉลี่ยเดียวเล็งหน้าต่างปลอดภัยกลางอายุไม่ได้",
                  fontsize=10.5)
     fig.savefig(OUT / "toxin_window_sim_result.png"); plt.close(fig)
     print(f"blend value = {blend:.2f} | net_by_age = {[round(v,1) for v in net_curve]}")

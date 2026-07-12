@@ -27,7 +27,8 @@ from world import metabolism
 
 OUT = Path(__file__).resolve().parent.parent / "reports" / "figures"
 OUT.mkdir(parents=True, exist_ok=True)
-plt.rcParams.update({"figure.dpi": 150, "savefig.dpi": 150, "font.size": 11, "figure.autolayout": True})
+plt.rcParams.update({"figure.dpi": 150, "savefig.dpi": 150, "font.size": 11,
+                     "font.family": "Tahoma", "axes.unicode_minus": False, "figure.autolayout": True})
 
 STAPLE, NOW, T = 5.0, 100000, 4
 N, TRIALS = 60, 30
@@ -75,16 +76,16 @@ def main():
     fig, ax = plt.subplots(figsize=(8.2, 5.0))
     im = ax.imshow(grid, origin="lower", aspect="auto", cmap="YlOrRd_r", vmin=0, vmax=100,
                    extent=[ACUTES[0] - 5, ACUTES[-1] + 5, FRESH_FRACS[0] - 0.05, FRESH_FRACS[-1] + 0.05])
-    cb = fig.colorbar(im, ax=ax, pad=0.02); cb.set_label("% of agents LURED (fruit ranked > staple)")
+    cb = fig.colorbar(im, ax=ax, pad=0.02); cb.set_label("% เอเจนต์ที่ถูกล่อ (จัดผลไม้ > อาหารปลอดภัย)")
     # contour marking the 50%-lured boundary (majority-lured region is to its left)
     cs = ax.contour(ACUTES, FRESH_FRACS, grid, levels=[50], colors="#0C447C", linewidths=2.2, linestyles="--")
-    ax.clabel(cs, fmt="50%% lured", fontsize=8)
-    ax.set_xlabel("toxin acute penalty (per-bite severity)")
-    ax.set_ylabel("fraction of fruit that is FRESH (toxic)")
-    ax.set_title("The 'lure' is a broad region, not a cherry-picked point")
-    ax.text(0.03, 0.90, "majority of agents LURED\n(seek the partly-toxic fruit)",
+    ax.clabel(cs, fmt="ถูกล่อ 50%%", fontsize=8)
+    ax.set_xlabel("โทษพิษเฉียบพลัน (ความรุนแรงต่อคำ)")
+    ax.set_ylabel("สัดส่วนผลไม้ที่สด (เป็นพิษ)")
+    ax.set_title("การถูกล่อเป็นบริเวณกว้าง ไม่ใช่จุดที่เลือกมาเฉพาะ")
+    ax.text(0.03, 0.90, "เอเจนต์ส่วนใหญ่ถูกล่อ\n(มุ่งกินผลไม้ที่มีพิษบางส่วน)",
             transform=ax.transAxes, fontsize=9, color="#7A1010")
-    ax.text(0.62, 0.12, "not lured\n(poison severe + frequent)",
+    ax.text(0.62, 0.12, "ไม่ถูกล่อ\n(พิษรุนแรง + ถี่)",
             transform=ax.transAxes, fontsize=9, color="#0C447C")
     fig.savefig(OUT / "toxin_lure_sweep.png"); plt.close(fig)
 

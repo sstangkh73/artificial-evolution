@@ -39,6 +39,7 @@ from world import metabolism
 OUT = Path(__file__).resolve().parent.parent / "reports" / "figures"
 OUT.mkdir(parents=True, exist_ok=True)
 plt.rcParams.update({"figure.dpi": 150, "savefig.dpi": 150, "font.size": 11,
+                     "font.family": "Tahoma", "axes.unicode_minus": False,
                      "axes.spines.top": False, "axes.spines.right": False,
                      "axes.grid": True, "grid.alpha": 0.25, "figure.autolayout": True})
 
@@ -127,11 +128,11 @@ def main():
     # analytic boundary: blend > staple  <=>  p < (aged-staple)/(aged-fresh)
     p_star = 100 * (NET_AGED - STAPLE) / (NET_AGED - NET_FRESH)
     ax.axvline(p_star, color="#A32D2D", ls=":", lw=1.6)
-    ax.text(p_star + 0.6, 8, f"analytic lure boundary\n(blend=staple, p*={p_star:.0f}%)",
+    ax.text(p_star + 0.6, 8, f"ขอบเขตเชิงวิเคราะห์\n(ค่าเฉลี่ย=อาหารปลอดภัย, p*={p_star:.0f}%)",
             fontsize=8.5, color="#A32D2D")
-    ax.set_title("The 'lure' is not an artifact of our gate: standard learners are lured MORE")
-    ax.set_xlabel("% of fruit encounters that are toxic (fresh)")
-    ax.set_ylabel("% of agents LURED (rank fruit > safe staple)")
+    ax.set_title("การถูกล่อไม่ใช่ของเฉพาะกฎเรา: กฎมาตรฐานยิ่งถูกล่อมากกว่า")
+    ax.set_xlabel("% ครั้งที่เจอผลไม้เป็นพิษ (สด)")
+    ax.set_ylabel("% เอเจนต์ที่ถูกล่อ (จัดผลไม้ > อาหารปลอดภัย)")
     ax.set_ylim(-5, 108); ax.legend(fontsize=9, loc="lower left")
     fig.savefig(OUT / "toxin_learner_comparison.png"); plt.close(fig)
     print("\nnote: discrimination = 0 holds for ALL of these by construction (value is keyed on"

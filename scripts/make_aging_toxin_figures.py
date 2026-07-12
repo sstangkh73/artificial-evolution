@@ -27,6 +27,7 @@ OUT = Path(__file__).resolve().parent.parent / "reports" / "figures"
 OUT.mkdir(parents=True, exist_ok=True)
 plt.rcParams.update({
     "figure.dpi": 150, "savefig.dpi": 150, "font.size": 11,
+    "font.family": "Tahoma", "axes.unicode_minus": False,
     "axes.spines.top": False, "axes.spines.right": False,
     "axes.grid": True, "grid.alpha": 0.25, "figure.autolayout": True,
 })
@@ -280,11 +281,11 @@ def fig_toxin_learning_curve():
     x = list(range(1, trials + 1))
     fig, ax = plt.subplots(figsize=(7.4, 4.5))
     ax.plot(x, [100 * v for v in off], "-", color=C["old"], lw=2.5,
-            label="no toxin mechanism (fruit stays attractive)")
+            label="ไม่มีกลไกพิษ (ผลไม้ยังน่ากิน)")
     ax.plot(x, [100 * v for v in on], "o-", color=C["new"], ms=3, lw=2.2,
-            label="with toxin mechanism (learns to avoid)")
-    ax.set_title("Learning curve: probability of choosing the toxic fruit")
-    ax.set_xlabel("feeding trial"); ax.set_ylabel("P(choose toxic fruit)  (% of 400 agents)")
+            label="มีกลไกพิษ (เรียนเลี่ยงได้เอง)")
+    ax.set_title("เส้นโค้งการเรียนรู้: ความน่าจะเป็นที่เลือกกินผลไม้พิษ")
+    ax.set_xlabel("ครั้งที่ลองกิน"); ax.set_ylabel("P(เลือกผลไม้พิษ)  (% ของ 400 เอเจนต์)")
     ax.legend(fontsize=9, loc="center right")
     ax.set_xlim(1, trials); ax.set_ylim(-3, 105)
     ax.annotate("population learns\nto avoid (~trial 9)", xy=(5, 100 * on[4]),

@@ -33,6 +33,7 @@ OUT = Path(__file__).resolve().parent.parent / "reports" / "figures"
 OUT.mkdir(parents=True, exist_ok=True)
 plt.rcParams.update({
     "figure.dpi": 150, "savefig.dpi": 150, "font.size": 11,
+    "font.family": "Tahoma", "axes.unicode_minus": False,
     "axes.spines.top": False, "axes.spines.right": False,
     "axes.grid": True, "grid.alpha": 0.25, "figure.autolayout": True,
 })
@@ -166,24 +167,24 @@ def main():
     xs = [int(f * 100) for f in fracs]
     ys = [lured_curve[f][0] for f in fracs]; es = [lured_curve[f][1] for f in fracs]
     axL.errorbar(xs, ys, yerr=es, marker="o", color=LINE, lw=2.2, capsize=4)
-    axL.set_title("Result 1: the 'lure' vs how often the fruit is toxic")
-    axL.set_xlabel("% of fruit encounters that are toxic (fresh)")
-    axL.set_ylabel("% of agents LURED (rank fruit > safe staple)")
+    axL.set_title("ผลที่ 1: การถูกล่อ (lure) เทียบกับความถี่ที่ผลไม้เป็นพิษ")
+    axL.set_xlabel("% ครั้งที่เจอผลไม้เป็นพิษ (สด)")
+    axL.set_ylabel("% เอเจนต์ที่ถูกล่อ (จัดผลไม้ > อาหารปลอดภัย)")
     axL.set_ylim(-5, 108)
-    axL.annotate(f"even when {int(P0*100)}% of encounters are a real poison\n(net {net_fresh:.0f} < staple 5),"
-                 f" {lured0[0]:.0f}% still seek it",
+    axL.annotate(f"แม้ {int(P0*100)}% ของครั้งเป็นพิษจริง\n(net {net_fresh:.0f} < staple 5)"
+                 f" ก็ยัง {lured0[0]:.0f}% ที่มุ่งกิน",
                  xy=(int(P0*100), lured0[0]), xytext=(38, 70), fontsize=8.6, color=OLD,
                  arrowprops=dict(arrowstyle="->", color=OLD))
-    b2 = axR.bar(["P(eat|in\nwindow)", "P(eat|out of\nwindow)"], [pin[0], pout[0]],
+    b2 = axR.bar(["P(กิน|ในหน้าต่าง)", "P(กิน|นอกหน้าต่าง)"], [pin[0], pout[0]],
                  yerr=[pin[1], pout[1]], capsize=5, color=[SAFE, TOXIC], alpha=0.85)
     axR.bar_label(b2, fmt="%.0f%%", padding=3, fontsize=10)
-    axR.set_title(f"Result 2: safe-window discrimination = {disc[0]:.1f} pts")
-    axR.set_ylabel("P(choose to eat)  (%)")
+    axR.set_title(f"ผลที่ 2: การแยกช่วงปลอดภัย = {disc[0]:.1f} pts")
+    axR.set_ylabel("P(เลือกกิน)  (%)")
     axR.set_ylim(0, max(pin[0], pout[0]) + max(pin[1], pout[1]) + 8)
-    axR.annotate(f"ideal gap 100 pts;\nlearner {disc[0]:.1f} pts -> age-blind",
+    axR.annotate(f"ค่าอุดมคติ 100 pts;\nเอเจนต์ {disc[0]:.1f} pts → มองไม่เห็นอายุ",
                  xy=(0.5, max(pin[0], pout[0])), xytext=(0.02, max(pin[0], pout[0]) + 2.5),
                  fontsize=9, color=OLD)
-    fig.suptitle(f"Multi-seed ({SEEDS} seeds x {N} agents, 95% CI): the failures are robust across the toxic-frequency axis",
+    fig.suptitle(f"หลายซีด ({SEEDS} ซีด × {N} เอเจนต์, 95% CI): ผลคงทนตลอดช่วงความถี่พิษ",
                  fontsize=10.5)
     fig.savefig(OUT / "toxin_multiseed_ci.png"); plt.close(fig)
     print("wrote", OUT / "toxin_multiseed_ci.png")
