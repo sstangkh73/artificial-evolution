@@ -288,7 +288,7 @@ def fig_toxin_learning_curve():
     ax.set_xlabel("ครั้งที่ลองกิน"); ax.set_ylabel("P(เลือกผลไม้พิษ)  (% ของ 400 เอเจนต์)")
     ax.legend(fontsize=9, loc="center right")
     ax.set_xlim(1, trials); ax.set_ylim(-3, 105)
-    ax.annotate("population learns\nto avoid (~trial 9)", xy=(5, 100 * on[4]),
+    ax.annotate("ประชากรเรียนเลี่ยง\nได้เอง (~รอบที่ 9)", xy=(5, 100 * on[4]),
                 xytext=(11, 78), fontsize=10, color=C["new"], ha="left",
                 arrowprops=dict(arrowstyle="->", color=C["new"]))
     fig.savefig(OUT / "toxin_fig3_learning_curve.png"); plt.close(fig)
