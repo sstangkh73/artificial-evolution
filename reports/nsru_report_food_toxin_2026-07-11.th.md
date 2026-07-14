@@ -127,6 +127,7 @@
 | ภาพที่ 7 | บริเวณการเกิด lure ทั่วช่วงพารามิเตอร์ | 23 |
 | ภาพที่ 8 | lure เกิดกับกฎการเรียนรู้ทั้ง 4 แบบ | 24 |
 | ภาพที่ 9 | พิษไม่โมโนโทนิก เล็งหน้าต่างปลอดภัยไม่ได้ (discrimination = 0) | 25 |
+| ภาพที่ 10 | ภาพหน้าจอโลกจำลอง 2 มิติ: เอเจนต์และจุดอาหาร (ภาคผนวก ก) | 32 |
 
 ---
 
@@ -414,7 +415,82 @@ lure เกิดกับกฎการเรียนรู้ทุกแบ
 
 # ภาคผนวก
 
-## ภาคผนวก ก: การทำซ้ำการทดลอง
+## ภาคผนวก ก: ภาพสภาพแวดล้อมและโลกจำลองสิ่งมีชีวิต
+
+ภาพที่ 10 เป็น **ภาพสถานะจริงจากโปรแกรม Artificial Evolution** (จับจากการรันโลกจริง ไม่ใช่ภาพวาดประกอบ) แสดงตารางโลก 2 มิติ ขนาด 40×40 ช่อง พร้อมเอเจนต์ (AI) และจุดที่เกิดอาหารแต่ละชนิด ณ รอบเวลาที่ 250
+
+![ภาพที่ 10 ภาพหน้าจอโลกจำลอง 2 มิติ: เอเจนต์ (สามเหลี่ยมน้ำเงิน) และจุดอาหารต่างชนิด](figures/world_snapshot.png)
+
+จากภาพจะเห็นว่าโลกกระจายด้วยอาหารสองชนิด คือ `raw_seed` (จุดสีน้ำตาล อาหารค่าต่ำ มีจำนวนมาก) และ `raw_plant` (จุดสีเขียว อาหารค่าสูง) ส่วนเอเจนต์ (สามเหลี่ยมน้ำเงิน) เดินหากินท่ามกลางอาหารเหล่านี้ เอเจนต์ **ไม่มีป้ายบอกว่าอาหารชนิดใดมีค่าเท่าไรหรือมีพิษ** ต้องเรียนรู้เองจากพลังงานที่ได้รับจริง — ภาพนี้คือสภาพแวดล้อมจริงที่ใช้ในการทดลององก์ที่ 1 (การเรียนรู้คุณค่าอาหาร) สร้างได้ด้วยคำสั่ง `python scripts/render_world_snapshot.py`
+
+## ภาคผนวก ข: โครงสร้างและซอร์สโค้ดการทำงานที่สำคัญ
+
+หัวใจของการเรียนรู้อยู่ที่โค้ด 3 ส่วนในไฟล์ `agents/agent.py` ดังนี้
+
+**(1) การเรียนค่าอาหารจากพลังงานจริง** — ปรับค่าที่จำของอาหารแต่ละชนิดแบบค่าเฉลี่ยเคลื่อนที่ (EMA) จากพลังงานสุทธิที่ได้รับ ค่านี้ไม่ได้ตั้งด้วยมือ
+
+```
+def _learn_food_value(self, env, kind, gained_energy):
+    if not getattr(env, "food_value_learning_enabled", False):
+        return
+    alpha = getattr(env, "diet_learning_rate", 0.3)
+    prev = self.food_value_memory.get(kind)
+    if prev is None:
+        self.food_value_memory[kind] = float(gained_energy)   # ชิมครั้งแรก = ค่าที่ได้จริง
+    else:
+        self.food_value_memory[kind] = prev + alpha * (float(gained_energy) - prev)
+```
+
+**(2) การตัดสินใจกิน/ข้าม (พฤติกรรมเลี่ยงเกิดเอง)** — ข้ามอาหารที่ค่าที่เรียนได้ต่ำกว่าเกณฑ์ pickiness เทียบกับอาหารที่ดีที่สุดที่รู้จัก
+
+```
+def _food_worth_eating(self, env):
+    pending = env.food_positions.get((self.x, self.y))
+    if pending is None:
+        return True
+    kind = pending.kind
+    if kind not in self.food_value_memory:
+        return True                       # ยังไม่เคยชิม -> ต้องชิมก่อนถึงเรียนค่าได้
+    if self.energy <= getattr(env, "diet_starvation_energy", 6):
+        return True                       # ใกล้อดตาย -> กินทุกอย่าง
+    best_known = max(self.food_value_memory.values())
+    if best_known <= 0.0:
+        return True
+    pickiness = getattr(env, "diet_pickiness", 0.5)
+    # ข้ามถ้าค่าที่เรียนได้ < pickiness x อาหารที่ดีที่สุดที่รู้จัก
+    return self.food_value_memory[kind] >= pickiness * best_known
+```
+
+**(3) ฟิสิกส์ของพิษ** — หักพลังงานเมื่อพิษเกินยีนความทน โดยพิษเปลี่ยนตามอายุอาหาร (สด/เก่า) ค่าที่หักไหลเข้าการเรียนรู้ทำให้เกิดการเลี่ยงได้เอง
+
+```
+def _apply_toxin(self, env, resource, gained_energy):
+    acute = getattr(env, "toxin_acute_penalty", 0.0)
+    chronic = getattr(env, "toxin_damage_coeff", 0.0)
+    if acute <= 0.0 and chronic <= 0.0:
+        return gained_energy              # ปิดพิษ -> ผลเดิมไม่เปลี่ยน
+    comp = metabolism.COMPOSITION.get(resource.kind)
+    mass = metabolism.FOOD_MASS.get(resource.kind, 1.0)
+    # พิษเปลี่ยนตามอายุอาหาร (detox / safe-window) -> ปัญหา hidden-state ต่อผู้เรียน
+    detox = getattr(env, "toxin_detox_ticks", 0)
+    w0 = getattr(env, "toxin_safe_window_start", 0)
+    w1 = getattr(env, "toxin_safe_window_end", 0)
+    potency = 1.0
+    if (detox and detox > 0) or (w1 and w1 > w0):
+        age = max(0, env.tick_count - resource.created_tick)
+        potency = metabolism.toxin_age_potency(age, detox, w0, w1)
+    excess = metabolism.toxin_penalty(
+        metabolism.toxin_load(comp, mass) * potency, self.body.toxin_tolerance)
+    if excess <= 0.0:
+        return gained_energy
+    if chronic > 0.0:                     # เรื้อรัง: เพิ่มความเสียหายสะสม (ต้นทุนอายุขัย)
+        self.damage += excess * chronic
+    if acute > 0.0:                       # เฉียบพลัน: หักพลังงานคำนี้ -> ป้อนการเรียนรู้
+        gained_energy = int(round(gained_energy - excess * acute))
+    return gained_energy
+```
+
+## ภาคผนวก ค: การทำซ้ำการทดลอง
 
 การเรียนรู้คุณค่าอาหาร (องก์ที่ 1):
 
@@ -436,6 +512,6 @@ python scripts/run_toxin_window_sim.py
 
 โค้ดกลไกหลักอยู่ใน `agents/agent.py`, `agents/body.py`, `world/metabolism.py`, `world/environment.py` และชุดทดสอบใน `tests/` (รวม 93/93 ผ่าน)
 
-## ภาคผนวก ข: หมายเหตุการจัดรูปแบบ
+## ภาคผนวก ง: หมายเหตุการจัดรูปแบบ
 
 รายงานฉบับนี้จัดตามข้อกำหนด: กระดาษ A4 พิมพ์หน้าเดียว, ตัวอักษร TH SarabunPSK ขนาด 16, ระยะขอบบน/ซ้าย 3.18 ซม. และล่าง/ขวา 2.54 ซม. บทที่ 1–5 รวมกันไม่เกิน 30 หน้า และภาคผนวกไม่เกิน 10 หน้า
