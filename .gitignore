@@ -17,6 +17,10 @@ env/
 .DS_Store
 Thumbs.db
 
+# Local Codex workspace files
+/.codex-temp/
+/agents/.skills/
+
 # Temporary probes and generated scratch files
 tmp_*
 bundled_python_test.txt
