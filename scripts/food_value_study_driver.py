@@ -76,7 +76,25 @@ def make_args(seed: int, model: str, max_ticks: int, output: str,
               memory_return_enabled: bool = True,
               initial_plant_population: int = 0,
               food_detection_threshold: float = 0.0,
-              vision_horizon: int = 0) -> SimpleNamespace:
+              vision_horizon: int = 0,
+              demographic_telemetry: bool = False,
+              demographic_local_radius: int = 3,
+              demographic_density_bin_size: int = 10,
+              demographic_age_bucket_size: int = 20,
+              aging_physics: bool = False,
+              aging_damage_rate: float = 0.4,
+              aging_repair_gain: float = 0.5,
+              aging_maintenance_cost: float = 2.0,
+              aging_damage_threshold: float = 100.0,
+              aging_mass_exponent: float = 0.25,
+              aging_max_repair_fraction: float = 0.95,
+              aging_intake_damage_coeff: float = 0.0,
+              toxin_acute_penalty: float = 0.0,
+              toxin_damage_coeff: float = 0.0,
+              toxic_food: float = 0.0,
+              toxin_detox_ticks: int = 0,
+              toxin_safe_window_start: int = 0,
+              toxin_safe_window_end: int = 0) -> SimpleNamespace:
     return SimpleNamespace(
         home_fidelity_enabled=home_fidelity,
         home_radius=home_radius,
@@ -133,12 +151,30 @@ def make_args(seed: int, model: str, max_ticks: int, output: str,
         memory_return_enabled=memory_return_enabled,
         initial_plant_population=initial_plant_population,
         food_detection_threshold=food_detection_threshold, vision_horizon=vision_horizon,
+        demographic_telemetry_enabled=demographic_telemetry,
+        demographic_local_radius=demographic_local_radius,
+        demographic_density_bin_size=demographic_density_bin_size,
+        demographic_age_bucket_size=demographic_age_bucket_size,
         plant_lifecycle_food_signal_weight=1.35,
         seed_hunger_drop_bonus=0.06, seed_drop_block_critical_hunger=False,
         seed_drop_safe_window_only=False, seed_drop_safe_hunger_max=0.55,
         seed_drop_safe_fear_max=0.45, seed_drop_safe_cold_max=0.45,
         seed_drop_safe_safety_min=0.45, reward_memory_shuffle_radius=0,
         metabolism_model=model,
+        aging_physics_enabled=aging_physics,
+        aging_damage_rate=aging_damage_rate,
+        aging_repair_gain=aging_repair_gain,
+        aging_maintenance_cost=aging_maintenance_cost,
+        aging_damage_threshold=aging_damage_threshold,
+        aging_mass_exponent=aging_mass_exponent,
+        aging_max_repair_fraction=aging_max_repair_fraction,
+        aging_intake_damage_coeff=aging_intake_damage_coeff,
+        toxin_acute_penalty=toxin_acute_penalty,
+        toxin_damage_coeff=toxin_damage_coeff,
+        toxic_food_spawn_per_tick=toxic_food,
+        toxin_detox_ticks=toxin_detox_ticks,
+        toxin_safe_window_start=toxin_safe_window_start,
+        toxin_safe_window_end=toxin_safe_window_end,
     )
 
 
@@ -165,6 +201,14 @@ def summarize(s: dict) -> dict:
     out["food_spawned_by_kind"] = s.get("food_spawned_by_kind")
     out["agent_diet_metrics"] = s.get("agent_diet_metrics")
     out["agent_diet_trajectory_rows"] = len(s.get("agent_diet_trajectory") or [])
+    demographic = s.get("demographic_telemetry") or {}
+    out["demographic_telemetry"] = {
+        "enabled": demographic.get("enabled"),
+        "birth_window_cv": demographic.get("birth_window_cv"),
+        "death_window_cv": demographic.get("death_window_cv"),
+        "r0_density_bins": len(demographic.get("r0_by_density") or {}),
+        "k_estimate": demographic.get("k_estimate"),
+    } if demographic else None
     out["top_agent_diet"] = _top_agent_diet_rows(s)
     return out
 
@@ -226,6 +270,45 @@ if __name__ == "__main__":
                    help="GA.3b physical vision: replace the hard sight cutoff with continuous 1/d^2 falloff; perceive food while energy/(d+1)^2 >= this threshold (range emerges from brightness). 0 = off (legacy hard cutoff)")
     p.add_argument("--vision-horizon", type=int, default=0,
                    help="absolute sight ceiling (curvature horizon) for the continuous model; 0 = width+height")
+    p.add_argument("--demographic-telemetry", action="store_true",
+                   help="write Option ข.0 demographic diagnostics into the full result JSON")
+    p.add_argument("--demographic-local-radius", type=int, default=3,
+                   help="radius for local food-per-capita telemetry")
+    p.add_argument("--demographic-density-bin-size", type=int, default=10,
+                   help="population-count bin size for R0-by-density telemetry")
+    p.add_argument("--demographic-age-bucket-size", type=int, default=20,
+                   help="age histogram bucket size for cohort-sync telemetry")
+    # Aging Physics v1 (opt-in). See reports/physics_realism_audit_aging_2026-07-01.th.md
+    # and reports/aging_physics_v1_implementation_2026-07-01.th.md.
+    p.add_argument("--aging", action="store_true",
+                   help="enable Aging Physics: intrinsic death from accumulated somatic damage (senescence)")
+    p.add_argument("--aging-damage-rate", type=float, default=0.4,
+                   help="damage per tick per unit mass-specific metabolism (ageing pace)")
+    p.add_argument("--aging-repair-gain", type=float, default=0.5,
+                   help="how much a unit of somatic-maintenance effort repairs damage")
+    p.add_argument("--aging-maintenance-cost", type=float, default=2.0,
+                   help="energy per tick per unit somatic_maintenance (Disposable Soma price)")
+    p.add_argument("--aging-damage-threshold", type=float, default=100.0,
+                   help="damage level at which senescence death fires")
+    p.add_argument("--aging-mass-exponent", type=float, default=0.25,
+                   help="allometric exponent -> lifespan ~ mass^this (Speakman ~0.15-0.3)")
+    p.add_argument("--aging-max-repair-fraction", type=float, default=0.95,
+                   help="max fraction of gross damage repair can offset (<1 -> ageing inevitable)")
+    p.add_argument("--aging-intake-damage-coeff", type=float, default=0.0,
+                   help="caloric-restriction lever: extra damage per unit energy absorbed (0=off)")
+    # Toxicity study (opt-in). raw_fruit = high energy + high toxin.
+    p.add_argument("--toxic-food", type=float, default=0.0,
+                   help="spawn this many high-energy/high-toxin raw_fruit per tick (0=off)")
+    p.add_argument("--toxin-acute-penalty", type=float, default=0.0,
+                   help="energy subtracted per unit toxin excess (acute sickness -> learnable avoidance)")
+    p.add_argument("--toxin-damage-coeff", type=float, default=0.0,
+                   help="chronic somatic damage per unit toxin excess (needs --aging to affect death)")
+    p.add_argument("--toxin-detox-ticks", type=int, default=0,
+                   help="age (ticks) at which a food's toxin fully decays to 0 (store-to-detoxify; 0=off)")
+    p.add_argument("--toxin-safe-window-start", type=int, default=0,
+                   help="non-monotonic: food is safe only for age in [start, end) (toxic before/after)")
+    p.add_argument("--toxin-safe-window-end", type=int, default=0,
+                   help="end of the safe age window (0=off; overrides --toxin-detox-ticks)")
     p.add_argument("--dump", default=None, help="write full result JSON here for regression diff")
     a = p.parse_args()
     summary = R.run_watch(make_args(a.seed, a.model, a.ticks, a.output,
@@ -255,7 +338,27 @@ if __name__ == "__main__":
                                     memory_return_enabled=not a.no_memory_return,
                                     initial_plant_population=a.initial_plants,
                                     food_detection_threshold=a.food_detection_threshold,
-                                    vision_horizon=a.vision_horizon))
+                                    vision_horizon=a.vision_horizon,
+                                    demographic_telemetry=a.demographic_telemetry,
+                                    demographic_local_radius=a.demographic_local_radius,
+                                    demographic_density_bin_size=a.demographic_density_bin_size,
+                                    demographic_age_bucket_size=a.demographic_age_bucket_size,
+                                    aging_physics=a.aging,
+                                    aging_damage_rate=a.aging_damage_rate,
+                                    aging_repair_gain=a.aging_repair_gain,
+                                    aging_maintenance_cost=a.aging_maintenance_cost,
+                                    aging_damage_threshold=a.aging_damage_threshold,
+                                    aging_mass_exponent=a.aging_mass_exponent,
+                                    aging_max_repair_fraction=a.aging_max_repair_fraction,
+                                    aging_intake_damage_coeff=a.aging_intake_damage_coeff,
+                                    toxin_acute_penalty=a.toxin_acute_penalty,
+                                    toxin_damage_coeff=a.toxin_damage_coeff,
+                                    toxic_food=a.toxic_food,
+                                    toxin_detox_ticks=a.toxin_detox_ticks,
+                                    toxin_safe_window_start=a.toxin_safe_window_start,
+                                    toxin_safe_window_end=a.toxin_safe_window_end))
     if a.dump:
-        Path(a.dump).write_text(json.dumps(summary, ensure_ascii=False, indent=2), encoding="utf-8")
+        dump_path = Path(a.dump)
+        dump_path.parent.mkdir(parents=True, exist_ok=True)
+        dump_path.write_text(json.dumps(summary, ensure_ascii=False, indent=2), encoding="utf-8")
     print(json.dumps(summarize(summary), ensure_ascii=False))

@@ -745,6 +745,200 @@ def _agent_state_summary(agents: list[Agent]) -> dict[str, object]:
     }
 
 
+def _bucket_label(value: int | float, bucket_size: int) -> str:
+    size = max(1, int(bucket_size))
+    low = (max(0, int(value)) // size) * size
+    return f"{low}-{low + size - 1}"
+
+
+def _rounded_mean(values: list[int | float], digits: int = 3) -> float | None:
+    if not values:
+        return None
+    return round(sum(float(value) for value in values) / len(values), digits)
+
+
+def _coefficient_of_variation(values: list[int | float]) -> float | None:
+    if not values:
+        return None
+    mean = sum(float(value) for value in values) / len(values)
+    if mean <= 0.0:
+        return None
+    variance = sum((float(value) - mean) ** 2 for value in values) / len(values)
+    return round((variance ** 0.5) / mean, 4)
+
+
+def _age_structure_summary(agents: list[Agent], bucket_size: int) -> dict[str, object]:
+    if not agents:
+        return {
+            "age_bucket_size": max(1, int(bucket_size)),
+            "histogram": {},
+            "stage_counts": {},
+            "mean_age": None,
+        }
+    ages = [max(0, int(getattr(agent, "age", 0))) for agent in agents]
+    return {
+        "age_bucket_size": max(1, int(bucket_size)),
+        "histogram": dict(sorted(Counter(_bucket_label(age, bucket_size) for age in ages).items())),
+        "stage_counts": dict(Counter(str(getattr(agent, "current_stage", "unknown")) for agent in agents)),
+        "mean_age": _rounded_mean(ages, 2),
+    }
+
+
+def _local_food_per_capita_summary(env: Environment, agents: list[Agent], radius: int) -> dict[str, object]:
+    radius = max(0, int(radius))
+    if not agents:
+        return {
+            "radius": radius,
+            "agents": 0,
+            "mean": None,
+            "min": None,
+            "max": None,
+            "mean_food_count": None,
+            "mean_local_agents": None,
+        }
+
+    food_positions = list(env.food_positions.keys())
+    agent_positions = [
+        (int(getattr(agent, "x", 0)), int(getattr(agent, "y", 0)))
+        for agent in agents
+    ]
+    local_values: list[float] = []
+    food_counts: list[int] = []
+    local_agent_counts: list[int] = []
+
+    for agent in agents:
+        anchor = getattr(agent, "home_anchor", None)
+        if anchor is None:
+            center_x = int(getattr(agent, "x", 0))
+            center_y = int(getattr(agent, "y", 0))
+        else:
+            center_x = int(anchor[0])
+            center_y = int(anchor[1])
+        food_count = sum(
+            1
+            for food_x, food_y in food_positions
+            if abs(food_x - center_x) + abs(food_y - center_y) <= radius
+        )
+        local_agents = sum(
+            1
+            for agent_x, agent_y in agent_positions
+            if abs(agent_x - center_x) + abs(agent_y - center_y) <= radius
+        )
+        local_agents = max(1, local_agents)
+        local_values.append(food_count / local_agents)
+        food_counts.append(food_count)
+        local_agent_counts.append(local_agents)
+
+    return {
+        "radius": radius,
+        "agents": len(agents),
+        "mean": round(sum(local_values) / len(local_values), 3),
+        "min": round(min(local_values), 3),
+        "max": round(max(local_values), 3),
+        "mean_food_count": _rounded_mean(food_counts, 3),
+        "mean_local_agents": _rounded_mean(local_agent_counts, 3),
+    }
+
+
+def _new_r0_density_bin() -> dict[str, object]:
+    return {
+        "births": 0,
+        "matured_offspring": 0,
+        "matured_female_offspring": 0,
+        "population_at_birth": [],
+        "food_per_capita_at_birth": [],
+    }
+
+
+def _summarize_r0_by_density(
+    r0_density_bins: dict[str, dict[str, object]],
+    r0_density_mothers: dict[str, set[int]],
+    r0_density_matured_mothers: dict[str, set[int]],
+) -> dict[str, dict[str, object]]:
+    def sort_key(label: str) -> int:
+        try:
+            return int(label.split("-", 1)[0])
+        except ValueError:
+            return 0
+
+    summary: dict[str, dict[str, object]] = {}
+    for density_bin in sorted(r0_density_bins, key=sort_key):
+        stats = r0_density_bins[density_bin]
+        births = int(stats.get("births", 0) or 0)
+        matured = int(stats.get("matured_offspring", 0) or 0)
+        matured_female = int(stats.get("matured_female_offspring", 0) or 0)
+        mothers = len(r0_density_mothers.get(density_bin, set()))
+        matured_mothers = len(r0_density_matured_mothers.get(density_bin, set()))
+        populations = [float(value) for value in stats.get("population_at_birth", [])]
+        food_per_capita = [float(value) for value in stats.get("food_per_capita_at_birth", [])]
+        summary[density_bin] = {
+            "mothers": mothers,
+            "mothers_with_matured_offspring": matured_mothers,
+            "births": births,
+            "matured_offspring": matured,
+            "matured_female_offspring": matured_female,
+            "offspring_maturation_rate": round(matured / births, 4) if births else None,
+            "matured_offspring_per_mother": round(matured / mothers, 4) if mothers else None,
+            "female_replacement_proxy": round(matured_female / mothers, 4) if mothers else None,
+            "mean_population_at_birth": _rounded_mean(populations, 3),
+            "mean_food_per_capita_at_birth": _rounded_mean(food_per_capita, 3),
+        }
+    return summary
+
+
+def _estimate_k_from_trajectory(population_trajectory: list[dict[str, object]]) -> dict[str, object]:
+    candidates: list[dict[str, object]] = []
+    nearest: dict[str, object] | None = None
+    nearest_key: tuple[float, int] | None = None
+
+    for row in population_trajectory:
+        if "births_window" not in row or "deaths_window" not in row:
+            continue
+        births = int(row.get("births_window", 0) or 0)
+        deaths = int(row.get("deaths_window", 0) or 0)
+        events = births + deaths
+        error = abs(births - deaths)
+        tolerance = max(1, int(round(events * 0.1)))
+        if events > 0:
+            key = (error / events, error)
+            if nearest_key is None or key < nearest_key:
+                nearest_key = key
+                nearest = row
+            if error <= tolerance:
+                candidates.append(row)
+
+    result: dict[str, object] = {
+        "method": "population windows where births ~= deaths",
+        "candidate_windows": len(candidates),
+    }
+    if nearest is not None:
+        result["nearest_balance_window"] = {
+            "tick": nearest.get("tick"),
+            "population": nearest.get("population"),
+            "standing_food": nearest.get("standing_food"),
+            "food_per_capita": nearest.get("food_per_capita"),
+            "births_window": nearest.get("births_window"),
+            "deaths_window": nearest.get("deaths_window"),
+            "balance_error": nearest.get("birth_death_balance_error"),
+        }
+    if candidates:
+        result.update({
+            "mean_population_at_balance": _rounded_mean(
+                [float(row.get("population", 0) or 0) for row in candidates],
+                3,
+            ),
+            "mean_standing_food_at_balance": _rounded_mean(
+                [float(row.get("standing_food", 0) or 0) for row in candidates],
+                3,
+            ),
+            "mean_food_per_capita_at_balance": _rounded_mean(
+                [float(row.get("food_per_capita", 0) or 0) for row in candidates],
+                3,
+            ),
+        })
+    return result
+
+
 def run_watch(args: argparse.Namespace) -> dict[str, object]:
     rng = Random(args.seed)
     bodies = generate_candidate_body_plans()
@@ -820,6 +1014,20 @@ def run_watch(args: argparse.Namespace) -> dict[str, object]:
         mortality_constant_hazard=getattr(args, "mortality_constant_hazard", 0.0),
         starvation_death_enabled=getattr(args, "starvation_death_enabled", False),
         starvation_tolerance=getattr(args, "starvation_tolerance", 15),
+        aging_physics_enabled=getattr(args, "aging_physics_enabled", False),
+        aging_damage_rate=getattr(args, "aging_damage_rate", 0.4),
+        aging_repair_gain=getattr(args, "aging_repair_gain", 0.5),
+        aging_maintenance_cost=getattr(args, "aging_maintenance_cost", 2.0),
+        aging_damage_threshold=getattr(args, "aging_damage_threshold", 100.0),
+        aging_mass_exponent=getattr(args, "aging_mass_exponent", 0.25),
+        aging_max_repair_fraction=getattr(args, "aging_max_repair_fraction", 0.95),
+        aging_intake_damage_coeff=getattr(args, "aging_intake_damage_coeff", 0.0),
+        toxin_acute_penalty=getattr(args, "toxin_acute_penalty", 0.0),
+        toxin_damage_coeff=getattr(args, "toxin_damage_coeff", 0.0),
+        toxic_food_spawn_per_tick=getattr(args, "toxic_food_spawn_per_tick", 0.0),
+        toxin_detox_ticks=getattr(args, "toxin_detox_ticks", 0),
+        toxin_safe_window_start=getattr(args, "toxin_safe_window_start", 0),
+        toxin_safe_window_end=getattr(args, "toxin_safe_window_end", 0),
     )
     # GA.4: optionally establish a mature plant population before founders arrive
     # (a pre-existing grassland -> real carrying capacity at tick 0). 0 = off,
@@ -969,6 +1177,22 @@ def run_watch(args: argparse.Namespace) -> dict[str, object]:
     agent_moved_seed_chain_agents: set[int] = set()
     control_seed_chain_ids: set[int] = set()
     total_births = 0
+    demographic_telemetry_enabled = bool(getattr(args, "demographic_telemetry_enabled", False))
+    demographic_local_radius = max(
+        0,
+        int(getattr(args, "demographic_local_radius", getattr(args, "home_radius", 3))),
+    )
+    demographic_density_bin_size = max(1, int(getattr(args, "demographic_density_bin_size", 10)))
+    demographic_age_bucket_size = max(1, int(getattr(args, "demographic_age_bucket_size", 20)))
+    births_at_last_trajectory = 0
+    deaths_at_last_trajectory = 0
+    birth_window_counts: list[int] = []
+    death_window_counts: list[int] = []
+    child_birth_density_records: dict[int, dict[str, object]] = {}
+    adult_maturation_seen_ids: set[int] = set()
+    r0_density_bins: dict[str, dict[str, object]] = defaultdict(_new_r0_density_bin)
+    r0_density_mothers: dict[str, set[int]] = defaultdict(set)
+    r0_density_matured_mothers: dict[str, set[int]] = defaultdict(set)
     peak_population = len(agents)
     stop_reason = "max_ticks_reached"
     stop_signals: list[dict[str, object]] = []
@@ -2099,9 +2323,26 @@ def run_watch(args: argparse.Namespace) -> dict[str, object]:
                     args.max_population - (len(agents) + len(newborns)),
                     agent.decide_litter_size(env, mate, rng),
                 )
+                birth_population = len(agents) + len(newborns)
+                birth_density_bin = _bucket_label(birth_population, demographic_density_bin_size)
                 agent.prepare_reproduction(env, mate, litter_size)
                 for _ in range(litter_size):
                     child = agent.spawn_child(next_agent_id, rng, env, mate=mate)
+                    if demographic_telemetry_enabled:
+                        child_birth_density_records[child.agent_id] = {
+                            "birth_tick": current_tick,
+                            "mother_id": agent.agent_id,
+                            "mother_generation": int(agent.generation),
+                            "density_bin": birth_density_bin,
+                            "population_at_birth": birth_population,
+                            "food_per_capita_at_birth": round(env.food_per_capita, 4),
+                            "child_sex": child.sex,
+                        }
+                        density_stats = r0_density_bins[birth_density_bin]
+                        density_stats["births"] = int(density_stats.get("births", 0) or 0) + 1
+                        density_stats["population_at_birth"].append(birth_population)
+                        density_stats["food_per_capita_at_birth"].append(round(env.food_per_capita, 4))
+                        r0_density_mothers[birth_density_bin].add(agent.agent_id)
                     newborns.append(child)
                     next_agent_id += 1
                 total_births += litter_size
@@ -2121,6 +2362,24 @@ def run_watch(args: argparse.Namespace) -> dict[str, object]:
                 agents.remove(agent)
 
         agents.extend(newborns)
+        if demographic_telemetry_enabled:
+            for agent in agents:
+                if agent.agent_id in adult_maturation_seen_ids:
+                    continue
+                birth_record = child_birth_density_records.get(agent.agent_id)
+                if birth_record is None or int(getattr(agent, "age", 0)) < ADULT_AGE:
+                    continue
+                adult_maturation_seen_ids.add(agent.agent_id)
+                density_bin = str(birth_record.get("density_bin", "unknown"))
+                density_stats = r0_density_bins[density_bin]
+                density_stats["matured_offspring"] = int(density_stats.get("matured_offspring", 0) or 0) + 1
+                if getattr(agent, "sex", None) == "female":
+                    density_stats["matured_female_offspring"] = (
+                        int(density_stats.get("matured_female_offspring", 0) or 0) + 1
+                    )
+                mother_id = birth_record.get("mother_id")
+                if isinstance(mother_id, int):
+                    r0_density_matured_mothers[density_bin].add(mother_id)
         peak_population = max(peak_population, len(agents))
         if current_tick % 200 == 0:
             diet_snap: Counter[str] = Counter()
@@ -2152,11 +2411,12 @@ def run_watch(args: argparse.Namespace) -> dict[str, object]:
                     for _r in _sensing_r:
                         if _nd <= _r:
                             _sensing_r[_r] += 1
-            population_trajectory.append({
+            total_deaths = sum(agent_death_reasons.values())
+            trajectory_row = {
                 "tick": current_tick,
                 "population": len(agents),
                 "births": total_births,
-                "deaths": sum(agent_death_reasons.values()),
+                "deaths": total_deaths,
                 "mean_energy": round(sum(a.energy for a in agents) / len(agents), 1) if agents else 0,
                 "standing_food": len(env.food_positions),
                 "food_per_capita": round(env.food_per_capita, 2),
@@ -2169,7 +2429,28 @@ def run_watch(args: argparse.Namespace) -> dict[str, object]:
                 "raw_plant_meals": diet_snap.get("raw_plant", 0),
                 "max_generation": max(gen_snap) if gen_snap else 0,
                 "generation_counts": dict(sorted(gen_snap.items())),
-            })
+            }
+            if demographic_telemetry_enabled:
+                births_window = total_births - births_at_last_trajectory
+                deaths_window = total_deaths - deaths_at_last_trajectory
+                births_at_last_trajectory = total_births
+                deaths_at_last_trajectory = total_deaths
+                birth_window_counts.append(births_window)
+                death_window_counts.append(deaths_window)
+                trajectory_row.update({
+                    "births_window": births_window,
+                    "deaths_window": deaths_window,
+                    "birth_death_balance_error": abs(births_window - deaths_window),
+                    "birth_window_cv": _coefficient_of_variation(birth_window_counts),
+                    "death_window_cv": _coefficient_of_variation(death_window_counts),
+                    "local_food_per_capita": _local_food_per_capita_summary(
+                        env,
+                        agents,
+                        demographic_local_radius,
+                    ),
+                    "age_structure": _age_structure_summary(agents, demographic_age_bucket_size),
+                })
+            population_trajectory.append(trajectory_row)
         if current_tick % agent_diet_sample_interval == 0:
             append_agent_diet_snapshot(current_tick)
         tick_events.extend(env.pop_physics_events())
@@ -2921,6 +3202,28 @@ def run_watch(args: argparse.Namespace) -> dict[str, object]:
         "sample_plant_lifecycle_food_consumed": event_samples_by_kind["plant_lifecycle_food_consumed"],
         "sample_plant_lifecycle_food_decayed": event_samples_by_kind["plant_lifecycle_food_decayed"],
     }
+    if demographic_telemetry_enabled:
+        result["demographic_telemetry"] = {
+            "enabled": True,
+            "local_radius": demographic_local_radius,
+            "density_bin_size": demographic_density_bin_size,
+            "age_bucket_size": demographic_age_bucket_size,
+            "birth_windows": len(birth_window_counts),
+            "birth_window_cv": _coefficient_of_variation(birth_window_counts),
+            "death_window_cv": _coefficient_of_variation(death_window_counts),
+            "final_local_food_per_capita": _local_food_per_capita_summary(
+                env,
+                agents,
+                demographic_local_radius,
+            ),
+            "final_age_structure": _age_structure_summary(agents, demographic_age_bucket_size),
+            "r0_by_density": _summarize_r0_by_density(
+                r0_density_bins,
+                r0_density_mothers,
+                r0_density_matured_mothers,
+            ),
+            "k_estimate": _estimate_k_from_trajectory(population_trajectory),
+        }
     return result
 
 
@@ -2968,6 +3271,30 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--learning-revisit-min-delay-ticks", type=int, default=20)
     parser.add_argument("--learning-revisit-max-age-ticks", type=int, default=2000)
     parser.add_argument("--learning-reward-memory-limit", type=int, default=1200)
+    parser.add_argument(
+        "--demographic-telemetry",
+        dest="demographic_telemetry_enabled",
+        action="store_true",
+        help="add opt-in demographic diagnostics to population_trajectory and final JSON",
+    )
+    parser.add_argument(
+        "--demographic-local-radius",
+        type=int,
+        default=3,
+        help="radius for local food-per-capita telemetry around home/current position",
+    )
+    parser.add_argument(
+        "--demographic-density-bin-size",
+        type=int,
+        default=10,
+        help="population-count bin size for R0-by-density telemetry",
+    )
+    parser.add_argument(
+        "--demographic-age-bucket-size",
+        type=int,
+        default=20,
+        help="age histogram bucket size for cohort-synchronization telemetry",
+    )
     parser.add_argument("--phase3-min-seed-move-distance", type=int, default=1)
     parser.add_argument("--phase4-patch-radius", type=int, default=4)
     parser.add_argument("--phase4-min-patch-moved-seed-drops", type=int, default=3)

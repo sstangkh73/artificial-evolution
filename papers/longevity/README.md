@@ -48,3 +48,181 @@ cd C:\artificial-evolution\papers\longevity
 - #13 López-Otín 2023 (Cell): https://pubmed.ncbi.nlm.nih.gov/36599349/
 
 > เลขที่ (#) ตรงกับตารางอ้างอิงในรายงานหลัก `human_lifespan_determinants_review.md`
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+(async () => {
+  const CONFIG = {
+    DRY_RUN: true,          // ตรวจสอบก่อน แล้วเปลี่ยนเป็น false
+    MAX_UNFOLLOW: 9999,     // เปลี่ยนเป็น 30–50 หากต้องการทำเป็นรอบ
+    DELAY_MIN: 3000,
+    DELAY_MAX: 6000,
+    MAX_STUCK_ROUNDS: 8
+  };
+
+  window.stopTikTokUnfollow = false;
+
+  const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
+  const normalize = value => String(value || "").trim().toLowerCase();
+  const randomDelay = () =>
+    CONFIG.DELAY_MIN +
+    Math.random() * (CONFIG.DELAY_MAX - CONFIG.DELAY_MIN);
+
+  const isVisible = element => {
+    const rect = element.getBoundingClientRect();
+    return rect.width > 0 && rect.height > 0;
+  };
+
+  const followingLabels = new Set([
+    "following",
+    "กำลังติดตาม",
+    "กำลังติดตามอยู่",
+    "ติดตามแล้ว"
+  ]);
+
+  const friendLabels = new Set([
+    "friends",
+    "friend",
+    "เพื่อน"
+  ]);
+
+  const ariaLabel = button =>
+    normalize(button.getAttribute("aria-label"));
+
+  const getFollowingButtons = () =>
+    [...document.querySelectorAll("button[aria-label]")]
+      .filter(isVisible)
+      .filter(button => followingLabels.has(ariaLabel(button)))
+      .filter(button => !friendLabels.has(ariaLabel(button)));
+
+  const getFriendButtons = () =>
+    [...document.querySelectorAll("button[aria-label]")]
+      .filter(isVisible)
+      .filter(button => friendLabels.has(ariaLabel(button)));
+
+  const findScrollContainer = element => {
+    let current = element?.parentElement;
+
+    while (current && current !== document.body) {
+      const style = getComputedStyle(current);
+
+      if (
+        current.scrollHeight > current.clientHeight + 20 &&
+        ["auto", "scroll"].includes(style.overflowY)
+      ) {
+        return current;
+      }
+
+      current = current.parentElement;
+    }
+
+    return document.scrollingElement;
+  };
+
+  const initialFollowing = getFollowingButtons();
+  const initialFriends = getFriendButtons();
+
+  console.log(`🎯 Following ที่พบตอนนี้: ${initialFollowing.length}`);
+  console.log(`🛡️ Friends ที่จะไม่แตะ: ${initialFriends.length}`);
+
+  if (CONFIG.DRY_RUN) {
+    console.log(
+      "✅ DRY RUN เสร็จแล้ว — ยังไม่มีการกดปุ่ม เปลี่ยน DRY_RUN เป็น false เพื่อเริ่ม"
+    );
+    return;
+  }
+
+  const firstButton =
+    initialFollowing[0] ||
+    initialFriends[0] ||
+    document.querySelector("button[aria-label]");
+
+  const scrollContainer = findScrollContainer(firstButton);
+
+  let total = 0;
+  let stuckRounds = 0;
+
+  while (
+    total < CONFIG.MAX_UNFOLLOW &&
+    stuckRounds < CONFIG.MAX_STUCK_ROUNDS
+  ) {
+    if (window.stopTikTokUnfollow) {
+      console.warn("⛔ หยุดการทำงานแล้ว");
+      break;
+    }
+
+    const buttons = getFollowingButtons();
+    let clickedThisRound = 0;
+
+    for (const button of buttons) {
+      if (
+        window.stopTikTokUnfollow ||
+        total >= CONFIG.MAX_UNFOLLOW
+      ) {
+        break;
+      }
+
+      // ตรวจซ้ำทันที ก่อนกด
+      if (!followingLabels.has(ariaLabel(button))) continue;
+      if (friendLabels.has(ariaLabel(button))) continue;
+
+      button.scrollIntoView({
+        block: "center",
+        behavior: "smooth"
+      });
+
+      await sleep(500);
+
+      // หากสถานะเปลี่ยนเป็น Friends ระหว่างรอ จะข้ามทันที
+      if (!followingLabels.has(ariaLabel(button))) {
+        console.log("🛡️ สถานะเปลี่ยน จึงข้ามปุ่มนี้");
+        continue;
+      }
+
+      button.click();
+      total++;
+      clickedThisRound++;
+
+      console.log(`❌ Unfollow แล้ว ${total} บัญชี`);
+
+      await sleep(randomDelay());
+    }
+
+    const before = scrollContainer.scrollTop;
+
+    scrollContainer.scrollBy({
+      top: Math.max(400, scrollContainer.clientHeight * 0.8),
+      behavior: "smooth"
+    });
+
+    await sleep(1800);
+
+    const after = scrollContainer.scrollTop;
+    const remaining = getFollowingButtons().length;
+
+    if (
+      clickedThisRound === 0 &&
+      remaining === 0 &&
+      Math.abs(after - before) < 5
+    ) {
+      stuckRounds++;
+    } else {
+      stuckRounds = 0;
+    }
+  }
+
+  console.log(`✅ จบการทำงาน — unfollow ทั้งหมด ${total} บัญชี`);
+  console.log(`🛡️ ปุ่ม Friends ไม่ถูกกด`);
+})();
