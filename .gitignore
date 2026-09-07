@@ -44,3 +44,6 @@ bodysmith_*
 utmt_cli/
 utmt_*.csx
 utmt_release.json
+
+# Third-party paper PDFs are copyrighted; only the reading list is published
+papers/*.pdf

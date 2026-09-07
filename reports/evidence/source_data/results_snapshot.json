@@ -1,0 +1,56 @@
+{
+  "generated_by": "scripts/prepare_top_two_publication_stats.py",
+  "source_scope": "existing completed runs and existing real-mechanism toxin harnesses",
+  "paper_01_food_value": {
+    "design": "paired-seed controlled simulation",
+    "statistical_unit": "seed/run",
+    "n_pairs": 10,
+    "ticks_per_run": 3000,
+    "no_learning": {
+      "mean": 1945.3,
+      "sd": 248.17469205738482,
+      "ci95_half_width": 177.52114575666752
+    },
+    "value_learning": {
+      "mean": 423.0,
+      "sd": 65.12381370214057,
+      "ci95_half_width": 46.58353327088876
+    },
+    "paired_difference": {
+      "mean": 1522.3,
+      "sd": 253.8683166963184,
+      "ci95_half_width": 181.5938364933127,
+      "median": 1594.5,
+      "exact_two_sided_sign_flip_p": 0.001953125,
+      "all_pairs_favor_learning": true
+    },
+    "paired_ratio": {
+      "mean": 4.697670680900949,
+      "median": 4.859157165154361
+    },
+    "mechanism_control_from_report": {
+      "memory_on_agents_skipping": "10/12",
+      "memory_off_agents_skipping": "0/12",
+      "scope": "single matched seed; mechanistic control, not the inferential unit"
+    }
+  },
+  "paper_02_toxin_lure": {
+    "design": "controlled two-state and safe-window mechanism experiments",
+    "statistical_unit": "seed/run",
+    "n_seeds": 30,
+    "agents_per_seed": 100,
+    "trials_per_agent": 40,
+    "fresh_net_energy": 2.0,
+    "aged_net_energy": 10.0,
+    "safe_staple_energy": 5.0,
+    "analytic_lure_boundary_toxic_fraction": 0.625,
+    "safe_window_discrimination_points": {
+      "mean": 0.0,
+      "sd": 0.0,
+      "ci95_half_width": 0.0
+    },
+    "fitness_cost_demonstrated": false,
+    "full_ecology_demonstrated": false,
+    "claim_boundary": "The representation-level discrimination failure is analytic; lure magnitude is learner- and protocol-specific. Survival or evolutionary cost is not established."
+  }
+}
