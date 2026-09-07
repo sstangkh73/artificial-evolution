@@ -280,3 +280,31 @@ python main.py --mode distinct-search --seed 7 --target-body-types 50
 - `docs/PROJECT_OVERVIEW.md` for research framing and roadmap
 - `docs/WORLD_RULES.md` for simulation rules
 - `docs/PAPER_DATA_PROTOCOL.md` for research artifact structure
+
+## License
+
+- **Code** — MIT License, see [`LICENSE`](LICENSE).
+- **Data, reports, and figures** — Creative Commons Attribution 4.0
+  International (CC BY 4.0), see [`LICENSE-DATA.md`](LICENSE-DATA.md). This
+  covers `reports/`, `data/`, and `docs/`.
+- **Third-party papers** under `papers/` are not covered and remain under their
+  publishers' terms. Only the reading list and the author's own summaries are
+  published here.
+
+Attribution: Chisanupong Injun (2026).
+[ORCID 0009-0000-2979-1916](https://orcid.org/0009-0000-2979-1916).
+
+### สัญญาอนุญาต
+
+- **โค้ด** ใช้สัญญาอนุญาต MIT ดู [`LICENSE`](LICENSE)
+- **ข้อมูล รายงาน และภาพประกอบ** ใช้ CC BY 4.0 ดู [`LICENSE-DATA.md`](LICENSE-DATA.md)
+  ครอบคลุม `reports/`, `data/` และ `docs/`
+- **เอกสารของบุคคลที่สาม** ใน `papers/` ไม่อยู่ภายใต้สัญญาอนุญาตนี้
+  และยังคงอยู่ภายใต้เงื่อนไขของสำนักพิมพ์ต้นทาง
+
+## Verifying the claims in this repository
+
+[`EVIDENCE.md`](EVIDENCE.md) maps every claim made about this project to the
+artifact and the command that reproduces it. Per-seed source data and the
+claim-to-artifact statistical audits are in
+[`reports/evidence/`](reports/evidence/README.md).
