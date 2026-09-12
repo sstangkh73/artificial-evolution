@@ -102,7 +102,8 @@ def make_args(seed: int, model: str, max_ticks: int, output: str,
               encounter_telemetry: bool = False,
               encounter_age_bin: int = 1,
               encounter_age_max_bin: int = 32,
-              agent_outcome_telemetry: bool = False) -> SimpleNamespace:
+              agent_outcome_telemetry: bool = False,
+              founder_toxin_tolerance_spread: float = 0.0) -> SimpleNamespace:
     return SimpleNamespace(
         home_fidelity_enabled=home_fidelity,
         home_radius=home_radius,
@@ -191,6 +192,7 @@ def make_args(seed: int, model: str, max_ticks: int, output: str,
         encounter_age_bin=encounter_age_bin,
         encounter_age_max_bin=encounter_age_max_bin,
         agent_outcome_telemetry_enabled=agent_outcome_telemetry,
+        founder_toxin_tolerance_spread=founder_toxin_tolerance_spread,
     )
 
 
@@ -346,6 +348,10 @@ if __name__ == "__main__":
                    help="P3: age-bin width in ticks for the encounter counters")
     p.add_argument("--encounter-age-max-bin", type=int, default=32,
                    help="P3: highest encounter age bin; older food falls into this bin")
+    p.add_argument("--founder-toxin-tolerance-spread", type=float, default=0.0,
+                   help="P4: give founders standing variation in toxin_tolerance, drawn uniformly "
+                        "within +/- this much of the body default and clamped to the gene bounds. "
+                        "0 = off (all founders identical, and no selection differential can exist)")
     p.add_argument("--agent-outcome-telemetry", action="store_true",
                    help="add death/physiology/gene/encounter fields to every per-agent row in the "
                         "summary (E1 age-at-death, E3 toxin_tolerance, E4 encounters). Off by "
@@ -405,7 +411,8 @@ if __name__ == "__main__":
                                     encounter_telemetry=a.encounter_telemetry,
                                     encounter_age_bin=a.encounter_age_bin,
                                     encounter_age_max_bin=a.encounter_age_max_bin,
-                                    agent_outcome_telemetry=a.agent_outcome_telemetry))
+                                    agent_outcome_telemetry=a.agent_outcome_telemetry,
+                                    founder_toxin_tolerance_spread=a.founder_toxin_tolerance_spread))
     if a.dump:
         dump_path = Path(a.dump)
         dump_path.parent.mkdir(parents=True, exist_ok=True)

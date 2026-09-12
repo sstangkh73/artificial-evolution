@@ -1110,6 +1110,32 @@ def run_watch(args: argparse.Namespace) -> dict[str, object]:
         for agent_id, (spawn_x, spawn_y) in enumerate(spawn_positions)
     ]
 
+    # P4 (E3 precondition): standing genetic variation in toxin_tolerance.
+    # Every founder is built from the SAME BodyPlan, so the founder cohort has zero
+    # variance in every gene. A selection differential is by definition zero when
+    # there is nothing to select between, which makes E3 unanswerable rather than
+    # negative. This spreads founders' toxin_tolerance around its default and
+    # leaves every other gene alone, so the only heritable axis under selection is
+    # the one the toxin acts on.
+    #
+    # The draws come from a DEDICATED Random seeded off the run seed, never from
+    # the main `rng`. Taking them from the world RNG would shift every later draw
+    # and break both the byte-identical-off guarantee and the seed-matched pairing
+    # between arms. Default 0.0 -> no Random is constructed and no body is
+    # replaced. See reports/E0_calibration_notes_2026-09-12.th.md.
+    _tolerance_spread = float(getattr(args, "founder_toxin_tolerance_spread", 0.0) or 0.0)
+    if _tolerance_spread > 0.0 and agents:
+        from dataclasses import replace as _replace
+        from agents.body import TRAIT_BOUNDS as _TRAIT_BOUNDS
+
+        _low, _high = _TRAIT_BOUNDS["toxin_tolerance"]
+        _centre = body.toxin_tolerance
+        _gene_rng = Random(args.seed ^ 0x70583EED)
+        for _a in agents:
+            _value = min(_high, max(_low, _gene_rng.uniform(
+                _centre - _tolerance_spread, _centre + _tolerance_spread)))
+            _a.body = _replace(_a.body, toxin_tolerance=_value)
+
     # Home/breeding-site fidelity: founders share the spawn centroid as their home
     # anchor (offspring inherit it via spawn_child). Only read when the env flag is
     # on, so this assignment is behaviourally inert otherwise.

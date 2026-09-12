@@ -13,6 +13,8 @@ P3  env.encounter_telemetry_enabled -- the exposure denominator P(eat | encounte
 Run:  python -m unittest tests.test_gap_closure_patches
 """
 
+import contextlib
+import io
 import os
 import sys
 import tempfile
@@ -451,6 +453,52 @@ class TestGeneAndOutcomeTelemetry(unittest.TestCase):
             lines = (out / "generation_traits.csv").read_text(encoding="utf-8").splitlines()
             self.assertIn("mean_toxin_tolerance", lines[0].split(","))
             self.assertIn("0.27", lines[1])
+
+
+# ---------------------------------------------------------------- P4
+
+
+class TestFounderGeneVariation(unittest.TestCase):
+    """E3 needs standing variation to select on; founders share one BodyPlan."""
+
+    @staticmethod
+    def _founder_genes(spread: float) -> list[dict]:
+        import run_long_emergence_watch as watch
+        from food_value_study_driver import make_args
+
+        with tempfile.TemporaryDirectory() as tmp:
+            args = make_args(
+                seed=20260901, model="v2", max_ticks=20, output=str(Path(tmp) / "out.json"),
+                population=10, world=24, value_learning=True, immortal=True,
+                founder_toxin_tolerance_spread=spread, agent_outcome_telemetry=True,
+            )
+            # run_watch streams progress JSON to stdout; keep the test output readable.
+            with io.StringIO() as sink, contextlib.redirect_stdout(sink):
+                summary = watch.run_watch(args)
+        return [row for row in summary["agent_diet_summary"] if row["generation"] == 0]
+
+    def test_founder_spread_default_is_off(self):
+        values = {row["toxin_tolerance"] for row in self._founder_genes(0.0)}
+        self.assertEqual(len(values), 1, "with the knob off every founder must be identical")
+
+    def test_founder_spread_creates_variance_within_gene_bounds(self):
+        from agents.body import TRAIT_BOUNDS
+
+        rows = self._founder_genes(0.15)
+        values = [row["toxin_tolerance"] for row in rows]
+        low, high = TRAIT_BOUNDS["toxin_tolerance"]
+        self.assertGreater(len(set(values)), 1)
+        self.assertGreaterEqual(min(values), low)
+        self.assertLessEqual(max(values), high)
+        self.assertLessEqual(max(values) - min(values), 2 * 0.15 + 1e-9)
+
+    def test_founder_spread_leaves_other_genes_untouched(self):
+        """Only the axis the toxin acts on may vary, or the contrast is confounded."""
+        rows = self._founder_genes(0.15)
+        for gene in ("gape", "gut_capacity", "acid_strength", "cellulose_efficiency",
+                     "body_mass", "somatic_maintenance", "repair_efficiency", "damage_resistance"):
+            if gene in rows[0]:
+                self.assertEqual(len({row[gene] for row in rows}), 1, gene)
 
 
 if __name__ == "__main__":
