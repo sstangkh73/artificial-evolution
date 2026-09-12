@@ -1,0 +1,42 @@
+{
+  "experiment": "E4",
+  "preregistration": "reports/prereg/PREREG_toxin_ecological_trap_2026-09-12.th.md",
+  "note": "Retro-check of Study 1 (decision point D1): the SAME config and the SAME ten seeds as the published 1,945 -> 423 result, rerun with the exposure denominator switched on. Nothing about the experiment changes except that encounters are now counted.",
+  "ticks": 3000,
+  "seeds": [
+    20260610,
+    20260611,
+    20260612,
+    20260613,
+    20260614,
+    20260615,
+    20260616,
+    20260617,
+    20260618,
+    20260619
+  ],
+  "base": [
+    "--model",
+    "v2",
+    "--body",
+    "37",
+    "--drain-mult",
+    "0.05",
+    "--food-energy-mult",
+    "50",
+    "--low-value-food",
+    "6",
+    "--encounter-telemetry",
+    "--encounter-age-bin",
+    "5",
+    "--encounter-age-max-bin",
+    "60",
+    "--agent-outcome-telemetry"
+  ],
+  "arms": {
+    "A_no_learning": [],
+    "B_value_learning": [
+      "--value-learning"
+    ]
+  }
+}
