@@ -1,0 +1,272 @@
+{
+  "source_runs": "reports/e0_20260912/E0F_runs.json",
+  "provenance": {
+    "experiment": "E0F",
+    "spec": {
+      "experiment": "E0F",
+      "ticks": 400,
+      "seeds": [
+        20260901,
+        20260902,
+        20260903,
+        20260904,
+        20260905
+      ],
+      "base": [
+        "--model",
+        "v2",
+        "--body",
+        "37",
+        "--population",
+        "50",
+        "--value-learning",
+        "--pickiness",
+        "0.6",
+        "--starvation-energy",
+        "6",
+        "--mortal",
+        "--starvation-death",
+        "--aging",
+        "--founder-age-spread",
+        "1",
+        "--encounter-telemetry",
+        "--encounter-age-bin",
+        "5",
+        "--encounter-age-max-bin",
+        "60",
+        "--agent-outcome-telemetry",
+        "--drain-mult",
+        "0.2",
+        "--toxic-food",
+        "20",
+        "--toxin-acute-penalty",
+        "50",
+        "--toxin-damage-coeff",
+        "5",
+        "--world",
+        "100",
+        "--natural-seed-rain",
+        "12",
+        "--initial-plants",
+        "2500",
+        "--food-detection-threshold",
+        "0.01",
+        "--vision-horizon",
+        "200"
+      ],
+      "arms": {
+        "A0": [
+          "--toxin-potency-scale",
+          "0"
+        ],
+        "A1": [
+          "--toxin-potency-scale",
+          "1"
+        ],
+        "A2": [
+          "--toxin-detox-ticks",
+          "120"
+        ],
+        "A3": [
+          "--toxin-potency-scale",
+          "0.757811"
+        ]
+      }
+    },
+    "git_revision": "d4cc4d7bb6e7e7efe1648e6d7c6b3cb645e7c177",
+    "git_tree_dirty": false,
+    "python_version": "3.14.3 (tags/v3.14.3:323c59a, Feb  3 2026, 16:04:56) [MSC v.1944 64 bit (AMD64)]",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "wall_seconds_total": 379.8,
+    "runs": 20,
+    "failures": 0
+  },
+  "primary_metric": "founder_mean_age",
+  "inferential_unit": "seed/run",
+  "runs_excluded": [],
+  "primary": {
+    "contrast": "A2-A3",
+    "metric": "founder_mean_age",
+    "n_pairs": 5,
+    "seeds_dropped_for_missing_arm": [],
+    "A2": {
+      "n": 5,
+      "mean": 363.532,
+      "sd": 20.103008,
+      "median": 372.28
+    },
+    "A3": {
+      "n": 5,
+      "mean": 359.364,
+      "sd": 12.049227,
+      "median": 360.8
+    },
+    "paired_difference": {
+      "n": 5,
+      "mean": 4.168,
+      "sd": 8.943451,
+      "median": 8.78,
+      "t_ci95": {
+        "half_width": 11.102981,
+        "low": -6.934981,
+        "high": 15.270981
+      },
+      "bootstrap_ci95": {
+        "low": -2.86,
+        "high": 10.924
+      },
+      "method": "exact_sign_flip",
+      "p": 0.3125,
+      "enumerations": 32,
+      "floor": 0.0625,
+      "seeds_favouring_left": 3,
+      "seeds_favouring_right": 2,
+      "seeds_tied": 0
+    },
+    "cliffs_delta": {
+      "delta": 0.12,
+      "magnitude": "negligible"
+    }
+  },
+  "secondary": [
+    {
+      "contrast": "A2-A0",
+      "metric": "founder_mean_age",
+      "n_pairs": 5,
+      "seeds_dropped_for_missing_arm": [],
+      "A2": {
+        "n": 5,
+        "mean": 363.532,
+        "sd": 20.103008,
+        "median": 372.28
+      },
+      "A0": {
+        "n": 5,
+        "mean": 399.42,
+        "sd": 9.114955,
+        "median": 399.94
+      },
+      "paired_difference": {
+        "n": 5,
+        "mean": -35.888,
+        "sd": 12.935661,
+        "median": -37.0,
+        "t_ci95": {
+          "half_width": 16.059169,
+          "low": -51.947169,
+          "high": -19.828831
+        },
+        "bootstrap_ci95": {
+          "low": -46.144,
+          "high": -25.632
+        },
+        "method": "exact_sign_flip",
+        "p": 0.0625,
+        "enumerations": 32,
+        "floor": 0.0625,
+        "seeds_favouring_left": 0,
+        "seeds_favouring_right": 5,
+        "seeds_tied": 0,
+        "holm_adjusted_p": 0.1875
+      },
+      "cliffs_delta": {
+        "delta": -1.0,
+        "magnitude": "large"
+      }
+    },
+    {
+      "contrast": "A1-A0",
+      "metric": "founder_mean_age",
+      "n_pairs": 5,
+      "seeds_dropped_for_missing_arm": [],
+      "A1": {
+        "n": 5,
+        "mean": 320.304,
+        "sd": 26.385164,
+        "median": 326.14
+      },
+      "A0": {
+        "n": 5,
+        "mean": 399.42,
+        "sd": 9.114955,
+        "median": 399.94
+      },
+      "paired_difference": {
+        "n": 5,
+        "mean": -79.116,
+        "sd": 19.416686,
+        "median": -83.14,
+        "t_ci95": {
+          "half_width": 24.105134,
+          "low": -103.221134,
+          "high": -55.010866
+        },
+        "bootstrap_ci95": {
+          "low": -94.516,
+          "high": -63.716
+        },
+        "method": "exact_sign_flip",
+        "p": 0.0625,
+        "enumerations": 32,
+        "floor": 0.0625,
+        "seeds_favouring_left": 0,
+        "seeds_favouring_right": 5,
+        "seeds_tied": 0,
+        "holm_adjusted_p": 0.1875
+      },
+      "cliffs_delta": {
+        "delta": -1.0,
+        "magnitude": "large"
+      }
+    },
+    {
+      "contrast": "A3-A0",
+      "metric": "founder_mean_age",
+      "n_pairs": 5,
+      "seeds_dropped_for_missing_arm": [],
+      "A3": {
+        "n": 5,
+        "mean": 359.364,
+        "sd": 12.049227,
+        "median": 360.8
+      },
+      "A0": {
+        "n": 5,
+        "mean": 399.42,
+        "sd": 9.114955,
+        "median": 399.94
+      },
+      "paired_difference": {
+        "n": 5,
+        "mean": -40.056,
+        "sd": 7.46945,
+        "median": -38.98,
+        "t_ci95": {
+          "half_width": 9.27306,
+          "low": -49.32906,
+          "high": -30.78294
+        },
+        "bootstrap_ci95": {
+          "low": -45.996,
+          "high": -34.116
+        },
+        "method": "exact_sign_flip",
+        "p": 0.0625,
+        "enumerations": 32,
+        "floor": 0.0625,
+        "seeds_favouring_left": 0,
+        "seeds_favouring_right": 5,
+        "seeds_tied": 0,
+        "holm_adjusted_p": 0.1875
+      },
+      "cliffs_delta": {
+        "delta": -1.0,
+        "magnitude": "large"
+      }
+    }
+  ],
+  "multiplicity": {
+    "method": "Holm across secondary contrasts only",
+    "note": "the primary contrast is a single pre-specified test and is not adjusted"
+  }
+}

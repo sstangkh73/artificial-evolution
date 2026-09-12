@@ -1,0 +1,71 @@
+{
+  "experiment": "E0F",
+  "ticks": 400,
+  "seeds": [
+    20260901,
+    20260902,
+    20260903,
+    20260904,
+    20260905
+  ],
+  "base": [
+    "--model",
+    "v2",
+    "--body",
+    "37",
+    "--population",
+    "50",
+    "--value-learning",
+    "--pickiness",
+    "0.6",
+    "--starvation-energy",
+    "6",
+    "--mortal",
+    "--starvation-death",
+    "--aging",
+    "--founder-age-spread",
+    "1",
+    "--encounter-telemetry",
+    "--encounter-age-bin",
+    "5",
+    "--encounter-age-max-bin",
+    "60",
+    "--agent-outcome-telemetry",
+    "--drain-mult",
+    "0.2",
+    "--toxic-food",
+    "20",
+    "--toxin-acute-penalty",
+    "50",
+    "--toxin-damage-coeff",
+    "5",
+    "--world",
+    "100",
+    "--natural-seed-rain",
+    "12",
+    "--initial-plants",
+    "2500",
+    "--food-detection-threshold",
+    "0.01",
+    "--vision-horizon",
+    "200"
+  ],
+  "arms": {
+    "A0": [
+      "--toxin-potency-scale",
+      "0"
+    ],
+    "A1": [
+      "--toxin-potency-scale",
+      "1"
+    ],
+    "A2": [
+      "--toxin-detox-ticks",
+      "120"
+    ],
+    "A3": [
+      "--toxin-potency-scale",
+      "0.757811"
+    ]
+  }
+}
