@@ -58,6 +58,7 @@ def make_args(seed: int, model: str, max_ticks: int, output: str,
               pickiness: float = 0.5, starvation_energy: int = 6,
               immortal: bool = True, population: int = 50,
               food_energy_mult: float = 1.0, drain_mult: float = 1.0,
+              raw_fruit_energy_mult: float = 1.0,
               body_index: int = 37, founder_age_spread: int = 0,
               repro_safety: float = 0.66, repro_comfort: float = 0.58,
               repro_safety_streak: int = 10, repro_pair_bond_streak: int = 14,
@@ -123,6 +124,7 @@ def make_args(seed: int, model: str, max_ticks: int, output: str,
         continuous_repro_local_cap=continuous_repro_local_cap,
         continuous_repro_food_target=continuous_repro_food_target,
         food_energy_multiplier=food_energy_mult,
+        raw_fruit_energy_multiplier=raw_fruit_energy_mult,
         metabolic_drain_multiplier=drain_mult,
         founder_age_spread=founder_age_spread,
         repro_safety_threshold=repro_safety,
@@ -247,6 +249,9 @@ if __name__ == "__main__":
     p.add_argument("--mortal", action="store_true", help="immortal OFF (agents can die) for the mortality test")
     p.add_argument("--population", type=int, default=50)
     p.add_argument("--food-energy-mult", type=float, default=1.0, help="scale all food energy (energy study)")
+    p.add_argument("--raw-fruit-energy-mult", type=float, default=1.0,
+                   help="scale raw_fruit energy only while leaving staple foods unchanged "
+                        "(toxin value-of-information experiment)")
     p.add_argument("--drain-mult", type=float, default=1.0, help="scale metabolic drain (energy study)")
     p.add_argument("--body", type=int, default=37, help="body index (37=armor0/dur10; 38=armor2/dur26)")
     p.add_argument("--founder-age-spread", type=int, default=0,
@@ -369,6 +374,7 @@ if __name__ == "__main__":
                                     starvation_energy=a.starvation_energy,
                                     immortal=not a.mortal, population=a.population,
                                     food_energy_mult=a.food_energy_mult, drain_mult=a.drain_mult,
+                                    raw_fruit_energy_mult=a.raw_fruit_energy_mult,
                                     body_index=a.body, founder_age_spread=a.founder_age_spread,
                                     repro_safety=a.repro_safety, repro_comfort=a.repro_comfort,
                                     repro_safety_streak=a.repro_safety_streak,

@@ -142,6 +142,44 @@ class TestPotencyScale(unittest.TestCase):
         self.assertAlmostEqual(agent.toxin_ingested_total, target_dose, places=6)
 
 
+# ---------------------------------------------------- fruit energy manipulation
+
+
+class TestRawFruitEnergyMultiplier(unittest.TestCase):
+    def test_default_is_byte_identical(self):
+        agent = _agent()
+        legacy = SimpleNamespace(metabolism_model="v2", food_energy_multiplier=1.0)
+        explicit = SimpleNamespace(
+            metabolism_model="v2", food_energy_multiplier=1.0,
+            raw_fruit_energy_multiplier=1.0,
+        )
+        self.assertEqual(
+            agent._metabolic_base_energy(legacy, _fruit()),
+            agent._metabolic_base_energy(explicit, _fruit()),
+        )
+
+    def test_scales_fruit_but_not_staple(self):
+        agent = _agent()
+        baseline = SimpleNamespace(
+            metabolism_model="v2", food_energy_multiplier=1.0,
+            raw_fruit_energy_multiplier=1.0,
+        )
+        reduced = SimpleNamespace(
+            metabolism_model="v2", food_energy_multiplier=1.0,
+            raw_fruit_energy_multiplier=0.5,
+        )
+        fruit = _fruit()
+        plant = SimpleNamespace(kind="raw_plant", energy=5, source="test", created_tick=NOW)
+        self.assertEqual(
+            agent._metabolic_base_energy(reduced, fruit),
+            int(round(agent._metabolic_base_energy(baseline, fruit) * 0.5)),
+        )
+        self.assertEqual(
+            agent._metabolic_base_energy(reduced, plant),
+            agent._metabolic_base_energy(baseline, plant),
+        )
+
+
 # ---------------------------------------------------------------- P1
 
 

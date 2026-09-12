@@ -1874,7 +1874,9 @@ class Agent:
         variation is not yet reflected (a later v2.x refinement).
 
         food_energy_multiplier (default 1.0) scales all food energy for the
-        energy-economy study; at 1.0 the value is byte-identical to before.
+        energy-economy study. raw_fruit_energy_multiplier (default 1.0) then
+        scales raw_fruit only, allowing its energetic value to vary while the
+        staple-food economy stays fixed. Both defaults are byte-identical.
         """
         mult = getattr(env, "food_energy_multiplier", 1.0)
         if getattr(env, "metabolism_model", "v1") != "v2":
@@ -1888,6 +1890,10 @@ class Agent:
                 base = int(round(metabolism.digestible_energy(composition, mass, self.body.enzyme_profile)))
         if mult != 1.0:
             base = int(round(base * mult))
+        if resource.kind == "raw_fruit":
+            fruit_mult = getattr(env, "raw_fruit_energy_multiplier", 1.0)
+            if fruit_mult != 1.0:
+                base = int(round(base * fruit_mult))
         return base
 
     def _consume_processed_food(self, env, food_kind: str, base_energy: int) -> int:

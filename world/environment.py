@@ -597,6 +597,9 @@ class Environment:
     # up and/or all metabolic drain (base + brain + movement) down to find a
     # viable regime where intake can exceed drain.
     food_energy_multiplier: float = 1.0
+    # Toxin value-of-information experiment (default 1.0 = byte-identical):
+    # scale raw_fruit energy only, leaving the staple-food economy unchanged.
+    raw_fruit_energy_multiplier: float = 1.0
     metabolic_drain_multiplier: float = 1.0
     # Food-value-learning study B (default off = no behavior change): agents learn
     # net energy per food kind and skip low-value food via an optimal-diet rule.
