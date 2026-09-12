@@ -1,0 +1,147 @@
+{
+  "source_runs": "reports/e3_20260913/E3_selection_runs.json",
+  "provenance": {
+    "experiment": "E3",
+    "spec": {
+      "experiment": "E3",
+      "preregistration": "reports/prereg/PREREG_toxin_ecological_trap_2026-09-12.th.md",
+      "preregistration_commit": "fd758ce6854d8a77a0df420222e5a5a22fe13d4c",
+      "ticks": 400,
+      "seeds": [
+        20260930,
+        20260931,
+        20260932,
+        20260933,
+        20260934,
+        20260935,
+        20260936,
+        20260937,
+        20260938,
+        20260939,
+        20260940,
+        20260941,
+        20260942,
+        20260943,
+        20260944,
+        20260945,
+        20260946,
+        20260947,
+        20260948,
+        20260949
+      ],
+      "base": [
+        "--model",
+        "v2",
+        "--body",
+        "37",
+        "--population",
+        "50",
+        "--founder-age-spread",
+        "1",
+        "--world",
+        "100",
+        "--natural-seed-rain",
+        "12",
+        "--initial-plants",
+        "2500",
+        "--food-detection-threshold",
+        "0.01",
+        "--vision-horizon",
+        "200",
+        "--value-learning",
+        "--pickiness",
+        "0.6",
+        "--starvation-energy",
+        "6",
+        "--mortal",
+        "--starvation-death",
+        "--aging",
+        "--toxic-food",
+        "20",
+        "--toxin-acute-penalty",
+        "50",
+        "--toxin-damage-coeff",
+        "5",
+        "--encounter-telemetry",
+        "--encounter-age-bin",
+        "5",
+        "--encounter-age-max-bin",
+        "60",
+        "--agent-outcome-telemetry",
+        "--drain-mult",
+        "0.2",
+        "--founder-toxin-tolerance-spread",
+        "0.15"
+      ],
+      "arms": {
+        "A0": [
+          "--toxin-potency-scale",
+          "0"
+        ],
+        "A2": [
+          "--toxin-detox-ticks",
+          "120"
+        ],
+        "A3": [
+          "--toxin-potency-scale",
+          "0.757811"
+        ]
+      }
+    },
+    "git_revision": "510d9eb74e674afc02ce58f5bd4ca4a3bcdfde81",
+    "git_tree_dirty": false,
+    "python_version": "3.14.3 (tags/v3.14.3:323c59a, Feb  3 2026, 16:04:56) [MSC v.1944 64 bit (AMD64)]",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "wall_seconds_total": 1165.8,
+    "runs": 60,
+    "failures": 0
+  },
+  "primary_metric": "selection_differential",
+  "inferential_unit": "seed/run",
+  "runs_excluded": [],
+  "primary": {
+    "contrast": "A2-A3",
+    "metric": "selection_differential",
+    "n_pairs": 20,
+    "seeds_dropped_for_missing_arm": [],
+    "A2": {
+      "n": 20,
+      "mean": 0.028911,
+      "sd": 0.014624,
+      "median": 0.027636
+    },
+    "A3": {
+      "n": 20,
+      "mean": 0.03723,
+      "sd": 0.012279,
+      "median": 0.034057
+    },
+    "paired_difference": {
+      "n": 20,
+      "mean": -0.008319,
+      "sd": 0.010996,
+      "median": -0.01008,
+      "t_ci95": {
+        "half_width": 0.005146,
+        "low": -0.013466,
+        "high": -0.003173
+      },
+      "bootstrap_ci95": {
+        "low": -0.012796,
+        "high": -0.003352
+      },
+      "method": "exact_sign_flip",
+      "p": 0.0039577484130859375,
+      "enumerations": 1048576,
+      "floor": 1.9073486328125e-06,
+      "seeds_favouring_left": 3,
+      "seeds_favouring_right": 17,
+      "seeds_tied": 0
+    },
+    "cliffs_delta": {
+      "delta": -0.315,
+      "magnitude": "small"
+    }
+  },
+  "secondary": []
+}
