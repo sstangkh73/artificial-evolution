@@ -104,6 +104,52 @@ def _encounter_outcomes(rows: list[dict], kind: str) -> dict[str, int]:
     return total
 
 
+def discrimination_index(rows: list[dict], params: dict, tolerances: list[float],
+                         kind: str = "raw_fruit") -> dict:
+    """E2 primary DV: P(eat | encounter, truly safe) - P(eat | encounter, truly toxic).
+
+    "Truly safe" is defined on the food's REAL state, not on what the agent could
+    know: a bin is safe when its potency leaves a body no toxin at all after the
+    tolerance subtraction. That definition is fixed by the toxin profile and the
+    tolerance distribution, so it is identical across arms and cannot be tuned to
+    an arm's advantage.
+
+    A learner keyed on kind alone must score ~0 here BY CONSTRUCTION -- one key
+    cannot hold two values. That is a property of the representation, not a
+    statistical discovery, and must be written that way.
+    """
+    detox = int(params.get("toxin_detox_ticks", 0))
+    window = (int(params.get("toxin_safe_window_start", 0)),
+              int(params.get("toxin_safe_window_end", 0)))
+    age_bin = int(params.get("encounter_age_bin", 1))
+    if detox <= 0 and window[1] <= window[0]:
+        return {"discrimination_index": None, "reason": "no age-dependent toxin profile"}
+
+    safe = {"seen": 0, "ate": 0}
+    toxic = {"seen": 0, "ate": 0}
+    for row in rows:
+        for key, counts in (row.get("encounters_by_kind_age") or {}).items():
+            row_kind, _, bin_text = key.partition("@")
+            if row_kind != kind:
+                continue
+            age = int(bin_text) * age_bin + (age_bin - 1) / 2.0
+            potency = metabolism.toxin_age_potency(age, detox, window[0], window[1])
+            bucket = safe if mean_dose(potency, tolerances, kind) <= 0.0 else toxic
+            bucket["seen"] += int(counts.get("seen", 0))
+            bucket["ate"] += int(counts.get("ate", 0))
+
+    p_safe = safe["ate"] / safe["seen"] if safe["seen"] else None
+    p_toxic = toxic["ate"] / toxic["seen"] if toxic["seen"] else None
+    return {
+        "p_eat_given_safe": round(p_safe, 6) if p_safe is not None else None,
+        "p_eat_given_toxic": round(p_toxic, 6) if p_toxic is not None else None,
+        "encounters_safe": safe["seen"],
+        "encounters_toxic": toxic["seen"],
+        "discrimination_index": (round(p_safe - p_toxic, 6)
+                                 if p_safe is not None and p_toxic is not None else None),
+    }
+
+
 def _mean(values: list[float]) -> float | None:
     return round(sum(values) / len(values), 4) if values else None
 
@@ -187,6 +233,8 @@ def diagnose(summary: dict, params: dict, wall_seconds: float, requested_ticks: 
     diagnostics["toxin_share_of_damage"] = (
         round((diagnostics["mean_toxin_damage"] or 0.0) / damage, 4) if damage > 0 else None
     )
+
+    diagnostics.update(discrimination_index(rows, params, tolerances))
 
     if weights and (detox > 0 or window[1] > window[0]):
         age_bin = int(params.get("encounter_age_bin", 1))

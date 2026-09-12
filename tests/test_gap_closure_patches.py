@@ -455,6 +455,47 @@ class TestGeneAndOutcomeTelemetry(unittest.TestCase):
             self.assertIn("0.27", lines[1])
 
 
+# ---------------------------------------------------------------- B4 oracle
+
+
+class TestDietOracle(unittest.TestCase):
+    """Arm B4: the ceiling a learner is measured against."""
+
+    def test_oracle_default_is_off(self):
+        env = _env(toxin_detox_ticks=120)
+        agent = _agent()
+        agent.food_value_memory = {"raw_plant": 5.0, "raw_fruit": 1.0}
+        env.food_positions = {(0, 0): _fruit(200)}      # harmless by age
+        self.assertFalse(agent._food_worth_eating(env),
+                         "off, the decision must still come from the learned value")
+
+    def test_oracle_refuses_exactly_what_would_cost_it(self):
+        env = _env(toxin_detox_ticks=120, diet_oracle_enabled=True)
+        agent = _agent()
+        agent.energy = 100
+        for age in range(0, 200, 5):
+            env.food_positions = {(0, 0): _fruit(age)}
+            harmful = agent._realised_toxin_excess(env, _fruit(age)) > 0.0
+            self.assertEqual(agent._food_worth_eating(env), not harmful, f"age {age}")
+
+    def test_oracle_still_eats_at_true_starvation(self):
+        env = _env(toxin_detox_ticks=120, diet_oracle_enabled=True)
+        agent = _agent()
+        agent.energy = 1
+        env.food_positions = {(0, 0): _fruit(0)}        # maximally toxic
+        self.assertTrue(agent._food_worth_eating(env),
+                        "the ceiling is perfect knowledge, not indifference to starving")
+
+    def test_realised_excess_matches_what_the_eating_path_charges(self):
+        """The oracle and _apply_toxin must never disagree about what is toxic."""
+        env = _env(toxin_detox_ticks=120, toxin_damage_coeff=1.0)
+        for age in (0, 30, 60, 90, 119, 120, 200):
+            probe, eater = _agent(), _agent()
+            expected = probe._realised_toxin_excess(env, _fruit(age))
+            eater._apply_toxin(env, _fruit(age), 10)
+            self.assertAlmostEqual(eater.toxin_ingested_total, expected, places=12, msg=f"age {age}")
+
+
 # ---------------------------------------------------------------- P4
 
 

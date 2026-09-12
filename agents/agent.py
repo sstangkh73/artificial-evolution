@@ -1194,6 +1194,16 @@ class Agent:
         pending = env.food_positions.get((self.x, self.y))
         if pending is None:
             return True
+        # Arm B4: an ORACLE policy, opt-in and default off. It reads the food's true
+        # realised toxin for THIS body and refuses anything that would cost it
+        # anything, without learning. It is the theoretical ceiling a learner is
+        # measured against -- never a claim that agents can perceive toxicity. It
+        # deliberately keeps the true-starvation floor, so it is "perfect knowledge",
+        # not "perfect knowledge plus indifference to starving".
+        if getattr(env, "diet_oracle_enabled", False):
+            if self.energy <= getattr(env, "diet_starvation_energy", 6):
+                return True
+            return self._realised_toxin_excess(env, pending) <= 0.0
         key = self._food_value_key(env, pending)
         if key not in self.food_value_memory:
             return True
@@ -1305,9 +1315,19 @@ class Agent:
         chronic_coeff = getattr(env, "toxin_damage_coeff", 0.0)
         if acute_coeff <= 0.0 and chronic_coeff <= 0.0:
             return gained_energy
+        excess = self._realised_toxin_excess(env, resource)
+        if excess <= 0.0:
+            return gained_energy
+        return self._charge_toxin(env, resource, gained_energy, excess)
+
+    def _realised_toxin_excess(self, env, resource) -> float:
+        """Toxin this bite would cost THIS body, after age profile, scale and tolerance.
+
+        Pure function of world state: the eating path and the oracle policy both
+        call it, so the two can never disagree about what is actually toxic."""
         composition = metabolism.COMPOSITION.get(resource.kind)
         if composition is None:
-            return gained_energy
+            return 0.0
         mass = metabolism.FOOD_MASS.get(resource.kind, 1.0)
         # Age-dependent toxicity (opt-in; see metabolism.toxin_age_potency). The
         # realised toxin depends on the food's AGE: either a monotonic linear detox
@@ -1331,11 +1351,14 @@ class Agent:
         potency_scale = getattr(env, "toxin_potency_scale", 1.0)
         if potency_scale != 1.0:
             potency *= max(0.0, float(potency_scale))
-        excess = metabolism.toxin_penalty(
+        return metabolism.toxin_penalty(
             metabolism.toxin_load(composition, mass) * potency, self.body.toxin_tolerance
         )
-        if excess <= 0.0:
-            return gained_energy
+
+    def _charge_toxin(self, env, resource, gained_energy: int, excess: float) -> int:
+        """Apply one bite's acute and chronic toxin costs (see _apply_toxin)."""
+        acute_coeff = getattr(env, "toxin_acute_penalty", 0.0)
+        chronic_coeff = getattr(env, "toxin_damage_coeff", 0.0)
         self.toxin_ingested_total += excess
         if chronic_coeff > 0.0:
             chronic = excess * chronic_coeff

@@ -751,6 +751,10 @@ class Environment:
     # meal count that confounds "chose less" with "met less". Default off ->
     # byte-identical. Read-only counting: draws no RNG and changes no ordering.
     # See PLAN_G1_G6 S5 and PLAN_E1_E6 S2 (P3) / S7.
+    # Arm B4 of E2: an oracle diet policy that reads a food's true realised toxin
+    # and refuses anything harmful, without learning. The theoretical ceiling a
+    # learner is measured against. Default off -> byte-identical.
+    diet_oracle_enabled: bool = False
     encounter_telemetry_enabled: bool = False
     encounter_age_bin: int = 1
     encounter_age_max_bin: int = 32

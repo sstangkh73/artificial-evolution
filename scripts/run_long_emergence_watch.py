@@ -1063,6 +1063,7 @@ def run_watch(args: argparse.Namespace) -> dict[str, object]:
         food_value_key_mode=getattr(args, "food_value_key_mode", "type"),
         food_value_age_bin=getattr(args, "food_value_age_bin", 1),
         food_value_age_max_bin=getattr(args, "food_value_age_max_bin", 8),
+        diet_oracle_enabled=getattr(args, "diet_oracle_enabled", False),
         encounter_telemetry_enabled=getattr(args, "encounter_telemetry_enabled", False),
         encounter_age_bin=getattr(args, "encounter_age_bin", 1),
         encounter_age_max_bin=getattr(args, "encounter_age_max_bin", 32),
