@@ -3005,6 +3005,10 @@ def run_single_body_trial(
                     "mean_reproduction_investment": 0.0,
                     "mean_trait_mutation_count": 0.0,
                     "mean_morphology_mutation_count": 0.0,
+                    # P2: declared here on purpose -- the accumulation below uses
+                    # `bucket[f"mean_{trait}"] += value` on a pre-declared dict, so
+                    # an undeclared gene raises KeyError instead of being skipped.
+                    "mean_toxin_tolerance": 0.0,
                 },
             )
             generation_bucket["agent_count"] += 1.0
@@ -3016,6 +3020,10 @@ def run_single_body_trial(
                 generation_bucket[f"mean_{trait_name}"] += value
             generation_bucket["mean_trait_mutation_count"] += agent.body.trait_mutation_count
             generation_bucket["mean_morphology_mutation_count"] += agent.body.morphology_mutation_count
+            # P2: accumulated separately because METABOLISM_TRAIT_FIELDS is
+            # deliberately not part of TRAIT_FIELDS (the inherit_body_plan RNG
+            # prefix must stay byte-identical -- see agents/body.py).
+            generation_bucket["mean_toxin_tolerance"] += agent.body.toxin_tolerance
 
             agent_outcomes.append(
                 {
@@ -3072,6 +3080,18 @@ def run_single_body_trial(
                     "maintenance_energy_total": round(agent.drain_maintenance_total, 2),
                     "toxin_ingested_total": round(agent.toxin_ingested_total, 3),
                     "toxin_damage_total": round(agent.toxin_damage_total, 3),
+                    # P2: Metabolism Physics v2 genes. toxin_tolerance is the gene
+                    # the toxin trap is expected to select on; without it here the
+                    # selection differential S cannot be computed at all. Heritable
+                    # only under --model v2 (see agent inherit path).
+                    "gape": round(agent.body.gape, 4),
+                    "gut_capacity": round(agent.body.gut_capacity, 4),
+                    "gut_transit_ticks": agent.body.gut_transit_ticks,
+                    "acid_strength": round(agent.body.acid_strength, 4),
+                    "cellulose_efficiency": round(agent.body.cellulose_efficiency, 4),
+                    "toxin_tolerance": round(agent.body.toxin_tolerance, 4),
+                    # P3: exposure denominator ({} unless encounter telemetry is on).
+                    "encounters_by_kind_age_json": agent.encounters_by_kind_age,
                     "final_x": agent.x,
                     "final_y": agent.y,
                     "meals_by_type_json": agent.meals_by_type,

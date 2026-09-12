@@ -128,6 +128,15 @@ class Agent:
     child_stress: int = 0
     meals_by_type: dict[str, int] = field(default_factory=dict)
     skipped_food_by_type: dict[str, int] = field(default_factory=dict)
+    # P3 exposure denominator (opt-in via env.encounter_telemetry_enabled). Maps
+    # f"{kind}@{true_age_bin}" -> {"seen", "ate", "skipped"}. The age bin is the
+    # food's REAL age, independent of food_value_key_mode, so P(eat | encounter,
+    # age) can be plotted for every arm on the same axis. Unlike the legacy
+    # skipped_food_by_type counter this is deduplicated to one encounter per
+    # (tick, cell): _consume_current_food can run twice in a hunger tick, which
+    # double-counts a skip but never a meal. See env.encounter_telemetry_enabled.
+    encounters_by_kind_age: dict[str, dict[str, int]] = field(default_factory=dict)
+    _encounter_mark: tuple[int, int, int] | None = field(default=None, repr=False)
     # Food-value learning study B: learned net energy per food kind (EMA over the
     # energy actually gained when eating it). Drives an optimal-diet eat decision
     # when env.food_value_learning_enabled. Empty by default = no effect.
@@ -1097,6 +1106,33 @@ class Agent:
             # initiative. Eating is applied later by _consume_current_food.
             self._handle_seed_primitive(env, rng)
 
+    def _note_encounter(self, env, resource, outcome: str) -> None:
+        """Count one edible-food encounter and what was decided (P3).
+
+        Read-only bookkeeping: draws no RNG, mutates no world state, and is skipped
+        entirely unless env.encounter_telemetry_enabled, so runs with it off are
+        byte-identical. Deduplicated per (tick, x, y) because _consume_current_food
+        is reached twice in a hunger tick (once from _act_on_hunger_instinct, once
+        from the main update), which would otherwise inflate skips relative to
+        meals and bias P(eat | encounter) downward."""
+        if resource is None or not getattr(env, "encounter_telemetry_enabled", False):
+            return
+        tick = int(getattr(env, "tick_count", 0))
+        mark = (tick, int(self.x), int(self.y))
+        if self._encounter_mark == mark:
+            return
+        self._encounter_mark = mark
+        bin_size = max(1, int(getattr(env, "encounter_age_bin", 1)))
+        max_bin = max(0, int(getattr(env, "encounter_age_max_bin", 32)))
+        age = max(0, tick - int(getattr(resource, "created_tick", 0)))
+        key = f"{resource.kind}@{min(age // bin_size, max_bin)}"
+        bucket = self.encounters_by_kind_age.get(key)
+        if bucket is None:
+            bucket = {"seen": 0, "ate": 0, "skipped": 0}
+            self.encounters_by_kind_age[key] = bucket
+        bucket["seen"] += 1
+        bucket[outcome] += 1
+
     def _consume_current_food(self, env) -> bool:
         if not self._fits_mouth(env):
             return False
@@ -1107,21 +1143,24 @@ class Agent:
             and self.neural_genome is not None
             and not getattr(self, "_neural_eat_intent", False)
         ):
+            self._note_encounter(env, env.food_positions.get((self.x, self.y)), "skipped")
             return False
         if getattr(env, "food_value_learning_enabled", False):
             pending_food = env.food_positions.get((self.x, self.y))
             if pending_food is not None and not self._food_worth_eating(env):
+                self._note_encounter(env, pending_food, "skipped")
                 self._record_skipped_food(env, pending_food)
                 return False
         resource = env.consume_food(self.x, self.y, eater=self)
         if resource is None:
             return False
+        self._note_encounter(env, resource, "ate")
         restored_energy = self._process_food_resource(env, resource)
         # Toxicity (opt-in; default off -> byte-identical). Applied BEFORE learning
         # and energy credit so the acute penalty lowers this bite's LEARNED value
         # (emergent avoidance, no oracle). Chronic damage is added inside.
         restored_energy = self._apply_toxin(env, resource, restored_energy)
-        self._learn_food_value(env, resource.kind, restored_energy)
+        self._learn_food_value(env, resource.kind, restored_energy, resource=resource)
         self.energy += restored_energy
         self.energy_gained_total += restored_energy
         self.food_eaten += 1
@@ -1155,8 +1194,8 @@ class Agent:
         pending = env.food_positions.get((self.x, self.y))
         if pending is None:
             return True
-        kind = pending.kind
-        if kind not in self.food_value_memory:
+        key = self._food_value_key(env, pending)
+        if key not in self.food_value_memory:
             return True
         if self.energy <= getattr(env, "diet_starvation_energy", 6):
             return True
@@ -1165,31 +1204,86 @@ class Agent:
         if best_known <= 0.0:
             return True
         pickiness = getattr(env, "diet_pickiness", 0.5)
-        return self.food_value_memory[kind] >= pickiness * best_known
+        return self.food_value_memory[key] >= pickiness * best_known
+
+    @staticmethod
+    def _scramble_bin(mixed: int, bin_count: int) -> int:
+        """Deterministic uniform bin in [0, bin_count) from an integer id.
+
+        SplitMix64-style avalanche. Deliberately NOT an RNG draw: taking a number
+        from the run's RNG inside the eating path would shift the RNG stream and
+        destroy both the byte-identical-off guarantee and the seed-matched pairing
+        between arms. A pure function of a per-resource id gives the same
+        properties (stable per food item, uncorrelated with its age) with none of
+        that cost. Documented as a deviation from PLAN_E1_E6 S2 (P1)."""
+        z = (mixed + 0x9E3779B97F4A7C15) & 0xFFFFFFFFFFFFFFFF
+        z = ((z ^ (z >> 30)) * 0xBF58476D1CE4E5B9) & 0xFFFFFFFFFFFFFFFF
+        z = ((z ^ (z >> 27)) * 0x94D049BB133111EB) & 0xFFFFFFFFFFFFFFFF
+        z ^= z >> 31
+        return z % max(1, bin_count)
+
+    def _food_value_key(self, env, resource) -> str:
+        """Key this food's learned value is stored under (P1; see
+        env.food_value_key_mode).
+
+        Default "type" returns the bare kind, so every existing caller, log line
+        and stored memory is byte-identical. The other two modes exist ONLY to
+        answer E2: does supplying the hidden state (age) rescue the learner, and
+        is any rescue actually about the information rather than about having more
+        keys to taste? "type_sham" answers the second by producing exactly the same
+        number of keys with none of the information."""
+        kind = resource.kind
+        mode = getattr(env, "food_value_key_mode", "type")
+        if mode == "type":
+            return kind
+        max_bin = max(0, int(getattr(env, "food_value_age_max_bin", 8)))
+        if mode == "type_age":
+            bin_size = max(1, int(getattr(env, "food_value_age_bin", 1)))
+            age = max(0, int(getattr(env, "tick_count", 0)) - int(getattr(resource, "created_tick", 0)))
+            return f"{kind}@{min(age // bin_size, max_bin)}"
+        if mode == "type_sham":
+            mixed = (
+                int(getattr(resource, "created_tick", 0)) * 1_000_003
+                + int(self.x) * 1009
+                + int(self.y)
+            )
+            return f"{kind}@{self._scramble_bin(mixed, max_bin + 1)}"
+        return kind
 
     def _record_skipped_food(self, env, resource) -> None:
         kind = resource.kind
+        key = self._food_value_key(env, resource)
         self.skipped_food_by_type[kind] = self.skipped_food_by_type.get(kind, 0) + 1
-        learned_value = self.food_value_memory.get(kind, 0.0)
+        learned_value = self.food_value_memory.get(key, 0.0)
         best_known = max(self.food_value_memory.values()) if self.food_value_memory else 0.0
         pickiness = getattr(env, "diet_pickiness", 0.5)
+        # The trailing ` key=` field is emitted only when a non-default key mode is
+        # in use, so default-mode event streams stay byte-identical.
+        key_field = "" if key == kind else f" key={key}"
         self.recent_events.append(
             f"food_skipped -> agent={self.agent_id} source={resource.source} "
             f"x={self.x} y={self.y} kind={kind} energy={resource.energy} "
             f"learned_value={learned_value:.3f} best_known={best_known:.3f} "
-            f"pickiness={pickiness:.3f} reason=low_value"
+            f"pickiness={pickiness:.3f} reason=low_value{key_field}"
         )
 
-    def _learn_food_value(self, env, kind: str, gained_energy: float) -> None:
-        """EMA update of the learned per-kind food value (study B)."""
+    def _learn_food_value(self, env, kind: str, gained_energy: float, resource=None) -> None:
+        """EMA update of the learned food value (study B).
+
+        `resource` is optional and only matters when env.food_value_key_mode is not
+        the default "type": it is what lets the key carry the food's age (P1). The
+        older positional (env, kind, energy) form is kept so the frozen Study-2
+        harness scripts under scripts/ and the published supplement keep running
+        unchanged."""
         if not getattr(env, "food_value_learning_enabled", False):
             return
+        key = kind if resource is None else self._food_value_key(env, resource)
         alpha = getattr(env, "diet_learning_rate", 0.3)
-        prev = self.food_value_memory.get(kind)
+        prev = self.food_value_memory.get(key)
         if prev is None:
-            self.food_value_memory[kind] = float(gained_energy)
+            self.food_value_memory[key] = float(gained_energy)
         else:
-            self.food_value_memory[kind] = prev + alpha * (float(gained_energy) - prev)
+            self.food_value_memory[key] = prev + alpha * (float(gained_energy) - prev)
 
     def _apply_toxin(self, env, resource, gained_energy: int) -> int:
         """Toxin physics for one bite (opt-in; default coeffs 0 -> byte-identical).
@@ -1230,6 +1324,13 @@ class Agent:
         if (detox_ticks and detox_ticks > 0) or (window_end and window_end > window_start):
             age = max(0, getattr(env, "tick_count", 0) - getattr(resource, "created_tick", 0))
             potency = metabolism.toxin_age_potency(age, detox_ticks, window_start, window_end)
+        # P0: constant potency multiplier (default 1.0 -> byte-identical). Applied
+        # ON TOP of any age profile, so a "matched-mean-potency, no hidden state"
+        # control arm is built by leaving detox/window OFF and setting this to the
+        # mean potency measured in the detox arm. See env.toxin_potency_scale.
+        potency_scale = getattr(env, "toxin_potency_scale", 1.0)
+        if potency_scale != 1.0:
+            potency *= max(0.0, float(potency_scale))
         excess = metabolism.toxin_penalty(
             metabolism.toxin_load(composition, mass) * potency, self.body.toxin_tolerance
         )

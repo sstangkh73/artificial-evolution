@@ -724,6 +724,36 @@ class Environment:
     # metabolism.toxin_age_potency and the age-dependent-toxicity design reports.
     toxin_safe_window_start: int = 0
     toxin_safe_window_end: int = 0
+    # P0 (E1 arm A3): a CONSTANT multiplier on realised toxin potency, default 1.0
+    # -> byte-identical. Lets an arm deliver the SAME MEAN toxin per encounter as a
+    # detox/window arm but with NO hidden state (every bite is equally toxic and
+    # therefore learnable). Scaling --toxin-acute-penalty instead would NOT work:
+    # metabolism.toxin_penalty subtracts toxin_tolerance from the load first, so
+    # the acute cost is a non-linear function of potency. See
+    # reports/PLAN_G1_G6_gap_closure_2026-09-12.th.md S3.4 and
+    # reports/PLAN_E1_E6_experiments_2026-09-12.th.md S2 (P0).
+    toxin_potency_scale: float = 1.0
+    # P1 (E2 rescue arm): which key the food-value learner stores values under.
+    #   "type"      -> kind only (default; byte-identical, the published Study-2 learner)
+    #   "type_age"  -> f"{kind}@{age // food_value_age_bin}" (capped at max_bin):
+    #                  the MINIMAL extra information that makes age-dependent
+    #                  toxicity learnable. This is a supplied cue, an upper bound
+    #                  on performance -- NOT a claim that agents perceive age.
+    #   "type_sham" -> f"{kind}@{deterministic_scramble}" with the SAME key count as
+    #                  type_age but carrying NO age information. Controls for the
+    #                  "more keys -> more first-taste exploration" explanation.
+    # See PLAN_G1_G6 S4.3 (arms B1-B3) and PLAN_E1_E6 S2 (P1).
+    food_value_key_mode: str = "type"
+    food_value_age_bin: int = 1
+    food_value_age_max_bin: int = 8
+    # P3 (E4 exposure denominator): count every edible-food encounter and its
+    # outcome, so the dependent variable can be P(eat | encounter) instead of a raw
+    # meal count that confounds "chose less" with "met less". Default off ->
+    # byte-identical. Read-only counting: draws no RNG and changes no ordering.
+    # See PLAN_G1_G6 S5 and PLAN_E1_E6 S2 (P3) / S7.
+    encounter_telemetry_enabled: bool = False
+    encounter_age_bin: int = 1
+    encounter_age_max_bin: int = 32
     ambient_food_decay_chance: float = 0.006
     plant_food_decay_chance: float = 0.003
     tick_count: int = 0

@@ -94,7 +94,15 @@ def make_args(seed: int, model: str, max_ticks: int, output: str,
               toxic_food: float = 0.0,
               toxin_detox_ticks: int = 0,
               toxin_safe_window_start: int = 0,
-              toxin_safe_window_end: int = 0) -> SimpleNamespace:
+              toxin_safe_window_end: int = 0,
+              toxin_potency_scale: float = 1.0,
+              food_value_key_mode: str = "type",
+              food_value_age_bin: int = 1,
+              food_value_age_max_bin: int = 8,
+              encounter_telemetry: bool = False,
+              encounter_age_bin: int = 1,
+              encounter_age_max_bin: int = 32,
+              agent_outcome_telemetry: bool = False) -> SimpleNamespace:
     return SimpleNamespace(
         home_fidelity_enabled=home_fidelity,
         home_radius=home_radius,
@@ -175,6 +183,14 @@ def make_args(seed: int, model: str, max_ticks: int, output: str,
         toxin_detox_ticks=toxin_detox_ticks,
         toxin_safe_window_start=toxin_safe_window_start,
         toxin_safe_window_end=toxin_safe_window_end,
+        toxin_potency_scale=toxin_potency_scale,
+        food_value_key_mode=food_value_key_mode,
+        food_value_age_bin=food_value_age_bin,
+        food_value_age_max_bin=food_value_age_max_bin,
+        encounter_telemetry_enabled=encounter_telemetry,
+        encounter_age_bin=encounter_age_bin,
+        encounter_age_max_bin=encounter_age_max_bin,
+        agent_outcome_telemetry_enabled=agent_outcome_telemetry,
     )
 
 
@@ -309,6 +325,31 @@ if __name__ == "__main__":
                    help="non-monotonic: food is safe only for age in [start, end) (toxic before/after)")
     p.add_argument("--toxin-safe-window-end", type=int, default=0,
                    help="end of the safe age window (0=off; overrides --toxin-detox-ticks)")
+    # G1-G6 gap-closure knobs. See reports/PLAN_E1_E6_experiments_2026-09-12.th.md.
+    p.add_argument("--toxin-potency-scale", type=float, default=1.0,
+                   help="P0: constant multiplier on realised toxin potency (1.0=off). Builds the "
+                        "matched-mean-potency control arm A3: same mean toxin per encounter as the "
+                        "detox arm, but no hidden state")
+    p.add_argument("--food-value-key-mode", choices=["type", "type_age", "type_sham"], default="type",
+                   help="P1: key the food-value learner stores values under. type=kind only "
+                        "(default, published behaviour); type_age=kind x age bin (rescue arm B2); "
+                        "type_sham=same key count, no age information (control arm B3)")
+    p.add_argument("--food-value-age-bin", type=int, default=1,
+                   help="P1: age-bin width in ticks for --food-value-key-mode type_age")
+    p.add_argument("--food-value-age-max-bin", type=int, default=8,
+                   help="P1: highest age bin index; older food falls into this bin (also sets the "
+                        "sham key count)")
+    p.add_argument("--encounter-telemetry", action="store_true",
+                   help="P3: count every edible-food encounter and its outcome, giving the exposure "
+                        "denominator for P(eat | encounter, age)")
+    p.add_argument("--encounter-age-bin", type=int, default=1,
+                   help="P3: age-bin width in ticks for the encounter counters")
+    p.add_argument("--encounter-age-max-bin", type=int, default=32,
+                   help="P3: highest encounter age bin; older food falls into this bin")
+    p.add_argument("--agent-outcome-telemetry", action="store_true",
+                   help="add death/physiology/gene/encounter fields to every per-agent row in the "
+                        "summary (E1 age-at-death, E3 toxin_tolerance, E4 encounters). Off by "
+                        "default so existing study dumps stay byte-identical")
     p.add_argument("--dump", default=None, help="write full result JSON here for regression diff")
     a = p.parse_args()
     summary = R.run_watch(make_args(a.seed, a.model, a.ticks, a.output,
@@ -356,7 +397,15 @@ if __name__ == "__main__":
                                     toxic_food=a.toxic_food,
                                     toxin_detox_ticks=a.toxin_detox_ticks,
                                     toxin_safe_window_start=a.toxin_safe_window_start,
-                                    toxin_safe_window_end=a.toxin_safe_window_end))
+                                    toxin_safe_window_end=a.toxin_safe_window_end,
+                                    toxin_potency_scale=a.toxin_potency_scale,
+                                    food_value_key_mode=a.food_value_key_mode,
+                                    food_value_age_bin=a.food_value_age_bin,
+                                    food_value_age_max_bin=a.food_value_age_max_bin,
+                                    encounter_telemetry=a.encounter_telemetry,
+                                    encounter_age_bin=a.encounter_age_bin,
+                                    encounter_age_max_bin=a.encounter_age_max_bin,
+                                    agent_outcome_telemetry=a.agent_outcome_telemetry))
     if a.dump:
         dump_path = Path(a.dump)
         dump_path.parent.mkdir(parents=True, exist_ok=True)

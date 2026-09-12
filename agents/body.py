@@ -409,6 +409,16 @@ class BodyPlan:
     def aging_values(self) -> dict[str, float]:
         return {field: getattr(self, field) for field in AGING_TRAIT_FIELDS}
 
+    @property
+    def metabolism_values(self) -> dict[str, float]:
+        """The Metabolism Physics v2 genes (P2).
+
+        Needed because `trait_values` covers only the 13 classic TRAIT_FIELDS, so
+        `toxin_tolerance` -- the gene the toxin trap is expected to select on --
+        was absent from every telemetry file and selection was unmeasurable.
+        Inheritance of these genes still requires metabolism_model == "v2"."""
+        return {field: getattr(self, field) for field in METABOLISM_TRAIT_FIELDS}
+
     def mass_specific_metabolic_rate(self, mass_exponent: float) -> float:
         """Metabolic rate per unit mass, following Kleiber-style allometry.
 

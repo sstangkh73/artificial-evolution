@@ -336,7 +336,16 @@ def _agent_diet_rows(
     tick: int | None = None,
     include_details: bool = True,
     event_timing_by_agent: dict[int, dict[str, int]] | None = None,
+    include_outcomes: bool = False,
 ) -> list[dict[str, object]]:
+    """Per-agent study rows for the run summary.
+
+    `include_outcomes` (opt-in, default off -> summaries byte-identical) adds the
+    mortality, physiology, gene and encounter fields the G1-G6 experiments use as
+    dependent variables. They are NOT in the summary by default because the
+    published Study-1/Study-2 dumps must keep diffing clean against this driver.
+    Note this driver never calls the research-artifact writer, so agent_outcomes.csv
+    does not exist on this path -- these rows ARE the per-agent record."""
     rows: list[dict[str, object]] = []
     for agent in sorted(agents, key=lambda item: item.agent_id):
         meals = {
@@ -416,6 +425,26 @@ def _agent_diet_rows(
             row["meals_by_type"] = meals
             row["skipped_food_by_type"] = skipped
             row["food_value_memory"] = memory
+        if include_outcomes:
+            # E1 primary DV (age at death) needs the death fields; E3 needs the
+            # heritable toxin_tolerance; E4 needs the exposure denominator.
+            row["death_reason"] = agent.death_reason
+            row["completed_lifespan"] = agent.completed_lifespan
+            row["children_count"] = agent.children_count
+            row["distance_traveled"] = agent.distance_traveled
+            row["damage"] = round(float(agent.damage), 4)
+            row["toxin_ingested_total"] = round(float(agent.toxin_ingested_total), 4)
+            row["toxin_damage_total"] = round(float(agent.toxin_damage_total), 4)
+            row["maintenance_energy_total"] = round(float(agent.drain_maintenance_total), 2)
+            row["body_mass"] = round(float(agent.body.body_mass), 4)
+            row["somatic_maintenance"] = round(float(agent.body.somatic_maintenance), 4)
+            row["repair_efficiency"] = round(float(agent.body.repair_efficiency), 4)
+            row["damage_resistance"] = round(float(agent.body.damage_resistance), 4)
+            row["toxin_tolerance"] = round(float(agent.body.toxin_tolerance), 4)
+            row["encounters_by_kind_age"] = {
+                str(key): dict(sorted(counts.items()))
+                for key, counts in sorted(getattr(agent, "encounters_by_kind_age", {}).items())
+            }
         rows.append(row)
     return rows
 
@@ -1028,6 +1057,15 @@ def run_watch(args: argparse.Namespace) -> dict[str, object]:
         toxin_detox_ticks=getattr(args, "toxin_detox_ticks", 0),
         toxin_safe_window_start=getattr(args, "toxin_safe_window_start", 0),
         toxin_safe_window_end=getattr(args, "toxin_safe_window_end", 0),
+        # G1-G6 gap-closure knobs (P0/P1/P3). All defaults are the pre-existing
+        # behavior, so runs that do not pass them stay byte-identical.
+        toxin_potency_scale=getattr(args, "toxin_potency_scale", 1.0),
+        food_value_key_mode=getattr(args, "food_value_key_mode", "type"),
+        food_value_age_bin=getattr(args, "food_value_age_bin", 1),
+        food_value_age_max_bin=getattr(args, "food_value_age_max_bin", 8),
+        encounter_telemetry_enabled=getattr(args, "encounter_telemetry_enabled", False),
+        encounter_age_bin=getattr(args, "encounter_age_bin", 1),
+        encounter_age_max_bin=getattr(args, "encounter_age_max_bin", 32),
     )
     # GA.4: optionally establish a mature plant population before founders arrive
     # (a pre-existing grassland -> real carrying capacity at tick 0). 0 = off,
@@ -3116,6 +3154,7 @@ def run_watch(args: argparse.Namespace) -> dict[str, object]:
     agent_diet_summary = _agent_diet_rows(
         observed_agents,
         event_timing_by_agent=agent_food_event_timing,
+        include_outcomes=getattr(args, "agent_outcome_telemetry_enabled", False),
     )
     agent_diet_metrics = _agent_diet_metrics(agent_diet_summary)
     result = {

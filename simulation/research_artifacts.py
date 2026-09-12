@@ -164,6 +164,28 @@ def write_research_artifacts(output_dir: Path, payload: dict[str, object]) -> di
             "alive",
             "completed_lifespan",
             "death_reason",
+            # Aging Physics v1 / toxicity outcomes. The runner has emitted these
+            # since the aging module landed, but they were missing from this
+            # column list, so _write_csv silently dropped them from every
+            # agent_outcomes.csv -- they existed only inside summary.json. E1/E3
+            # read them as dependent variables, so they are added here.
+            "damage",
+            "body_mass",
+            "somatic_maintenance",
+            "repair_efficiency",
+            "damage_resistance",
+            "maintenance_energy_total",
+            "toxin_ingested_total",
+            "toxin_damage_total",
+            # P2: Metabolism Physics v2 genes (toxin_tolerance = the selection target).
+            "gape",
+            "gut_capacity",
+            "gut_transit_ticks",
+            "acid_strength",
+            "cellulose_efficiency",
+            "toxin_tolerance",
+            # P3: exposure denominator.
+            "encounters_by_kind_age_json",
             "final_x",
             "final_y",
             "meals_by_type_json",
@@ -200,6 +222,10 @@ def write_research_artifacts(output_dir: Path, payload: dict[str, object]) -> di
             "mean_reproduction_investment",
             "mean_trait_mutation_count",
             "mean_morphology_mutation_count",
+            # P2: cross-generation mean of the toxin-tolerance gene (N2 response to
+            # selection). Populated for every run; only MEANINGFUL under --model v2,
+            # where the metabolism genes are actually inherited and mutated.
+            "mean_toxin_tolerance",
         ],
     )
     methods_path.write_text(_methods_markdown(), encoding="utf-8")
