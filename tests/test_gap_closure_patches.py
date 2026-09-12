@@ -146,6 +146,15 @@ class TestPotencyScale(unittest.TestCase):
 
 
 class TestRawFruitEnergyMultiplier(unittest.TestCase):
+    def test_driver_exposes_the_multiplier_to_the_world_builder(self):
+        from food_value_study_driver import make_args
+
+        args = make_args(
+            seed=1, model="v2", max_ticks=1, output="unused",
+            raw_fruit_energy_mult=0.5,
+        )
+        self.assertEqual(args.raw_fruit_energy_multiplier, 0.5)
+
     def test_default_is_byte_identical(self):
         agent = _agent()
         legacy = SimpleNamespace(metabolism_model="v2", food_energy_multiplier=1.0)

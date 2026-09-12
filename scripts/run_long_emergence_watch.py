@@ -1016,6 +1016,7 @@ def run_watch(args: argparse.Namespace) -> dict[str, object]:
         metabolism_model=getattr(args, "metabolism_model", "v1"),
         low_value_food_spawn_per_tick=getattr(args, "low_value_food_spawn_per_tick", 0.0),
         food_energy_multiplier=getattr(args, "food_energy_multiplier", 1.0),
+        raw_fruit_energy_multiplier=getattr(args, "raw_fruit_energy_multiplier", 1.0),
         metabolic_drain_multiplier=getattr(args, "metabolic_drain_multiplier", 1.0),
         food_value_learning_enabled=getattr(args, "food_value_learning_enabled", False),
         diet_pickiness=getattr(args, "diet_pickiness", 0.5),
