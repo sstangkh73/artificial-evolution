@@ -1,0 +1,343 @@
+{
+  "source_runs": "reports/e2_20260913/E2_runs.json",
+  "provenance": {
+    "experiment": "E2",
+    "spec": {
+      "experiment": "E2",
+      "preregistration": "reports/prereg/PREREG_toxin_ecological_trap_2026-09-12.th.md",
+      "preregistration_commit": "fd758ce6854d8a77a0df420222e5a5a22fe13d4c",
+      "ticks": 400,
+      "seeds": [
+        20260930,
+        20260931,
+        20260932,
+        20260933,
+        20260934,
+        20260935,
+        20260936,
+        20260937,
+        20260938,
+        20260939,
+        20260940,
+        20260941,
+        20260942,
+        20260943,
+        20260944,
+        20260945,
+        20260946,
+        20260947,
+        20260948,
+        20260949
+      ],
+      "base": [
+        "--model",
+        "v2",
+        "--body",
+        "37",
+        "--population",
+        "50",
+        "--founder-age-spread",
+        "1",
+        "--world",
+        "100",
+        "--natural-seed-rain",
+        "12",
+        "--initial-plants",
+        "2500",
+        "--food-detection-threshold",
+        "0.01",
+        "--vision-horizon",
+        "200",
+        "--value-learning",
+        "--pickiness",
+        "0.6",
+        "--starvation-energy",
+        "6",
+        "--mortal",
+        "--starvation-death",
+        "--aging",
+        "--toxic-food",
+        "20",
+        "--toxin-acute-penalty",
+        "50",
+        "--toxin-damage-coeff",
+        "5",
+        "--encounter-telemetry",
+        "--encounter-age-bin",
+        "5",
+        "--encounter-age-max-bin",
+        "60",
+        "--agent-outcome-telemetry",
+        "--drain-mult",
+        "0.2"
+      ],
+      "arms": {
+        "B1_M": [
+          "--toxin-detox-ticks",
+          "120",
+          "--food-value-key-mode",
+          "type"
+        ],
+        "B2_M": [
+          "--toxin-detox-ticks",
+          "120",
+          "--food-value-key-mode",
+          "type_age",
+          "--food-value-age-bin",
+          "20",
+          "--food-value-age-max-bin",
+          "8"
+        ],
+        "B3_M": [
+          "--toxin-detox-ticks",
+          "120",
+          "--food-value-key-mode",
+          "type_sham",
+          "--food-value-age-bin",
+          "20",
+          "--food-value-age-max-bin",
+          "8"
+        ],
+        "B4_M": [
+          "--toxin-detox-ticks",
+          "120",
+          "--diet-oracle"
+        ],
+        "B1_W": [
+          "--toxin-safe-window-start",
+          "40",
+          "--toxin-safe-window-end",
+          "80",
+          "--food-value-key-mode",
+          "type"
+        ],
+        "B2_W": [
+          "--toxin-safe-window-start",
+          "40",
+          "--toxin-safe-window-end",
+          "80",
+          "--food-value-key-mode",
+          "type_age",
+          "--food-value-age-bin",
+          "20",
+          "--food-value-age-max-bin",
+          "8"
+        ],
+        "B3_W": [
+          "--toxin-safe-window-start",
+          "40",
+          "--toxin-safe-window-end",
+          "80",
+          "--food-value-key-mode",
+          "type_sham",
+          "--food-value-age-bin",
+          "20",
+          "--food-value-age-max-bin",
+          "8"
+        ],
+        "B4_W": [
+          "--toxin-safe-window-start",
+          "40",
+          "--toxin-safe-window-end",
+          "80",
+          "--diet-oracle"
+        ]
+      }
+    },
+    "git_revision": "52cd6fbda83dbcff3c43171c8c86f1b99ac89ae1",
+    "git_tree_dirty": false,
+    "python_version": "3.14.3 (tags/v3.14.3:323c59a, Feb  3 2026, 16:04:56) [MSC v.1944 64 bit (AMD64)]",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "wall_seconds_total": 2767.8,
+    "runs": 160,
+    "failures": 0
+  },
+  "primary_metric": "discrimination_index",
+  "inferential_unit": "seed/run",
+  "runs_excluded": [],
+  "primary": {
+    "contrast": "B2_W-B3_W",
+    "metric": "discrimination_index",
+    "n_pairs": 20,
+    "seeds_dropped_for_missing_arm": [],
+    "B2_W": {
+      "n": 20,
+      "mean": 0.657251,
+      "sd": 0.040472,
+      "median": 0.669137
+    },
+    "B3_W": {
+      "n": 20,
+      "mean": -0.094214,
+      "sd": 0.040384,
+      "median": -0.089806
+    },
+    "paired_difference": {
+      "n": 20,
+      "mean": 0.751464,
+      "sd": 0.064182,
+      "median": 0.758264,
+      "t_ci95": {
+        "half_width": 0.030038,
+        "low": 0.721427,
+        "high": 0.781502
+      },
+      "bootstrap_ci95": {
+        "low": 0.723837,
+        "high": 0.778577
+      },
+      "method": "exact_sign_flip",
+      "p": 1.9073486328125e-06,
+      "enumerations": 1048576,
+      "floor": 1.9073486328125e-06,
+      "seeds_favouring_left": 20,
+      "seeds_favouring_right": 0,
+      "seeds_tied": 0
+    },
+    "cliffs_delta": {
+      "delta": 1.0,
+      "magnitude": "large"
+    }
+  },
+  "secondary": [
+    {
+      "contrast": "B2_W-B1_W",
+      "metric": "discrimination_index",
+      "n_pairs": 20,
+      "seeds_dropped_for_missing_arm": [],
+      "B2_W": {
+        "n": 20,
+        "mean": 0.657251,
+        "sd": 0.040472,
+        "median": 0.669137
+      },
+      "B1_W": {
+        "n": 20,
+        "mean": -0.051505,
+        "sd": 0.031552,
+        "median": -0.048861
+      },
+      "paired_difference": {
+        "n": 20,
+        "mean": 0.708756,
+        "sd": 0.055852,
+        "median": 0.728905,
+        "t_ci95": {
+          "half_width": 0.026139,
+          "low": 0.682617,
+          "high": 0.734895
+        },
+        "bootstrap_ci95": {
+          "low": 0.684323,
+          "high": 0.73218
+        },
+        "method": "exact_sign_flip",
+        "p": 1.9073486328125e-06,
+        "enumerations": 1048576,
+        "floor": 1.9073486328125e-06,
+        "seeds_favouring_left": 20,
+        "seeds_favouring_right": 0,
+        "seeds_tied": 0,
+        "holm_adjusted_p": 5.72e-06
+      },
+      "cliffs_delta": {
+        "delta": 1.0,
+        "magnitude": "large"
+      }
+    },
+    {
+      "contrast": "B4_W-B2_W",
+      "metric": "discrimination_index",
+      "n_pairs": 20,
+      "seeds_dropped_for_missing_arm": [],
+      "B4_W": {
+        "n": 20,
+        "mean": 0.853566,
+        "sd": 0.016791,
+        "median": 0.846488
+      },
+      "B2_W": {
+        "n": 20,
+        "mean": 0.657251,
+        "sd": 0.040472,
+        "median": 0.669137
+      },
+      "paired_difference": {
+        "n": 20,
+        "mean": 0.196315,
+        "sd": 0.046476,
+        "median": 0.179074,
+        "t_ci95": {
+          "half_width": 0.021751,
+          "low": 0.174564,
+          "high": 0.218066
+        },
+        "bootstrap_ci95": {
+          "low": 0.176949,
+          "high": 0.216349
+        },
+        "method": "exact_sign_flip",
+        "p": 1.9073486328125e-06,
+        "enumerations": 1048576,
+        "floor": 1.9073486328125e-06,
+        "seeds_favouring_left": 20,
+        "seeds_favouring_right": 0,
+        "seeds_tied": 0,
+        "holm_adjusted_p": 5.72e-06
+      },
+      "cliffs_delta": {
+        "delta": 1.0,
+        "magnitude": "large"
+      }
+    },
+    {
+      "contrast": "B3_W-B1_W",
+      "metric": "discrimination_index",
+      "n_pairs": 20,
+      "seeds_dropped_for_missing_arm": [],
+      "B3_W": {
+        "n": 20,
+        "mean": -0.094214,
+        "sd": 0.040384,
+        "median": -0.089806
+      },
+      "B1_W": {
+        "n": 20,
+        "mean": -0.051505,
+        "sd": 0.031552,
+        "median": -0.048861
+      },
+      "paired_difference": {
+        "n": 20,
+        "mean": -0.042708,
+        "sd": 0.051482,
+        "median": -0.03696,
+        "t_ci95": {
+          "half_width": 0.024094,
+          "low": -0.066803,
+          "high": -0.018614
+        },
+        "bootstrap_ci95": {
+          "low": -0.064029,
+          "high": -0.020156
+        },
+        "method": "exact_sign_flip",
+        "p": 0.0019321441650390625,
+        "enumerations": 1048576,
+        "floor": 1.9073486328125e-06,
+        "seeds_favouring_left": 4,
+        "seeds_favouring_right": 16,
+        "seeds_tied": 0,
+        "holm_adjusted_p": 0.00193214
+      },
+      "cliffs_delta": {
+        "delta": -0.605,
+        "magnitude": "large"
+      }
+    }
+  ],
+  "multiplicity": {
+    "method": "Holm across secondary contrasts only",
+    "note": "the primary contrast is a single pre-specified test and is not adjusted"
+  }
+}
