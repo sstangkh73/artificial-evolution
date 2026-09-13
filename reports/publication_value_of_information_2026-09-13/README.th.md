@@ -5,7 +5,7 @@
 วันที่ล็อกทิศทาง: 2026-09-13
 สถานะ: **เลือกเป็นเรื่องที่จะตีพิมพ์แล้ว แต่ยังไม่พร้อมส่ง**
 
-เอกสารควบคุมงานรอบนี้: [`แผนดำเนินงานถึงขั้นส่งตีพิมพ์`](EXECUTION_PLAN_TO_PUBLICATION_2026-09-13.th.md) · [`clean-worktree smoke audit`](SMOKE_AUDIT_2026-09-14.th.md) · [`publication-readiness audit`](PUBLICATION_READINESS_AUDIT_2026-09-13.th.md) · [`ODD model description draft`](ODD_MODEL_DESCRIPTION_DRAFT.en.md) · [`AI-use log`](AI_USE_LOG.md)
+เอกสารควบคุมงานรอบนี้: [`frozen preregistration`](PREREG_E6_representation_payoff_2026-09-14.th.md) · [`แผนดำเนินงานถึงขั้นส่งตีพิมพ์`](EXECUTION_PLAN_TO_PUBLICATION_2026-09-13.th.md) · [`clean-worktree smoke audit`](SMOKE_AUDIT_2026-09-14.th.md) · [`publication-readiness audit`](PUBLICATION_READINESS_AUDIT_2026-09-13.th.md) · [`ODD model description draft`](ODD_MODEL_DESCRIPTION_DRAFT.en.md) · [`AI-use log`](AI_USE_LOG.md)
 
 ## ชื่อเรื่องชั่วคราว
 
@@ -68,7 +68,7 @@ E6 จะเปลี่ยนข้อสองจากหลักฐาน�
 ## งานที่ต้องปิดก่อนเรียกว่าพร้อมส่ง
 
 1. จบ exploratory E6 pilot ที่โค้ดหลัง `63fd324` และเลือกช่วงพลังงานจากเกณฑ์ทางวิศวกรรมเท่านั้น — **เสร็จแล้ว 18/18 รัน ไม่มี failure**
-2. ตรวจและ freeze preregistration addendum: E6 30 seed และ T2 replication 50 seed พร้อม sample-size sensitivity analysis ก่อนเห็นผลชุดยืนยัน
+2. ตรวจและ freeze preregistration addendum: E6 30 seed และ T2 replication 50 seed พร้อม sample-size sensitivity analysis ก่อนเห็นผลชุดยืนยัน — **เสร็จแล้ว 2026-09-14; tag `prereg-resource-age-2026-09-14`**
 3. รันและวิเคราะห์ชุดยืนยันแบบจับคู่ตาม seed รวม 600 รัน
 4. สร้าง Figure 1-5 พร้อม source data
 5. ค้นและอ่านวรรณกรรมฉบับจริงเรื่อง value of information, state representation, partial observability และ foraging information use

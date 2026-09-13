@@ -63,7 +63,7 @@ gantt
 
 ### งาน
 
-- อ่าน [`DRAFT_PREREG_E6_representation_payoff.th.md`](DRAFT_PREREG_E6_representation_payoff.th.md) ทีละข้อโดยไม่เปิดผล pilot ระหว่างตัดสินใจ
+- อ่าน [`PREREG_E6_representation_payoff_2026-09-14.th.md`](PREREG_E6_representation_payoff_2026-09-14.th.md) ทีละข้อโดยไม่เปิดผล confirmatory ระหว่างตัดสินใจ
 - ยืนยันคำถามหลัก E6 ว่าเป็นผลของ resource-age-informed representation ต่อ empirical RMST/lifespan ตลอดแกน realized fruit energy; resource age คืออายุของชิ้นอาหารตั้งแต่ถูกสร้าง ไม่ใช่อายุ agent
 - ยืนยัน SESOI:
   - E6 slope = 1 tick ต่อหนึ่งหน่วยพลังงาน
@@ -127,9 +127,9 @@ git diff --check
 
 ### เกณฑ์ผ่าน G1
 
-- [ ] 18/18 smoke arms สำเร็จ
-- [ ] metadata และ diagnostic ตรงสเปก
-- [ ] tracked tree สะอาด
+- [x] 18/18 smoke arms สำเร็จ
+- [x] metadata และ diagnostic ตรงสเปก
+- [x] tracked tree สะอาด
 - [ ] prereg commit และ annotated tag มีอยู่และจดลง manifest
 
 ## 6. Phase 2 — รัน E6 ชุดยืนยัน

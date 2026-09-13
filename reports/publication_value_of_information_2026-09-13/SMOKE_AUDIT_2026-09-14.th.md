@@ -5,7 +5,7 @@
 
 ## ขอบเขต
 
-- source commit: `8b9233e6885df65cef6f2d5d3f914f9fd466f551`
+- source commit ของรอบ final: `11d69c8` (`Enforce frozen-spec analysis eligibility`)
 - detached clean worktree: `C:\artificial-evolution-prereg-smoke-20260914`
 - E6 smoke: seed `20260968`, 200 ticks, 15 arms
 - T2-RB smoke: seed `20260969`, 200 ticks, 3 arms
@@ -18,7 +18,7 @@
 |---|---|
 | E6 grid | 15/15 runs, 0 failures |
 | T2-RB grid | 3/3 runs, 0 failures |
-| revision ระหว่าง run | start = end = `8b9233e...`; ไม่เปลี่ยน |
+| revision ระหว่าง run | start = end = `11d69c8...`; ไม่เปลี่ยน |
 | tracked tree ระหว่าง run | clean ทั้ง start และ end |
 | requested horizon | ทุก arm จบที่ tick 200; ไม่มี early stop |
 | E6 realized fruit energy | V04=4, V05=5, V06=6, V08=8, V10=10 |
@@ -48,4 +48,4 @@ analyzer อ่าน batch ทั้งสองได้และสร้า�
 
 ## คำตัดสิน
 
-Gate ด้าน execution, telemetry, realized parameters, analysis routing และ provenance ผ่าน สามารถเข้าสู่ขั้น final preregistration freeze ได้หลัง commit การแก้ guard และคำศัพท์ resource age แล้วทวน clean smoke/validation จาก commit ล่าสุด
+รอบแรกจาก `8b9233e` ทำให้พบว่า analyzer ยังไม่ได้ตรวจสถานะ preregistration จึงเพิ่ม frozen-status guard และไม่นำรอบนั้นไปเป็น final smoke gate จากนั้นรันใหม่ทั้งหมดจาก `11d69c8` โดยไม่ใช้ผลเดิม ผลรอบ final เหมือนเดิมแบบ deterministic และผ่าน execution, telemetry, realized parameters, analysis routing และ provenance จึงอนุญาตให้เข้าสู่ final preregistration freeze
