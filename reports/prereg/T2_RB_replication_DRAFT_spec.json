@@ -2,6 +2,7 @@
   "experiment": "T2RB",
   "status": "DRAFT_NOT_PREREGISTERED_DO_NOT_RUN_CONFIRMATORY",
   "purpose": "Replicate the exploratory A2 lifespan deficit in R-B against both the original constant-potency control and an E5-dose-recalibrated control.",
+  "primary_metric": "founder_mean_followup_ticks",
   "ticks": 400,
   "seeds": [
     20261000, 20261001, 20261002, 20261003, 20261004,

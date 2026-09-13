@@ -2,6 +2,7 @@
   "experiment": "E6",
   "status": "DRAFT_NOT_PREREGISTERED_DO_NOT_RUN_CONFIRMATORY",
   "purpose": "Test whether the survival effect of an age-informed representation changes with realized risky-fruit energy, using a capacity-matched sham as the primary control.",
+  "primary_metric": "founder_mean_followup_ticks",
   "ticks": 800,
   "seeds": [
     20260970, 20260971, 20260972, 20260973, 20260974,

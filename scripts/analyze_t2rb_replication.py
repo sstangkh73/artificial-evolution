@@ -19,7 +19,7 @@ REQUIRED_PROVENANCE = (
 )
 
 
-def analyze_payload(payload: dict, metric: str = "founder_mean_age") -> dict:
+def analyze_payload(payload: dict, metric: str = "founder_mean_followup_ticks") -> dict:
     provenance = payload.get("provenance") or {}
     spec = provenance.get("spec") or {}
     expected_seeds = {int(seed) for seed in spec.get("seeds", [])}
@@ -79,7 +79,7 @@ def analyze_payload(payload: dict, metric: str = "founder_mean_age") -> dict:
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--runs", required=True)
-    parser.add_argument("--metric", default="founder_mean_age")
+    parser.add_argument("--metric", default="founder_mean_followup_ticks")
     parser.add_argument("--out", required=True)
     args = parser.parse_args()
 

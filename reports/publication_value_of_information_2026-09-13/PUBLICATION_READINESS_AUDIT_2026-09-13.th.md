@@ -18,7 +18,7 @@
 
 | ลำดับ | ช่องว่าง | ผลหากไม่ปิด | สิ่งที่ต้องทำ |
 |---:|---|---|---|
-| 1 | E6 ยังไม่มี confirmatory data | คำถามในชื่อเรื่องยังไม่มีคำตอบ | freeze/tag addendum แล้วรัน E6 30 seed × 15 arms = 450 รัน |
+| 1 | E6 ยังไม่มี confirmatory data | คำถามในชื่อเรื่องยังไม่มีคำตอบ | freeze/tag addendum แล้วรัน E6 30 seed × 15 arms = 450 รัน โดยใช้ mean founder follow-up time เป็น outcome หลัก |
 | 2 | จำนวน seed เดิมของ T2 ต่ำ | replication มีโอกาสให้ผลก้ำกึ่งสูง | ใช้ 50 seed × 3 arms = 150 รัน พร้อมรายงาน CI แม้ p ไม่ผ่าน |
 | 3 | deviation log เดิมไม่ครบ | จุดขายเรื่อง preregistration ถูกผู้ประเมินหักล้างได้ | บันทึก E2 implementation, E4 post-freeze spec และสถานะ exploratory ของ E5 T2 ใน §11 แล้ว |
 | 4 | novelty ยังไม่ได้เทียบงานใกล้เคียงแบบตรงตัว | editor อาจมองว่าเป็น perceptual aliasing ที่ทราบอยู่แล้ว | ทำ claim-to-literature matrix และเขียนหนึ่งย่อหน้าว่า contribution ต่างจาก POMDP/RL และงาน foraging learning rules อย่างไร |
@@ -65,7 +65,7 @@
 
 ควรทำหลังผลหลักโดยประกาศสถานะให้ชัด:
 
-- sensitivity ต่อการ censor ที่ tick 800: empirical RMST เป็นหลัก และ complete-case deaths เป็นผลรอง
+- sensitivity ต่อการ censor: empirical restricted mean follow-up เป็นหลัก และ complete-case deaths เป็นผลรอง
 - แสดงผลทุกระดับพลังงาน ไม่พึ่งเส้น regression เพียงเส้นเดียว
 - แสดง seed-level paired lines และ distribution ของ slopes
 - ตรวจผลเมื่อเอา seed ออกทีละหนึ่งเพื่อประเมิน influence โดยไม่ใช้เป็นเกณฑ์คัด seed

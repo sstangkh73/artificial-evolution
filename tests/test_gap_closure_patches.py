@@ -212,6 +212,39 @@ class TestRawFruitEnergyMultiplier(unittest.TestCase):
             "raw_fruit@2": {"n_agents": 1, "mean": 4.0},
         })
 
+    def test_pilot_diagnostics_report_followup_separately_from_attained_age(self):
+        from run_e0_pilot import diagnose
+
+        summary = {
+            "tick": 10,
+            "population": 0,
+            "peak_population": 1,
+            "births": 0,
+            "agent_death_reasons": {"senescence": 1},
+            "agent_diet_summary": [{
+                "agent_id": 0,
+                "generation": 0,
+                "alive": False,
+                "age": 71,
+                "toxin_tolerance": 0.2,
+                "damage": 0.0,
+                "toxin_damage_total": 0.0,
+                "toxin_ingested_total": 0.0,
+                "food_value_memory": {},
+                "encounters_by_kind_age": {},
+            }],
+        }
+        result = diagnose(
+            summary,
+            {"population": 1, "founder_age_spread": 1},
+            wall_seconds=0.1,
+            requested_ticks=10,
+        )
+
+        self.assertEqual(result["founder_initial_age_mean"], 61.0)
+        self.assertEqual(result["founder_mean_age"], 71.0)
+        self.assertEqual(result["founder_mean_followup_ticks"], 10.0)
+
 
 # ---------------------------------------------------------------- P1
 

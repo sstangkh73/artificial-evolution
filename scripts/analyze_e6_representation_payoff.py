@@ -33,7 +33,7 @@ def ols_slope(xs: list[float], ys: list[float]) -> float:
 
 def analyze_payload(
     payload: dict,
-    metric: str = "founder_mean_age",
+    metric: str = "founder_mean_followup_ticks",
     expected_seed_count: int | None = None,
     expected_seeds: set[int] | None = None,
 ) -> dict:
@@ -164,7 +164,7 @@ def analyze_payload(
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--runs", required=True)
-    parser.add_argument("--metric", default="founder_mean_age")
+    parser.add_argument("--metric", default="founder_mean_followup_ticks")
     parser.add_argument("--out", required=True)
     args = parser.parse_args()
 

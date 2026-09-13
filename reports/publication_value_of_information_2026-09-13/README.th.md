@@ -5,7 +5,7 @@
 วันที่ล็อกทิศทาง: 2026-09-13
 สถานะ: **เลือกเป็นเรื่องที่จะตีพิมพ์แล้ว แต่ยังไม่พร้อมส่ง**
 
-เอกสารควบคุมงานรอบนี้: [`publication-readiness audit`](PUBLICATION_READINESS_AUDIT_2026-09-13.th.md) · [`ODD model description draft`](ODD_MODEL_DESCRIPTION_DRAFT.en.md) · [`AI-use log`](AI_USE_LOG.md)
+เอกสารควบคุมงานรอบนี้: [`แผนดำเนินงานถึงขั้นส่งตีพิมพ์`](EXECUTION_PLAN_TO_PUBLICATION_2026-09-13.th.md) · [`publication-readiness audit`](PUBLICATION_READINESS_AUDIT_2026-09-13.th.md) · [`ODD model description draft`](ODD_MODEL_DESCRIPTION_DRAFT.en.md) · [`AI-use log`](AI_USE_LOG.md)
 
 ## ชื่อเรื่องชั่วคราว
 

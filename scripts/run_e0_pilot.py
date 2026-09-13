@@ -212,6 +212,18 @@ def _learned_values_by_key(rows: list[dict], food_kind: str) -> dict[str, dict]:
     }
 
 
+def _founder_initial_age(agent_id: int, population: int, spread: bool) -> int:
+    """Mirror the driver's deterministic founder-age initialization."""
+    from agents.agent import ADULT_AGE, MAX_AGE
+    from simulation.runner import FOUNDER_START_AGE
+
+    if not spread:
+        return FOUNDER_START_AGE
+    return ADULT_AGE + int(
+        agent_id / max(1, population - 1) * (MAX_AGE - ADULT_AGE - 1)
+    )
+
+
 def diagnose(summary: dict, params: dict, wall_seconds: float, requested_ticks: int) -> dict:
     rows = summary.get("agent_diet_summary") or []
     founders = [r for r in rows if r.get("generation") == 0]
@@ -225,6 +237,20 @@ def diagnose(summary: dict, params: dict, wall_seconds: float, requested_ticks: 
     detox = int(params.get("toxin_detox_ticks", 0))
     window = (int(params.get("toxin_safe_window_start", 0)), int(params.get("toxin_safe_window_end", 0)))
     acute = float(params.get("toxin_acute_penalty", 0.0))
+    population = int(params.get("population", len(founders) or 1))
+    spread = bool(int(params.get("founder_age_spread", 0)))
+    founder_initial_ages = [
+        _founder_initial_age(int(row["agent_id"]), population, spread)
+        for row in founders
+    ]
+    founder_followups = [
+        float(row["age"]) - _founder_initial_age(int(row["agent_id"]), population, spread)
+        for row in founders
+    ]
+    founder_death_followups = [
+        float(row["age"]) - _founder_initial_age(int(row["agent_id"]), population, spread)
+        for row in founders if not row.get("alive")
+    ]
 
     diagnostics: dict = {
         "wall_seconds": round(wall_seconds, 2),
@@ -241,6 +267,10 @@ def diagnose(summary: dict, params: dict, wall_seconds: float, requested_ticks: 
         "founder_survival_at_end": round(len(alive_founders) / len(founders), 3) if founders else None,
         "founder_mean_age": _mean([float(r["age"]) for r in founders]),
         "founder_mean_age_at_death": _mean([float(r["age"]) for r in founders if not r.get("alive")]),
+        "founder_initial_age_mean": _mean([float(age) for age in founder_initial_ages]),
+        "founder_mean_followup_ticks": _mean(founder_followups),
+        "founder_mean_followup_ticks_at_death": _mean(founder_death_followups),
+        "founders_censored": len(alive_founders),
         "fruit_encounters_total": fruit["seen"],
         "fruit_encounters_per_agent": round(fruit["seen"] / len(rows), 2) if rows else None,
         "fruit_p_eat_given_encounter": round(fruit["ate"] / fruit["seen"], 4) if fruit["seen"] else None,

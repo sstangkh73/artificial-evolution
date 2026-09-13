@@ -72,7 +72,7 @@ pilot พบข้อเท็จจริงทางวิศวกรรม�
 
 สำหรับแต่ละ seed และพลังงาน `E` คำนวณ
 
-`Delta_i(E) = founder_mean_age(B2, i, E) - founder_mean_age(B3, i, E)`
+`Delta_i(E) = founder_mean_followup_ticks(B2, i, E) - founder_mean_followup_ticks(B3, i, E)`
 
 แล้ว fit เส้นตรง `Delta_i(E) = intercept_i + slope_i * E` แยกต่อ seed บนค่าพลังงานจริง `{4,5,6,8,10}`
 
@@ -100,8 +100,9 @@ mechanism gate: ถ้า B2 ไม่แสดงข้อมูลอายุ
 
 ## 6. censoring, failure และ exclusion
 
-- outcome หลักคือ mean founder age at death หรือที่ censor ณ tick 800; รายงานจำนวน founder ที่ยังมีชีวิตทุกแขน
-- ถ้ามี founder ถูก censor ให้รายงาน restricted mean และทำ sensitivity analysis เฉพาะผู้ตายเป็นผลรอง
+- outcome หลักคือ `founder_mean_followup_ticks`: ค่าเฉลี่ย `final age - deterministic initial age` ของ founder ทุกตัว โดยใช้เวลาถึงตายหรือ censor ณ tick 800 จึงเป็น empirical restricted mean follow-up time; รายงานจำนวน founder ที่ยังมีชีวิตทุกแขน
+- initial age กระจาย 61–199 แบบ deterministic และเหมือนกันระหว่างแขนที่จับคู่ seed ค่า `founder_mean_age` เดิมจึงให้ผลต่างระหว่างแขนเท่ากัน แต่ไม่ใช่เวลาติดตามโดยตรงและจะไม่ใช้เป็นชื่อ outcome หลัก
+- ถ้ามี founder ถูก censor ให้คง empirical restricted mean follow-up เป็นหลัก และทำ sensitivity analysis เฉพาะผู้ตายเป็นผลรอง
 - ไม่มีการตัด seed จากค่าผิดปกติ
 - runtime failure ให้แก้สาเหตุแล้วรันซ้ำเฉพาะ arm-seed เดิม พร้อมบันทึกทั้งไฟล์เสียและเหตุผล
 - ถ้า HEAD เปลี่ยนระหว่าง batch ให้ batch นั้นไม่มีสิทธิ์เป็น confirmatory evidence และรันใหม่จาก revision เดียว
@@ -138,7 +139,7 @@ mechanism gate: ถ้า B2 ไม่แสดงข้อมูลอายุ
 
 จำนวน seed อิง smallest effect of scientific interest ที่ 5 tick และ SD ของ paired A2-A3 ใน E5 เท่ากับ 12.521 tick การคำนวณแบบ normal approximation ให้ power เพียงราว 0.43 ที่ 20 seed แต่ราว 0.81 ที่ 50 seed และ 95% CI half-width โดยประมาณ 3.47 tick การคำนวณนี้ใช้ E5 เพื่อวางขนาด replication อย่างเปิดเผย และไม่มีสิทธิ์เปลี่ยนจำนวน seed หลังดูผลชุดใหม่
 
-primary contrast คือ A2-A3R บน founder mean age โดยทำนายค่าติดลบ ทดสอบด้วย seeded Monte Carlo two-sided sign-flip 200,000 draws ที่ alpha 0.05 รายงาน CI และ effect size ตาม E1-E5 ส่วน A2-A3O เป็น direct-replication secondary contrast ถ้าสอง control ให้ข้อสรุปต่างกัน ให้ถือว่าผลไวต่อวิธี dose matching และห้ามอ้างต้นทุนของความซ่อนเร้นเป็นข้อสรุปทั่วไป
+primary contrast คือ A2-A3R บน `founder_mean_followup_ticks` ที่ censor horizon 400 tick โดยทำนายค่าติดลบ ทดสอบด้วย seeded Monte Carlo two-sided sign-flip 200,000 draws ที่ alpha 0.05 รายงาน CI และ effect size ตาม E1-E5 ส่วน A2-A3O เป็น direct-replication secondary contrast ถ้าสอง control ให้ข้อสรุปต่างกัน ให้ถือว่าผลไวต่อวิธี dose matching และห้ามอ้างต้นทุนของความซ่อนเร้นเป็นข้อสรุปทั่วไป
 
 E6 H6.1 เป็นข้ออ้างหลักของบทความ ส่วน T2-RB เป็น replication question ที่แยกต่างหาก จึงกำหนด family และ alpha 0.05 แยกกัน การทดสอบรองภายในแต่ละ family ใช้ Holm ตามที่ระบุและไม่มีสิทธิ์เปลี่ยนข้อสรุปหลัก
 

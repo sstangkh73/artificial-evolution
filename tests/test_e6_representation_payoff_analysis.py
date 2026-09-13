@@ -32,11 +32,11 @@ class TestE6RepresentationPayoffAnalysis(unittest.TestCase):
             for energy in (4, 5, 6, 8, 10):
                 rows.extend([
                     {"arm": f"V{energy:02d}_B1", "seed": seed,
-                     "founder_mean_age": 201},
+                     "founder_mean_followup_ticks": 201},
                     {"arm": f"V{energy:02d}_B2", "seed": seed,
-                     "founder_mean_age": 200 + slope * energy},
+                     "founder_mean_followup_ticks": 200 + slope * energy},
                     {"arm": f"V{energy:02d}_B3", "seed": seed,
-                     "founder_mean_age": 200},
+                     "founder_mean_followup_ticks": 200},
                 ])
         result = analyze_payload(
             {"provenance": _clean_provenance(), "rows": rows},
@@ -51,10 +51,10 @@ class TestE6RepresentationPayoffAnalysis(unittest.TestCase):
         rows = []
         for energy in (4, 5, 6, 8, 10):
             rows.append({"arm": f"V{energy:02d}_B2", "seed": 11,
-                         "founder_mean_age": 200 + energy})
+                         "founder_mean_followup_ticks": 200 + energy})
             if energy != 6:
                 rows.append({"arm": f"V{energy:02d}_B3", "seed": 11,
-                             "founder_mean_age": 200})
+                             "founder_mean_followup_ticks": 200})
         result = analyze_payload({"provenance": _clean_provenance(), "rows": rows})
         self.assertEqual(result["primary"]["n_complete_seeds"], 0)
         self.assertEqual(result["excluded_seeds"][0]["missing"], ["V06_B3"])
@@ -65,9 +65,9 @@ class TestE6RepresentationPayoffAnalysis(unittest.TestCase):
         for energy in (4, 5, 6, 8, 10):
             rows.extend([
                 {"arm": f"V{energy:02d}_B2", "seed": 11,
-                 "founder_mean_age": 200 + energy},
+                 "founder_mean_followup_ticks": 200 + energy},
                 {"arm": f"V{energy:02d}_B3", "seed": 11,
-                 "founder_mean_age": 200},
+                 "founder_mean_followup_ticks": 200},
             ])
 
         missing_provenance = analyze_payload({"provenance": {"failures": 0}, "rows": rows})
@@ -83,11 +83,11 @@ class TestE6RepresentationPayoffAnalysis(unittest.TestCase):
         for energy in (4, 5, 6, 8, 10):
             rows.extend([
                 {"arm": f"V{energy:02d}_B1", "seed": 12,
-                 "founder_mean_age": 201},
+                 "founder_mean_followup_ticks": 201},
                 {"arm": f"V{energy:02d}_B2", "seed": 12,
-                 "founder_mean_age": 200 + energy},
+                 "founder_mean_followup_ticks": 200 + energy},
                 {"arm": f"V{energy:02d}_B3", "seed": 12,
-                 "founder_mean_age": 200},
+                 "founder_mean_followup_ticks": 200},
             ])
         wrong_seed = analyze_payload(
             {"provenance": _clean_provenance(), "rows": rows},
@@ -109,11 +109,11 @@ class TestE6RepresentationPayoffAnalysis(unittest.TestCase):
         for energy in (4, 5, 6, 8, 10):
             rows.extend([
                 {"arm": f"V{energy:02d}_B1", "seed": 11,
-                 "founder_mean_age": 201},
+                 "founder_mean_followup_ticks": 201},
                 {"arm": f"V{energy:02d}_B2", "seed": 11,
-                 "founder_mean_age": 200 + energy},
+                 "founder_mean_followup_ticks": 200 + energy},
                 {"arm": f"V{energy:02d}_B3", "seed": 11,
-                 "founder_mean_age": 200},
+                 "founder_mean_followup_ticks": 200},
             ])
         provenance = _clean_provenance()
         provenance["spec"] = {"seeds": [11]}

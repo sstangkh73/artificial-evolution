@@ -14,7 +14,11 @@ def _payload(missing: tuple[str, int] | None = None):
         for arm, value in (("A2", 190), ("A3O", 198), ("A3R", 200)):
             if missing == (arm, seed):
                 continue
-            rows.append({"arm": arm, "seed": seed, "founder_mean_age": value + seed})
+            rows.append({
+                "arm": arm,
+                "seed": seed,
+                "founder_mean_followup_ticks": value + seed,
+            })
     return {
         "provenance": {
             "spec": {"seeds": seeds},
