@@ -1,0 +1,233 @@
+{
+  "manifest_version": 1,
+  "created_utc": "2026-09-13T17:42:15.622639+00:00",
+  "frozen_by_annotated_tag": "prereg-resource-age-2026-09-14",
+  "source_revision_before_freeze_commit": "816938212bf8526331deaa914e4b78540c9d5f80",
+  "tree_clean_when_manifest_built": true,
+  "python_version": "3.14.3 (tags/v3.14.3:323c59a, Feb  3 2026, 16:04:56) [MSC v.1944 64 bit (AMD64)]",
+  "platform": "Windows-11-10.0.26200-SP0",
+  "experiments": [
+    {
+      "experiment": "E6",
+      "status": "PREREGISTERED_CONFIRMATORY_FROZEN",
+      "primary_metric": "founder_mean_followup_ticks",
+      "ticks": 800,
+      "seeds": [
+        20260970,
+        20260971,
+        20260972,
+        20260973,
+        20260974,
+        20260975,
+        20260976,
+        20260977,
+        20260978,
+        20260979,
+        20260980,
+        20260981,
+        20260982,
+        20260983,
+        20260984,
+        20260985,
+        20260986,
+        20260987,
+        20260988,
+        20260989,
+        20260990,
+        20260991,
+        20260992,
+        20260993,
+        20260994,
+        20260995,
+        20260996,
+        20260997,
+        20260998,
+        20260999
+      ],
+      "arms": [
+        "V10_B1",
+        "V10_B2",
+        "V10_B3",
+        "V08_B1",
+        "V08_B2",
+        "V08_B3",
+        "V06_B1",
+        "V06_B2",
+        "V06_B3",
+        "V05_B1",
+        "V05_B2",
+        "V05_B3",
+        "V04_B1",
+        "V04_B2",
+        "V04_B3"
+      ],
+      "expected_runs": 450
+    },
+    {
+      "experiment": "T2RB",
+      "status": "PREREGISTERED_CONFIRMATORY_FROZEN",
+      "primary_metric": "founder_mean_followup_ticks",
+      "ticks": 400,
+      "seeds": [
+        20261000,
+        20261001,
+        20261002,
+        20261003,
+        20261004,
+        20261005,
+        20261006,
+        20261007,
+        20261008,
+        20261009,
+        20261010,
+        20261011,
+        20261012,
+        20261013,
+        20261014,
+        20261015,
+        20261016,
+        20261017,
+        20261018,
+        20261019,
+        20261020,
+        20261021,
+        20261022,
+        20261023,
+        20261024,
+        20261025,
+        20261026,
+        20261027,
+        20261028,
+        20261029,
+        20261030,
+        20261031,
+        20261032,
+        20261033,
+        20261034,
+        20261035,
+        20261036,
+        20261037,
+        20261038,
+        20261039,
+        20261040,
+        20261041,
+        20261042,
+        20261043,
+        20261044,
+        20261045,
+        20261046,
+        20261047,
+        20261048,
+        20261049
+      ],
+      "arms": [
+        "A2",
+        "A3O",
+        "A3R"
+      ],
+      "expected_runs": 150
+    }
+  ],
+  "files": [
+    {
+      "path": "agents/agent.py",
+      "bytes": 137149,
+      "sha256": "2ccfe6d76f4b927b3349a643af6830db7fb42e4a05a8fe9a4719b3e96c0808dc"
+    },
+    {
+      "path": "reports/prereg/E6_representation_payoff_spec.json",
+      "bytes": 4627,
+      "sha256": "a90fb5bbdd6a6c556aca4cf4bc4ab545107ceb2481b5a72afdb3b7fc40ed6e3a"
+    },
+    {
+      "path": "reports/prereg/T2_RB_replication_spec.json",
+      "bytes": 2168,
+      "sha256": "5bc4f72088a029d6c4e58f40feba6e35bf72a6d823878bb941b2ae31faf77205"
+    },
+    {
+      "path": "reports/publication_value_of_information_2026-09-13/PREREG_E6_representation_payoff_2026-09-14.th.md",
+      "bytes": 17397,
+      "sha256": "7115710632aff82083265ba1be072e03df811cf815178fae7902e146279c9dc5"
+    },
+    {
+      "path": "requirements.txt",
+      "bytes": 51,
+      "sha256": "9d1161dd64730468468c3e7268b029f666db2612fc83f603c4026b7eb39edc64"
+    },
+    {
+      "path": "scripts/analyze_e6_representation_payoff.py",
+      "bytes": 7632,
+      "sha256": "5febb7dbd7ffea4c299884bf2e9d86e2118325ba74ef3be606d40004f1721f2c"
+    },
+    {
+      "path": "scripts/analyze_e_series.py",
+      "bytes": 9825,
+      "sha256": "727df1276809b5e7ce0cfd254e5303d727da7fee288a77dc5c7b7b4fa626af2d"
+    },
+    {
+      "path": "scripts/analyze_t2rb_replication.py",
+      "bytes": 3917,
+      "sha256": "54ead9de417d6b915edb05176bb1e5fc6277f1bf98fe5217ffeb787bc751e3aa"
+    },
+    {
+      "path": "scripts/calibrate_matched_potency.py",
+      "bytes": 9084,
+      "sha256": "de9cce2081448db3e966df8f696ba3a8735bc38df1cd1a871702c1635742eeed"
+    },
+    {
+      "path": "scripts/food_value_study_driver.py",
+      "bytes": 29096,
+      "sha256": "793ea25c43210119c657dd27f2a91ccb5704e9e486d26d6832beb83619f92ce9"
+    },
+    {
+      "path": "scripts/run_e0_pilot.py",
+      "bytes": 20065,
+      "sha256": "7571e62a7b24e67846c06aa7dc41075795eca22121604bd175f7addee41554b3"
+    },
+    {
+      "path": "scripts/run_e_series.py",
+      "bytes": 7799,
+      "sha256": "2b011ac350381b882ec35c425d071dd56a7c881c1cd21c1eeef4e8fbadd7ea1f"
+    },
+    {
+      "path": "scripts/run_long_emergence_watch.py",
+      "bytes": 180193,
+      "sha256": "4be6120098ad38b83dfddfa8920d167c416c90b87fee2b475c2bcacb05cd9f07"
+    },
+    {
+      "path": "scripts/validate_e_series_batch.py",
+      "bytes": 6165,
+      "sha256": "6b832e6ee0aeb693037b94aae344487e740324fafb02457987e2bc9b476f5322"
+    },
+    {
+      "path": "tests/test_e6_representation_payoff_analysis.py",
+      "bytes": 6995,
+      "sha256": "15e8260b9a9ee087a931db0ba16f24e817bf9f9f0599aa8e518ac42f6fcd8a31"
+    },
+    {
+      "path": "tests/test_gap_closure_patches.py",
+      "bytes": 29448,
+      "sha256": "173939c35fc28bb69606781c89f5f691639a6cd4f86fa48e98a0820b36cc28b0"
+    },
+    {
+      "path": "tests/test_t2rb_replication_analysis.py",
+      "bytes": 2518,
+      "sha256": "e734c4ab7bf48e48fe63a4885bd7f49415c0dc408424c286504c21f0a4e04a29"
+    },
+    {
+      "path": "tests/test_validate_e_series_batch.py",
+      "bytes": 2835,
+      "sha256": "29c89dccd5e1f7ca8d677f9644d015b7c3ee539427b55993a0f791ad7a430127"
+    },
+    {
+      "path": "world/environment.py",
+      "bytes": 133346,
+      "sha256": "4612794b49893cc56916720a7f481f295167950f17ea54b2d55cbdd9829a13a7"
+    },
+    {
+      "path": "world/metabolism.py",
+      "bytes": 6055,
+      "sha256": "0ce61f97794a3ba7aebc1663cc46715e3c21f21af68bfc2c03524c7d4c563100"
+    }
+  ]
+}
