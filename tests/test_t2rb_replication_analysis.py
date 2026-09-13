@@ -21,7 +21,10 @@ def _payload(missing: tuple[str, int] | None = None):
             })
     return {
         "provenance": {
-            "spec": {"seeds": seeds},
+            "spec": {
+                "status": "PREREGISTERED_CONFIRMATORY_FROZEN",
+                "seeds": seeds,
+            },
             "git_revision_start": "abc",
             "git_revision_end": "abc",
             "git_revision_changed_during_run": False,
@@ -50,6 +53,14 @@ class TestT2RBReplicationAnalysis(unittest.TestCase):
         payload = _payload()
         payload["provenance"]["git_revision_changed_during_run"] = True
         self.assertFalse(analyze_payload(payload)["confirmatory_provenance_eligible"])
+
+    def test_exploratory_spec_is_not_confirmatory_eligible(self):
+        payload = _payload()
+        payload["provenance"]["spec"]["status"] = "EXPLORATORY_SMOKE_ONLY_NOT_CONFIRMATORY"
+        result = analyze_payload(payload)
+        self.assertTrue(result["design_complete"])
+        self.assertFalse(result["frozen_confirmatory_spec"])
+        self.assertFalse(result["confirmatory_provenance_eligible"])
 
 
 if __name__ == "__main__":

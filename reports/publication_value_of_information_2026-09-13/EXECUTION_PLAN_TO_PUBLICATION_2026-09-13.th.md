@@ -1,6 +1,6 @@
 # แผนดำเนินงานจาก preregistration ถึงส่งตีพิมพ์
 
-โครงการ: Artificial Evolution — temporal toxicity and age information
+โครงการ: Artificial Evolution — temporal toxicity and resource-age information
 
 วันที่จัดทำ: 2026-09-13
 
@@ -64,7 +64,7 @@ gantt
 ### งาน
 
 - อ่าน [`DRAFT_PREREG_E6_representation_payoff.th.md`](DRAFT_PREREG_E6_representation_payoff.th.md) ทีละข้อโดยไม่เปิดผล pilot ระหว่างตัดสินใจ
-- ยืนยันคำถามหลัก E6 ว่าเป็นผลของ age-informed representation ต่อ empirical RMST/lifespan ตลอดแกน realized fruit energy
+- ยืนยันคำถามหลัก E6 ว่าเป็นผลของ resource-age-informed representation ต่อ empirical RMST/lifespan ตลอดแกน realized fruit energy; resource age คืออายุของชิ้นอาหารตั้งแต่ถูกสร้าง ไม่ใช่อายุ agent
 - ยืนยัน SESOI:
   - E6 slope = 1 tick ต่อหนึ่งหน่วยพลังงาน
   - T2-RB paired difference = 5 tick

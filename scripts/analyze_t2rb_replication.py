@@ -17,11 +17,13 @@ REQUIRED_PROVENANCE = (
     "git_tree_dirty_end",
     "failures",
 )
+FROZEN_STATUS = "PREREGISTERED_CONFIRMATORY_FROZEN"
 
 
 def analyze_payload(payload: dict, metric: str = "founder_mean_followup_ticks") -> dict:
     provenance = payload.get("provenance") or {}
     spec = provenance.get("spec") or {}
+    frozen_confirmatory_spec = spec.get("status") == FROZEN_STATUS
     expected_seeds = {int(seed) for seed in spec.get("seeds", [])}
     by_arm: dict[str, dict[int, float]] = {arm: {} for arm in REQUIRED_ARMS}
     unusable_rows: list[dict] = []
@@ -51,7 +53,7 @@ def analyze_payload(payload: dict, metric: str = "founder_mean_followup_ticks") 
     design_complete = bool(expected_seeds) and not (
         missing_by_arm or unexpected_seeds or unusable_rows
     )
-    confirmatory_eligible = provenance_complete and design_complete and not (
+    confirmatory_eligible = frozen_confirmatory_spec and provenance_complete and design_complete and not (
         provenance.get("git_tree_dirty")
         or provenance.get("git_tree_dirty_start")
         or provenance.get("git_tree_dirty_end")
@@ -65,6 +67,7 @@ def analyze_payload(payload: dict, metric: str = "founder_mean_followup_ticks") 
         "inferential_unit": "seed/run",
         "provenance": provenance,
         "provenance_complete": provenance_complete,
+        "frozen_confirmatory_spec": frozen_confirmatory_spec,
         "design_complete": design_complete,
         "confirmatory_provenance_eligible": confirmatory_eligible,
         "expected_seed_count": len(expected_seeds),

@@ -44,6 +44,7 @@ class TestBatchValidation(unittest.TestCase):
     def test_accepts_complete_clean_cartesian_batch(self):
         result = validate_payload(_payload())
         self.assertTrue(result["valid"])
+        self.assertFalse(result["confirmatory_eligible"])
         self.assertEqual(result["expected_runs"], 4)
 
     def test_rejects_missing_duplicate_and_wrong_energy(self):

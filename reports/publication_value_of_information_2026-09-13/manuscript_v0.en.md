@@ -1,4 +1,4 @@
-# When Does a Better Representation Pay? Survival Effects of Age Information in Artificial Foraging Under Temporal Toxicity
+# When Does a Better Representation Pay? Survival Effects of Resource-Age Information in Artificial Foraging Under Temporal Toxicity
 
 **Manuscript type:** Article
 
@@ -9,7 +9,7 @@
 
 ## Abstract
 
-Artificial foragers can learn food values from post-ingestive outcomes while still failing when one perceptual category combines ecologically different states. We studied agents that stored one value per food type while fruit toxicity changed with food age. In full-ecology experiments, type-only agents failed to discriminate safe from toxic ages. Adding age to the value key strongly restored discrimination under both monotonic and toxic-safe-toxic profiles, whereas a sham key with the same capacity did not, isolating information rather than memory capacity as the cause. Yet improved discrimination produced little or no lifespan benefit in the tested ecology, and an avoidance oracle shortened lifespan because toxic fruit remained energetically valuable. These results separate the ability to use information from the survival effect of using it. We therefore test whether the paired lifespan effect of an age-informed representation changes as the energetic value of risky fruit is varied while toxicity is held fixed. **[Insert preregistered E6 estimates and trend result only after the confirmatory run.]** The study tests whether representational adequacy alone determines an ecological benefit, or whether that benefit depends on the resource payoffs that the representation changes.
+Artificial foragers can learn food values from post-ingestive outcomes while still failing when one perceptual category combines ecologically different states. We studied agents that stored one value per food type while fruit toxicity changed with food age. In full-ecology experiments, type-only agents failed to discriminate safe from toxic ages. Adding resource age to the value key strongly restored discrimination under both monotonic and toxic-safe-toxic profiles, whereas a sham key with the same capacity did not, isolating information rather than memory capacity as the cause. Yet improved discrimination produced little or no lifespan benefit in the tested ecology, and an avoidance oracle shortened lifespan because toxic fruit remained energetically valuable. These results separate the ability to use information from the survival effect of using it. We therefore test whether the paired lifespan effect of a resource-age-informed representation changes as the energetic value of risky fruit is varied while toxicity is held fixed. **[Insert preregistered E6 estimates and trend result only after the confirmatory run.]** The study tests whether representational adequacy alone determines an ecological benefit, or whether that benefit depends on the resource payoffs that the representation changes.
 
 **Keywords:** artificial life; value of information; embodied foraging; perceptual aliasing; partial observability; temporal toxicity; state representation
 
@@ -26,7 +26,7 @@ The existence of this limit is established in reinforcement learning and partial
 This article makes three bounded contributions:
 
 1. It demonstrates a full-ecology failure of type-only food valuation under age-dependent toxicity.
-2. It uses an age-key rescue and a capacity-matched sham control to identify information as the cause of restored discrimination.
+2. It uses a resource-age-key rescue and a capacity-matched sham control to identify information as the cause of restored discrimination.
 3. It measures whether the survival effect of that information changes with the energetic value of the risky resource.
 
 The article does not claim that perceptual aliasing is new, that agents discovered food age, or that an evolutionary response occurred across generations.
@@ -67,7 +67,7 @@ The type-only learner stored one value per food implementation type. The rescue 
 
 **[E5 and the new preregistered R-B replication. Separate confirmatory and exploratory results.]**
 
-#### Study E: Energy-dependent survival effect of age information
+#### Study E: Energy-dependent survival effect of resource-age information
 
 **[E6 confirmatory design after the pilot is closed and the addendum is frozen. Compare B2 with capacity-matched B3 within each realized fruit-energy level; retain B1 as a secondary baseline.]**
 
@@ -95,7 +95,7 @@ Relative to the type-only learner, the type-by-age learner changed mean founder 
 
 **[Report E3 as N1 selection only; include the falsified comparison against dose-matched constant toxicity.]**
 
-### 3.5 The survival effect of age information changed with risky-resource energy
+### 3.5 The survival effect of resource-age information changed with risky-resource energy
 
 **[Insert E6 confirmatory results, confidence intervals, trend test, and the complete pattern across all preregistered levels. Do not use pilot estimates here.]**
 

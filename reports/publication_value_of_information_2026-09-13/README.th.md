@@ -5,11 +5,11 @@
 วันที่ล็อกทิศทาง: 2026-09-13
 สถานะ: **เลือกเป็นเรื่องที่จะตีพิมพ์แล้ว แต่ยังไม่พร้อมส่ง**
 
-เอกสารควบคุมงานรอบนี้: [`แผนดำเนินงานถึงขั้นส่งตีพิมพ์`](EXECUTION_PLAN_TO_PUBLICATION_2026-09-13.th.md) · [`publication-readiness audit`](PUBLICATION_READINESS_AUDIT_2026-09-13.th.md) · [`ODD model description draft`](ODD_MODEL_DESCRIPTION_DRAFT.en.md) · [`AI-use log`](AI_USE_LOG.md)
+เอกสารควบคุมงานรอบนี้: [`แผนดำเนินงานถึงขั้นส่งตีพิมพ์`](EXECUTION_PLAN_TO_PUBLICATION_2026-09-13.th.md) · [`clean-worktree smoke audit`](SMOKE_AUDIT_2026-09-14.th.md) · [`publication-readiness audit`](PUBLICATION_READINESS_AUDIT_2026-09-13.th.md) · [`ODD model description draft`](ODD_MODEL_DESCRIPTION_DRAFT.en.md) · [`AI-use log`](AI_USE_LOG.md)
 
 ## ชื่อเรื่องชั่วคราว
 
-**When Does a Better Representation Pay? Survival Effects of Age Information in Artificial Foraging Under Temporal Toxicity**
+**When Does a Better Representation Pay? Survival Effects of Resource-Age Information in Artificial Foraging Under Temporal Toxicity**
 
 ชื่อไทยสำหรับใช้อธิบายงาน:
 
@@ -28,7 +28,7 @@
 
 E6 จะเปลี่ยนข้อสองจากหลักฐานจุดเดียวให้เป็นความสัมพันธ์ระหว่างค่าพลังงานของอาหารเสี่ยงกับผลต่ออายุขัยของ representation ที่มีข้อมูลอายุ ส่วนการทำซ้ำ T2 ใน regime R-B จะตรวจผลที่พบแบบสำรวจในสภาวะอาหารขาด
 
-ในต้นฉบับจะเรียกผลต่างนี้ว่า **survival effect of age information** ซึ่งนิยามเชิงปฏิบัติการเป็นผลต่างอายุขัยระหว่าง B2 และ B3 ที่จับคู่ seed ไม่เรียกว่า expected value of perfect information หรือ Darwinian fitness value เพราะ agent ไม่ได้ปรับนโยบายอย่างเหมาะที่สุดและ E-series ไม่มีการสืบพันธุ์
+ในต้นฉบับจะเรียกผลต่างนี้ว่า **survival effect of resource-age information** ซึ่งนิยามเชิงปฏิบัติการเป็นผลต่างอายุขัยระหว่าง B2 และ B3 ที่จับคู่ seed โดย resource age คืออายุของชิ้นอาหารตั้งแต่ถูกสร้าง ไม่ใช่อายุ agent ไม่เรียกว่า expected value of perfect information หรือ Darwinian fitness value เพราะ agent ไม่ได้ปรับนโยบายอย่างเหมาะที่สุดและ E-series ไม่มีการสืบพันธุ์
 
 ## หลักฐานที่ใช้ได้แล้ว
 

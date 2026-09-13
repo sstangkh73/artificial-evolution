@@ -23,6 +23,7 @@ REQUIRED_PROVENANCE = (
     "git_tree_dirty_end",
     "failures",
 )
+FROZEN_STATUS = "PREREGISTERED_CONFIRMATORY_FROZEN"
 
 
 def validate_payload(payload: dict) -> dict:
@@ -122,6 +123,7 @@ def validate_payload(payload: dict) -> dict:
         "realized_energy_errors": realized_energy_errors,
     }
     valid = not any(errors.values()) and len(rows) == len(expected)
+    confirmatory_eligible = valid and spec.get("status") == FROZEN_STATUS
     return {
         "validator": "E-series batch integrity v1",
         "experiment": experiment,
@@ -129,6 +131,8 @@ def validate_payload(payload: dict) -> dict:
         "expected_runs": len(expected),
         "observed_rows": len(rows),
         "valid": valid,
+        "frozen_confirmatory_spec": spec.get("status") == FROZEN_STATUS,
+        "confirmatory_eligible": confirmatory_eligible,
         "errors": errors,
     }
 

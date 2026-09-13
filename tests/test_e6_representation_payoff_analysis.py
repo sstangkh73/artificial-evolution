@@ -13,6 +13,7 @@ from analyze_e6_representation_payoff import analyze_payload, ols_slope
 
 def _clean_provenance():
     return {
+        "spec": {"status": "PREREGISTERED_CONFIRMATORY_FROZEN"},
         "git_revision_start": "abc",
         "git_revision_end": "abc",
         "git_revision_changed_during_run": False,
@@ -78,6 +79,26 @@ class TestE6RepresentationPayoffAnalysis(unittest.TestCase):
         self.assertFalse(missing_provenance["confirmatory_provenance_eligible"])
         self.assertFalse(wrong_seed_count["confirmatory_provenance_eligible"])
 
+    def test_exploratory_spec_is_not_confirmatory_eligible(self):
+        rows = []
+        for energy in (4, 5, 6, 8, 10):
+            rows.extend([
+                {"arm": f"V{energy:02d}_B1", "seed": 11,
+                 "founder_mean_followup_ticks": 201},
+                {"arm": f"V{energy:02d}_B2", "seed": 11,
+                 "founder_mean_followup_ticks": 200 + energy},
+                {"arm": f"V{energy:02d}_B3", "seed": 11,
+                 "founder_mean_followup_ticks": 200},
+            ])
+        provenance = _clean_provenance()
+        provenance["spec"]["status"] = "EXPLORATORY_SMOKE_ONLY_NOT_CONFIRMATORY"
+        result = analyze_payload(
+            {"provenance": provenance, "rows": rows}, expected_seed_count=1
+        )
+        self.assertTrue(result["design_complete"])
+        self.assertFalse(result["frozen_confirmatory_spec"])
+        self.assertFalse(result["confirmatory_provenance_eligible"])
+
     def test_analysis_rejects_wrong_seed_identity_and_missing_secondary_arm(self):
         rows = []
         for energy in (4, 5, 6, 8, 10):
@@ -116,7 +137,10 @@ class TestE6RepresentationPayoffAnalysis(unittest.TestCase):
                  "founder_mean_followup_ticks": 200},
             ])
         provenance = _clean_provenance()
-        provenance["spec"] = {"seeds": [11]}
+        provenance["spec"] = {
+            "status": "PREREGISTERED_CONFIRMATORY_FROZEN",
+            "seeds": [11],
+        }
         payload = {"provenance": provenance, "rows": rows}
 
         with tempfile.TemporaryDirectory(dir=os.getcwd()) as tmp:

@@ -18,6 +18,7 @@ from analyze_e_series import bootstrap_ci95, mean_sd, sign_flip_p, t_ci95
 
 ARM_PATTERN = re.compile(r"^V(?P<energy>\d+)_B(?P<condition>[123])$")
 EXPECTED_ENERGIES = (4, 5, 6, 8, 10)
+FROZEN_STATUS = "PREREGISTERED_CONFIRMATORY_FROZEN"
 
 
 def ols_slope(xs: list[float], ys: list[float]) -> float:
@@ -116,6 +117,8 @@ def analyze_payload(
         primary.update(sign_flip_p(slopes))
 
     provenance = payload.get("provenance") or {}
+    embedded_spec = provenance.get("spec") or {}
+    frozen_confirmatory_spec = embedded_spec.get("status") == FROZEN_STATUS
     required_provenance = (
         "git_revision_start",
         "git_revision_end",
@@ -137,7 +140,7 @@ def analyze_payload(
         and not unusable_rows
         and (expected_seed_count is None or len(slopes) == expected_seed_count)
     )
-    confirmatory_eligible = provenance_complete and design_complete and not (
+    confirmatory_eligible = frozen_confirmatory_spec and provenance_complete and design_complete and not (
         provenance.get("git_tree_dirty")
         or provenance.get("git_tree_dirty_start")
         or provenance.get("git_tree_dirty_end")
@@ -149,6 +152,7 @@ def analyze_payload(
         "inferential_unit": "seed-level slope",
         "provenance": provenance,
         "provenance_complete": provenance_complete,
+        "frozen_confirmatory_spec": frozen_confirmatory_spec,
         "design_complete": design_complete,
         "confirmatory_provenance_eligible": confirmatory_eligible,
         "complete_seeds": complete_seeds,

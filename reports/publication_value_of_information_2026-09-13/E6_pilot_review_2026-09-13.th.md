@@ -53,7 +53,7 @@ pilot ที่แก้แล้วและ pilot เสริมจบรว�
 3. ตัดระดับ 2 ออกจากชุดยืนยัน เพราะ B2 discrimination ลดเหลือ 0.147 และ starvation ครองผล ทำให้แยก representation failure ออกจาก resource collapse ยาก
 4. ไม่ใช้ B4 ใน E6 ชุดยืนยัน B4 เป็น avoidance oracle ที่ยืนยันแล้วว่าไม่ optimize อายุขัย; E2 เพียงพอสำหรับข้ออ้างนี้
 5. ทดสอบ per-seed slope ของ B2-B3 บนพลังงานจริง เป็น primary test เดียว
-6. เรียก outcome ว่า survival effect of age information ไม่ใช่ EVPI หรือ fitness value
+6. เรียก outcome ว่า survival effect of resource-age information ไม่ใช่ EVPI หรือ fitness value
 
 ## provenance และข้อบกพร่องที่แก้
 
