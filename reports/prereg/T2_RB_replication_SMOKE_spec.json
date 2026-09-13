@@ -1,0 +1,66 @@
+{
+  "experiment": "T2RBSMOKE",
+  "status": "EXPLORATORY_SMOKE_ONLY_NOT_CONFIRMATORY",
+  "purpose": "Clean-checkout one-seed smoke test of all frozen T2-RB arms; never use for confirmatory inference.",
+  "primary_metric": "founder_mean_followup_ticks",
+  "ticks": 200,
+  "seeds": [
+    20260969
+  ],
+  "base": [
+    "--model",
+    "v2",
+    "--body",
+    "37",
+    "--population",
+    "50",
+    "--founder-age-spread",
+    "1",
+    "--world",
+    "100",
+    "--natural-seed-rain",
+    "12",
+    "--initial-plants",
+    "2500",
+    "--food-detection-threshold",
+    "0.01",
+    "--vision-horizon",
+    "200",
+    "--value-learning",
+    "--pickiness",
+    "0.6",
+    "--starvation-energy",
+    "6",
+    "--mortal",
+    "--starvation-death",
+    "--aging",
+    "--toxic-food",
+    "20",
+    "--toxin-acute-penalty",
+    "50",
+    "--toxin-damage-coeff",
+    "5",
+    "--encounter-telemetry",
+    "--encounter-age-bin",
+    "5",
+    "--encounter-age-max-bin",
+    "60",
+    "--agent-outcome-telemetry",
+    "--drain-mult",
+    "0.5"
+  ],
+  "arms": {
+    "A2": [
+      "--toxin-detox-ticks",
+      "120"
+    ],
+    "A3O": [
+      "--toxin-potency-scale",
+      "0.757811"
+    ],
+    "A3R": [
+      "--toxin-potency-scale",
+      "0.7506672222220914"
+    ]
+  }
+}

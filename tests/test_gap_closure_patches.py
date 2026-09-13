@@ -244,6 +244,8 @@ class TestRawFruitEnergyMultiplier(unittest.TestCase):
         self.assertEqual(result["founder_initial_age_mean"], 61.0)
         self.assertEqual(result["founder_mean_age"], 71.0)
         self.assertEqual(result["founder_mean_followup_ticks"], 10.0)
+        self.assertEqual(result["realized_gross_fruit_energy"], 10.0)
+        self.assertEqual(result["realized_gross_staple_energy"], 5.0)
 
 
 # ---------------------------------------------------------------- P1

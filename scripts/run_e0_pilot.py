@@ -326,8 +326,10 @@ def diagnose(summary: dict, params: dict, wall_seconds: float, requested_ticks: 
         diagnostics["a3_under_dosing_if_matched_on_potency"] = (
             round(target / naive, 2) if naive > 0 else None)
 
+    gross_fruit, gross_staple = _realized_gross_food_values(params)
+    diagnostics["realized_gross_fruit_energy"] = gross_fruit
+    diagnostics["realized_gross_staple_energy"] = gross_staple
     if acute > 0:
-        gross_fruit, gross_staple = _realized_gross_food_values(params)
         diagnostics["trap"] = _trap_condition(
             gross_fruit, gross_staple, acute,
             sum(tolerances) / len(tolerances), detox, window)
