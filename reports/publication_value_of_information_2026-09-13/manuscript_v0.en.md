@@ -73,7 +73,7 @@ The type-only learner stored one value per food implementation type. The rescue 
 
 ### 2.4 Outcomes and statistical analysis
 
-The inferential unit is the simulation run. Arms use matched seeds and are compared with paired differences. Report arm means and standard deviations, mean paired differences, 95% confidence intervals, exact two-sided sign-flip tests where prespecified, effect sizes, and directional seed counts. Encounter-dependent behavior is reported as `P(eat | encounter)`; raw meal counts are secondary because rejected food remains available and changes later exposure.
+The inferential unit is the simulation run. Arms use matched seeds and are compared with paired differences. Report arm means and standard deviations, mean paired differences, 95% confidence intervals, exact or seeded Monte Carlo two-sided sign-flip tests as prespecified, effect sizes, and directional seed counts. Encounter-dependent behavior is reported as `P(eat | encounter)`; raw meal counts are secondary because rejected food remains available and changes later exposure.
 
 **[Insert the preregistered E6 trend model, multiplicity rule, exclusions, extinction handling, and missing-run handling verbatim from the frozen addendum.]**
 

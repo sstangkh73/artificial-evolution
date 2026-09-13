@@ -273,5 +273,6 @@ commit hash ของเอกสารนี้จะถูกบันทึ�
 | วันที่ | การเบี่ยงเบน | เหตุผล |
 |---|---|---|
 | 2026-09-12 | commit ที่ตรึงเอกสารนี้คือ `fd758ce6854d8a77a0df420222e5a5a22fe13d4c` · tag `prereg-toxin-trap-2026-09-12` | การแก้ที่ประกาศไว้ล่วงหน้าใน §10 |
-
-*ยังไม่มีการเบี่ยงเบนอื่น*
+| 2026-09-13 | แขน oracle B4 และตัวแปรตาม discrimination index ของ E2 ถูก implement หลัง freeze ใน commit `e668829` ก่อนรัน E2 | prereg ระบุแนวคิดของ E2 แต่ implementation ที่ใช้จริงยังไม่อยู่ใน code revision ตอน freeze; เปิดเผยเพื่อไม่ให้ commit ของเอกสารถูกตีความว่าได้ตรึงโค้ดส่วนนี้แล้ว |
+| 2026-09-13 | runnable spec ของ E4 ถูกเพิ่มหลัง freeze ใน commit `f2026a6` และใช้ seed เดิมของ E1 | E4 เป็น retroactive exposure-denominator check ที่เพิ่มเพื่อแก้ bias ของ meal-count denominator ไม่ใช่ผลยืนยันที่ตรึงพร้อม E1 |
+| 2026-09-13 | ผล T2 ใน E5 ถูกจัดเป็น exploratory แม้ E5 ถูกกล่าวถึงใน prereg | หลัง E1 หักล้าง T2 และเกิดจุดตัดสินใจ D2 การเปรียบเทียบ A2-A3 ใน regime R-B ไม่ได้ถูกตรึงเป็น primary replication ที่มีแบบวิเคราะห์เฉพาะ ผล E5 จึงใช้สร้างสมมติฐานและต้องทำซ้ำด้วย seed ใหม่ |

@@ -5,6 +5,8 @@
 วันที่ล็อกทิศทาง: 2026-09-13
 สถานะ: **เลือกเป็นเรื่องที่จะตีพิมพ์แล้ว แต่ยังไม่พร้อมส่ง**
 
+เอกสารควบคุมงานรอบนี้: [`publication-readiness audit`](PUBLICATION_READINESS_AUDIT_2026-09-13.th.md) · [`ODD model description draft`](ODD_MODEL_DESCRIPTION_DRAFT.en.md) · [`AI-use log`](AI_USE_LOG.md)
+
 ## ชื่อเรื่องชั่วคราว
 
 **When Does a Better Representation Pay? Survival Effects of Age Information in Artificial Foraging Under Temporal Toxicity**
@@ -66,12 +68,13 @@ E6 จะเปลี่ยนข้อสองจากหลักฐาน�
 ## งานที่ต้องปิดก่อนเรียกว่าพร้อมส่ง
 
 1. จบ exploratory E6 pilot ที่โค้ดหลัง `63fd324` และเลือกช่วงพลังงานจากเกณฑ์ทางวิศวกรรมเท่านั้น — **เสร็จแล้ว 18/18 รัน ไม่มี failure**
-2. เขียน preregistration addendum สำหรับ E6 และ T2 replication ก่อนเห็นผลชุดยืนยัน
-3. รันและวิเคราะห์ชุดยืนยันแบบจับคู่ตาม seed
+2. ตรวจและ freeze preregistration addendum: E6 30 seed และ T2 replication 50 seed พร้อม sample-size sensitivity analysis ก่อนเห็นผลชุดยืนยัน
+3. รันและวิเคราะห์ชุดยืนยันแบบจับคู่ตาม seed รวม 600 รัน
 4. สร้าง Figure 1-5 พร้อม source data
 5. ค้นและอ่านวรรณกรรมฉบับจริงเรื่อง value of information, state representation, partial observability และ foraging information use
 6. เขียน manuscript ภาษาอังกฤษใหม่; manuscript เดิมที่มี `lure/trap` ใช้เป็นแหล่งชิ้นส่วนเท่านั้น
 7. ปิดงาน reproducibility, archive/DOI, license, AI disclosure และตรวจ reference ทุกชิ้น
+8. เขียน ODD model description และให้บุคคลอื่นทำ clean-clone reproduction อย่างน้อยหนึ่ง seed ต่อแขนก่อนส่ง
 
 ## กฎกันการเลือกผลย้อนหลัง
 

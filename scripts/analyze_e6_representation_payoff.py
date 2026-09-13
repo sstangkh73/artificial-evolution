@@ -35,6 +35,7 @@ def analyze_payload(
     payload: dict,
     metric: str = "founder_mean_age",
     expected_seed_count: int | None = None,
+    expected_seeds: set[int] | None = None,
 ) -> dict:
     values: dict[int, dict[int, dict[str, float]]] = {}
     unusable_rows: list[dict] = []
@@ -57,14 +58,24 @@ def analyze_payload(
 
     complete_seeds: list[int] = []
     excluded_seeds: list[dict] = []
+    design_missing: list[dict] = []
     per_seed: list[dict] = []
     raw_slopes: list[float] = []
-    for seed in sorted(values):
+    seeds_to_check = sorted(expected_seeds if expected_seeds is not None else values)
+    for seed in seeds_to_check:
+        missing_design_arms = [
+            f"V{energy:02d}_{condition}"
+            for energy in EXPECTED_ENERGIES
+            for condition in ("B1", "B2", "B3")
+            if condition not in values.get(seed, {}).get(energy, {})
+        ]
+        if missing_design_arms:
+            design_missing.append({"seed": seed, "missing": missing_design_arms})
         missing = [
             f"V{energy:02d}_{condition}"
             for energy in EXPECTED_ENERGIES
             for condition in ("B2", "B3")
-            if condition not in values[seed].get(energy, {})
+            if condition not in values.get(seed, {}).get(energy, {})
         ]
         if missing:
             excluded_seeds.append({"seed": seed, "missing": missing})
@@ -114,8 +125,15 @@ def analyze_payload(
         "failures",
     )
     provenance_complete = all(key in provenance for key in required_provenance)
+    unexpected_seeds = sorted(set(values) - expected_seeds) if expected_seeds is not None else []
+    expected_seed_count = (
+        len(expected_seeds) if expected_seeds is not None else expected_seed_count
+    )
     design_complete = (
-        not excluded_seeds
+        (expected_seeds is None or bool(expected_seeds))
+        and not excluded_seeds
+        and not design_missing
+        and not unexpected_seeds
         and not unusable_rows
         and (expected_seed_count is None or len(slopes) == expected_seed_count)
     )
@@ -135,6 +153,8 @@ def analyze_payload(
         "confirmatory_provenance_eligible": confirmatory_eligible,
         "complete_seeds": complete_seeds,
         "excluded_seeds": excluded_seeds,
+        "design_missing": design_missing,
+        "unexpected_seeds": unexpected_seeds,
         "unusable_rows": unusable_rows,
         "per_seed": per_seed,
         "primary": primary,
@@ -149,7 +169,15 @@ def main() -> int:
     args = parser.parse_args()
 
     payload = json.loads(Path(args.runs).read_text(encoding="utf-8"))
-    analysis = analyze_payload(payload, metric=args.metric, expected_seed_count=20)
+    expected_seeds = ((payload.get("provenance") or {}).get("spec") or {}).get("seeds")
+    expected_seed_set = (
+        {int(seed) for seed in expected_seeds} if isinstance(expected_seeds, list) else set()
+    )
+    analysis = analyze_payload(
+        payload,
+        metric=args.metric,
+        expected_seeds=expected_seed_set,
+    )
     Path(args.out).write_text(json.dumps(analysis, indent=2, ensure_ascii=False), encoding="utf-8")
 
     primary = analysis["primary"]

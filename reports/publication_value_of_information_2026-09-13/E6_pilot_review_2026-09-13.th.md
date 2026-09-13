@@ -66,4 +66,4 @@ pilot ที่แก้แล้วและ pilot เสริมจบรว�
 ## verification
 
 - syntax/JSON/diff checks ผ่าน
-- full suite: 128/128 ผ่านเมื่อรันนอก sandbox; การรันใน sandbox ล้ม 5 test เพราะ temporary-directory permission ไม่ใช่ assertion failure
+- full suite: 133/133 ผ่านเมื่อรันนอก sandbox; การรันใน sandbox ล้มเฉพาะ test ที่ต้องใช้ temporary directory เพราะ permission ไม่ใช่ assertion failure

@@ -34,7 +34,7 @@ pilot พบข้อเท็จจริงทางวิศวกรรม�
 - ใช้โปรไฟล์ W: พิษก่อน tick 40, ปลอดภัย tick 40-80, แล้วกลับเป็นพิษ
 - ใช้ base flags เดียวกับ E2_W และ E6 pilot
 - `ticks=800`; simulation หยุดเมื่อประชากรสูญพันธุ์ได้ตามปกติ
-- seed ชุดยืนยันใหม่: `20260970` ถึง `20260989` รวม 20 seed
+- seed ชุดยืนยันใหม่: `20260970` ถึง `20260999` รวม 30 seed
 
 ### 3.2 ระดับพลังงาน
 
@@ -58,7 +58,15 @@ pilot พบข้อเท็จจริงทางวิศวกรรม�
 
 ไม่ใช้ B4 เป็นแขนหลักของ E6 เพราะ B4 optimize การหลบพิษ ไม่ได้ optimize อายุขัย และไม่ใช่นโยบายที่เหมาะที่สุด
 
-ขนาดรวม: 5 ระดับ × 3 แขน × 20 seed = **300 รัน**
+ขนาดรวม: 5 ระดับ × 3 แขน × 30 seed = **450 รัน**
+
+### 3.4 เหตุผลของจำนวน seed
+
+กำหนด smallest effect of scientific interest ของแนวโน้มไว้ที่ **1 tick ต่อหน่วยพลังงาน** หรือผลต่าง B2-B3 เปลี่ยน 6 tick ระหว่างพลังงาน 4 กับ 10 ซึ่งเท่ากับราว 2% ของอายุ founder โดยทั่วไปใน regime นี้
+
+ใช้ SD ของ paired B2-B3 lifespan ใน E2-W เท่ากับ 7.822 tick เป็นค่าความแปรปรวนภายนอก E6 และสมมติอย่างเปิดเผยว่าความคลาดเคลื่อนระหว่างห้าระดับพลังงานเป็นอิสระ จะได้ SD ของ seed-level slope โดยประมาณ `7.822 / sqrt(23.2) = 1.624` tick ต่อหน่วยพลังงาน การคำนวณแบบ normal approximation ให้ power ราว 0.79 ที่ 20 seed และ 0.92 ที่ 30 seed สำหรับ slope 1.0; 95% CI half-width โดยประมาณลดจาก 0.71 เป็น 0.58
+
+การคำนวณนี้เป็น sensitivity analysis ไม่ใช่การรับประกัน power เพราะ covariance ข้ามระดับพลังงานยังไม่ทราบ เลือก 30 seed ก่อนรันยืนยันและจะรายงาน uncertainty ตามจริง ไม่เพิ่ม seed หลังดู p-value
 
 ## 4. สมมติฐานและการทดสอบหลัก
 
@@ -71,7 +79,7 @@ pilot พบข้อเท็จจริงทางวิศวกรรม�
 ### H6.1 — ผลของข้อมูลอายุดีขึ้นเมื่อผลไม้มีค่ามากขึ้น
 
 - คำทำนาย: ค่าเฉลี่ย `slope_i > 0`
-- การทดสอบหลัก: exact two-sided sign-flip test บน `slope_i` จำนวน 20 ค่า; alpha 0.05
+- การทดสอบหลัก: seeded Monte Carlo two-sided sign-flip test บน `slope_i` จำนวน 30 ค่า ใช้ 200,000 draws และ seed `20260912`; alpha 0.05
 - รายงาน: mean/SD/median ของ slope, 95% t CI, 95% bootstrap CI, exact p, จำนวน slope บวก/ลบ และผลทุกระดับ
 - ถ้าค่าเฉลี่ย slope ≤ 0 หรือ CI คร่อม 0 ให้ถือว่าสมมติฐานไม่ได้รับการยืนยัน
 
@@ -112,13 +120,13 @@ mechanism gate: ถ้า B2 ไม่แสดงข้อมูลอายุ
 3. ตรวจว่า telemetry ส่ง learned value แยก age bin ออกมาครบ — **เสร็จแล้ว; raw dump และ summary ที่แก้แล้วมี `raw_fruit@0...@8`**
 4. บันทึก deviation ของงานเดิมให้ครบ — **เสร็จแล้วใน prereg หลัก commit `42ed7fb`**
 5. commit เอกสาร spec, analyzer, tests และ runner; รัน test suite; tag preregistration
-6. หลัง tag เท่านั้นจึงเริ่ม 300 รัน
+6. หลัง tag เท่านั้นจึงเริ่ม E6 450 รันและ T2-RB 150 รัน
 
 ## 9. T2-RB replication ที่จะตรึงใน addendum เดียวกัน
 
 ผล E5 ที่ `--drain-mult 0.5` พบ A2-A3 = -6.15 tick แต่เป็น exploratory และ A3 เดิมรับ dose ต่อ encounter 0.0728 เทียบ A2 0.0650 เมื่อดูจากมื้อที่กิน; diagnostic encounter-weighted dose เฉลี่ยต่อ run ของ A2 เท่ากับ 0.0702402
 
-ชุดทำซ้ำใช้ seed ใหม่ `20260990` ถึง `20261009` และสามแขน:
+ชุดทำซ้ำใช้ seed ใหม่ `20261000` ถึง `20261049` รวม 50 seed และสามแขน:
 
 | แขน | นิยาม | บทบาท |
 |---|---|---|
@@ -126,8 +134,12 @@ mechanism gate: ถ้า B2 ไม่แสดงข้อมูลอายุ
 | A3O | `--toxin-potency-scale 0.757811` | ทำซ้ำ control เดิมโดยตรง |
 | A3R | `--toxin-potency-scale 0.7506672222220914` | control ที่ recalibrate จาก mean run-level encounter dose ของ E5 A2 |
 
-ขนาดรวม 3 แขน × 20 seed = **60 รัน** การ recalibrate ใช้ exposure/dose ของ E5 ไม่ใช้ผลอายุขัย และเปิดเผยว่าเป็นการออกแบบหลังเห็น E5
+ขนาดรวม 3 แขน × 50 seed = **150 รัน** การ recalibrate ใช้ exposure/dose ของ E5 ไม่ใช้ผลอายุขัย และเปิดเผยว่าเป็นการออกแบบหลังเห็น E5
 
-primary contrast คือ A2-A3R บน founder mean age โดยทำนายค่าติดลบ ทดสอบด้วย exact two-sided sign-flip ที่ alpha 0.05 รายงาน CI และ effect size ตาม E1-E5 ส่วน A2-A3O เป็น direct-replication secondary contrast ถ้าสอง control ให้ข้อสรุปต่างกัน ให้ถือว่าผลไวต่อวิธี dose matching และห้ามอ้างต้นทุนของความซ่อนเร้นเป็นข้อสรุปทั่วไป
+จำนวน seed อิง smallest effect of scientific interest ที่ 5 tick และ SD ของ paired A2-A3 ใน E5 เท่ากับ 12.521 tick การคำนวณแบบ normal approximation ให้ power เพียงราว 0.43 ที่ 20 seed แต่ราว 0.81 ที่ 50 seed และ 95% CI half-width โดยประมาณ 3.47 tick การคำนวณนี้ใช้ E5 เพื่อวางขนาด replication อย่างเปิดเผย และไม่มีสิทธิ์เปลี่ยนจำนวน seed หลังดูผลชุดใหม่
+
+primary contrast คือ A2-A3R บน founder mean age โดยทำนายค่าติดลบ ทดสอบด้วย seeded Monte Carlo two-sided sign-flip 200,000 draws ที่ alpha 0.05 รายงาน CI และ effect size ตาม E1-E5 ส่วน A2-A3O เป็น direct-replication secondary contrast ถ้าสอง control ให้ข้อสรุปต่างกัน ให้ถือว่าผลไวต่อวิธี dose matching และห้ามอ้างต้นทุนของความซ่อนเร้นเป็นข้อสรุปทั่วไป
+
+E6 H6.1 เป็นข้ออ้างหลักของบทความ ส่วน T2-RB เป็น replication question ที่แยกต่างหาก จึงกำหนด family และ alpha 0.05 แยกกัน การทดสอบรองภายในแต่ละ family ใช้ Holm ตามที่ระบุและไม่มีสิทธิ์เปลี่ยนข้อสรุปหลัก
 
 `--drain-mult` เปลี่ยนทั้งการใช้พลังงานและการสะสมความเสียหาย ชุดนี้จึงทำซ้ำเฉพาะผลใน R-B และไม่มีสิทธิ์ระบุว่าสาเหตุมาจาก food scarcity เพียงอย่างเดียว
