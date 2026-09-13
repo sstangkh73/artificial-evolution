@@ -1,0 +1,67 @@
+{
+  "experiment": "E6",
+  "status": "DRAFT_NOT_PREREGISTERED_DO_NOT_RUN_CONFIRMATORY",
+  "purpose": "Test whether the survival effect of an age-informed representation changes with realized risky-fruit energy, using a capacity-matched sham as the primary control.",
+  "ticks": 800,
+  "seeds": [
+    20260970, 20260971, 20260972, 20260973, 20260974,
+    20260975, 20260976, 20260977, 20260978, 20260979,
+    20260980, 20260981, 20260982, 20260983, 20260984,
+    20260985, 20260986, 20260987, 20260988, 20260989
+  ],
+  "realized_fruit_energy_by_prefix": {
+    "V10": 10,
+    "V08": 8,
+    "V06": 6,
+    "V05": 5,
+    "V04": 4
+  },
+  "base": [
+    "--model", "v2",
+    "--body", "37",
+    "--population", "50",
+    "--founder-age-spread", "1",
+    "--world", "100",
+    "--natural-seed-rain", "12",
+    "--initial-plants", "2500",
+    "--food-detection-threshold", "0.01",
+    "--vision-horizon", "200",
+    "--value-learning",
+    "--pickiness", "0.6",
+    "--starvation-energy", "6",
+    "--mortal",
+    "--starvation-death",
+    "--aging",
+    "--toxic-food", "20",
+    "--toxin-acute-penalty", "50",
+    "--toxin-damage-coeff", "5",
+    "--toxin-safe-window-start", "40",
+    "--toxin-safe-window-end", "80",
+    "--encounter-telemetry",
+    "--encounter-age-bin", "5",
+    "--encounter-age-max-bin", "60",
+    "--agent-outcome-telemetry",
+    "--drain-mult", "0.2"
+  ],
+  "arms": {
+    "V10_B1": ["--raw-fruit-energy-mult", "1.0", "--food-value-key-mode", "type"],
+    "V10_B2": ["--raw-fruit-energy-mult", "1.0", "--food-value-key-mode", "type_age", "--food-value-age-bin", "20", "--food-value-age-max-bin", "8"],
+    "V10_B3": ["--raw-fruit-energy-mult", "1.0", "--food-value-key-mode", "type_sham", "--food-value-age-bin", "20", "--food-value-age-max-bin", "8"],
+
+    "V08_B1": ["--raw-fruit-energy-mult", "0.8", "--food-value-key-mode", "type"],
+    "V08_B2": ["--raw-fruit-energy-mult", "0.8", "--food-value-key-mode", "type_age", "--food-value-age-bin", "20", "--food-value-age-max-bin", "8"],
+    "V08_B3": ["--raw-fruit-energy-mult", "0.8", "--food-value-key-mode", "type_sham", "--food-value-age-bin", "20", "--food-value-age-max-bin", "8"],
+
+    "V06_B1": ["--raw-fruit-energy-mult", "0.6", "--food-value-key-mode", "type"],
+    "V06_B2": ["--raw-fruit-energy-mult", "0.6", "--food-value-key-mode", "type_age", "--food-value-age-bin", "20", "--food-value-age-max-bin", "8"],
+    "V06_B3": ["--raw-fruit-energy-mult", "0.6", "--food-value-key-mode", "type_sham", "--food-value-age-bin", "20", "--food-value-age-max-bin", "8"],
+
+    "V05_B1": ["--raw-fruit-energy-mult", "0.5", "--food-value-key-mode", "type"],
+    "V05_B2": ["--raw-fruit-energy-mult", "0.5", "--food-value-key-mode", "type_age", "--food-value-age-bin", "20", "--food-value-age-max-bin", "8"],
+    "V05_B3": ["--raw-fruit-energy-mult", "0.5", "--food-value-key-mode", "type_sham", "--food-value-age-bin", "20", "--food-value-age-max-bin", "8"],
+
+    "V04_B1": ["--raw-fruit-energy-mult", "0.4", "--food-value-key-mode", "type"],
+    "V04_B2": ["--raw-fruit-energy-mult", "0.4", "--food-value-key-mode", "type_age", "--food-value-age-bin", "20", "--food-value-age-max-bin", "8"],
+    "V04_B3": ["--raw-fruit-energy-mult", "0.4", "--food-value-key-mode", "type_sham", "--food-value-age-bin", "20", "--food-value-age-max-bin", "8"]
+  }
+}

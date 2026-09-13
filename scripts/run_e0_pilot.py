@@ -181,6 +181,37 @@ def _trap_condition(gross_fruit: float, gross_staple: float, acute: float,
     }
 
 
+def _realized_gross_food_values(params: dict) -> tuple[float, float]:
+    """Return fruit and staple energy exactly as the v2 agent receives them."""
+    from agents.body import BodyPlan
+
+    body = BodyPlan(sensor_units=2, muscle_units=2, armor_units=0, brain_units=2)
+    enzyme = body.enzyme_profile
+    fruit = round(metabolism.digestible_energy(
+        metabolism.COMPOSITION["raw_fruit"], metabolism.FOOD_MASS["raw_fruit"], enzyme))
+    staple = round(metabolism.digestible_energy(
+        metabolism.COMPOSITION["raw_plant"], metabolism.FOOD_MASS["raw_plant"], enzyme))
+
+    food_multiplier = float(params.get("food_energy_mult", 1.0))
+    fruit = round(fruit * food_multiplier)
+    staple = round(staple * food_multiplier)
+    fruit = round(fruit * float(params.get("raw_fruit_energy_mult", 1.0)))
+    return float(fruit), float(staple)
+
+
+def _learned_values_by_key(rows: list[dict], food_kind: str) -> dict[str, dict]:
+    """Aggregate the final per-agent learned values, including age-bin keys."""
+    grouped: dict[str, list[float]] = {}
+    for row in rows:
+        for key, value in (row.get("food_value_memory") or {}).items():
+            if key == food_kind or key.startswith(f"{food_kind}@"):
+                grouped.setdefault(key, []).append(float(value))
+    return {
+        key: {"n_agents": len(values), "mean": _mean(values)}
+        for key, values in sorted(grouped.items())
+    }
+
+
 def diagnose(summary: dict, params: dict, wall_seconds: float, requested_ticks: int) -> dict:
     rows = summary.get("agent_diet_summary") or []
     founders = [r for r in rows if r.get("generation") == 0]
@@ -223,6 +254,8 @@ def diagnose(summary: dict, params: dict, wall_seconds: float, requested_ticks: 
             float(r["food_value_memory"]["raw_plant"]) for r in rows
             if "raw_plant" in (r.get("food_value_memory") or {})
         ]),
+        "learned_fruit_values_by_key": _learned_values_by_key(rows, "raw_fruit"),
+        "learned_plant_values_by_key": _learned_values_by_key(rows, "raw_plant"),
         "mean_damage": _mean([float(r["damage"]) for r in rows]),
         "mean_toxin_damage": _mean([float(r["toxin_damage_total"]) for r in rows]),
         "mean_toxin_ingested": _mean([float(r["toxin_ingested_total"]) for r in rows]),
@@ -264,14 +297,7 @@ def diagnose(summary: dict, params: dict, wall_seconds: float, requested_ticks: 
             round(target / naive, 2) if naive > 0 else None)
 
     if acute > 0:
-        enzyme = None  # gross energy is body-dependent; use the shipped default body profile
-        from agents.body import BodyPlan
-        body = BodyPlan(sensor_units=2, muscle_units=2, armor_units=0, brain_units=2)
-        enzyme = body.enzyme_profile
-        gross_fruit = metabolism.digestible_energy(
-            metabolism.COMPOSITION["raw_fruit"], metabolism.FOOD_MASS["raw_fruit"], enzyme)
-        gross_staple = metabolism.digestible_energy(
-            metabolism.COMPOSITION["raw_plant"], metabolism.FOOD_MASS["raw_plant"], enzyme)
+        gross_fruit, gross_staple = _realized_gross_food_values(params)
         diagnostics["trap"] = _trap_condition(
             gross_fruit, gross_staple, acute,
             sum(tolerances) / len(tolerances), detox, window)

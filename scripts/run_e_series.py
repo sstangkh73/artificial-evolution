@@ -98,16 +98,26 @@ def main() -> int:
                         help="reuse dumps that already exist instead of rerunning")
     parser.add_argument("--allow-dirty", action="store_true",
                         help="run even though tracked files are modified (NOT for confirmatory runs)")
+    parser.add_argument("--allow-draft", action="store_true",
+                        help="run a spec whose status marks it as draft (exploratory use only)")
     args = parser.parse_args()
 
     spec = json.loads(Path(args.spec).read_text(encoding="utf-8"))
+    if "DRAFT" in str(spec.get("status", "")).upper() and not args.allow_draft:
+        print("REFUSING: the experiment spec is marked DRAFT. Freeze and rename the spec "
+              "before a confirmatory run, or pass --allow-draft for an explicitly "
+              "exploratory run.", file=sys.stderr)
+        return 2
     name = spec["experiment"]
     ticks = int(spec["ticks"])
     seeds = [int(s) for s in spec["seeds"]]
     base = list(spec.get("base") or [])
     arms = spec["arms"]
 
-    if _dirty_tree() and not args.allow_dirty:
+    git_revision_start = _git_revision()
+    git_tree_dirty_start = _dirty_tree()
+
+    if git_tree_dirty_start and not args.allow_dirty:
         print("REFUSING: tracked files are modified. A confirmatory run must be made from a "
               "clean tree so its commit hash means something. Commit, or pass --allow-dirty "
               "for an exploratory run.", file=sys.stderr)
@@ -142,11 +152,22 @@ def main() -> int:
                              ensure_ascii=False), flush=True)
 
     failures = [r for r in rows if r.get("error")]
+    git_revision_end = _git_revision()
+    git_tree_dirty_end = _dirty_tree()
+    git_revision_changed = git_revision_start != git_revision_end
     provenance = {
         "experiment": name,
         "spec": spec,
-        "git_revision": _git_revision(),
-        "git_tree_dirty": _dirty_tree(),
+        # Keep the legacy fields for downstream readers. They now describe the
+        # state that launched the batch rather than whichever state exists when
+        # the last run happens to finish.
+        "git_revision": git_revision_start,
+        "git_tree_dirty": git_tree_dirty_start,
+        "git_revision_start": git_revision_start,
+        "git_revision_end": git_revision_end,
+        "git_revision_changed_during_run": git_revision_changed,
+        "git_tree_dirty_start": git_tree_dirty_start,
+        "git_tree_dirty_end": git_tree_dirty_end,
         "python_version": sys.version,
         "platform": platform.platform(),
         "wall_seconds_total": round(time.monotonic() - started, 1),
@@ -158,6 +179,11 @@ def main() -> int:
                                        indent=2, ensure_ascii=False), encoding="utf-8")
     print(f"\nwrote {results_path}  ({len(rows)} runs, {len(failures)} failed, "
           f"{provenance['wall_seconds_total']}s)")
+    if git_revision_changed:
+        print("INVALID PROVENANCE: HEAD changed while the batch was running "
+              f"({git_revision_start} -> {git_revision_end}). Do not use this batch as "
+              "confirmatory evidence.", file=sys.stderr)
+        return 3
     return 1 if failures else 0
 
 

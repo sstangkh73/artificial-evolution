@@ -188,6 +188,30 @@ class TestRawFruitEnergyMultiplier(unittest.TestCase):
             agent._metabolic_base_energy(baseline, plant),
         )
 
+    def test_pilot_diagnostics_use_the_realized_energy_multiplier(self):
+        from run_e0_pilot import _realized_gross_food_values
+
+        baseline_fruit, baseline_staple = _realized_gross_food_values({})
+        reduced_fruit, reduced_staple = _realized_gross_food_values({
+            "raw_fruit_energy_mult": "0.5",
+        })
+
+        self.assertEqual(reduced_fruit, round(baseline_fruit * 0.5))
+        self.assertEqual(reduced_staple, baseline_staple)
+
+    def test_pilot_diagnostics_preserve_age_keyed_learned_values(self):
+        from run_e0_pilot import _learned_values_by_key
+
+        rows = [
+            {"food_value_memory": {"raw_fruit@0": -4.0, "raw_fruit@2": 4.0}},
+            {"food_value_memory": {"raw_fruit@0": -2.0, "raw_plant@0": 5.0}},
+        ]
+
+        self.assertEqual(_learned_values_by_key(rows, "raw_fruit"), {
+            "raw_fruit@0": {"n_agents": 2, "mean": -3.0},
+            "raw_fruit@2": {"n_agents": 1, "mean": 4.0},
+        })
+
 
 # ---------------------------------------------------------------- P1
 

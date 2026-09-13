@@ -1,0 +1,42 @@
+{
+  "experiment": "T2RB",
+  "status": "DRAFT_NOT_PREREGISTERED_DO_NOT_RUN_CONFIRMATORY",
+  "purpose": "Replicate the exploratory A2 lifespan deficit in R-B against both the original constant-potency control and an E5-dose-recalibrated control.",
+  "ticks": 400,
+  "seeds": [
+    20260990, 20260991, 20260992, 20260993, 20260994,
+    20260995, 20260996, 20260997, 20260998, 20260999,
+    20261000, 20261001, 20261002, 20261003, 20261004,
+    20261005, 20261006, 20261007, 20261008, 20261009
+  ],
+  "base": [
+    "--model", "v2",
+    "--body", "37",
+    "--population", "50",
+    "--founder-age-spread", "1",
+    "--world", "100",
+    "--natural-seed-rain", "12",
+    "--initial-plants", "2500",
+    "--food-detection-threshold", "0.01",
+    "--vision-horizon", "200",
+    "--value-learning",
+    "--pickiness", "0.6",
+    "--starvation-energy", "6",
+    "--mortal",
+    "--starvation-death",
+    "--aging",
+    "--toxic-food", "20",
+    "--toxin-acute-penalty", "50",
+    "--toxin-damage-coeff", "5",
+    "--encounter-telemetry",
+    "--encounter-age-bin", "5",
+    "--encounter-age-max-bin", "60",
+    "--agent-outcome-telemetry",
+    "--drain-mult", "0.5"
+  ],
+  "arms": {
+    "A2": ["--toxin-detox-ticks", "120"],
+    "A3O": ["--toxin-potency-scale", "0.757811"],
+    "A3R": ["--toxin-potency-scale", "0.7506672222220914"]
+  }
+}
