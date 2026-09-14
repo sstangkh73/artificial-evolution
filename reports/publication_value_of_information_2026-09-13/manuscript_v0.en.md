@@ -5,7 +5,7 @@
 **Target journal:** *Artificial Life* (provisional; current author instructions and article fit must be verified before formatting)
 
 **Author:** Chisanupong Injun
-**Status:** confirmatory results integrated; methods, literature, references, and archive still incomplete
+**Status:** confirmatory results integrated; core methods and screened literature drafted; full ODD supplement and public archive still incomplete
 
 ## Abstract
 
@@ -17,9 +17,9 @@ Artificial foragers can learn food values from post-ingestive outcomes while sti
 
 ### 1.1 Problem
 
-Outcome-grounded learning can estimate the average consequence of a food category without representing every state that determines that consequence. When toxicity changes with food age, a type-only estimate combines safe and toxic encounters. This creates a representational limit: an action cannot depend on age when age, or a correlated cue, is absent from the decision key.
+Outcome-grounded learning can estimate the average consequence of a food category without representing every state that determines that consequence. When toxicity changes with food age, a type-only estimate combines safe and toxic encounters. This is a form of perceptual aliasing: situations that require different responses are indistinguishable to the decision rule (Chrisman, 1992). An action cannot depend on resource age when age, or a correlated cue, is absent from the decision key.
 
-The existence of this limit is established in reinforcement learning and partial-observability research. The empirical question here is narrower and ecological: **when does resolving the hidden state improve survival-relevant outcomes, and when is the information nearly worthless?**
+The existence of this representational limit is established in reinforcement-learning research. Ecological accounts add a second requirement: uncertainty reduction should be evaluated through the decisions and functional consequences it enables (Dall et al., 2005). Formal fitness value further assumes a response chosen to improve long-run fitness (Donaldson-Matasci et al., 2010). Our fixed learner and within-lifetime survival outcome do not satisfy that definition. The empirical question here is narrower: **when does resolving the hidden resource state improve survival-relevant outcomes, and when does it fail to do so?**
 
 ### 1.2 Contribution
 
@@ -28,6 +28,8 @@ This article makes three bounded contributions:
 1. It demonstrates a full-ecology failure of type-only food valuation under age-dependent toxicity.
 2. It uses a resource-age-key rescue and a capacity-matched sham control to identify information as the cause of restored discrimination.
 3. It measures whether the survival effect of that information changes with the energetic value of the risky resource.
+
+This focus complements recent artificial-life work showing that task structure and architectural constraints change the learning rules and performance that evolve in embodied foragers (Giannakakis et al., 2025). Here the learning rule is held fixed so that resource-state representation and ecological payoff can be manipulated directly.
 
 The article does not claim that perceptual aliasing is new, that agents discovered food age, or that an evolutionary response occurred across generations.
 
@@ -43,7 +45,11 @@ The article does not claim that perceptual aliasing is new, that agents discover
 
 ### 2.1 Artificial ecology
 
-**[Describe world size, population, resource renewal, metabolism, mortality, food energies, toxin load and damage, and stopping rules from the frozen E-series specifications.]**
+The focal experiments used a 100 × 100 discrete world initialized with 50 mortal founders and 2,500 plants. Natural seed rain was fixed at 12, the food-detection threshold at 0.01, and the vision horizon at 200. Agents used body plan 37 under metabolism model v2. Aging, starvation death, and toxin-induced acute energy loss and chronic damage were enabled. The realized gross energy values were 10 for raw fruit and 5 for the plant staple; E6 multiplied raw-fruit energy only and verified the realized values in every output. Except where stated below, runs lasted at most 400 ticks and could end earlier at population extinction. E6 ran for at most 800 ticks, and the legacy-denominator reproduction E4 ran for 3,000 ticks.
+
+Temporal toxicity was attached to raw fruit. In the monotonic profile M, potency declined with resource age over a 120-tick detoxification interval. In the non-monotonic profile W, fruit was toxic before age 40, safe from ages 40 through 79, and toxic again from age 80. Resource age was the current simulation tick minus the fruit's creation tick; it was not agent age. A consumed toxic fruit imposed an acute energy penalty proportional to excess toxin above the agent's tolerance and added chronic damage. Constant-potency controls retained the same fruit supply while removing the age-dependent hidden state.
+
+A complete model description is being prepared using the updated ODD protocol (Grimm et al., 2020).
 
 ### 2.2 Learning representation
 
@@ -53,19 +59,19 @@ The type-only learner stored one value per food implementation type. The rescue 
 
 #### Study A: Hidden-state cost and behavioral response
 
-**[E1: A0, A1, A2, A3; paired seeds; preregistered T1-T3; E4 exposure-denominator correction.]**
+E1 used 20 matched seeds across four arms: food-matched nontoxic fruit (A0), fully potent constant toxicity (A1), age-dependent monotonic detoxification (A2), and constant toxicity calibrated to the preregistered mean-dose target (A3). Its three Holm-controlled tests compared A2-A0 founder attained age, A2-A3 founder attained age, and A2-A1 acceptance conditional on encounter. A1 was a positive control for the learner's ability to avoid a consistently harmful category. E4 separately reran the 10 seeds and 3,000-tick configuration of an earlier food-value experiment with encounter telemetry enabled. E4 tested whether raw meal counts understated selectivity when rejected food remained in the world and could be encountered again.
 
 #### Study B: Information rescue
 
-**[E2: B1-B4 under monotonic M and non-monotonic W profiles; discrimination index as the primary outcome.]**
+E2 used the same 20 matched seeds in both toxicity profiles. Each profile crossed four decision systems: type-only values (B1), type-by-resource-age values (B2), the capacity-matched sham (B3), and an oracle that rejected any fruit with positive excess toxin (B4). The preregistered primary outcome was the discrimination index, `P(eat | safe encounter) - P(eat | toxic encounter)`, and the causal contrast was B2-B3 within profile. The M profile used monotonic detoxification over 120 ticks; the W profile used the toxic-safe-toxic window.
 
 #### Study C: Within-generation selection
 
-**[E3: toxin-tolerance selection differential only. State explicitly that births were zero and no response across generations was measured.]**
+E3 introduced experimenter-supplied variation in founder toxin tolerance by spreading the baseline value 0.20 over 0.05 to 0.35. Twenty matched seeds ran A0, A2, and A3. The selection differential was the mean tolerance of the half of founders with the longest attained ages minus the mean tolerance of all founders. Continuous tolerance-age slopes were reported as a mechanism check. No birth occurred, so E3 measured differential survival within the founder cohort and no response to selection across generations.
 
 #### Study D: Ecological-regime transfer
 
-**[E5 and the new preregistered R-B replication. Separate confirmatory and exploratory results.]**
+E5 repeated A0, A2, and the original A3 control across 20 matched seeds with the drain multiplier increased from 0.2 to 0.5. This simultaneously increased metabolic drain and damage accumulation and shifted deaths toward starvation; E5 therefore tested transfer to the composite R-B regime rather than isolating food scarcity. Its A2-A3 contrast was exploratory. After observing that result, we preregistered T2-RB with 50 new matched seeds. T2-RB compared A2 with both the original constant-potency control (A3O, scale 0.757811) and a dose-recalibrated control (A3R, scale 0.7506672222220914). A2-A3R was primary and A2-A3O was the direct-replication secondary contrast.
 
 #### Study E: Energy-dependent survival effect of resource-age information
 
@@ -81,7 +87,11 @@ For E6, we computed B2-B3 at each energy within each seed and fitted one ordinar
 
 ### 3.1 Hidden toxicity changed behavior and lifespan, but concealment did not add cost beyond toxin dose
 
-**[Report E1 T1-T3 and E4. Preserve the null/falsifying T2 result.]**
+All 80 E1 runs completed without failure. Relative to food-matched nontoxic fruit, age-dependent toxicity reduced mean founder attained age by 27.73 ticks (A2-A0, 95% CI -33.69 to -21.77; Holm-adjusted exact sign-flip p=0.00000572; Cliff's delta -0.635). All 20 paired differences were negative. However, A2 did not reduce age relative to the preregistered constant-potency control: A2-A3 was +1.08 ticks (95% CI -2.39 to 4.55; adjusted p=0.522; delta 0.100). Thus E1 supported a cost of toxin exposure but did not support the predicted additional survival cost of hiding toxicity in resource age.
+
+The behavioral positive control passed. A1's learned fruit value fell to 2.00, below the learned staple value of 5.00, and its mean encounter-conditional acceptance was 0.354. A2 instead learned a mixed value of 7.01 and accepted 0.711 of encounters. The A2-A1 acceptance difference was 0.357 (95% CI 0.323 to 0.391; adjusted p=0.00000572; delta 1.000), showing that the type-only learner could avoid constant toxicity but not resolve age-dependent toxicity.
+
+E4 reproduced the earlier raw-meal means exactly (1,945.3 without learning versus 423.0 with learning) and exposed a larger difference in acceptance per opportunity. The value-learning arm encountered the persistent resource 26,945.3 times on average and accepted 0.0161 of encounters, whereas the no-learning arm had 1,945.3 encounters and accepted all of them. The paired acceptance difference was 0.9839 (95% CI 0.9812 to 0.9865; exact sign-flip p=0.00195). Raw meal count therefore understated selectivity because rejection increased later re-encounters.
 
 ### 3.2 Age information restored discrimination because it carried relevant state information
 
@@ -93,19 +103,21 @@ Relative to the type-only learner, the type-by-age learner changed mean founder 
 
 ### 3.4 Toxicity generated a within-generation selection differential
 
-**[Report E3 as N1 selection only; include the falsified comparison against dose-matched constant toxicity.]**
+Founder toxin tolerance showed a positive within-generation selection differential under both toxic treatments but not under the nontoxic control. Mean differentials were +0.0034 for A0 (95% CI -0.0022 to 0.0089), +0.0289 for A2 (0.0221 to 0.0358), and +0.0372 for A3 (0.0315 to 0.0430). A2-A0 was +0.0255 (95% CI 0.0191 to 0.0319; exact sign-flip p=0.0000019; Cliff's delta 0.86). The predicted stronger selection under hidden toxicity was not observed: A2-A3 was -0.0083 (95% CI -0.0135 to -0.0032; p=0.0040; delta -0.315). The constant-potency control produced the larger differential, consistent with its greater realized toxin intake. Because all runs remained in generation 0, these effects describe selective survival among founders rather than evolutionary change.
 
 ### 3.5 The survival effect of resource-age information changed with risky-resource energy
 
 All 450 E6 runs passed the frozen batch validator. The mean seed-level B2-B3 slope was 0.890 ticks per energy unit (SD 2.227; median 0.381; 95% t CI 0.059 to 1.722; bootstrap CI 0.130 to 1.696; seeded two-sided sign-flip p=0.0365). Eighteen of 30 slopes were positive and 12 were negative. The manuscript H2 decision rule, registered as H6.1 in the frozen protocol, was therefore met. The point estimate was slightly below the preregistered smallest effect of scientific interest of 1 tick per energy unit, while its confidence interval included that threshold.
 
-The level-specific pattern qualified the linear result. Mean B2-B3 follow-up differences were -5.431 ticks at energy 4 (95% CI -8.826 to -2.037; Holm-adjusted p=0.0120), -5.576 at 5 (-9.403 to -1.749; adjusted p=0.0120), -6.141 at 6 (-9.989 to -2.293; adjusted p=0.0120), -7.650 at 8 (-11.470 to -3.830; adjusted p=0.00265), and +1.365 at 10 (-2.122 to 4.852; adjusted p=0.4448). Thus, resource-age information did not show a confirmed survival benefit at any single tested level. The positive preregistered slope arose because the survival cost seen from energies 4 through 8 was absent at energy 10.
+The level-specific pattern qualified the linear result. Mean B2-B3 follow-up differences were -5.431 ticks at energy 4 (95% CI -8.826 to -2.037; Holm-adjusted p=0.0120), -5.576 at 5 (-9.403 to -1.749; adjusted p=0.0120), -6.141 at 6 (-9.989 to -2.293; adjusted p=0.0120), -7.650 at 8 (-11.470 to -3.830; adjusted p=0.00265), and +1.365 at 10 (-2.122 to 4.852; adjusted p=0.4448). Thus, resource-age information did not show a confirmed survival benefit at any single tested level. The positive preregistered slope arose because the survival cost detected from energies 4 through 8 was no longer detected at energy 10.
 
 The mechanism gate passed at all five levels. B2's mean discrimination index ranged from 0.654 to 0.748, while B3 ranged from -0.112 to -0.097. Every B2 run contained all nine resource-age keys and assigned higher learned values to safe bins than to toxic bins. Mean fruit encounters per founder ranged from 48.7 to 65.5 across energy levels, above the preregistered threshold of 30. A stricter post hoc check found that individual runs fell below 30 at energies 4, 5, and 6. This does not change the preregistered level-mean gate, but it limits claims that every seed had equally strong exposure.
 
 A leave-one-energy-out analysis was conducted after seeing the primary result and is descriptive only. The slope remained positive with a confidence interval excluding zero when energies 4, 5, 6, or 8 were omitted. Omitting energy 10 changed the slope to -0.58 ticks per energy unit (95% CI -1.85 to 0.70; p=0.36). The primary linear result therefore depends materially on the highest-energy endpoint and should not be described as a smooth gradient across the full range.
 
 ### 3.6 Regime replication
+
+The exploratory E5 transfer first suggested a deficit in R-B: A2-A3O was -6.15 ticks across 20 matched seeds (95% CI -12.01 to -0.29; p=0.042), opposite to the preregistered E5 prediction. The drain manipulation changed both energy expenditure and damage accumulation, and this contrast was not the primary registered test, so it motivated rather than substituted for a new replication.
 
 All 150 R-B replication runs passed the frozen batch validator. Across 50 matched seeds, age-varying toxicity (A2) reduced mean founder follow-up relative to the recalibrated constant-potency control (A3R) by 7.928 ticks (95% t CI -11.046 to -4.810; bootstrap CI -10.967 to -4.938; two-sided sign-flip p=0.000020). Thirty-eight seeds favored A3R, 12 favored A2, and none tied. The point estimate exceeded the preregistered 5-tick smallest effect of scientific interest, although the t interval narrowly included -5. The direct-replication comparison with the original constant-potency control (A3O) agreed: A2-A3O was -7.102 ticks (95% CI -10.218 to -3.985; p=0.000035). The two control definitions therefore led to the same directional conclusion. Unpaired Cliff's delta was negligible for both contrasts (-0.134 and -0.118), reflecting large between-seed overlap despite the matched-seed difference.
 
@@ -144,4 +156,12 @@ Resource-age information solved the hidden-state discrimination problem but redu
 
 ## References
 
-**[Add only sources whose full texts were read and checked against the claims they support.]**
+Chrisman, L. (1992). Reinforcement learning with perceptual aliasing: The perceptual distinctions approach. In *Proceedings of the Tenth National Conference on Artificial Intelligence* (pp. 183–188). AAAI Press. https://cdn.aaai.org/AAAI/1992/AAAI92-029.pdf
+
+Dall, S. R. X., Giraldeau, L.-A., Olsson, O., McNamara, J. M., & Stephens, D. W. (2005). Information and its use by animals in evolutionary ecology. *Trends in Ecology & Evolution, 20*(4), 187–193. https://doi.org/10.1016/j.tree.2005.01.010
+
+Donaldson-Matasci, M. C., Bergstrom, C. T., & Lachmann, M. (2010). The fitness value of information. *Oikos, 119*(2), 219–230. https://doi.org/10.1111/j.1600-0706.2009.17781.x
+
+Giannakakis, E., Khajehabdollahi, S., & Levina, A. (2025). Network bottlenecks and task structure control the evolution of interpretable learning rules in a foraging agent. *Artificial Life, 31*(2), 177–194. https://doi.org/10.1162/artl_a_00458
+
+Grimm, V., Railsback, S. F., Vincenot, C. E., Berger, U., Gallagher, C., DeAngelis, D. L., Edmonds, B., Ge, J., Giske, J., Groeneveld, J., Johnston, A. S. A., Miles, A., Nabe-Nielsen, J., Polhill, J. G., Radchuk, V., Rohwäder, M.-S., Stillman, R. A., Thiele, J. C., & Ayllón, D. (2020). The ODD protocol for describing agent-based and other simulation models: A second update to improve clarity, replication, and structural realism. *Journal of Artificial Societies and Social Simulation, 23*(2), Article 7. https://doi.org/10.18564/jasss.4259
