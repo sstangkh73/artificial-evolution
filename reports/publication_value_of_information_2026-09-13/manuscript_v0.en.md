@@ -2,14 +2,14 @@
 
 **Manuscript type:** Article
 
-**Target journal:** *Artificial Life* (provisional; current author instructions and article fit must be verified before formatting)
+**Target journal:** *Artificial Life* (author instructions checked September 14, 2026; final requirements must be rechecked at submission)
 
 **Author:** Chisanupong Injun
-**Status:** full first Article draft at target length; author verification, copyedit, independent reproduction, and public archive still incomplete
+**Status:** submission-audited Article draft at target length; author verification, independent reproduction, and public archive still incomplete
 
 ## Abstract
 
-Artificial foragers can learn food values from post-ingestive outcomes while still failing when one perceptual category combines ecologically different states. We studied agents that stored one value per food type while fruit toxicity changed with food age. Adding resource age to the value key restored safe-versus-toxic discrimination, whereas a capacity-matched sham did not. In a preregistered confirmatory experiment spanning five realized fruit energies, the seed-level linear slope of the rescue-minus-sham survival effect was positive (0.890 restricted-mean follow-up ticks per energy unit, 95% t CI 0.059 to 1.722; two-sided sign-flip p=0.0365). The point estimate was slightly below the preregistered smallest effect of scientific interest. Level-specific effects were negative at energies 4, 5, 6, and 8 and indistinguishable from zero at 10, so the gradient reflected attenuation of a survival cost at the upper endpoint rather than a demonstrated survival benefit throughout the range. A separate 50-seed replication found shorter follow-up under age-varying toxicity than under a recalibrated constant-potency control (mean paired difference -7.928 ticks, 95% CI -11.046 to -4.810). These results separate representational sufficiency from ecological benefit: information can improve state-sensitive behavior while the fixed policy that uses it still reduces survival under most tested payoffs.
+Artificial foragers can learn food values from post-ingestive outcomes while still failing when one perceptual category combines ecologically different states. We studied agents that stored one value per food type while fruit toxicity changed with food age. Adding resource age to the value key restored safe-versus-toxic discrimination, whereas a capacity-matched sham did not. In a preregistered confirmatory experiment spanning five realized fruit energies, the seed-level linear slope of the rescue-minus-sham survival effect was positive (0.890 restricted-mean follow-up ticks per energy unit, 95% t CI 0.059 to 1.722; two-sided sign-flip p=0.0365). The point estimate was slightly below the preregistered smallest effect of scientific interest. Level-specific effects were negative at energies 4, 5, 6, and 8, while the 95% CI included zero at 10, so the gradient reflected attenuation of a survival cost at the upper endpoint rather than a demonstrated survival benefit throughout the range. A separate 50-seed replication found shorter follow-up under age-varying toxicity than under a recalibrated constant-potency control (mean paired difference -7.928 ticks, 95% CI -11.046 to -4.810). These results separate representational sufficiency from ecological benefit: information can improve state-sensitive behavior while the fixed policy that uses it still reduces survival under most tested payoffs.
 
 **Keywords:** artificial life; value of information; embodied foraging; perceptual aliasing; temporal toxicity; state representation
 
@@ -47,7 +47,7 @@ The article does not claim that perceptual aliasing is new, that agents discover
 
 **H2: Survival effect of state information.** The paired lifespan difference between the type-by-age learner and the capacity-matched sham changes systematically as risky-fruit energy changes. This is an empirical effect for fixed learning policies, not expected value of perfect information and not reproductive fitness.
 
-**H3: Regime dependence.** The cost of hidden toxicity relative to dose-matched observable toxicity is tested in a new, preregistered R-B replication and is reported regardless of direction.
+**H3: Regime dependence.** The cost of age-varying toxicity relative to constant-potency toxicity is tested in a new, preregistered R-B replication and is reported regardless of direction.
 
 ## 2. Methods
 
@@ -99,7 +99,7 @@ For E6, we computed B2-B3 at each energy within each seed and fitted one ordinar
 
 E6 and T2-RB specifications, seeds, directional rules, exclusions, smallest effects of scientific interest, and analysis procedures were frozen before their outcome files were generated. The tag `prereg-resource-age-2026-09-14` identifies commit `3f1af32f9e37655ed9bee5462526921eff226c8a`. Confirmatory runs were executed from a clean detached worktree at that tag. Each output recorded requested flags, effective model parameters, source revision, platform, Python version, run duration, completion state, and arm/seed identity.
 
-Batch validators required one complete output for every planned arm-by-seed cell, the frozen revision, expected effective parameters, no silent reuse, and explicit failure and censoring fields. All 600 confirmatory cells passed. A SHA-256 manifest covers 616 confirmatory files, including raw dumps and derived results; an independent check reproduced all 616 hashes. Unit and regression tests covered age-key assignment, the capacity-matched sham, raw-fruit-only energy scaling, toxin timing, encounter telemetry, provenance guards, validators, and analysis behavior. Figure scripts consume the frozen result tables and export the plotted seed-level values as CSV. The E4 figure additionally checks `encounters = ate + skipped` and `telemetry ate = raw meals` within every run.
+Batch validators required one complete output for every planned arm-by-seed cell, the frozen revision, expected effective parameters, no silent reuse, and explicit failure and censoring fields. All 600 confirmatory cells passed. A SHA-256 manifest covers 616 confirmatory files, including raw dumps and derived results; a separate verification pass reproduced all 616 hashes. Unit and regression tests covered age-key assignment, the capacity-matched sham, raw-fruit-only energy scaling, toxin timing, encounter telemetry, provenance guards, validators, and analysis behavior. Figure scripts consume the frozen result tables and export the plotted seed-level values as CSV. The E4 figure additionally checks `encounters = ate + skipped` and `telemetry ate = raw meals` within every run.
 
 ## 3. Results
 
@@ -169,7 +169,7 @@ The regime comparison reinforces that boundary. In E1 at drain multiplier 0.2, a
 
 ### 4.4 Selection within a cohort is not evolutionary change
 
-E3 provides a separate view of the toxin mechanism. When founders varied in toxin tolerance, the longer-lived half of the cohort had higher mean tolerance under both toxic conditions and not under the nontoxic control. This is a within-generation selection differential: a statistical association between a supplied heritable trait and differential survival. The constant-potency arm produced a larger differential than the age-dependent arm, contrary to the prediction that concealment would intensify selection. Its greater realized toxin intake provides a mechanistically consistent explanation.
+E3 provides a separate view of the toxin mechanism. When founders varied in toxin tolerance, the longer-lived half of the cohort had higher mean tolerance under both toxic conditions and not under the nontoxic control. This is a within-generation selection differential: a statistical association between a supplied trait and differential survival. The constant-potency arm produced a larger differential than the age-dependent arm, contrary to the prediction that concealment would intensify selection. Its greater realized toxin intake provides a mechanistically consistent explanation.
 
 No births occurred, so the model did not realize inheritance, reproduction, or a response to selection in these experiments. Calling the E3 pattern “evolution” would collapse distinct levels of evidence. The result supports selective survival among founders and shows that the toxin implementation can act on tolerance. Demonstrating evolutionary change would require sustained reproduction, transmission of tolerance, and a preregistered population-level change across generations.
 
@@ -204,15 +204,31 @@ Resource-age information solved the hidden-state discrimination problem but redu
 
 ## Data and Code Availability
 
-The release package has been assembled locally as five licensed bundles containing the 600 confirmatory raw dumps, derived evidence, manuscript and methods files, frozen preregistration, and the focal code and tests. A machine-readable inventory and flat SHA-256 list verify 693 files. **[Insert the versioned public archive citation, DOI, and code-release tag after deposit and download-back verification; do not submit this placeholder.]**
+The release package has been assembled locally as five licensed bundles containing the 600 confirmatory raw dumps, derived evidence, manuscript and methods files, frozen preregistration, and the focal code and tests. A machine-readable inventory and flat SHA-256 list verify 695 files. **[Insert the versioned public archive citation, DOI, and code-release tag after deposit and download-back verification; do not submit this placeholder.]**
 
 ## Supplementary Materials
 
 The working supplement contains the ODD model description; the complete experiment launch-parameter and code-fixed-setting tables; the focal state/process catalogue; the code-version audit; an independent-reproduction protocol and deterministic smoke signatures; preregistration and validation records; source-data tables for all figures; the analysis and figure-generation scripts; and a public-archive manifest with machine-readable inventory and checksums. Public archive links will be finalized after deposit.
 
+## Funding
+
+**[Author confirmation required. If accurate: This research received no specific grant from any funding agency in the public, commercial, or not-for-profit sectors.]**
+
+## Competing Interests
+
+**[Author confirmation required. If accurate: The author declares no competing interests.]**
+
+## Ethics Statement
+
+**[Author confirmation required. Proposed statement: This study used only computer simulations and involved no human participants or live animals; institutional ethics approval was therefore not required.]**
+
+## Author Contributions
+
+**[Author confirmation required. Complete a CRediT statement covering conceptualization, methodology, software, validation, formal analysis, investigation, data curation, visualization, writing, and project administration.]**
+
 ## Generative-AI Disclosure
 
-**[Complete with the author-approved record of tools, providers, versions, dates, tasks, and human verification.]**
+**[Author approval required; add any AI use not recorded here.]** OpenAI Codex using GPT-6 (OpenAI, 2026; https://openai.com/codex/; accessed September 13–14, 2026) assisted with code and evidence audits, experiment and analysis tooling, execution checks, literature screening, figures, parameter exports, and drafting and editing manuscript and supplement text. The human author made the scientific decisions and is responsible for verifying the source papers, code, outputs, statistics, figures, claims, citations, and submitted wording. A detailed task-level record is included in the supplementary AI-use log.
 
 ## References
 
@@ -225,6 +241,8 @@ Donaldson-Matasci, M. C., Bergstrom, C. T., & Lachmann, M. (2010). The fitness v
 Giannakakis, E., Khajehabdollahi, S., & Levina, A. (2025). Network bottlenecks and task structure control the evolution of interpretable learning rules in a foraging agent. *Artificial Life, 31*(2), 177–194. https://doi.org/10.1162/artl_a_00458
 
 Grimm, V., Railsback, S. F., Vincenot, C. E., Berger, U., Gallagher, C., DeAngelis, D. L., Edmonds, B., Ge, J., Giske, J., Groeneveld, J., Johnston, A. S. A., Miles, A., Nabe-Nielsen, J., Polhill, J. G., Radchuk, V., Rohwäder, M.-S., Stillman, R. A., Thiele, J. C., & Ayllón, D. (2020). The ODD protocol for describing agent-based and other simulation models: A second update to improve clarity, replication, and structural realism. *Journal of Artificial Societies and Social Simulation, 23*(2), Article 7. https://doi.org/10.18564/jasss.4259
+
+OpenAI. (2026). *Codex (GPT-6)* [Large language model]. https://openai.com/codex/
 
 Scholz, M., Dinner, A. R., Levine, E., & Biron, D. (2017). Stochastic feeding dynamics arise from the need for information and energy. *Proceedings of the National Academy of Sciences, 114*(35), 9261–9266. https://doi.org/10.1073/pnas.1703958114
 

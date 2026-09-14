@@ -23,8 +23,8 @@
   },
   "summary": {
     "bundle_count": 5,
-    "file_count": 693,
-    "total_bytes": 234493752
+    "file_count": 695,
+    "total_bytes": 234517052
   },
   "bundles": [
     {
@@ -3190,7 +3190,7 @@
       "license": "CC-BY-4.0",
       "purpose": "Manuscript, model description, references, disclosure log, parameter/state/version documentation, and reproduction records.",
       "file_count": 18,
-      "total_bytes": 285989,
+      "total_bytes": 287604,
       "files": [
         {
           "path": "LICENSE",
@@ -3204,28 +3204,28 @@
         },
         {
           "path": "reports/publication_value_of_information_2026-09-13/AI_USE_LOG.md",
-          "bytes": 2029,
-          "sha256": "8fff58c1860818164968c7e25cb6297e314f89490398e5d4df4693895438e1df"
+          "bytes": 2111,
+          "sha256": "05dcf559af640d65f0c911c064b02d3801ec97e431220f88caaeec41319a2be4"
         },
         {
           "path": "reports/publication_value_of_information_2026-09-13/ODD_MODEL_DESCRIPTION_DRAFT.en.md",
           "bytes": 17120,
-          "sha256": "128105ef92319060448a5aa0cd4011d0454a42d50be1d25460753236162682d4"
+          "sha256": "081bf5a6f861ae291b23722fde40d525e5aa60d71cd99f9b69d4fcf5c29a595d"
         },
         {
           "path": "reports/publication_value_of_information_2026-09-13/README.th.md",
-          "bytes": 13968,
-          "sha256": "80d3823c5e5d5811425f6fb72fda49eb13af62a46fff74a257796cfc90c63bb5"
+          "bytes": 13895,
+          "sha256": "fe6bfa3917e6ef7f5586d1a7d5fa54ed147380e5c3ddf5b140c1065988b007bb"
         },
         {
           "path": "reports/publication_value_of_information_2026-09-13/manuscript_v0.en.md",
-          "bytes": 42520,
-          "sha256": "e1857abee0d3c931b4b72d65267d84b842b239468ec3a5b6de1f0f317faa91dc"
+          "bytes": 43885,
+          "sha256": "4b61f87dcdb4a9a6542aed8b0a012b9ff97c7d2cc068ef9042705cba2af7b8ec"
         },
         {
           "path": "reports/publication_value_of_information_2026-09-13/references.bib",
-          "bytes": 2598,
-          "sha256": "80899e3dc6dd409fed08030f7aaf6ae07c7492fb3d7e2324d2335427e71e81a1"
+          "bytes": 2793,
+          "sha256": "7c71468e65658f62d24c5efdb5e0c2b624573ab8514da556f43dc4c431fcd1bc"
         },
         {
           "path": "reports/publication_value_of_information_2026-09-13/supplement/CODE_VERSION_AUDIT.en.md",
@@ -3244,8 +3244,8 @@
         },
         {
           "path": "reports/publication_value_of_information_2026-09-13/supplement/PUBLIC_ARCHIVE_MANIFEST.en.md",
-          "bytes": 5836,
-          "sha256": "1f5e015df4cc0427dfcd7ad3d67468a4a6ec7cdd56a1169bc349ca7a16d36563"
+          "bytes": 5882,
+          "sha256": "9844272c169a858567f27fdc97b7917491ed2a91beb8f309161b6a58fd491cfa"
         },
         {
           "path": "reports/publication_value_of_information_2026-09-13/supplement/STATE_VARIABLE_CATALOGUE.en.md",
@@ -3322,8 +3322,8 @@
       "id": "code_and_tests",
       "license": "MIT",
       "purpose": "Focal model, experiment, analysis, figure, inventory, and regression-test code needed for reproduction and audit.",
-      "file_count": 42,
-      "total_bytes": 989692,
+      "file_count": 44,
+      "total_bytes": 1011377,
       "files": [
         {
           "path": "agents/__init__.py",
@@ -3376,6 +3376,11 @@
           "sha256": "54ead9de417d6b915edb05176bb1e5fc6277f1bf98fe5217ffeb787bc751e3aa"
         },
         {
+          "path": "scripts/audit_submission_manuscript.py",
+          "bytes": 9340,
+          "sha256": "6b50e62e6d0bc51f5d9a4f6847049dbbc6d7a051284add940102767212e4230a"
+        },
+        {
           "path": "scripts/build_confirmatory_checksums.py",
           "bytes": 2340,
           "sha256": "631d9708d44e3c8074113015229db77d113da2cb28e83c206364a66eff58f2c1"
@@ -3387,8 +3392,13 @@
         },
         {
           "path": "scripts/build_publication_release_inventory.py",
-          "bytes": 13931,
-          "sha256": "deb3c365a4634d6897e3e5d48d8263ba9961e08682054a9795a4281c19ab5185"
+          "bytes": 14023,
+          "sha256": "3a1c088fbc4fa3d1953a2e6f217d3bd991a576fe772426f13afc72b9a590382e"
+        },
+        {
+          "path": "scripts/build_submission_manuscript.py",
+          "bytes": 12253,
+          "sha256": "740a76c9122d0cb6201ce84f12be27874c8ab0f9a6087486af262942685bfa78"
         },
         {
           "path": "scripts/export_experiment_parameter_matrix.py",

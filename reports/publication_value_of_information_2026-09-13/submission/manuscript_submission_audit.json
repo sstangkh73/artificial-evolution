@@ -1,0 +1,43 @@
+{
+  "schema_version": 1,
+  "manuscript": "reports/publication_value_of_information_2026-09-13/manuscript_v0.en.md",
+  "automated_scientific_checks": "PASS",
+  "submission_ready": false,
+  "word_counts": {
+    "gross_article_through_declarations_and_references": 6157,
+    "abstract": 205,
+    "scientific_text_abstract_through_declarations": 5817
+  },
+  "keywords": [
+    "artificial life",
+    "value of information",
+    "embodied foraging",
+    "perceptual aliasing",
+    "temporal toxicity",
+    "state representation"
+  ],
+  "figures": 5,
+  "bibliography_entries": 7,
+  "unresolved_placeholders": [
+    "[Author approval required; add any AI use not recorded here.]",
+    "[Author confirmation required. Complete a CRediT statement covering conceptualization, methodology, software, validation, formal analysis, investigation, data curation, visualization, writing, and project administration.]",
+    "[Author confirmation required. If accurate: The author declares no competing interests.]",
+    "[Author confirmation required. If accurate: This research received no specific grant from any funding agency in the public, commercial, or not-for-profit sectors.]",
+    "[Author confirmation required. Proposed statement: This study used only computer simulations and involved no human participants or live animals; institutional ethics approval was therefore not required.]",
+    "[Insert the versioned public archive citation, DOI, and code-release tag after deposit and download-back verification; do not submit this placeholder.]"
+  ],
+  "author_actions_expected": [
+    "public archive citation/DOI/code-release tag",
+    "funding statement",
+    "competing-interest statement",
+    "ethics confirmation",
+    "author-contribution statement",
+    "AI-disclosure approval and any additional AI use"
+  ],
+  "failures": [],
+  "evidence_sources": [
+    "reports/publication_value_of_information_2026-09-13/confirmatory/e6/E6_analysis.json",
+    "reports/publication_value_of_information_2026-09-13/confirmatory/e6/E6_secondary_and_mechanism.json",
+    "reports/publication_value_of_information_2026-09-13/confirmatory/t2rb/T2RB_analysis.json"
+  ]
+}
