@@ -1,0 +1,1134 @@
+{
+  "analysis_timing": "post-prereg implementation after primary-result reveal; restricted to secondary summaries named in the frozen preregistration",
+  "primary_decision_source": "analyze_e6_representation_payoff.py",
+  "primary": {
+    "contrast": "B2-B3",
+    "metric": "founder_mean_followup_ticks",
+    "predictor": "realized fruit energy",
+    "energies": [
+      4,
+      5,
+      6,
+      8,
+      10
+    ],
+    "n_complete_seeds": 30,
+    "slope_summary": {
+      "n": 30,
+      "mean": 0.890402,
+      "sd": 2.227007,
+      "median": 0.381207
+    },
+    "t_ci95": {
+      "half_width": 0.831485,
+      "low": 0.058918,
+      "high": 1.721887
+    },
+    "bootstrap_ci95": {
+      "low": 0.130236,
+      "high": 1.695776
+    },
+    "slopes_positive": 18,
+    "slopes_negative": 12,
+    "slopes_zero": 0,
+    "method": "monte_carlo_sign_flip",
+    "p": 0.03648481757591212,
+    "draws": 200000,
+    "floor": 4.9999750001249995e-06
+  },
+  "all_mechanism_gates_pass": true,
+  "holm_family": "B2-B3 across five realized-energy levels",
+  "by_realized_fruit_energy": [
+    {
+      "realized_fruit_energy": 4,
+      "B2_minus_B3": {
+        "contrast": "B2-B3",
+        "metric": "founder_mean_followup_ticks",
+        "n_pairs": 30,
+        "seeds_dropped_for_missing_arm": [],
+        "B2": {
+          "n": 30,
+          "mean": 150.713333,
+          "sd": 36.146297,
+          "median": 153.26
+        },
+        "B3": {
+          "n": 30,
+          "mean": 156.144667,
+          "sd": 37.038125,
+          "median": 161.01
+        },
+        "paired_difference": {
+          "n": 30,
+          "mean": -5.431333,
+          "sd": 9.091696,
+          "median": -5.44,
+          "t_ci95": {
+            "half_width": 3.394514,
+            "low": -8.825847,
+            "high": -2.036819
+          },
+          "bootstrap_ci95": {
+            "low": -8.62,
+            "high": -2.266667
+          },
+          "method": "monte_carlo_sign_flip",
+          "p": 0.002994985025074875,
+          "draws": 200000,
+          "floor": 4.9999750001249995e-06,
+          "seeds_favouring_left": 10,
+          "seeds_favouring_right": 20,
+          "seeds_tied": 0,
+          "holm_adjusted_p": 0.01197994
+        },
+        "cliffs_delta": {
+          "delta": -0.104444,
+          "magnitude": "negligible"
+        }
+      },
+      "B2_minus_B1": {
+        "contrast": "B2-B1",
+        "metric": "founder_mean_followup_ticks",
+        "n_pairs": 30,
+        "seeds_dropped_for_missing_arm": [],
+        "B2": {
+          "n": 30,
+          "mean": 150.713333,
+          "sd": 36.146297,
+          "median": 153.26
+        },
+        "B1": {
+          "n": 30,
+          "mean": 144.238667,
+          "sd": 28.076093,
+          "median": 150.27
+        },
+        "paired_difference": {
+          "n": 30,
+          "mean": 6.474667,
+          "sd": 11.586296,
+          "median": 4.71,
+          "t_ci95": {
+            "half_width": 4.325908,
+            "low": 2.148758,
+            "high": 10.800575
+          },
+          "bootstrap_ci95": {
+            "low": 2.456667,
+            "high": 10.62
+          },
+          "method": "monte_carlo_sign_flip",
+          "p": 0.004249978750106249,
+          "draws": 200000,
+          "floor": 4.9999750001249995e-06,
+          "seeds_favouring_left": 23,
+          "seeds_favouring_right": 7,
+          "seeds_tied": 0
+        },
+        "cliffs_delta": {
+          "delta": 0.105556,
+          "magnitude": "negligible"
+        }
+      },
+      "conditions": {
+        "B1": {
+          "n_runs": 30,
+          "founder_mean_followup_ticks": {
+            "n": 30,
+            "mean": 144.238667,
+            "sd": 28.076093,
+            "median": 150.27
+          },
+          "discrimination_index_mean": -0.080467,
+          "p_eat_given_safe_mean": 0.328674,
+          "p_eat_given_toxic_mean": 0.409141,
+          "fruit_encounters_per_founder_mean": 49.496667,
+          "fruit_encounters_per_founder_min": 17.94,
+          "founders_censored_total": 0,
+          "death_reason_counts": {
+            "starvation": 1141,
+            "durability_depleted": 80,
+            "senescence": 279
+          },
+          "death_reason_proportions": {
+            "starvation": 0.760667,
+            "durability_depleted": 0.053333,
+            "senescence": 0.186
+          }
+        },
+        "B2": {
+          "n_runs": 30,
+          "founder_mean_followup_ticks": {
+            "n": 30,
+            "mean": 150.713333,
+            "sd": 36.146297,
+            "median": 153.26
+          },
+          "discrimination_index_mean": 0.666076,
+          "p_eat_given_safe_mean": 1.0,
+          "p_eat_given_toxic_mean": 0.333924,
+          "fruit_encounters_per_founder_mean": 48.694667,
+          "fruit_encounters_per_founder_min": 19.26,
+          "founders_censored_total": 0,
+          "death_reason_counts": {
+            "starvation": 1092,
+            "durability_depleted": 83,
+            "senescence": 325
+          },
+          "death_reason_proportions": {
+            "starvation": 0.728,
+            "durability_depleted": 0.055333,
+            "senescence": 0.216667
+          }
+        },
+        "B3": {
+          "n_runs": 30,
+          "founder_mean_followup_ticks": {
+            "n": 30,
+            "mean": 156.144667,
+            "sd": 37.038125,
+            "median": 161.01
+          },
+          "discrimination_index_mean": -0.103961,
+          "p_eat_given_safe_mean": 0.388172,
+          "p_eat_given_toxic_mean": 0.492133,
+          "fruit_encounters_per_founder_mean": 45.959333,
+          "fruit_encounters_per_founder_min": 15.98,
+          "founders_censored_total": 0,
+          "death_reason_counts": {
+            "starvation": 1021,
+            "durability_depleted": 80,
+            "senescence": 399
+          },
+          "death_reason_proportions": {
+            "starvation": 0.680667,
+            "durability_depleted": 0.053333,
+            "senescence": 0.266
+          }
+        }
+      },
+      "mechanism_gate": {
+        "expected_resource_age_keys": [
+          "raw_fruit@0",
+          "raw_fruit@1",
+          "raw_fruit@2",
+          "raw_fruit@3",
+          "raw_fruit@4",
+          "raw_fruit@5",
+          "raw_fruit@6",
+          "raw_fruit@7",
+          "raw_fruit@8"
+        ],
+        "b2_rows_with_complete_key_coverage": 30,
+        "b2_rows_with_safe_bin_value_above_toxic_bins": 30,
+        "b2_mean_fruit_encounters_per_founder": 48.694667,
+        "b2_minimum_fruit_encounters_per_founder": 19.26,
+        "passes_preregistered_gate": true,
+        "stricter_all_runs_encounter_sensitivity_passes": false,
+        "encounter_gate_interpretation": "The frozen text states 30 encounters per founder at each energy level. The preregistered gate therefore uses the level mean; the minimum-run criterion is reported as a stricter post hoc sensitivity."
+      }
+    },
+    {
+      "realized_fruit_energy": 5,
+      "B2_minus_B3": {
+        "contrast": "B2-B3",
+        "metric": "founder_mean_followup_ticks",
+        "n_pairs": 30,
+        "seeds_dropped_for_missing_arm": [],
+        "B2": {
+          "n": 30,
+          "mean": 156.062667,
+          "sd": 35.546752,
+          "median": 155.61
+        },
+        "B3": {
+          "n": 30,
+          "mean": 161.638667,
+          "sd": 37.341823,
+          "median": 160.4
+        },
+        "paired_difference": {
+          "n": 30,
+          "mean": -5.576,
+          "sd": 10.249978,
+          "median": -2.9,
+          "t_ci95": {
+            "half_width": 3.826975,
+            "low": -9.402975,
+            "high": -1.749025
+          },
+          "bootstrap_ci95": {
+            "low": -9.207333,
+            "high": -2.068667
+          },
+          "method": "monte_carlo_sign_flip",
+          "p": 0.005604971975140124,
+          "draws": 200000,
+          "floor": 4.9999750001249995e-06,
+          "seeds_favouring_left": 11,
+          "seeds_favouring_right": 19,
+          "seeds_tied": 0,
+          "holm_adjusted_p": 0.01197994
+        },
+        "cliffs_delta": {
+          "delta": -0.095556,
+          "magnitude": "negligible"
+        }
+      },
+      "B2_minus_B1": {
+        "contrast": "B2-B1",
+        "metric": "founder_mean_followup_ticks",
+        "n_pairs": 30,
+        "seeds_dropped_for_missing_arm": [],
+        "B2": {
+          "n": 30,
+          "mean": 156.062667,
+          "sd": 35.546752,
+          "median": 155.61
+        },
+        "B1": {
+          "n": 30,
+          "mean": 150.314,
+          "sd": 30.076441,
+          "median": 151.08
+        },
+        "paired_difference": {
+          "n": 30,
+          "mean": 5.748667,
+          "sd": 13.378367,
+          "median": 4.83,
+          "t_ci95": {
+            "half_width": 4.995003,
+            "low": 0.753663,
+            "high": 10.74367
+          },
+          "bootstrap_ci95": {
+            "low": 1.092,
+            "high": 10.378
+          },
+          "method": "monte_carlo_sign_flip",
+          "p": 0.026139869300653498,
+          "draws": 200000,
+          "floor": 4.9999750001249995e-06,
+          "seeds_favouring_left": 19,
+          "seeds_favouring_right": 10,
+          "seeds_tied": 1
+        },
+        "cliffs_delta": {
+          "delta": 0.098889,
+          "magnitude": "negligible"
+        }
+      },
+      "conditions": {
+        "B1": {
+          "n_runs": 30,
+          "founder_mean_followup_ticks": {
+            "n": 30,
+            "mean": 150.314,
+            "sd": 30.076441,
+            "median": 151.08
+          },
+          "discrimination_index_mean": -0.081953,
+          "p_eat_given_safe_mean": 0.320273,
+          "p_eat_given_toxic_mean": 0.402226,
+          "fruit_encounters_per_founder_mean": 53.028667,
+          "fruit_encounters_per_founder_min": 21.86,
+          "founders_censored_total": 0,
+          "death_reason_counts": {
+            "starvation": 1082,
+            "durability_depleted": 93,
+            "senescence": 325
+          },
+          "death_reason_proportions": {
+            "starvation": 0.721333,
+            "durability_depleted": 0.062,
+            "senescence": 0.216667
+          }
+        },
+        "B2": {
+          "n_runs": 30,
+          "founder_mean_followup_ticks": {
+            "n": 30,
+            "mean": 156.062667,
+            "sd": 35.546752,
+            "median": 155.61
+          },
+          "discrimination_index_mean": 0.68377,
+          "p_eat_given_safe_mean": 1.0,
+          "p_eat_given_toxic_mean": 0.31623,
+          "fruit_encounters_per_founder_mean": 52.28,
+          "fruit_encounters_per_founder_min": 25.2,
+          "founders_censored_total": 0,
+          "death_reason_counts": {
+            "starvation": 1053,
+            "durability_depleted": 79,
+            "senescence": 368
+          },
+          "death_reason_proportions": {
+            "starvation": 0.702,
+            "durability_depleted": 0.052667,
+            "senescence": 0.245333
+          }
+        },
+        "B3": {
+          "n_runs": 30,
+          "founder_mean_followup_ticks": {
+            "n": 30,
+            "mean": 161.638667,
+            "sd": 37.341823,
+            "median": 160.4
+          },
+          "discrimination_index_mean": -0.112332,
+          "p_eat_given_safe_mean": 0.356322,
+          "p_eat_given_toxic_mean": 0.468654,
+          "fruit_encounters_per_founder_mean": 49.492667,
+          "fruit_encounters_per_founder_min": 20.78,
+          "founders_censored_total": 0,
+          "death_reason_counts": {
+            "starvation": 944,
+            "durability_depleted": 106,
+            "senescence": 450
+          },
+          "death_reason_proportions": {
+            "starvation": 0.629333,
+            "durability_depleted": 0.070667,
+            "senescence": 0.3
+          }
+        }
+      },
+      "mechanism_gate": {
+        "expected_resource_age_keys": [
+          "raw_fruit@0",
+          "raw_fruit@1",
+          "raw_fruit@2",
+          "raw_fruit@3",
+          "raw_fruit@4",
+          "raw_fruit@5",
+          "raw_fruit@6",
+          "raw_fruit@7",
+          "raw_fruit@8"
+        ],
+        "b2_rows_with_complete_key_coverage": 30,
+        "b2_rows_with_safe_bin_value_above_toxic_bins": 30,
+        "b2_mean_fruit_encounters_per_founder": 52.28,
+        "b2_minimum_fruit_encounters_per_founder": 25.2,
+        "passes_preregistered_gate": true,
+        "stricter_all_runs_encounter_sensitivity_passes": false,
+        "encounter_gate_interpretation": "The frozen text states 30 encounters per founder at each energy level. The preregistered gate therefore uses the level mean; the minimum-run criterion is reported as a stricter post hoc sensitivity."
+      }
+    },
+    {
+      "realized_fruit_energy": 6,
+      "B2_minus_B3": {
+        "contrast": "B2-B3",
+        "metric": "founder_mean_followup_ticks",
+        "n_pairs": 30,
+        "seeds_dropped_for_missing_arm": [],
+        "B2": {
+          "n": 30,
+          "mean": 160.168667,
+          "sd": 35.215795,
+          "median": 163.42
+        },
+        "B3": {
+          "n": 30,
+          "mean": 166.309333,
+          "sd": 35.763154,
+          "median": 167.7
+        },
+        "paired_difference": {
+          "n": 30,
+          "mean": -6.140667,
+          "sd": 10.306165,
+          "median": -4.98,
+          "t_ci95": {
+            "half_width": 3.847953,
+            "low": -9.98862,
+            "high": -2.292714
+          },
+          "bootstrap_ci95": {
+            "low": -9.749333,
+            "high": -2.577333
+          },
+          "method": "monte_carlo_sign_flip",
+          "p": 0.0030499847500762498,
+          "draws": 200000,
+          "floor": 4.9999750001249995e-06,
+          "seeds_favouring_left": 9,
+          "seeds_favouring_right": 21,
+          "seeds_tied": 0,
+          "holm_adjusted_p": 0.01197994
+        },
+        "cliffs_delta": {
+          "delta": -0.113333,
+          "magnitude": "negligible"
+        }
+      },
+      "B2_minus_B1": {
+        "contrast": "B2-B1",
+        "metric": "founder_mean_followup_ticks",
+        "n_pairs": 30,
+        "seeds_dropped_for_missing_arm": [],
+        "B2": {
+          "n": 30,
+          "mean": 160.168667,
+          "sd": 35.215795,
+          "median": 163.42
+        },
+        "B1": {
+          "n": 30,
+          "mean": 156.123333,
+          "sd": 29.508744,
+          "median": 155.77
+        },
+        "paired_difference": {
+          "n": 30,
+          "mean": 4.045333,
+          "sd": 11.983781,
+          "median": 6.06,
+          "t_ci95": {
+            "half_width": 4.474315,
+            "low": -0.428982,
+            "high": 8.519648
+          },
+          "bootstrap_ci95": {
+            "low": -0.206,
+            "high": 8.154
+          },
+          "method": "monte_carlo_sign_flip",
+          "p": 0.0754596227018865,
+          "draws": 200000,
+          "floor": 4.9999750001249995e-06,
+          "seeds_favouring_left": 20,
+          "seeds_favouring_right": 10,
+          "seeds_tied": 0
+        },
+        "cliffs_delta": {
+          "delta": 0.051111,
+          "magnitude": "negligible"
+        }
+      },
+      "conditions": {
+        "B1": {
+          "n_runs": 30,
+          "founder_mean_followup_ticks": {
+            "n": 30,
+            "mean": 156.123333,
+            "sd": 29.508744,
+            "median": 155.77
+          },
+          "discrimination_index_mean": -0.070995,
+          "p_eat_given_safe_mean": 0.318753,
+          "p_eat_given_toxic_mean": 0.389747,
+          "fruit_encounters_per_founder_mean": 56.273333,
+          "fruit_encounters_per_founder_min": 28.12,
+          "founders_censored_total": 0,
+          "death_reason_counts": {
+            "starvation": 991,
+            "durability_depleted": 105,
+            "senescence": 404
+          },
+          "death_reason_proportions": {
+            "starvation": 0.660667,
+            "durability_depleted": 0.07,
+            "senescence": 0.269333
+          }
+        },
+        "B2": {
+          "n_runs": 30,
+          "founder_mean_followup_ticks": {
+            "n": 30,
+            "mean": 160.168667,
+            "sd": 35.215795,
+            "median": 163.42
+          },
+          "discrimination_index_mean": 0.711928,
+          "p_eat_given_safe_mean": 1.0,
+          "p_eat_given_toxic_mean": 0.288072,
+          "fruit_encounters_per_founder_mean": 56.13,
+          "fruit_encounters_per_founder_min": 28.14,
+          "founders_censored_total": 0,
+          "death_reason_counts": {
+            "starvation": 973,
+            "durability_depleted": 112,
+            "senescence": 415
+          },
+          "death_reason_proportions": {
+            "starvation": 0.648667,
+            "durability_depleted": 0.074667,
+            "senescence": 0.276667
+          }
+        },
+        "B3": {
+          "n_runs": 30,
+          "founder_mean_followup_ticks": {
+            "n": 30,
+            "mean": 166.309333,
+            "sd": 35.763154,
+            "median": 167.7
+          },
+          "discrimination_index_mean": -0.109468,
+          "p_eat_given_safe_mean": 0.337947,
+          "p_eat_given_toxic_mean": 0.447415,
+          "fruit_encounters_per_founder_mean": 53.207333,
+          "fruit_encounters_per_founder_min": 22.76,
+          "founders_censored_total": 0,
+          "death_reason_counts": {
+            "starvation": 887,
+            "durability_depleted": 115,
+            "senescence": 498
+          },
+          "death_reason_proportions": {
+            "starvation": 0.591333,
+            "durability_depleted": 0.076667,
+            "senescence": 0.332
+          }
+        }
+      },
+      "mechanism_gate": {
+        "expected_resource_age_keys": [
+          "raw_fruit@0",
+          "raw_fruit@1",
+          "raw_fruit@2",
+          "raw_fruit@3",
+          "raw_fruit@4",
+          "raw_fruit@5",
+          "raw_fruit@6",
+          "raw_fruit@7",
+          "raw_fruit@8"
+        ],
+        "b2_rows_with_complete_key_coverage": 30,
+        "b2_rows_with_safe_bin_value_above_toxic_bins": 30,
+        "b2_mean_fruit_encounters_per_founder": 56.13,
+        "b2_minimum_fruit_encounters_per_founder": 28.14,
+        "passes_preregistered_gate": true,
+        "stricter_all_runs_encounter_sensitivity_passes": false,
+        "encounter_gate_interpretation": "The frozen text states 30 encounters per founder at each energy level. The preregistered gate therefore uses the level mean; the minimum-run criterion is reported as a stricter post hoc sensitivity."
+      }
+    },
+    {
+      "realized_fruit_energy": 8,
+      "B2_minus_B3": {
+        "contrast": "B2-B3",
+        "metric": "founder_mean_followup_ticks",
+        "n_pairs": 30,
+        "seeds_dropped_for_missing_arm": [],
+        "B2": {
+          "n": 30,
+          "mean": 171.341333,
+          "sd": 32.528777,
+          "median": 172.77
+        },
+        "B3": {
+          "n": 30,
+          "mean": 178.991333,
+          "sd": 38.815782,
+          "median": 181.65
+        },
+        "paired_difference": {
+          "n": 30,
+          "mean": -7.65,
+          "sd": 10.23015,
+          "median": -9.05,
+          "t_ci95": {
+            "half_width": 3.819572,
+            "low": -11.469572,
+            "high": -3.830428
+          },
+          "bootstrap_ci95": {
+            "low": -11.12,
+            "high": -3.924667
+          },
+          "method": "monte_carlo_sign_flip",
+          "p": 0.00052999735001325,
+          "draws": 200000,
+          "floor": 4.9999750001249995e-06,
+          "seeds_favouring_left": 5,
+          "seeds_favouring_right": 25,
+          "seeds_tied": 0,
+          "holm_adjusted_p": 0.00264999
+        },
+        "cliffs_delta": {
+          "delta": -0.146667,
+          "magnitude": "negligible"
+        }
+      },
+      "B2_minus_B1": {
+        "contrast": "B2-B1",
+        "metric": "founder_mean_followup_ticks",
+        "n_pairs": 30,
+        "seeds_dropped_for_missing_arm": [],
+        "B2": {
+          "n": 30,
+          "mean": 171.341333,
+          "sd": 32.528777,
+          "median": 172.77
+        },
+        "B1": {
+          "n": 30,
+          "mean": 172.624,
+          "sd": 29.417344,
+          "median": 181.67
+        },
+        "paired_difference": {
+          "n": 30,
+          "mean": -1.282667,
+          "sd": 9.922392,
+          "median": 0.86,
+          "t_ci95": {
+            "half_width": 3.704666,
+            "low": -4.987333,
+            "high": 2.421999
+          },
+          "bootstrap_ci95": {
+            "low": -4.777333,
+            "high": 2.192667
+          },
+          "method": "monte_carlo_sign_flip",
+          "p": 0.48434757826210867,
+          "draws": 200000,
+          "floor": 4.9999750001249995e-06,
+          "seeds_favouring_left": 17,
+          "seeds_favouring_right": 13,
+          "seeds_tied": 0
+        },
+        "cliffs_delta": {
+          "delta": -0.015556,
+          "magnitude": "negligible"
+        }
+      },
+      "conditions": {
+        "B1": {
+          "n_runs": 30,
+          "founder_mean_followup_ticks": {
+            "n": 30,
+            "mean": 172.624,
+            "sd": 29.417344,
+            "median": 181.67
+          },
+          "discrimination_index_mean": -0.072551,
+          "p_eat_given_safe_mean": 0.297375,
+          "p_eat_given_toxic_mean": 0.369926,
+          "fruit_encounters_per_founder_mean": 66.115333,
+          "fruit_encounters_per_founder_min": 38.14,
+          "founders_censored_total": 0,
+          "death_reason_counts": {
+            "starvation": 722,
+            "durability_depleted": 163,
+            "senescence": 615
+          },
+          "death_reason_proportions": {
+            "starvation": 0.481333,
+            "durability_depleted": 0.108667,
+            "senescence": 0.41
+          }
+        },
+        "B2": {
+          "n_runs": 30,
+          "founder_mean_followup_ticks": {
+            "n": 30,
+            "mean": 171.341333,
+            "sd": 32.528777,
+            "median": 172.77
+          },
+          "discrimination_index_mean": 0.74789,
+          "p_eat_given_safe_mean": 1.0,
+          "p_eat_given_toxic_mean": 0.25211,
+          "fruit_encounters_per_founder_mean": 65.458667,
+          "fruit_encounters_per_founder_min": 36.06,
+          "founders_censored_total": 0,
+          "death_reason_counts": {
+            "starvation": 816,
+            "durability_depleted": 158,
+            "senescence": 526
+          },
+          "death_reason_proportions": {
+            "starvation": 0.544,
+            "durability_depleted": 0.105333,
+            "senescence": 0.350667
+          }
+        },
+        "B3": {
+          "n_runs": 30,
+          "founder_mean_followup_ticks": {
+            "n": 30,
+            "mean": 178.991333,
+            "sd": 38.815782,
+            "median": 181.65
+          },
+          "discrimination_index_mean": -0.097404,
+          "p_eat_given_safe_mean": 0.289682,
+          "p_eat_given_toxic_mean": 0.387085,
+          "fruit_encounters_per_founder_mean": 64.037333,
+          "fruit_encounters_per_founder_min": 29.16,
+          "founders_censored_total": 0,
+          "death_reason_counts": {
+            "starvation": 698,
+            "durability_depleted": 151,
+            "senescence": 651
+          },
+          "death_reason_proportions": {
+            "starvation": 0.465333,
+            "durability_depleted": 0.100667,
+            "senescence": 0.434
+          }
+        }
+      },
+      "mechanism_gate": {
+        "expected_resource_age_keys": [
+          "raw_fruit@0",
+          "raw_fruit@1",
+          "raw_fruit@2",
+          "raw_fruit@3",
+          "raw_fruit@4",
+          "raw_fruit@5",
+          "raw_fruit@6",
+          "raw_fruit@7",
+          "raw_fruit@8"
+        ],
+        "b2_rows_with_complete_key_coverage": 30,
+        "b2_rows_with_safe_bin_value_above_toxic_bins": 30,
+        "b2_mean_fruit_encounters_per_founder": 65.458667,
+        "b2_minimum_fruit_encounters_per_founder": 36.06,
+        "passes_preregistered_gate": true,
+        "stricter_all_runs_encounter_sensitivity_passes": true,
+        "encounter_gate_interpretation": "The frozen text states 30 encounters per founder at each energy level. The preregistered gate therefore uses the level mean; the minimum-run criterion is reported as a stricter post hoc sensitivity."
+      }
+    },
+    {
+      "realized_fruit_energy": 10,
+      "B2_minus_B3": {
+        "contrast": "B2-B3",
+        "metric": "founder_mean_followup_ticks",
+        "n_pairs": 30,
+        "seeds_dropped_for_missing_arm": [],
+        "B2": {
+          "n": 30,
+          "mean": 207.078,
+          "sd": 25.86224,
+          "median": 211.64
+        },
+        "B3": {
+          "n": 30,
+          "mean": 205.713333,
+          "sd": 27.806625,
+          "median": 213.43
+        },
+        "paired_difference": {
+          "n": 30,
+          "mean": 1.364667,
+          "sd": 9.339557,
+          "median": 0.72,
+          "t_ci95": {
+            "half_width": 3.487056,
+            "low": -2.12239,
+            "high": 4.851723
+          },
+          "bootstrap_ci95": {
+            "low": -1.702,
+            "high": 4.858667
+          },
+          "method": "monte_carlo_sign_flip",
+          "p": 0.44477777611111946,
+          "draws": 200000,
+          "floor": 4.9999750001249995e-06,
+          "seeds_favouring_left": 17,
+          "seeds_favouring_right": 13,
+          "seeds_tied": 0,
+          "holm_adjusted_p": 0.44477778
+        },
+        "cliffs_delta": {
+          "delta": 0.035556,
+          "magnitude": "negligible"
+        }
+      },
+      "B2_minus_B1": {
+        "contrast": "B2-B1",
+        "metric": "founder_mean_followup_ticks",
+        "n_pairs": 30,
+        "seeds_dropped_for_missing_arm": [],
+        "B2": {
+          "n": 30,
+          "mean": 207.078,
+          "sd": 25.86224,
+          "median": 211.64
+        },
+        "B1": {
+          "n": 30,
+          "mean": 207.594667,
+          "sd": 24.916873,
+          "median": 210.14
+        },
+        "paired_difference": {
+          "n": 30,
+          "mean": -0.516667,
+          "sd": 7.737894,
+          "median": -0.99,
+          "t_ci95": {
+            "half_width": 2.889053,
+            "low": -3.405719,
+            "high": 2.372386
+          },
+          "bootstrap_ci95": {
+            "low": -3.198,
+            "high": 2.167333
+          },
+          "method": "monte_carlo_sign_flip",
+          "p": 0.7196714016429918,
+          "draws": 200000,
+          "floor": 4.9999750001249995e-06,
+          "seeds_favouring_left": 14,
+          "seeds_favouring_right": 16,
+          "seeds_tied": 0
+        },
+        "cliffs_delta": {
+          "delta": -0.006667,
+          "magnitude": "negligible"
+        }
+      },
+      "conditions": {
+        "B1": {
+          "n_runs": 30,
+          "founder_mean_followup_ticks": {
+            "n": 30,
+            "mean": 207.594667,
+            "sd": 24.916873,
+            "median": 210.14
+          },
+          "discrimination_index_mean": -0.057526,
+          "p_eat_given_safe_mean": 0.315373,
+          "p_eat_given_toxic_mean": 0.3729,
+          "fruit_encounters_per_founder_mean": 78.566,
+          "fruit_encounters_per_founder_min": 45.92,
+          "founders_censored_total": 0,
+          "death_reason_counts": {
+            "starvation": 116,
+            "durability_depleted": 237,
+            "senescence": 1147
+          },
+          "death_reason_proportions": {
+            "starvation": 0.077333,
+            "durability_depleted": 0.158,
+            "senescence": 0.764667
+          }
+        },
+        "B2": {
+          "n_runs": 30,
+          "founder_mean_followup_ticks": {
+            "n": 30,
+            "mean": 207.078,
+            "sd": 25.86224,
+            "median": 211.64
+          },
+          "discrimination_index_mean": 0.653709,
+          "p_eat_given_safe_mean": 1.0,
+          "p_eat_given_toxic_mean": 0.346291,
+          "fruit_encounters_per_founder_mean": 61.938,
+          "fruit_encounters_per_founder_min": 46.08,
+          "founders_censored_total": 0,
+          "death_reason_counts": {
+            "starvation": 132,
+            "durability_depleted": 258,
+            "senescence": 1110
+          },
+          "death_reason_proportions": {
+            "starvation": 0.088,
+            "durability_depleted": 0.172,
+            "senescence": 0.74
+          }
+        },
+        "B3": {
+          "n_runs": 30,
+          "founder_mean_followup_ticks": {
+            "n": 30,
+            "mean": 205.713333,
+            "sd": 27.806625,
+            "median": 213.43
+          },
+          "discrimination_index_mean": -0.097385,
+          "p_eat_given_safe_mean": 0.325863,
+          "p_eat_given_toxic_mean": 0.423248,
+          "fruit_encounters_per_founder_mean": 65.481333,
+          "fruit_encounters_per_founder_min": 46.34,
+          "founders_censored_total": 0,
+          "death_reason_counts": {
+            "starvation": 122,
+            "durability_depleted": 265,
+            "senescence": 1113
+          },
+          "death_reason_proportions": {
+            "starvation": 0.081333,
+            "durability_depleted": 0.176667,
+            "senescence": 0.742
+          }
+        }
+      },
+      "mechanism_gate": {
+        "expected_resource_age_keys": [
+          "raw_fruit@0",
+          "raw_fruit@1",
+          "raw_fruit@2",
+          "raw_fruit@3",
+          "raw_fruit@4",
+          "raw_fruit@5",
+          "raw_fruit@6",
+          "raw_fruit@7",
+          "raw_fruit@8"
+        ],
+        "b2_rows_with_complete_key_coverage": 30,
+        "b2_rows_with_safe_bin_value_above_toxic_bins": 30,
+        "b2_mean_fruit_encounters_per_founder": 61.938,
+        "b2_minimum_fruit_encounters_per_founder": 46.08,
+        "passes_preregistered_gate": true,
+        "stricter_all_runs_encounter_sensitivity_passes": true,
+        "encounter_gate_interpretation": "The frozen text states 30 encounters per founder at each energy level. The preregistered gate therefore uses the level mean; the minimum-run criterion is reported as a stricter post hoc sensitivity."
+      }
+    }
+  ],
+  "post_hoc_sensitivity": {
+    "status": "not preregistered; cannot change the H6.1 decision",
+    "purpose": "diagnose whether the linear slope depends on one energy level",
+    "leave_one_energy_out": [
+      {
+        "excluded_energy": 4,
+        "included_energies": [
+          5,
+          6,
+          8,
+          10
+        ],
+        "slope_summary": {
+          "n": 30,
+          "mean": 1.236418,
+          "sd": 2.479545,
+          "median": 1.303051
+        },
+        "t_ci95": {
+          "half_width": 0.925773,
+          "low": 0.310645,
+          "high": 2.162191
+        },
+        "bootstrap_ci95": {
+          "low": 0.383266,
+          "high": 2.119085
+        },
+        "method": "monte_carlo_sign_flip",
+        "p": 0.010729946350268249,
+        "draws": 200000,
+        "floor": 4.9999750001249995e-06
+      },
+      {
+        "excluded_energy": 5,
+        "included_energies": [
+          4,
+          6,
+          8,
+          10
+        ],
+        "slope_summary": {
+          "n": 30,
+          "mean": 0.943933,
+          "sd": 2.341918,
+          "median": 0.8675
+        },
+        "t_ci95": {
+          "half_width": 0.874388,
+          "low": 0.069545,
+          "high": 1.818322
+        },
+        "bootstrap_ci95": {
+          "low": 0.1318,
+          "high": 1.7987
+        },
+        "method": "monte_carlo_sign_flip",
+        "p": 0.035959820200898995,
+        "draws": 200000,
+        "floor": 4.9999750001249995e-06
+      },
+      {
+        "excluded_energy": 6,
+        "included_energies": [
+          4,
+          5,
+          8,
+          10
+        ],
+        "slope_summary": {
+          "n": 30,
+          "mean": 0.860081,
+          "sd": 2.216078,
+          "median": 0.421099
+        },
+        "t_ci95": {
+          "half_width": 0.827404,
+          "low": 0.032676,
+          "high": 1.687485
+        },
+        "bootstrap_ci95": {
+          "low": 0.102747,
+          "high": 1.657905
+        },
+        "method": "monte_carlo_sign_flip",
+        "p": 0.04175479122604387,
+        "draws": 200000,
+        "floor": 4.9999750001249995e-06
+      },
+      {
+        "excluded_energy": 8,
+        "included_energies": [
+          4,
+          5,
+          6,
+          10
+        ],
+        "slope_summary": {
+          "n": 30,
+          "mean": 1.245454,
+          "sd": 2.146137,
+          "median": 0.75759
+        },
+        "t_ci95": {
+          "half_width": 0.801291,
+          "low": 0.444163,
+          "high": 2.046745
+        },
+        "bootstrap_ci95": {
+          "low": 0.5149,
+          "high": 2.028378
+        },
+        "method": "monte_carlo_sign_flip",
+        "p": 0.0031849840750796245,
+        "draws": 200000,
+        "floor": 4.9999750001249995e-06
+      },
+      {
+        "excluded_energy": 10,
+        "included_energies": [
+          4,
+          5,
+          6,
+          8
+        ],
+        "slope_summary": {
+          "n": 30,
+          "mean": -0.578381,
+          "sd": 3.414195,
+          "median": -0.708286
+        },
+        "t_ci95": {
+          "half_width": 1.274738,
+          "low": -1.853119,
+          "high": 0.696357
+        },
+        "bootstrap_ci95": {
+          "low": -1.773505,
+          "high": 0.622381
+        },
+        "method": "monte_carlo_sign_flip",
+        "p": 0.35795821020894897,
+        "draws": 200000,
+        "floor": 4.9999750001249995e-06
+      }
+    ]
+  }
+}

@@ -1,0 +1,233 @@
+{
+  "analysis": "T2 R-B replication",
+  "primary_metric": "founder_mean_followup_ticks",
+  "inferential_unit": "seed/run",
+  "provenance": {
+    "experiment": "T2RB",
+    "spec": {
+      "experiment": "T2RB",
+      "status": "PREREGISTERED_CONFIRMATORY_FROZEN",
+      "frozen_date": "2026-09-14",
+      "frozen_tag": "prereg-resource-age-2026-09-14",
+      "purpose": "Replicate the exploratory A2 lifespan deficit in R-B against both the original constant-potency control and an E5-dose-recalibrated control.",
+      "primary_metric": "founder_mean_followup_ticks",
+      "ticks": 400,
+      "seeds": [
+        20261000,
+        20261001,
+        20261002,
+        20261003,
+        20261004,
+        20261005,
+        20261006,
+        20261007,
+        20261008,
+        20261009,
+        20261010,
+        20261011,
+        20261012,
+        20261013,
+        20261014,
+        20261015,
+        20261016,
+        20261017,
+        20261018,
+        20261019,
+        20261020,
+        20261021,
+        20261022,
+        20261023,
+        20261024,
+        20261025,
+        20261026,
+        20261027,
+        20261028,
+        20261029,
+        20261030,
+        20261031,
+        20261032,
+        20261033,
+        20261034,
+        20261035,
+        20261036,
+        20261037,
+        20261038,
+        20261039,
+        20261040,
+        20261041,
+        20261042,
+        20261043,
+        20261044,
+        20261045,
+        20261046,
+        20261047,
+        20261048,
+        20261049
+      ],
+      "base": [
+        "--model",
+        "v2",
+        "--body",
+        "37",
+        "--population",
+        "50",
+        "--founder-age-spread",
+        "1",
+        "--world",
+        "100",
+        "--natural-seed-rain",
+        "12",
+        "--initial-plants",
+        "2500",
+        "--food-detection-threshold",
+        "0.01",
+        "--vision-horizon",
+        "200",
+        "--value-learning",
+        "--pickiness",
+        "0.6",
+        "--starvation-energy",
+        "6",
+        "--mortal",
+        "--starvation-death",
+        "--aging",
+        "--toxic-food",
+        "20",
+        "--toxin-acute-penalty",
+        "50",
+        "--toxin-damage-coeff",
+        "5",
+        "--encounter-telemetry",
+        "--encounter-age-bin",
+        "5",
+        "--encounter-age-max-bin",
+        "60",
+        "--agent-outcome-telemetry",
+        "--drain-mult",
+        "0.5"
+      ],
+      "arms": {
+        "A2": [
+          "--toxin-detox-ticks",
+          "120"
+        ],
+        "A3O": [
+          "--toxin-potency-scale",
+          "0.757811"
+        ],
+        "A3R": [
+          "--toxin-potency-scale",
+          "0.7506672222220914"
+        ]
+      }
+    },
+    "git_revision": "3f1af32f9e37655ed9bee5462526921eff226c8a",
+    "git_tree_dirty": false,
+    "git_revision_start": "3f1af32f9e37655ed9bee5462526921eff226c8a",
+    "git_revision_end": "3f1af32f9e37655ed9bee5462526921eff226c8a",
+    "git_revision_changed_during_run": false,
+    "git_tree_dirty_start": false,
+    "git_tree_dirty_end": false,
+    "python_version": "3.14.3 (tags/v3.14.3:323c59a, Feb  3 2026, 16:04:56) [MSC v.1944 64 bit (AMD64)]",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "wall_seconds_total": 1007.7,
+    "runs": 150,
+    "failures": 0
+  },
+  "provenance_complete": true,
+  "frozen_confirmatory_spec": true,
+  "design_complete": true,
+  "confirmatory_provenance_eligible": true,
+  "expected_seed_count": 50,
+  "missing_by_arm": {},
+  "unexpected_seeds": [],
+  "unusable_rows": [],
+  "primary": {
+    "contrast": "A2-A3R",
+    "metric": "founder_mean_followup_ticks",
+    "n_pairs": 50,
+    "seeds_dropped_for_missing_arm": [],
+    "A2": {
+      "n": 50,
+      "mean": 159.2608,
+      "sd": 39.51657,
+      "median": 161.24
+    },
+    "A3R": {
+      "n": 50,
+      "mean": 167.1888,
+      "sd": 38.23784,
+      "median": 172.05
+    },
+    "paired_difference": {
+      "n": 50,
+      "mean": -7.928,
+      "sd": 11.017789,
+      "median": -5.42,
+      "t_ci95": {
+        "half_width": 3.117859,
+        "low": -11.045859,
+        "high": -4.810141
+      },
+      "bootstrap_ci95": {
+        "low": -10.9668,
+        "high": -4.9384
+      },
+      "method": "monte_carlo_sign_flip",
+      "p": 1.9999900000499998e-05,
+      "draws": 200000,
+      "floor": 4.9999750001249995e-06,
+      "seeds_favouring_left": 12,
+      "seeds_favouring_right": 38,
+      "seeds_tied": 0
+    },
+    "cliffs_delta": {
+      "delta": -0.1336,
+      "magnitude": "negligible"
+    }
+  },
+  "direct_replication_secondary": {
+    "contrast": "A2-A3O",
+    "metric": "founder_mean_followup_ticks",
+    "n_pairs": 50,
+    "seeds_dropped_for_missing_arm": [],
+    "A2": {
+      "n": 50,
+      "mean": 159.2608,
+      "sd": 39.51657,
+      "median": 161.24
+    },
+    "A3O": {
+      "n": 50,
+      "mean": 166.3624,
+      "sd": 38.032901,
+      "median": 171.22
+    },
+    "paired_difference": {
+      "n": 50,
+      "mean": -7.1016,
+      "sd": 11.012179,
+      "median": -4.83,
+      "t_ci95": {
+        "half_width": 3.116272,
+        "low": -10.217872,
+        "high": -3.985328
+      },
+      "bootstrap_ci95": {
+        "low": -10.1448,
+        "high": -4.1076
+      },
+      "method": "monte_carlo_sign_flip",
+      "p": 3.4999825000875e-05,
+      "draws": 200000,
+      "floor": 4.9999750001249995e-06,
+      "seeds_favouring_left": 13,
+      "seeds_favouring_right": 37,
+      "seeds_tied": 0
+    },
+    "cliffs_delta": {
+      "delta": -0.1184,
+      "magnitude": "negligible"
+    }
+  }
+}

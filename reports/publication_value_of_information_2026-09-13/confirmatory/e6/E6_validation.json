@@ -1,0 +1,23 @@
+{
+  "validator": "E-series batch integrity v1",
+  "experiment": "E6",
+  "primary_metric": "founder_mean_followup_ticks",
+  "expected_runs": 450,
+  "observed_rows": 450,
+  "valid": true,
+  "frozen_confirmatory_spec": true,
+  "confirmatory_eligible": true,
+  "errors": {
+    "missing_spec_fields": [],
+    "spec_status_errors": [],
+    "provenance_missing": [],
+    "provenance_errors": [],
+    "malformed_rows": [],
+    "failed_rows": [],
+    "missing_outcomes": [],
+    "duplicate_cells": [],
+    "missing_cells": [],
+    "unexpected_cells": [],
+    "realized_energy_errors": []
+  }
+}

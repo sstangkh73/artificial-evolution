@@ -1,0 +1,652 @@
+{
+  "analysis": "E6 representation-payoff slope",
+  "inferential_unit": "seed-level slope",
+  "provenance": {
+    "experiment": "E6",
+    "spec": {
+      "experiment": "E6",
+      "status": "PREREGISTERED_CONFIRMATORY_FROZEN",
+      "frozen_date": "2026-09-14",
+      "frozen_tag": "prereg-resource-age-2026-09-14",
+      "purpose": "Test whether the survival effect of a resource-age-informed representation changes with realized risky-fruit energy, using a capacity-matched sham as the primary control.",
+      "primary_metric": "founder_mean_followup_ticks",
+      "ticks": 800,
+      "seeds": [
+        20260970,
+        20260971,
+        20260972,
+        20260973,
+        20260974,
+        20260975,
+        20260976,
+        20260977,
+        20260978,
+        20260979,
+        20260980,
+        20260981,
+        20260982,
+        20260983,
+        20260984,
+        20260985,
+        20260986,
+        20260987,
+        20260988,
+        20260989,
+        20260990,
+        20260991,
+        20260992,
+        20260993,
+        20260994,
+        20260995,
+        20260996,
+        20260997,
+        20260998,
+        20260999
+      ],
+      "realized_fruit_energy_by_prefix": {
+        "V10": 10,
+        "V08": 8,
+        "V06": 6,
+        "V05": 5,
+        "V04": 4
+      },
+      "base": [
+        "--model",
+        "v2",
+        "--body",
+        "37",
+        "--population",
+        "50",
+        "--founder-age-spread",
+        "1",
+        "--world",
+        "100",
+        "--natural-seed-rain",
+        "12",
+        "--initial-plants",
+        "2500",
+        "--food-detection-threshold",
+        "0.01",
+        "--vision-horizon",
+        "200",
+        "--value-learning",
+        "--pickiness",
+        "0.6",
+        "--starvation-energy",
+        "6",
+        "--mortal",
+        "--starvation-death",
+        "--aging",
+        "--toxic-food",
+        "20",
+        "--toxin-acute-penalty",
+        "50",
+        "--toxin-damage-coeff",
+        "5",
+        "--toxin-safe-window-start",
+        "40",
+        "--toxin-safe-window-end",
+        "80",
+        "--encounter-telemetry",
+        "--encounter-age-bin",
+        "5",
+        "--encounter-age-max-bin",
+        "60",
+        "--agent-outcome-telemetry",
+        "--drain-mult",
+        "0.2"
+      ],
+      "arms": {
+        "V10_B1": [
+          "--raw-fruit-energy-mult",
+          "1.0",
+          "--food-value-key-mode",
+          "type"
+        ],
+        "V10_B2": [
+          "--raw-fruit-energy-mult",
+          "1.0",
+          "--food-value-key-mode",
+          "type_age",
+          "--food-value-age-bin",
+          "20",
+          "--food-value-age-max-bin",
+          "8"
+        ],
+        "V10_B3": [
+          "--raw-fruit-energy-mult",
+          "1.0",
+          "--food-value-key-mode",
+          "type_sham",
+          "--food-value-age-bin",
+          "20",
+          "--food-value-age-max-bin",
+          "8"
+        ],
+        "V08_B1": [
+          "--raw-fruit-energy-mult",
+          "0.8",
+          "--food-value-key-mode",
+          "type"
+        ],
+        "V08_B2": [
+          "--raw-fruit-energy-mult",
+          "0.8",
+          "--food-value-key-mode",
+          "type_age",
+          "--food-value-age-bin",
+          "20",
+          "--food-value-age-max-bin",
+          "8"
+        ],
+        "V08_B3": [
+          "--raw-fruit-energy-mult",
+          "0.8",
+          "--food-value-key-mode",
+          "type_sham",
+          "--food-value-age-bin",
+          "20",
+          "--food-value-age-max-bin",
+          "8"
+        ],
+        "V06_B1": [
+          "--raw-fruit-energy-mult",
+          "0.6",
+          "--food-value-key-mode",
+          "type"
+        ],
+        "V06_B2": [
+          "--raw-fruit-energy-mult",
+          "0.6",
+          "--food-value-key-mode",
+          "type_age",
+          "--food-value-age-bin",
+          "20",
+          "--food-value-age-max-bin",
+          "8"
+        ],
+        "V06_B3": [
+          "--raw-fruit-energy-mult",
+          "0.6",
+          "--food-value-key-mode",
+          "type_sham",
+          "--food-value-age-bin",
+          "20",
+          "--food-value-age-max-bin",
+          "8"
+        ],
+        "V05_B1": [
+          "--raw-fruit-energy-mult",
+          "0.5",
+          "--food-value-key-mode",
+          "type"
+        ],
+        "V05_B2": [
+          "--raw-fruit-energy-mult",
+          "0.5",
+          "--food-value-key-mode",
+          "type_age",
+          "--food-value-age-bin",
+          "20",
+          "--food-value-age-max-bin",
+          "8"
+        ],
+        "V05_B3": [
+          "--raw-fruit-energy-mult",
+          "0.5",
+          "--food-value-key-mode",
+          "type_sham",
+          "--food-value-age-bin",
+          "20",
+          "--food-value-age-max-bin",
+          "8"
+        ],
+        "V04_B1": [
+          "--raw-fruit-energy-mult",
+          "0.4",
+          "--food-value-key-mode",
+          "type"
+        ],
+        "V04_B2": [
+          "--raw-fruit-energy-mult",
+          "0.4",
+          "--food-value-key-mode",
+          "type_age",
+          "--food-value-age-bin",
+          "20",
+          "--food-value-age-max-bin",
+          "8"
+        ],
+        "V04_B3": [
+          "--raw-fruit-energy-mult",
+          "0.4",
+          "--food-value-key-mode",
+          "type_sham",
+          "--food-value-age-bin",
+          "20",
+          "--food-value-age-max-bin",
+          "8"
+        ]
+      }
+    },
+    "git_revision": "3f1af32f9e37655ed9bee5462526921eff226c8a",
+    "git_tree_dirty": false,
+    "git_revision_start": "3f1af32f9e37655ed9bee5462526921eff226c8a",
+    "git_revision_end": "3f1af32f9e37655ed9bee5462526921eff226c8a",
+    "git_revision_changed_during_run": false,
+    "git_tree_dirty_start": false,
+    "git_tree_dirty_end": false,
+    "python_version": "3.14.3 (tags/v3.14.3:323c59a, Feb  3 2026, 16:04:56) [MSC v.1944 64 bit (AMD64)]",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "wall_seconds_total": 2811.7,
+    "runs": 450,
+    "failures": 0
+  },
+  "provenance_complete": true,
+  "frozen_confirmatory_spec": true,
+  "design_complete": true,
+  "confirmatory_provenance_eligible": true,
+  "complete_seeds": [
+    20260970,
+    20260971,
+    20260972,
+    20260973,
+    20260974,
+    20260975,
+    20260976,
+    20260977,
+    20260978,
+    20260979,
+    20260980,
+    20260981,
+    20260982,
+    20260983,
+    20260984,
+    20260985,
+    20260986,
+    20260987,
+    20260988,
+    20260989,
+    20260990,
+    20260991,
+    20260992,
+    20260993,
+    20260994,
+    20260995,
+    20260996,
+    20260997,
+    20260998,
+    20260999
+  ],
+  "excluded_seeds": [],
+  "design_missing": [],
+  "unexpected_seeds": [],
+  "unusable_rows": [],
+  "per_seed": [
+    {
+      "seed": 20260970,
+      "b2_minus_b3_by_realized_energy": {
+        "4": -5.28,
+        "5": -8.3,
+        "6": -18.26,
+        "8": -9.12,
+        "10": 3.32
+      },
+      "slope_ticks_per_energy_unit": 1.572586
+    },
+    {
+      "seed": 20260971,
+      "b2_minus_b3_by_realized_energy": {
+        "4": -5.6,
+        "5": 4.32,
+        "6": -11.68,
+        "8": -11.18,
+        "10": -8.78
+      },
+      "slope_ticks_per_energy_unit": -1.329655
+    },
+    {
+      "seed": 20260972,
+      "b2_minus_b3_by_realized_energy": {
+        "4": -13.84,
+        "5": -19.44,
+        "6": -8.18,
+        "8": -5.32,
+        "10": -6.18
+      },
+      "slope_ticks_per_energy_unit": 1.876552
+    },
+    {
+      "seed": 20260973,
+      "b2_minus_b3_by_realized_energy": {
+        "4": -16.04,
+        "5": -13.6,
+        "6": -10.04,
+        "8": -13.76,
+        "10": -4.06
+      },
+      "slope_ticks_per_energy_unit": 1.569828
+    },
+    {
+      "seed": 20260974,
+      "b2_minus_b3_by_realized_energy": {
+        "4": 2.34,
+        "5": -13.68,
+        "6": -17.72,
+        "8": -10.04,
+        "10": -6.04
+      },
+      "slope_ticks_per_energy_unit": -0.351552
+    },
+    {
+      "seed": 20260975,
+      "b2_minus_b3_by_realized_energy": {
+        "4": -18.18,
+        "5": -6.28,
+        "6": -11.4,
+        "8": -0.58,
+        "10": 4.48
+      },
+      "slope_ticks_per_energy_unit": 3.386897
+    },
+    {
+      "seed": 20260976,
+      "b2_minus_b3_by_realized_energy": {
+        "4": -11.12,
+        "5": -23.44,
+        "6": -15.82,
+        "8": -4.24,
+        "10": 3.18
+      },
+      "slope_ticks_per_energy_unit": 3.482069
+    },
+    {
+      "seed": 20260977,
+      "b2_minus_b3_by_realized_energy": {
+        "4": -6.84,
+        "5": 4.34,
+        "6": -2.78,
+        "8": -8.98,
+        "10": -2.66
+      },
+      "slope_ticks_per_energy_unit": -0.392586
+    },
+    {
+      "seed": 20260978,
+      "b2_minus_b3_by_realized_energy": {
+        "4": 12.52,
+        "5": -11.8,
+        "6": 11.22,
+        "8": -20.96,
+        "10": -2.98
+      },
+      "slope_ticks_per_energy_unit": -2.581034
+    },
+    {
+      "seed": 20260979,
+      "b2_minus_b3_by_realized_energy": {
+        "4": -15.84,
+        "5": 4.54,
+        "6": 7.8,
+        "8": -13.8,
+        "10": -1.86
+      },
+      "slope_ticks_per_energy_unit": 0.155
+    },
+    {
+      "seed": 20260980,
+      "b2_minus_b3_by_realized_energy": {
+        "4": 3.54,
+        "5": -0.4,
+        "6": -0.52,
+        "8": -10.5,
+        "10": 3.56
+      },
+      "slope_ticks_per_energy_unit": -0.467586
+    },
+    {
+      "seed": 20260981,
+      "b2_minus_b3_by_realized_energy": {
+        "4": 1.6,
+        "5": -2.56,
+        "6": -22.28,
+        "8": -20.42,
+        "10": -4.36
+      },
+      "slope_ticks_per_energy_unit": -1.297759
+    },
+    {
+      "seed": 20260982,
+      "b2_minus_b3_by_realized_energy": {
+        "4": 5.44,
+        "5": 4.4,
+        "6": -1.56,
+        "8": -6.44,
+        "10": 0.96
+      },
+      "slope_ticks_per_energy_unit": -1.12069
+    },
+    {
+      "seed": 20260983,
+      "b2_minus_b3_by_realized_energy": {
+        "4": -10.16,
+        "5": -3.24,
+        "6": -7.2,
+        "8": 19.84,
+        "10": 22.98
+      },
+      "slope_ticks_per_energy_unit": 6.113276
+    },
+    {
+      "seed": 20260984,
+      "b2_minus_b3_by_realized_energy": {
+        "4": -19.04,
+        "5": -12.72,
+        "6": -20.8,
+        "8": -20.46,
+        "10": 3.86
+      },
+      "slope_ticks_per_energy_unit": 2.88
+    },
+    {
+      "seed": 20260985,
+      "b2_minus_b3_by_realized_energy": {
+        "4": -5.88,
+        "5": 1.72,
+        "6": -27.88,
+        "8": -20.7,
+        "10": 0.48
+      },
+      "slope_ticks_per_energy_unit": 0.082586
+    },
+    {
+      "seed": 20260986,
+      "b2_minus_b3_by_realized_energy": {
+        "4": -22.88,
+        "5": -26.2,
+        "6": 2.88,
+        "8": -8.74,
+        "10": 9.3
+      },
+      "slope_ticks_per_energy_unit": 5.132069
+    },
+    {
+      "seed": 20260987,
+      "b2_minus_b3_by_realized_energy": {
+        "4": -0.26,
+        "5": 2.18,
+        "6": -4.9,
+        "8": -22.2,
+        "10": -10.2
+      },
+      "slope_ticks_per_energy_unit": -2.828966
+    },
+    {
+      "seed": 20260988,
+      "b2_minus_b3_by_realized_energy": {
+        "4": -1.14,
+        "5": 11.18,
+        "6": -5.06,
+        "8": 5.1,
+        "10": 31.28
+      },
+      "slope_ticks_per_energy_unit": 4.379483
+    },
+    {
+      "seed": 20260989,
+      "b2_minus_b3_by_realized_energy": {
+        "4": 1.2,
+        "5": 7.42,
+        "6": 1.88,
+        "8": -12.44,
+        "10": 7.66
+      },
+      "slope_ticks_per_energy_unit": -0.322931
+    },
+    {
+      "seed": 20260990,
+      "b2_minus_b3_by_realized_energy": {
+        "4": 8.04,
+        "5": -14.42,
+        "6": -0.74,
+        "8": 8.44,
+        "10": 3.74
+      },
+      "slope_ticks_per_energy_unit": 1.17
+    },
+    {
+      "seed": 20260991,
+      "b2_minus_b3_by_realized_energy": {
+        "4": 1.74,
+        "5": -15.12,
+        "6": 1.4,
+        "8": -0.54,
+        "10": 0.14
+      },
+      "slope_ticks_per_energy_unit": 0.799483
+    },
+    {
+      "seed": 20260992,
+      "b2_minus_b3_by_realized_energy": {
+        "4": 1.02,
+        "5": -2.42,
+        "6": 12.46,
+        "8": -1.0,
+        "10": -1.54
+      },
+      "slope_ticks_per_energy_unit": -0.55569
+    },
+    {
+      "seed": 20260993,
+      "b2_minus_b3_by_realized_energy": {
+        "4": -17.98,
+        "5": -2.52,
+        "6": -14.92,
+        "8": 1.1,
+        "10": -0.16
+      },
+      "slope_ticks_per_energy_unit": 2.617586
+    },
+    {
+      "seed": 20260994,
+      "b2_minus_b3_by_realized_energy": {
+        "4": -6.94,
+        "5": -10.16,
+        "6": 3.24,
+        "8": -14.96,
+        "10": 12.42
+      },
+      "slope_ticks_per_energy_unit": 2.312069
+    },
+    {
+      "seed": 20260995,
+      "b2_minus_b3_by_realized_energy": {
+        "4": -4.62,
+        "5": -14.28,
+        "6": -2.38,
+        "8": -1.92,
+        "10": -18.78
+      },
+      "slope_ticks_per_energy_unit": -1.303966
+    },
+    {
+      "seed": 20260996,
+      "b2_minus_b3_by_realized_energy": {
+        "4": 5.96,
+        "5": 2.88,
+        "6": 1.68,
+        "8": -13.08,
+        "10": 1.82
+      },
+      "slope_ticks_per_energy_unit": -1.432586
+    },
+    {
+      "seed": 20260997,
+      "b2_minus_b3_by_realized_energy": {
+        "4": -14.06,
+        "5": -21.02,
+        "6": -14.98,
+        "8": -19.66,
+        "10": 1.22
+      },
+      "slope_ticks_per_energy_unit": 2.405172
+    },
+    {
+      "seed": 20260998,
+      "b2_minus_b3_by_realized_energy": {
+        "4": -9.64,
+        "5": 1.7,
+        "6": -14.08,
+        "8": -3.26,
+        "10": -4.34
+      },
+      "slope_ticks_per_energy_unit": 0.494483
+    },
+    {
+      "seed": 20260999,
+      "b2_minus_b3_by_realized_energy": {
+        "4": -1.0,
+        "5": 9.64,
+        "6": 6.4,
+        "8": 10.32,
+        "10": 2.48
+      },
+      "slope_ticks_per_energy_unit": 0.267931
+    }
+  ],
+  "primary": {
+    "contrast": "B2-B3",
+    "metric": "founder_mean_followup_ticks",
+    "predictor": "realized fruit energy",
+    "energies": [
+      4,
+      5,
+      6,
+      8,
+      10
+    ],
+    "n_complete_seeds": 30,
+    "slope_summary": {
+      "n": 30,
+      "mean": 0.890402,
+      "sd": 2.227007,
+      "median": 0.381207
+    },
+    "t_ci95": {
+      "half_width": 0.831485,
+      "low": 0.058918,
+      "high": 1.721887
+    },
+    "bootstrap_ci95": {
+      "low": 0.130236,
+      "high": 1.695776
+    },
+    "slopes_positive": 18,
+    "slopes_negative": 12,
+    "slopes_zero": 0,
+    "method": "monte_carlo_sign_flip",
+    "p": 0.03648481757591212,
+    "draws": 200000,
+    "floor": 4.9999750001249995e-06
+  }
+}

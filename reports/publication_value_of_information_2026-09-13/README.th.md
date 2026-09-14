@@ -5,7 +5,7 @@
 วันที่ล็อกทิศทาง: 2026-09-13
 สถานะ: **เลือกเป็นเรื่องที่จะตีพิมพ์แล้ว แต่ยังไม่พร้อมส่ง**
 
-เอกสารควบคุมงานรอบนี้: [`frozen preregistration`](PREREG_E6_representation_payoff_2026-09-14.th.md) · [`แผนดำเนินงานถึงขั้นส่งตีพิมพ์`](EXECUTION_PLAN_TO_PUBLICATION_2026-09-13.th.md) · [`clean-worktree smoke audit`](SMOKE_AUDIT_2026-09-14.th.md) · [`publication-readiness audit`](PUBLICATION_READINESS_AUDIT_2026-09-13.th.md) · [`ODD model description draft`](ODD_MODEL_DESCRIPTION_DRAFT.en.md) · [`AI-use log`](AI_USE_LOG.md)
+เอกสารควบคุมงานรอบนี้: [`ผลชุดยืนยัน`](CONFIRMATORY_RESULTS_2026-09-14.th.md) · [`frozen preregistration`](PREREG_E6_representation_payoff_2026-09-14.th.md) · [`แผนดำเนินงานถึงขั้นส่งตีพิมพ์`](EXECUTION_PLAN_TO_PUBLICATION_2026-09-13.th.md) · [`clean-worktree smoke audit`](SMOKE_AUDIT_2026-09-14.th.md) · [`publication-readiness audit`](PUBLICATION_READINESS_AUDIT_2026-09-13.th.md) · [`ODD model description draft`](ODD_MODEL_DESCRIPTION_DRAFT.en.md) · [`AI-use log`](AI_USE_LOG.md)
 
 ## ชื่อเรื่องชั่วคราว
 
@@ -26,7 +26,7 @@
 1. **ข้อมูลช่วยให้ตัดสินใจถูกหรือไม่** — E2 แสดงเชิงสาเหตุว่า cue อายุทำให้แยกพิษได้ เพราะข้อมูลในคีย์ ไม่ใช่เพราะเพิ่มจำนวนคีย์หรือการสำรวจ
 2. **การตัดสินใจที่ถูกนั้นคุ้มค่าหรือไม่** — ที่ค่าพลังงานปัจจุบัน การแยกพิษแทบไม่เพิ่มอายุขัย และการหลบพิษทั้งหมดทำให้อายุสั้นลง เพราะผลไม้ที่มีพิษยังเป็นอาหารที่มีค่าที่สุด
 
-E6 จะเปลี่ยนข้อสองจากหลักฐานจุดเดียวให้เป็นความสัมพันธ์ระหว่างค่าพลังงานของอาหารเสี่ยงกับผลต่ออายุขัยของ representation ที่มีข้อมูลอายุ ส่วนการทำซ้ำ T2 ใน regime R-B จะตรวจผลที่พบแบบสำรวจในสภาวะอาหารขาด
+E6 พบ positive slope ตามเกณฑ์ที่ลงทะเบียนไว้ แต่รูปแบบระดับย่อยแสดงว่าไม่ตรวจพบต้นทุนของ representation ที่มีข้อมูลอายุที่พลังงาน 10 และ sensitivity ชี้ว่า slope ขึ้นกับ endpoint นี้ ส่วน T2-RB ยืนยันว่า age-varying toxicity ลดเวลาอยู่รอดเทียบ constant-potency control ทั้งสองนิยาม
 
 ในต้นฉบับจะเรียกผลต่างนี้ว่า **survival effect of resource-age information** ซึ่งนิยามเชิงปฏิบัติการเป็นผลต่างอายุขัยระหว่าง B2 และ B3 ที่จับคู่ seed โดย resource age คืออายุของชิ้นอาหารตั้งแต่ถูกสร้าง ไม่ใช่อายุ agent ไม่เรียกว่า expected value of perfect information หรือ Darwinian fitness value เพราะ agent ไม่ได้ปรับนโยบายอย่างเหมาะที่สุดและ E-series ไม่มีการสืบพันธุ์
 
@@ -41,8 +41,8 @@ E6 จะเปลี่ยนข้อสองจากหลักฐาน�
 | พิษมีต้นทุนต่ออายุขัย | E1 และ E5 | พร้อมใช้ |
 | พิษสร้าง selection differential ภายในรุ่น | E3 | พร้อมใช้เฉพาะระดับ N1 |
 | มื้อดิบประเมินความเลือกกินต่ำไป | E4 | พร้อมใช้; ใช้ `P(กิน|เจอ)` เป็นตัวแปรหลัก |
-| ผลของ cue ต่ออายุขัยเปลี่ยนตามค่าพลังงานผลไม้ | E6: B2 เทียบ B3 | ยังต้องทดสอบยืนยัน |
-| ผล A2-A3 ใน regime R-B ทำซ้ำได้ | T2 replication | ยังต้องทดสอบยืนยัน |
+| ผลของ cue ต่ออายุขัยเปลี่ยนตามค่าพลังงานผลไม้ | E6: mean slope 0.890 tick/energy, 95% CI 0.059 ถึง 1.722, p=0.0365 | ยืนยันตาม decision rule; ต้องระบุว่า endpoint-dependent และต่ำกว่า SESOI เล็กน้อย |
+| ผล A2-A3 ใน regime R-B ทำซ้ำได้ | T2-RB: A2-A3R = -7.928 tick, 95% CI -11.046 ถึง -4.810 | ยืนยัน; A2-A3O ให้ทิศเดียวกัน |
 
 ## ข้ออ้างที่ตัดออกจากต้นฉบับ
 
@@ -69,8 +69,8 @@ E6 จะเปลี่ยนข้อสองจากหลักฐาน�
 
 1. จบ exploratory E6 pilot ที่โค้ดหลัง `63fd324` และเลือกช่วงพลังงานจากเกณฑ์ทางวิศวกรรมเท่านั้น — **เสร็จแล้ว 18/18 รัน ไม่มี failure**
 2. ตรวจและ freeze preregistration addendum: E6 30 seed และ T2 replication 50 seed พร้อม sample-size sensitivity analysis ก่อนเห็นผลชุดยืนยัน — **เสร็จแล้ว 2026-09-14; tag `prereg-resource-age-2026-09-14`**
-3. รันและวิเคราะห์ชุดยืนยันแบบจับคู่ตาม seed รวม 600 รัน
-4. สร้าง Figure 1-5 พร้อม source data
+3. รันและวิเคราะห์ชุดยืนยันแบบจับคู่ตาม seed รวม 600 รัน — **เสร็จแล้ว 600/600 รัน, 0 failure, validator ผ่านทั้งหมด**
+4. สร้าง Figure 1-5 พร้อม source data — **เสร็จแล้วสำหรับ figure ชุดยืนยัน 2 รูป; ยังเหลือ figure จาก Study A-D**
 5. ค้นและอ่านวรรณกรรมฉบับจริงเรื่อง value of information, state representation, partial observability และ foraging information use
 6. เขียน manuscript ภาษาอังกฤษใหม่; manuscript เดิมที่มี `lure/trap` ใช้เป็นแหล่งชิ้นส่วนเท่านั้น
 7. ปิดงาน reproducibility, archive/DOI, license, AI disclosure และตรวจ reference ทุกชิ้น
