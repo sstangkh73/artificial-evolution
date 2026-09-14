@@ -59,7 +59,7 @@ Agents used body plan 37 under metabolism model v2. Digestible energy was calcul
 
 Temporal toxicity was attached to raw fruit. Its toxin fraction was 0.30 and its mass was 1.2, giving an unscaled load of 0.36. In the monotonic profile M, potency was `max(0, 1 - age/120)`. In the non-monotonic profile W, potency was 1 before age 40, 0 from ages 40 through 79, and 1 again from age 80. Resource age was the current simulation tick minus the fruit's creation tick; it was not agent age. Realized toxin excess was `max(0, 0.36 × potency × potency_scale - tolerance)`. A positive excess added five times that value to chronic damage and subtracted 50 times that value from the bite's energy before integer rounding. Constant-potency controls retained the same fruit supply while fixing potency over resource age. This construction separated age dependence from the amount of fruit available.
 
-A code-checked model description following the updated ODD protocol accompanies this draft (Grimm et al., 2020). It records scheduling, state variables, equations, initialization, and implementation pointers. A generated supplement reports the archived launch configuration for all 38 arms in E1-E6 and T2-RB, including the origin of each effective driver value at the clean Git revision recorded by each batch. Its exporter verified the ordered launch flags, horizons, arms, and seeds for all 980 archived run rows. Per-run JSON dumps remain the authority for values realized during execution.
+A code-checked model description following the updated ODD protocol accompanies this draft (Grimm et al., 2020). It records scheduling, state variables, equations, initialization, and implementation pointers. A generated supplement reports the archived launch configuration for all 38 arms in E1-E6 and T2-RB, including the origin of each effective driver value and each code-fixed ecology setting at the clean Git revision recorded by the batch. Its exporter verified the ordered launch flags, horizons, arms, and seeds for all 980 archived run rows. A separate state-and-process catalogue traces movement, food access, eating, toxin, energy, damage, and survival, and a version audit bounds the code differences among batches. Per-run JSON dumps remain the authority for values realized during execution.
 
 ### 2.2 Learning representation
 
@@ -205,6 +205,10 @@ Resource-age information solved the hidden-state discrimination problem but redu
 ## Data and Code Availability
 
 **[Replace local paths with a versioned public archive and DOI before submission.]**
+
+## Supplementary Materials
+
+The working supplement contains the ODD model description; the complete experiment launch-parameter and code-fixed-setting tables; the focal state/process catalogue; the code-version audit; preregistration and validation records; checksum manifest; source-data tables for all figures; and the analysis and figure-generation scripts. File names and public archive links will be finalized at submission.
 
 ## Generative-AI Disclosure
 

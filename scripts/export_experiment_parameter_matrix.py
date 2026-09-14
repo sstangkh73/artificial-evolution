@@ -39,6 +39,18 @@ RUN_SUMMARY_PATHS = {
 }
 
 OPERATIONAL_PARAMETERS = {"dump", "output", "seed", "ticks"}
+FOCAL_FIXED_SETTINGS = {
+    "spawn_strategy", "max_food", "base_food_spawn_per_tick", "food_spawn_multiplier",
+    "bootstrap_food_spawn_ticks", "wild_food_spawn_after_bootstrap_multiplier",
+    "max_plant_seeds", "large_animal_spawn_per_tick", "max_large_animals", "frontier_band",
+    "global_food_decline_per_day", "minimum_global_food_multiplier",
+    "ambient_food_decay_chance", "plant_food_decay_chance",
+    "plant_seed_max_age_multiplier", "plant_growth_rate_multiplier",
+    "sprout_biomass_loss_multiplier", "germination_good_ticks_multiplier",
+    "plant_fruiting_interval_multiplier", "plant_fruiting_growth_threshold_multiplier",
+    "plant_fruiting_chance_multiplier", "natural_seed_drop_chance_multiplier",
+    "plant_lifecycle_food_signal_weight", "food_signal_radius_cap",
+}
 
 
 def literal(node: ast.AST) -> Any:
@@ -75,6 +87,30 @@ def driver_defaults(source: str, filename: str) -> tuple[OrderedDict[str, Any], 
         positions[name] = (node.lineno, node.col_offset)
     ordered_names = sorted(defaults, key=lambda name: positions[name])
     return OrderedDict((name, defaults[name]) for name in ordered_names), actions
+
+
+def fixed_runtime_settings(source: str, filename: str) -> OrderedDict[str, Any]:
+    tree = ast.parse(source, filename=filename)
+    function = next(
+        node for node in tree.body if isinstance(node, ast.FunctionDef) and node.name == "make_args"
+    )
+    return_call = next(
+        node.value
+        for node in ast.walk(function)
+        if isinstance(node, ast.Return)
+        and isinstance(node.value, ast.Call)
+        and isinstance(node.value.func, ast.Name)
+        and node.value.func.id == "SimpleNamespace"
+    )
+    settings: OrderedDict[str, Any] = OrderedDict()
+    for keyword in return_call.keywords:
+        if not keyword.arg:
+            continue
+        try:
+            settings[keyword.arg] = ast.literal_eval(keyword.value)
+        except (ValueError, TypeError):
+            continue
+    return settings
 
 
 def parse_flags(tokens: list[str], actions: dict[str, str]) -> OrderedDict[str, Any]:
@@ -132,23 +168,13 @@ def verify_run_summary(repo_root: Path, label: str, spec: dict) -> tuple[str, in
     return relative_path.as_posix(), len(rows), provenance
 
 
-def archived_driver(repo_root: Path, revision: str) -> tuple[OrderedDict[str, Any], dict[str, str]]:
-    result = subprocess.run(
-        ["git", "show", f"{revision}:scripts/food_value_study_driver.py"],
-        cwd=repo_root,
-        check=True,
-        capture_output=True,
-        text=True,
-        encoding="utf-8",
-    )
-    return driver_defaults(result.stdout, f"{revision}:scripts/food_value_study_driver.py")
-
-
 def encode(value: Any) -> str:
     if isinstance(value, bool):
         return "true" if value else "false"
     if value is None:
         return "null"
+    if isinstance(value, (list, tuple, dict)):
+        return json.dumps(value, ensure_ascii=False, separators=(",", ":"))
     return str(value)
 
 
@@ -156,11 +182,12 @@ def cli_text(tokens: list[str]) -> str:
     return " ".join(tokens) if tokens else "(no arm-specific flags)"
 
 
-def build_tables(repo_root: Path) -> tuple[list[dict], list[dict], list[dict], list[dict]]:
+def build_tables(repo_root: Path) -> tuple[list[dict], list[dict], list[dict], list[dict], list[dict]]:
     designs: list[dict] = []
     wide_rows: list[dict] = []
     long_rows: list[dict] = []
     arm_rows: list[dict] = []
+    fixed_rows: list[dict] = []
 
     for label, path in SPEC_PATHS.items():
         spec, spec_origin = load_spec(repo_root, path)
@@ -173,7 +200,25 @@ def build_tables(repo_root: Path) -> tuple[list[dict], list[dict], list[dict], l
         base_tokens = list(spec.get("base", []))
         run_summary_source, verified_run_rows, provenance = verify_run_summary(repo_root, label, spec)
         revision = str(provenance["git_revision"])
-        defaults, actions = archived_driver(repo_root, revision)
+        driver_source = subprocess.run(
+            ["git", "show", f"{revision}:scripts/food_value_study_driver.py"],
+            cwd=repo_root,
+            check=True,
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+        ).stdout
+        defaults, actions = driver_defaults(driver_source, f"{revision}:scripts/food_value_study_driver.py")
+        for setting, value in fixed_runtime_settings(
+            driver_source, f"{revision}:scripts/food_value_study_driver.py"
+        ).items():
+            fixed_rows.append({
+                "experiment": label,
+                "setting": setting,
+                "value": encode(value),
+                "run_git_revision": revision,
+                "origin": "make_args_literal",
+            })
         scientific_defaults = OrderedDict(
             (name, value) for name, value in defaults.items() if name not in OPERATIONAL_PARAMETERS
         )
@@ -250,7 +295,7 @@ def build_tables(repo_root: Path) -> tuple[list[dict], list[dict], list[dict], l
 
     if len(wide_rows) != 38:
         raise ValueError(f"expected 38 experiment arms, found {len(wide_rows)}")
-    return designs, wide_rows, long_rows, arm_rows
+    return designs, wide_rows, long_rows, arm_rows, fixed_rows
 
 
 def write_csv(path: Path, rows: list[dict]) -> None:
@@ -264,7 +309,7 @@ def write_csv(path: Path, rows: list[dict]) -> None:
         writer.writerows(rows)
 
 
-def markdown(designs: list[dict], arm_rows: list[dict]) -> str:
+def markdown(designs: list[dict], arm_rows: list[dict], fixed_rows: list[dict]) -> str:
     lines = [
         "# Experiment Parameter Tables — E1–E6 and T2-RB",
         "",
@@ -304,12 +349,30 @@ def markdown(designs: list[dict], arm_rows: list[dict]) -> str:
     for row in arm_rows:
         lines.append(f"| {row['experiment']} | `{row['arm']}` | `{row['parameter']}` | `{row['value']}` |")
 
+    fixed_lookup: OrderedDict[str, dict[str, str]] = OrderedDict()
+    for row in fixed_rows:
+        if row["setting"] in FOCAL_FIXED_SETTINGS:
+            fixed_lookup.setdefault(row["setting"], {})[row["experiment"]] = row["value"]
+    lines.extend([
+        "",
+        "## Code-fixed ecology and access settings",
+        "",
+        "These values are literal assignments in `make_args` rather than command-line flags. Only settings that directly describe initialization, food renewal, food persistence, or food sensing are shown here; the machine-readable file includes every literal assignment.",
+        "",
+        "| Runtime setting | E1 | E2 | E3 | E4 | E5 | E6 | T2-RB |",
+        "|---|---:|---:|---:|---:|---:|---:|---:|",
+    ])
+    labels = list(SPEC_PATHS)
+    for setting, values in fixed_lookup.items():
+        lines.append("| `" + setting + "` | " + " | ".join(f"`{values.get(label, '')}`" for label in labels) + " |")
+
     lines.extend([
         "",
         "## Machine-readable tables",
         "",
         "- `experiment_parameter_matrix.csv`: one row per arm, including design fields and every effective scientific driver parameter.",
         "- `experiment_parameter_origins.csv`: one row per arm and parameter, with origin marked as `driver_default`, `base_spec`, or `arm_spec`.",
+        "- `experiment_code_fixed_settings.csv`: literal runtime settings assigned inside `make_args` at each recorded run revision.",
         "- `experiment_design_provenance.csv`: seed ranges, horizons, run counts, specification locations, and freeze identifiers.",
         "",
         "The exporter also verifies every archived result row against the expected arm, seed, horizon, and ordered launch-flag sequence. The seed range notation is a compact description of the archived seed list; the exporter checks uniqueness but does not assume contiguity. Boolean driver flags are written as `true` or `false`, `null` denotes an argparse default of `None`, and a blank wide-matrix cell means that the parameter was absent from that run revision's driver.",
@@ -332,14 +395,18 @@ def main() -> None:
     if not output_dir.is_absolute():
         output_dir = repo_root / output_dir
 
-    designs, wide_rows, long_rows, arm_rows = build_tables(repo_root)
+    designs, wide_rows, long_rows, arm_rows, fixed_rows = build_tables(repo_root)
     write_csv(output_dir / "experiment_design_provenance.csv", designs)
     write_csv(output_dir / "experiment_parameter_matrix.csv", wide_rows)
     write_csv(output_dir / "experiment_parameter_origins.csv", long_rows)
+    write_csv(output_dir / "experiment_code_fixed_settings.csv", fixed_rows)
     (output_dir / "PARAMETER_TABLES.en.md").write_text(
-        markdown(designs, arm_rows), encoding="utf-8", newline="\n"
+        markdown(designs, arm_rows, fixed_rows), encoding="utf-8", newline="\n"
     )
-    print(f"wrote {len(designs)} experiment designs, {len(wide_rows)} arms, and {len(long_rows)} parameter-origin rows")
+    print(
+        f"wrote {len(designs)} experiment designs, {len(wide_rows)} arms, "
+        f"{len(long_rows)} parameter-origin rows, and {len(fixed_rows)} code-fixed rows"
+    )
 
 
 if __name__ == "__main__":

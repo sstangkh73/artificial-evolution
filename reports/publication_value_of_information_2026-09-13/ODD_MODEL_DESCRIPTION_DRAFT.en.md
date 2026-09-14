@@ -5,7 +5,7 @@
 **ODD version followed:** Grimm et al. (2020), https://doi.org/10.18564/jasss.4259
 
 **Code basis:** frozen tag `prereg-resource-age-2026-09-14`
-**Status:** the focal toxin, learning, scheduling, and outcome mechanisms below have been checked against the frozen implementation. Generated launch-parameter tables now cover E1–E6 and T2-RB. The full environment state catalogue, runtime record, and public-release cross-check remain to be completed before submission.
+**Status:** the focal toxin, learning, scheduling, and outcome mechanisms below have been checked against the frozen implementation. Generated launch-parameter tables cover E1–E6 and T2-RB, and the focal state/process and code-version catalogues are complete. Independent reproduction and the public-release cross-check remain to be completed before submission.
 
 ## 1. Purpose and patterns
 
@@ -119,7 +119,9 @@ The environment is generated from the main run seed. Mature plants are then plac
 
 ### Complete launch-parameter supplement
 
-`supplement/PARAMETER_TABLES.en.md` identifies the source specification, horizon, seed list, arm count, and explicit base and arm flags for every experiment. `supplement/experiment_parameter_matrix.csv` adds the effective scientific defaults parsed from `scripts/food_value_study_driver.py` at each batch's recorded clean Git revision, while `supplement/experiment_parameter_origins.csv` labels each value as a driver default, base-spec setting, or arm-spec setting. Operational output paths are excluded. The exporter verified the ordered launch flags, horizons, arms, and seeds of all 980 archived run rows. Per-run dumps and the confirmatory validators separately establish values realized during execution.
+`supplement/PARAMETER_TABLES.en.md` identifies the source specification, horizon, seed list, arm count, and explicit base and arm flags for every experiment. `supplement/experiment_parameter_matrix.csv` adds the effective scientific CLI defaults parsed from `scripts/food_value_study_driver.py` at each batch's recorded clean Git revision, while `supplement/experiment_parameter_origins.csv` labels each value as a driver default, base-spec setting, or arm-spec setting. `supplement/experiment_code_fixed_settings.csv` captures literal ecology and access settings assigned inside `make_args`. Operational output paths are excluded. The exporter verified the ordered launch flags, horizons, arms, and seeds of all 980 archived run rows. Per-run dumps and the confirmatory validators separately establish values realized during execution.
+
+The companion `supplement/STATE_VARIABLE_CATALOGUE.en.md` identifies the agent, body, resource, environment, movement, ingestion, and survival state used by the focal pathways. `supplement/CODE_VERSION_AUDIT.en.md` records all five clean run revisions and shows that intervening focal-code changes added only the opt-in E2 oracle/refactor and the opt-in E6 fruit-energy multiplier. Registered contrasts remain within a single revision.
 
 ## 6. Input data
 
@@ -168,4 +170,4 @@ The current evidence package separates code verification from model interpretati
 - E5 and T2-RB test transfer to a higher-drain composite regime;
 - the model remains an abstract artificial ecology with a supplied perfect age cue, fixed learning policy, and no demonstrated reproduction in these experiments.
 
-Before submission, this document still requires a complete catalogue of state variables that affect movement and energy access, software/runtime versions, and a cross-check against the archived public code release.
+Before submission, the supplement still requires an independent clean-clone reproduction and a cross-check against the archived public code release. Batch-level Python, platform, and Git revision records are preserved in `supplement/experiment_design_provenance.csv`.

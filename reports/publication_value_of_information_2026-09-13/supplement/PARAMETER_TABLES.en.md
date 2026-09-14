@@ -144,10 +144,42 @@ These tables report the planned launch configuration preserved in each archived 
 | T2-RB | `A3O` | `toxin_potency_scale` | `0.757811` |
 | T2-RB | `A3R` | `toxin_potency_scale` | `0.7506672222220914` |
 
+## Code-fixed ecology and access settings
+
+These values are literal assignments in `make_args` rather than command-line flags. Only settings that directly describe initialization, food renewal, food persistence, or food sensing are shown here; the machine-readable file includes every literal assignment.
+
+| Runtime setting | E1 | E2 | E3 | E4 | E5 | E6 | T2-RB |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| `spawn_strategy` | `frontier_safe_high_food` | `frontier_safe_high_food` | `frontier_safe_high_food` | `frontier_safe_high_food` | `frontier_safe_high_food` | `frontier_safe_high_food` | `frontier_safe_high_food` |
+| `max_food` | `2000` | `2000` | `2000` | `2000` | `2000` | `2000` | `2000` |
+| `base_food_spawn_per_tick` | `4` | `4` | `4` | `4` | `4` | `4` | `4` |
+| `food_spawn_multiplier` | `0.7` | `0.7` | `0.7` | `0.7` | `0.7` | `0.7` | `0.7` |
+| `bootstrap_food_spawn_ticks` | `300` | `300` | `300` | `300` | `300` | `300` | `300` |
+| `wild_food_spawn_after_bootstrap_multiplier` | `0.1` | `0.1` | `0.1` | `0.1` | `0.1` | `0.1` | `0.1` |
+| `max_plant_seeds` | `7600` | `7600` | `7600` | `7600` | `7600` | `7600` | `7600` |
+| `large_animal_spawn_per_tick` | `2` | `2` | `2` | `2` | `2` | `2` | `2` |
+| `max_large_animals` | `28` | `28` | `28` | `28` | `28` | `28` | `28` |
+| `frontier_band` | `10` | `10` | `10` | `10` | `10` | `10` | `10` |
+| `global_food_decline_per_day` | `0.012` | `0.012` | `0.012` | `0.012` | `0.012` | `0.012` | `0.012` |
+| `minimum_global_food_multiplier` | `0.24` | `0.24` | `0.24` | `0.24` | `0.24` | `0.24` | `0.24` |
+| `ambient_food_decay_chance` | `0.006` | `0.006` | `0.006` | `0.006` | `0.006` | `0.006` | `0.006` |
+| `plant_food_decay_chance` | `0.0015` | `0.0015` | `0.0015` | `0.0015` | `0.0015` | `0.0015` | `0.0015` |
+| `plant_seed_max_age_multiplier` | `4.0` | `4.0` | `4.0` | `4.0` | `4.0` | `4.0` | `4.0` |
+| `plant_growth_rate_multiplier` | `2.0` | `2.0` | `2.0` | `2.0` | `2.0` | `2.0` | `2.0` |
+| `sprout_biomass_loss_multiplier` | `0.1` | `0.1` | `0.1` | `0.1` | `0.1` | `0.1` | `0.1` |
+| `germination_good_ticks_multiplier` | `0.5` | `0.5` | `0.5` | `0.5` | `0.5` | `0.5` | `0.5` |
+| `plant_fruiting_interval_multiplier` | `0.25` | `0.25` | `0.25` | `0.25` | `0.25` | `0.25` | `0.25` |
+| `plant_fruiting_growth_threshold_multiplier` | `0.5` | `0.5` | `0.5` | `0.5` | `0.5` | `0.5` | `0.5` |
+| `plant_fruiting_chance_multiplier` | `2.0` | `2.0` | `2.0` | `2.0` | `2.0` | `2.0` | `2.0` |
+| `natural_seed_drop_chance_multiplier` | `2.0` | `2.0` | `2.0` | `2.0` | `2.0` | `2.0` | `2.0` |
+| `food_signal_radius_cap` | `null` | `null` | `null` | `null` | `null` | `null` | `null` |
+| `plant_lifecycle_food_signal_weight` | `1.35` | `1.35` | `1.35` | `1.35` | `1.35` | `1.35` | `1.35` |
+
 ## Machine-readable tables
 
 - `experiment_parameter_matrix.csv`: one row per arm, including design fields and every effective scientific driver parameter.
 - `experiment_parameter_origins.csv`: one row per arm and parameter, with origin marked as `driver_default`, `base_spec`, or `arm_spec`.
+- `experiment_code_fixed_settings.csv`: literal runtime settings assigned inside `make_args` at each recorded run revision.
 - `experiment_design_provenance.csv`: seed ranges, horizons, run counts, specification locations, and freeze identifiers.
 
 The exporter also verifies every archived result row against the expected arm, seed, horizon, and ordered launch-flag sequence. The seed range notation is a compact description of the archived seed list; the exporter checks uniqueness but does not assume contiguity. Boolean driver flags are written as `true` or `false`, `null` denotes an argparse default of `None`, and a blank wide-matrix cell means that the parameter was absent from that run revision's driver.

@@ -5,7 +5,7 @@
 วันที่ล็อกทิศทาง: 2026-09-13
 สถานะ: **เลือกเป็นเรื่องที่จะตีพิมพ์แล้ว แต่ยังไม่พร้อมส่ง**
 
-เอกสารควบคุมงานรอบนี้: [`ผลชุดยืนยัน`](CONFIRMATORY_RESULTS_2026-09-14.th.md) · [`figure/source-data manifest`](confirmatory/FIGURE_MANIFEST.md) · [`parameter supplement`](supplement/PARAMETER_TABLES.en.md) · [`literature evidence matrix`](LITERATURE_EVIDENCE_MATRIX_2026-09-14.md) · [`frozen preregistration`](PREREG_E6_representation_payoff_2026-09-14.th.md) · [`แผนดำเนินงานถึงขั้นส่งตีพิมพ์`](EXECUTION_PLAN_TO_PUBLICATION_2026-09-13.th.md) · [`clean-worktree smoke audit`](SMOKE_AUDIT_2026-09-14.th.md) · [`publication-readiness audit`](PUBLICATION_READINESS_AUDIT_2026-09-13.th.md) · [`ODD model description draft`](ODD_MODEL_DESCRIPTION_DRAFT.en.md) · [`AI-use log`](AI_USE_LOG.md)
+เอกสารควบคุมงานรอบนี้: [`ผลชุดยืนยัน`](CONFIRMATORY_RESULTS_2026-09-14.th.md) · [`figure/source-data manifest`](confirmatory/FIGURE_MANIFEST.md) · [`parameter supplement`](supplement/PARAMETER_TABLES.en.md) · [`state/process catalogue`](supplement/STATE_VARIABLE_CATALOGUE.en.md) · [`code-version audit`](supplement/CODE_VERSION_AUDIT.en.md) · [`literature evidence matrix`](LITERATURE_EVIDENCE_MATRIX_2026-09-14.md) · [`frozen preregistration`](PREREG_E6_representation_payoff_2026-09-14.th.md) · [`แผนดำเนินงานถึงขั้นส่งตีพิมพ์`](EXECUTION_PLAN_TO_PUBLICATION_2026-09-13.th.md) · [`clean-worktree smoke audit`](SMOKE_AUDIT_2026-09-14.th.md) · [`publication-readiness audit`](PUBLICATION_READINESS_AUDIT_2026-09-13.th.md) · [`ODD model description draft`](ODD_MODEL_DESCRIPTION_DRAFT.en.md) · [`AI-use log`](AI_USE_LOG.md)
 
 ## ชื่อเรื่องชั่วคราว
 
@@ -74,7 +74,7 @@ E6 พบ positive slope ตามเกณฑ์ที่ลงทะเบี�
 5. ค้นและอ่านวรรณกรรมฉบับจริงเรื่อง value of information, state representation, partial observability และ foraging information use — **อ่านฉบับเต็มและผูก claim แล้ว 6 แหล่งหลัก; ยังเหลือ candidate sources ใน evidence matrix**
 6. เขียน manuscript ภาษาอังกฤษใหม่; manuscript เดิมที่มี `lure/trap` ใช้เป็นแหล่งชิ้นส่วนเท่านั้น — **first full Article draft ครบ Introduction, Methods, Results, Discussion และ figure captions ประมาณ 6,000 คำแล้ว; ตาราง launch parameter E1-E6/T2-RB เสร็จแล้ว ยังเหลือ copyedit และการตรวจรับรองโดยผู้เขียน**
 7. ปิดงาน reproducibility, archive/DOI, license, AI disclosure และตรวจ reference ทุกชิ้น
-8. ทำ ODD model description ให้ครบทุก state/parameter และให้บุคคลอื่นทำ clean-clone reproduction อย่างน้อยหนึ่ง seed ต่อแขนก่อนส่ง — **launch-parameter matrix ครบ 38 แขน และตรวจตรงกับ archived result 980 แถวจาก clean run revision แล้ว; ยังเหลือ full state catalogue, runtime record และ independent reproduction**
+8. ทำ ODD model description ให้ครบทุก state/parameter และให้บุคคลอื่นทำ clean-clone reproduction อย่างน้อยหนึ่ง seed ต่อแขนก่อนส่ง — **launch-parameter matrix ครบ 38 แขน ตรวจตรงกับ archived result 980 แถว และทำ state/process catalogue, runtime provenance กับ code-version audit แล้ว; ยังเหลือ independent clean-clone reproduction และ public-release cross-check**
 
 ## กฎกันการเลือกผลย้อนหลัง
 
