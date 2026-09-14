@@ -1,5 +1,5 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "manuscript": "reports/publication_value_of_information_2026-09-13/manuscript_v0.en.md",
   "automated_scientific_checks": "PASS",
   "submission_ready": false,
@@ -26,7 +26,27 @@
     "[Author confirmation required. Proposed statement: This study used only computer simulations and involved no human participants or live animals; institutional ethics approval was therefore not required.]",
     "[Insert the versioned public archive citation, DOI, and code-release tag after deposit and download-back verification; do not submit this placeholder.]"
   ],
+  "pdf": {
+    "path": "reports/publication_value_of_information_2026-09-13/submission/manuscript_initial_submission_draft.pdf",
+    "present": true,
+    "pages": 28,
+    "status": "FAIL",
+    "matches_manuscript": true,
+    "unresolved_placeholders": [
+      "[Affiliation]",
+      "[Author approval required; add any AI use not recorded here.]",
+      "[Author confirmation required. Complete a CRediT statement covering conceptualization, methodology, software, validation, formal analysis, investigation, data curation, visualization, writing, and project administration.]",
+      "[Author confirmation required. If accurate: The author declares no competing interests.]",
+      "[Author confirmation required. If accurate: This research received no specific grant from any funding agency in the public, commercial, or not-for-profit sectors.]",
+      "[Author confirmation required. Proposed statement: This study used only computer simulations and involved no human participants or live animals; institutional ethics approval was therefore not required.]",
+      "[Email; corresponding author]",
+      "[Insert the versioned public archive citation, DOI, and code-release tag after deposit and download-back verification; do not submit this placeholder.]",
+      "[Postal address]"
+    ],
+    "internal_notes": []
+  },
   "author_actions_expected": [
+    "author affiliation, postal address, and corresponding-author email on the title page",
     "public archive citation/DOI/code-release tag",
     "funding statement",
     "competing-interest statement",

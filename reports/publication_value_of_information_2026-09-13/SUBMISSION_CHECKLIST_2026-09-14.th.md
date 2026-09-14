@@ -8,10 +8,10 @@
 |---|---|---|---|
 | ประเภทบทความ | Article โดยทั่วไป 6,000–12,000 คำ | ผ่าน: 6,156 คำจาก automated audit | ผู้เขียนตรวจว่าระบบส่งนับคำด้วยหลักเดียวกัน |
 | ความเหมาะสมกับวารสาร | ต้องอธิบายใน cover letter | ร่างแล้ว | ผู้เขียนตรวจและเติมข้อมูลติดต่อ |
-| initial submission | ส่ง manuscript เป็น PDF ผ่าน ScholarOne | author-review PDF พร้อมแล้ว 29 หน้าและตรวจ render ครบ | เติมข้อมูลผู้เขียน/DOI/คำรับรอง แล้วสร้างและตรวจ PDF รอบสุดท้าย |
+| initial submission | ส่ง manuscript เป็น PDF ผ่าน ScholarOne | author-review PDF 28 หน้า (build ใหม่หลังแก้ builder ที่ปล่อยโน้ต "Target journal" หลุดไปหน้าปก) | เติมข้อมูลผู้เขียน/DOI/คำรับรอง แล้วสร้าง PDF ใหม่และรัน audit จน `pdf.status` เป็น PASS |
 | หน้าปก | title, author, affiliation/address/email, corresponding author, abstract, 5–6 keywords | ขาดข้อมูลผู้เขียน | เติม affiliation, address, email; keywords ลดเหลือ 6 แล้ว |
 | ความใหม่/ไม่ส่งซ้ำ | ผู้เขียนรับรองว่าไม่ตีพิมพ์หรืออยู่ระหว่างพิจารณาที่อื่น | รอผู้เขียนรับรอง | ยืนยันใน cover letter/ระบบส่ง |
-| เนื้อหาหลัก | ต้นฉบับ Article ฉบับเต็ม | automated scientific audit ผ่าน; ยังมี 6 author/deposit placeholders | author line-by-line verification และปิด placeholders |
+| เนื้อหาหลัก | ต้นฉบับ Article ฉบับเต็ม | automated scientific audit ผ่าน; source มี 6 placeholders และ PDF ที่ build แล้วมี 9 (รวมช่องผู้เขียน 3 ช่องที่ builder ใส่บนหน้าปก) | author line-by-line verification และปิด placeholders ทั้งใน source และหน้าปกของ builder |
 | รูป | แนะนำ vector สำหรับกราฟ/diagram | พร้อม | ใช้ PDF vector ทั้ง 5 รูปเป็น master; PNG 300 dpi ใช้ preview เท่านั้น |
 | figure source data | ต้องตรวจย้อนกลับได้ | พร้อม 8 ตาราง | ตรวจ caption/เลขรูปหลังจัดหน้า |
 | supplementary material | ต้องแนบพร้อมบทความหรือให้ URL ที่ไม่กระทบ anonymity | โครงสร้างพร้อม | รวม ODD, parameter/state/version/reproduction files เป็น reviewer package |

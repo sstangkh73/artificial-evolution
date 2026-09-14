@@ -215,10 +215,9 @@ def build_text_pdf(title: str, lines: list[str], styles: dict[str, ParagraphStyl
 
     while index < len(lines):
         stripped = lines[index].strip()
-        if stripped in {
-            "**Manuscript type:** Article",
-            "**Target journal:** *Artificial Life* (provisional; current author instructions and article fit must be verified before formatting)",
-        } or stripped.startswith("**Author:**") or stripped.startswith("**Status:**"):
+        # Working-draft front matter is matched by prefix: an exact-string match
+        # silently stopped filtering once the Target journal note was reworded.
+        if stripped.startswith(("**Manuscript type:**", "**Target journal:**", "**Author:**", "**Status:**")):
             index += 1
             continue
         if not stripped:

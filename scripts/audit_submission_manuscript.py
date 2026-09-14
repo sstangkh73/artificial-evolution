@@ -1,11 +1,19 @@
 # -*- coding: utf-8 -*-
-"""Audit the publication manuscript against journal and evidence invariants."""
+"""Audit the publication manuscript against journal and evidence invariants.
+
+The Markdown source is checked for evidence-bound numbers, citations, and author
+placeholders. The built submission PDF is checked separately: the PDF builder
+injects its own title-page fields and filters working-draft front matter, so a
+clean Markdown source does not imply a clean PDF.
+"""
 from __future__ import annotations
 
 import argparse
 import json
 import re
 from pathlib import Path
+
+from pypdf import PdfReader
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -15,10 +23,16 @@ BIBLIOGRAPHY = PUBLICATION / "references.bib"
 E6_ANALYSIS = PUBLICATION / "confirmatory/e6/E6_analysis.json"
 E6_SECONDARY = PUBLICATION / "confirmatory/e6/E6_secondary_and_mechanism.json"
 T2_ANALYSIS = PUBLICATION / "confirmatory/t2rb/T2RB_analysis.json"
+SUBMISSION_PDF = PUBLICATION / "submission/manuscript_initial_submission_draft.pdf"
 DEFAULT_OUTPUT = PUBLICATION / "submission/manuscript_submission_audit.json"
 
 WORD = re.compile(r"[A-Za-z0-9]+(?:[-'][A-Za-z0-9]+)*")
 PLACEHOLDER = re.compile(r"\[(?:Author|Insert)[^\]\n]+\]")
+PDF_BRACKET = re.compile(r"\[[^\]]{1,400}\]")
+# APA 7 reference descriptors are bracketed by design and are not placeholders.
+ALLOWED_PDF_BRACKETS = frozenset({"[Large language model]"})
+# Working-draft front matter that must never reach the rendered manuscript.
+INTERNAL_NOTE_MARKERS = ("Manuscript type:", "Target journal:", "Status:", "must be rechecked")
 
 
 def words(text: str) -> list[str]:
@@ -53,13 +67,71 @@ def require(condition: bool, message: str, failures: list[str]) -> None:
         failures.append(message)
 
 
-def audit() -> dict[str, object]:
+def normalize_space(text: str) -> str:
+    return re.sub(r"\s+", " ", text).strip()
+
+
+def rendered_markdown(text: str) -> str:
+    """Approximate the builder's rendering, in which emphasis and code markers vanish."""
+    return normalize_space(re.sub(r"[*`]", "", text))
+
+
+def display_path(path: Path) -> str:
+    try:
+        return path.resolve().relative_to(ROOT).as_posix()
+    except ValueError:
+        return str(path)
+
+
+def pdf_placeholders(text: str) -> list[str]:
+    found = {normalize_space(match.group(0)) for match in PDF_BRACKET.finditer(text)}
+    return sorted(found - ALLOWED_PDF_BRACKETS)
+
+
+def pdf_internal_notes(text: str) -> list[str]:
+    flat = normalize_space(text)
+    return [marker for marker in INTERNAL_NOTE_MARKERS if marker in flat]
+
+
+def audit_pdf_text(text: str, title: str, abstract: str) -> dict[str, object]:
+    """Check extracted PDF text; a title or abstract mismatch means the PDF is stale."""
+    flat = normalize_space(text)
+    matches = rendered_markdown(title) in flat and rendered_markdown(abstract) in flat
+    placeholders = pdf_placeholders(text)
+    notes = pdf_internal_notes(text)
+    return {
+        "status": "PASS" if matches and not placeholders and not notes else "FAIL",
+        "matches_manuscript": matches,
+        "unresolved_placeholders": placeholders,
+        "internal_notes": notes,
+    }
+
+
+def audit_pdf(path: Path, title: str, abstract: str) -> dict[str, object]:
+    if not path.is_file():
+        return {
+            "path": display_path(path),
+            "present": False,
+            "status": "MISSING",
+            "matches_manuscript": False,
+            "unresolved_placeholders": [],
+            "internal_notes": [],
+        }
+    reader = PdfReader(str(path))
+    text = "\n".join(page.extract_text() or "" for page in reader.pages)
+    result: dict[str, object] = {"path": display_path(path), "present": True, "pages": len(reader.pages)}
+    result.update(audit_pdf_text(text, title, abstract))
+    return result
+
+
+def audit(pdf_path: Path = SUBMISSION_PDF) -> dict[str, object]:
     manuscript = MANUSCRIPT.read_text(encoding="utf-8")
     bibliography = BIBLIOGRAPHY.read_text(encoding="utf-8")
     e6 = json.loads(E6_ANALYSIS.read_text(encoding="utf-8"))
     e6_secondary = json.loads(E6_SECONDARY.read_text(encoding="utf-8"))
     t2 = json.loads(T2_ANALYSIS.read_text(encoding="utf-8"))
 
+    title = manuscript.split("\n", 1)[0].lstrip("#").strip()
     abstract = section(manuscript, "## Abstract", "**Keywords:")
     scientific_text = section(manuscript, "## Abstract", "## References")
     gross_article = manuscript.split("## Figure captions", 1)[0]
@@ -165,7 +237,9 @@ def audit() -> dict[str, object]:
         require(phrase not in manuscript, f"unsupported or imprecise phrase remains: {phrase}", failures)
 
     placeholders = sorted(set(PLACEHOLDER.findall(manuscript)))
+    pdf = audit_pdf(pdf_path, title, abstract)
     expected_author_actions = (
+        "author affiliation, postal address, and corresponding-author email on the title page",
         "public archive citation/DOI/code-release tag",
         "funding statement",
         "competing-interest statement",
@@ -174,10 +248,10 @@ def audit() -> dict[str, object]:
         "AI-disclosure approval and any additional AI use",
     )
     return {
-        "schema_version": 1,
+        "schema_version": 2,
         "manuscript": MANUSCRIPT.relative_to(ROOT).as_posix(),
         "automated_scientific_checks": "PASS" if not failures else "FAIL",
-        "submission_ready": not failures and not placeholders,
+        "submission_ready": not failures and not placeholders and pdf["status"] == "PASS",
         "word_counts": {
             "gross_article_through_declarations_and_references": gross_words,
             "abstract": abstract_words,
@@ -187,6 +261,7 @@ def audit() -> dict[str, object]:
         "figures": 5,
         "bibliography_entries": len(bibliography_records),
         "unresolved_placeholders": placeholders,
+        "pdf": pdf,
         "author_actions_expected": list(expected_author_actions),
         "failures": failures,
         "evidence_sources": [
@@ -200,19 +275,26 @@ def audit() -> dict[str, object]:
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--out", default=str(DEFAULT_OUTPUT))
+    parser.add_argument("--pdf", default=str(SUBMISSION_PDF), help="built submission PDF to check")
     parser.add_argument("--strict-submission-ready", action="store_true")
     args = parser.parse_args()
-    result = audit()
+    pdf_path = Path(args.pdf)
+    if not pdf_path.is_absolute():
+        pdf_path = ROOT / pdf_path
+    result = audit(pdf_path)
     output = Path(args.out)
     if not output.is_absolute():
         output = ROOT / output
     output.parent.mkdir(parents=True, exist_ok=True)
     output.write_text(json.dumps(result, indent=2, ensure_ascii=False) + "\n", encoding="utf-8", newline="\n")
+    pdf = result["pdf"]
     print(
         f"{result['automated_scientific_checks']}: {result['word_counts']['gross_article_through_declarations_and_references']} gross words, "
         f"{len(result['keywords'])} keywords, {result['figures']} figures, "
         f"{result['bibliography_entries']} bibliography entries, "
-        f"{len(result['unresolved_placeholders'])} unresolved placeholders"
+        f"{len(result['unresolved_placeholders'])} unresolved source placeholders; "
+        f"PDF {pdf['status']}: matches source={pdf['matches_manuscript']}, "
+        f"{len(pdf['unresolved_placeholders'])} placeholders, {len(pdf['internal_notes'])} internal notes"
     )
     if result["automated_scientific_checks"] != "PASS":
         return 1
