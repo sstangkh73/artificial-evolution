@@ -5,7 +5,7 @@
 **ODD version followed:** Grimm et al. (2020), https://doi.org/10.18564/jasss.4259
 
 **Code basis:** frozen tag `prereg-resource-age-2026-09-14`
-**Status:** the focal toxin, learning, scheduling, and outcome mechanisms below have been checked against the frozen implementation. The full environment state catalogue and parameter tables for E1–E5 remain to be completed before submission.
+**Status:** the focal toxin, learning, scheduling, and outcome mechanisms below have been checked against the frozen implementation. Generated launch-parameter tables now cover E1–E6 and T2-RB. The full environment state catalogue, runtime record, and public-release cross-check remain to be completed before submission.
 
 ## 1. Purpose and patterns
 
@@ -115,7 +115,11 @@ Founder follow-up is each founder's final attained age minus its deterministic i
 | run horizon | 800 ticks | 400 ticks | frozen specifications |
 | seeds | 30, 20260970–20260999 | 50, 20261000–20261049 | frozen specifications |
 
-The environment is generated from the main run seed. Mature plants are then placed stochastically on walkable, sufficiently fertile cells, with first-fruiting times staggered. Founders are placed by the `frontier_safe_high_food` strategy. Exact E1–E5 initialization differences will be tabulated from their archived specifications in the completed supplement.
+The environment is generated from the main run seed. Mature plants are then placed stochastically on walkable, sufficiently fertile cells, with first-fruiting times staggered. Founders are placed by the `frontier_safe_high_food` strategy. The generated parameter supplement records the exact archived launch settings for E1–E6 and T2-RB in both human-readable and machine-readable forms.
+
+### Complete launch-parameter supplement
+
+`supplement/PARAMETER_TABLES.en.md` identifies the source specification, horizon, seed list, arm count, and explicit base and arm flags for every experiment. `supplement/experiment_parameter_matrix.csv` adds the effective scientific defaults parsed from `scripts/food_value_study_driver.py` at each batch's recorded clean Git revision, while `supplement/experiment_parameter_origins.csv` labels each value as a driver default, base-spec setting, or arm-spec setting. Operational output paths are excluded. The exporter verified the ordered launch flags, horizons, arms, and seeds of all 980 archived run rows. Per-run dumps and the confirmatory validators separately establish values realized during execution.
 
 ## 6. Input data
 
@@ -164,4 +168,4 @@ The current evidence package separates code verification from model interpretati
 - E5 and T2-RB test transfer to a higher-drain composite regime;
 - the model remains an abstract artificial ecology with a supplied perfect age cue, fixed learning policy, and no demonstrated reproduction in these experiments.
 
-Before submission, this document still requires the full E1–E5 parameter table, a complete catalogue of state variables that affect movement and energy access, software/runtime versions, and a cross-check against the archived public code release.
+Before submission, this document still requires a complete catalogue of state variables that affect movement and energy access, software/runtime versions, and a cross-check against the archived public code release.
