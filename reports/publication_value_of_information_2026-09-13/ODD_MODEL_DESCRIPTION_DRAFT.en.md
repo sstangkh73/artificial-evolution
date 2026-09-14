@@ -170,4 +170,4 @@ The current evidence package separates code verification from model interpretati
 - E5 and T2-RB test transfer to a higher-drain composite regime;
 - the model remains an abstract artificial ecology with a supplied perfect age cue, fixed learning policy, and no demonstrated reproduction in these experiments.
 
-Before submission, the supplement still requires an independent clean-clone reproduction and a cross-check against the archived public code release. Batch-level Python, platform, and Git revision records are preserved in `supplement/experiment_design_provenance.csv`.
+Before submission, another person still needs to execute `supplement/INDEPENDENT_REPRODUCTION_PROTOCOL.en.md` and sign its record, and the resulting package must be cross-checked against the archived public code release. Two internal clean-worktree smoke runs already produced the same normalized 18-arm signatures, and `scripts/verify_reproduction_smoke.py` verifies those signatures. This is internal determinism evidence, not completed independent reproduction. Batch-level Python, platform, and Git revision records are preserved in `supplement/experiment_design_provenance.csv`.

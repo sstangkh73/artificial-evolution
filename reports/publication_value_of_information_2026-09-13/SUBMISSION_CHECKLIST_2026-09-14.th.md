@@ -1,0 +1,49 @@
+# Checklist ก่อนส่ง *Artificial Life*
+
+อ้างอิงข้อกำหนดวารสารที่ตรวจเมื่อ 2026-09-14: `https://direct.mit.edu/artl/pages/submission-guidelines` และนโยบาย AI ของวารสาร `https://direct.mit.edu/artl/article/29/2/141/116359/Editorial-What-Have-Large-Language-Models-and`
+
+## สถานะปัจจุบัน
+
+| รายการ | ข้อกำหนด/เหตุผล | สถานะ | งานถัดไป |
+|---|---|---|---|
+| ประเภทบทความ | Article โดยทั่วไป 6,000–12,000 คำ | ผ่านด้านช่วงคำ | ล็อก word count หลัง copyedit |
+| ความเหมาะสมกับวารสาร | ต้องอธิบายใน cover letter | ร่างแล้ว | ผู้เขียนตรวจและเติมข้อมูลติดต่อ |
+| initial submission | ส่ง manuscript เป็น PDF ผ่าน ScholarOne | ยังไม่พร้อม | จัดหน้า single-column, double-spaced และสร้าง PDF ตรวจภาพ |
+| หน้าปก | title, author, affiliation/address/email, corresponding author, abstract, 5–6 keywords | ขาดข้อมูลผู้เขียน | เติม affiliation, address, email; keywords ลดเหลือ 6 แล้ว |
+| ความใหม่/ไม่ส่งซ้ำ | ผู้เขียนรับรองว่าไม่ตีพิมพ์หรืออยู่ระหว่างพิจารณาที่อื่น | รอผู้เขียนรับรอง | ยืนยันใน cover letter/ระบบส่ง |
+| เนื้อหาหลัก | ต้นฉบับ Article ฉบับเต็ม | เสร็จระดับ first full draft | scientific copyedit และ author line-by-line verification |
+| รูป | แนะนำ vector สำหรับกราฟ/diagram | พร้อม | ใช้ PDF vector ทั้ง 5 รูปเป็น master; PNG 300 dpi ใช้ preview เท่านั้น |
+| figure source data | ต้องตรวจย้อนกลับได้ | พร้อม 8 ตาราง | ตรวจ caption/เลขรูปหลังจัดหน้า |
+| supplementary material | ต้องแนบพร้อมบทความหรือให้ URL ที่ไม่กระทบ anonymity | โครงสร้างพร้อม | รวม ODD, parameter/state/version/reproduction files เป็น reviewer package |
+| data/code policy | ทำข้อมูลที่รองรับข้อสรุปให้เข้าถึงได้และ cite ในบทความ | ยังขาด public archive | สร้าง versioned archive/DOI พร้อม 600 raw dumps, derived data, code, license |
+| reproducibility | reviewer ต้องรันและตรวจได้ | internal deterministic smoke ผ่าน | ให้บุคคลอื่นทำ protocol และลงชื่อผล; ห้ามเรียก independent ก่อนสำเร็จ |
+| citations | APA 7 และทุก claim ต้องอิง source ที่อ่านจริง | 6 แหล่งหลักผูก claim แล้ว | ตรวจ metadata/หน้า/DOI ทีละรายการ; ตัด candidate ที่ไม่ได้ใช้ |
+| AI disclosure | ทุกการใช้ generative AI ต้องระบุชัดและอ้างแหล่ง/เวอร์ชัน/วันที่ | log พร้อม, ข้อความยังรออนุมัติ | ผู้เขียนตรวจ AI log, เติม URL/access dates, อนุมัติข้อความใน manuscript และ cover letter |
+| funding | ต้องรายงานตามจริง | ไม่ทราบ | ผู้เขียนเติม “no specific funding” หรือรายละเอียดทุนตามจริง |
+| competing interests | ต้องรายงานตามจริง | ไม่ทราบ | ผู้เขียนเติม statement |
+| ethics | งานจำลองล้วนคาดว่าไม่ต้อง ethics approval | รอผู้เขียนยืนยัน | ระบุว่าไม่มี human/live-animal subjects หากเป็นจริง |
+| third-party permissions | ต้องขอสิทธิ์ถ้ามีภาพ/เนื้อหาภายนอก | รูปปัจจุบันสร้างจากข้อมูลของโครงการ | ผู้เขียนยืนยันว่าไม่มี third-party figure material |
+| final accepted package | PDF, Word/LaTeX source, figure แยก, forms | ยังไม่ถึงขั้นนี้ | เตรียมหลังผ่าน review; ไม่ต้องทำ forms ตอน initial submission |
+
+## ไฟล์ที่พร้อมใช้
+
+- `manuscript_v0.en.md` — ต้นฉบับฉบับเต็ม
+- `cover_letter_draft.en.md` — cover letter ที่ต้องเติมข้อมูลผู้เขียน
+- `ODD_MODEL_DESCRIPTION_DRAFT.en.md` — model description
+- `supplement/PARAMETER_TABLES.en.md` และ CSV — parameter provenance
+- `supplement/STATE_VARIABLE_CATALOGUE.en.md` — focal state/process catalogue
+- `supplement/CODE_VERSION_AUDIT.en.md` — audit ความต่าง 5 run revisions
+- `supplement/INDEPENDENT_REPRODUCTION_PROTOCOL.en.md` — ขั้นตอนตรวจโดยบุคคลอื่น
+- `confirmatory/` — analysis, validators, source data, figures และ checksum manifest
+- `AI_USE_LOG.md` — บันทึกการใช้ generative AI
+
+## Gate ที่ต้องผ่านก่อนกดส่ง
+
+1. ผู้เขียนตรวจทุกบรรทัดของต้นฉบับ ตัวเลข ตาราง รูป และ reference โดยเปิดหลักฐานต้นทางประกอบ
+2. บุคคลอื่นรัน independent reproduction protocol แล้วได้ `PASS` พร้อมบันทึกชื่อ ระบบ และ hash
+3. สร้าง reviewer-safe public archive/DOI และตรวจ checksum 616 รายการหลังดาวน์โหลดกลับ
+4. เติม Data and Code Availability และ AI Disclosure ในต้นฉบับด้วย URL/DOI และข้อความที่ผู้เขียนอนุมัติ
+5. เติมข้อมูลผู้เขียน funding conflict และ ethics statements
+6. จัดหน้า PDF แบบ single-column double-spaced ฝังรูป vector ตรวจทุกหน้า และนับคำครั้งสุดท้าย
+7. ตรวจว่า cover letter อธิบาย scope fit รับรองความใหม่ และเปิดเผย AI ตรงกับต้นฉบับ
+8. อัปโหลด manuscript, cover letter และ supplement พร้อมกัน แล้วเปิดไฟล์จากระบบส่งเพื่อตรวจอีกครั้งก่อน submit

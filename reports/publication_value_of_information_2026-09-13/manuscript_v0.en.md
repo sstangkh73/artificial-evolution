@@ -5,13 +5,13 @@
 **Target journal:** *Artificial Life* (provisional; current author instructions and article fit must be verified before formatting)
 
 **Author:** Chisanupong Injun
-**Status:** full first Article draft at target length; author verification, full ODD supplement, copyedit, and public archive still incomplete
+**Status:** full first Article draft at target length; author verification, copyedit, independent reproduction, and public archive still incomplete
 
 ## Abstract
 
 Artificial foragers can learn food values from post-ingestive outcomes while still failing when one perceptual category combines ecologically different states. We studied agents that stored one value per food type while fruit toxicity changed with food age. Adding resource age to the value key restored safe-versus-toxic discrimination, whereas a capacity-matched sham did not. In a preregistered confirmatory experiment spanning five realized fruit energies, the seed-level linear slope of the rescue-minus-sham survival effect was positive (0.890 restricted-mean follow-up ticks per energy unit, 95% t CI 0.059 to 1.722; two-sided sign-flip p=0.0365). The point estimate was slightly below the preregistered smallest effect of scientific interest. Level-specific effects were negative at energies 4, 5, 6, and 8 and indistinguishable from zero at 10, so the gradient reflected attenuation of a survival cost at the upper endpoint rather than a demonstrated survival benefit throughout the range. A separate 50-seed replication found shorter follow-up under age-varying toxicity than under a recalibrated constant-potency control (mean paired difference -7.928 ticks, 95% CI -11.046 to -4.810). These results separate representational sufficiency from ecological benefit: information can improve state-sensitive behavior while the fixed policy that uses it still reduces survival under most tested payoffs.
 
-**Keywords:** artificial life; value of information; embodied foraging; perceptual aliasing; partial observability; temporal toxicity; state representation
+**Keywords:** artificial life; value of information; embodied foraging; perceptual aliasing; temporal toxicity; state representation
 
 ## 1. Introduction
 
@@ -208,7 +208,7 @@ Resource-age information solved the hidden-state discrimination problem but redu
 
 ## Supplementary Materials
 
-The working supplement contains the ODD model description; the complete experiment launch-parameter and code-fixed-setting tables; the focal state/process catalogue; the code-version audit; preregistration and validation records; checksum manifest; source-data tables for all figures; and the analysis and figure-generation scripts. File names and public archive links will be finalized at submission.
+The working supplement contains the ODD model description; the complete experiment launch-parameter and code-fixed-setting tables; the focal state/process catalogue; the code-version audit; an independent-reproduction protocol and deterministic smoke signatures; preregistration and validation records; checksum manifest; source-data tables for all figures; and the analysis and figure-generation scripts. File names and public archive links will be finalized at submission.
 
 ## Generative-AI Disclosure
 

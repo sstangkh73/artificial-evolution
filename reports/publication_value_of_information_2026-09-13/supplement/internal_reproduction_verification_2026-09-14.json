@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "frozen_revision": "3f1af32f9e37655ed9bee5462526921eff226c8a",
+  "excluded_row_fields": [
+    "dump",
+    "wall_seconds"
+  ],
+  "checks": {
+    "e6": {
+      "path": "C:\\artificial-evolution-prereg-smoke-20260914\\reports\\prereg_smoke_r2\\e6\\E6SMOKE_runs.json",
+      "run_revision": "11d69c8e2e5d54063b135bcb095441dd8bda5068",
+      "focal_code_matches_frozen": true,
+      "rows": 15,
+      "normalized_rows_sha256": "21c6d7770e60d69cae6d696d8681f0a58d844debce15883e61a0ed7cb8f6535d",
+      "expected_sha256": "21c6d7770e60d69cae6d696d8681f0a58d844debce15883e61a0ed7cb8f6535d",
+      "status": "PASS",
+      "failures": []
+    },
+    "t2rb": {
+      "path": "C:\\artificial-evolution-prereg-smoke-20260914\\reports\\prereg_smoke_r2\\t2rb\\T2RBSMOKE_runs.json",
+      "run_revision": "11d69c8e2e5d54063b135bcb095441dd8bda5068",
+      "focal_code_matches_frozen": true,
+      "rows": 3,
+      "normalized_rows_sha256": "2ced69cdbc069f837a0e7bf7bd1e5b4229da25623ba0ac57018a079fc9537fcf",
+      "expected_sha256": "2ced69cdbc069f837a0e7bf7bd1e5b4229da25623ba0ac57018a079fc9537fcf",
+      "status": "PASS",
+      "failures": []
+    }
+  },
+  "status": "PASS"
+}

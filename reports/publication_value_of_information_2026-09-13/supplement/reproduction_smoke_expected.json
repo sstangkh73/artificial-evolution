@@ -1,0 +1,42 @@
+{
+  "schema_version": 1,
+  "frozen_revision": "3f1af32f9e37655ed9bee5462526921eff226c8a",
+  "frozen_tag": "prereg-resource-age-2026-09-14",
+  "baseline_revisions": [
+    "8b9233e6885df65cef6f2d5d3f914f9fd466f551",
+    "11d69c8e2e5d54063b135bcb095441dd8bda5068"
+  ],
+  "baseline_note": "Two clean-worktree runs produced identical normalized rows. Focal code is unchanged from the second baseline through the frozen revision.",
+  "normalization": {
+    "excluded_row_fields": [
+      "dump",
+      "wall_seconds"
+    ],
+    "row_order": "arm then integer seed",
+    "serialization": "JSON UTF-8, ensure_ascii=false, sort_keys=true, separators comma and colon"
+  },
+  "datasets": {
+    "e6": {
+      "experiment": "E6SMOKE",
+      "row_count": 15,
+      "ticks": 200,
+      "seeds": [20260968],
+      "arms": [
+        "V04_B1", "V04_B2", "V04_B3",
+        "V05_B1", "V05_B2", "V05_B3",
+        "V06_B1", "V06_B2", "V06_B3",
+        "V08_B1", "V08_B2", "V08_B3",
+        "V10_B1", "V10_B2", "V10_B3"
+      ],
+      "normalized_rows_sha256": "21c6d7770e60d69cae6d696d8681f0a58d844debce15883e61a0ed7cb8f6535d"
+    },
+    "t2rb": {
+      "experiment": "T2RBSMOKE",
+      "row_count": 3,
+      "ticks": 200,
+      "seeds": [20260969],
+      "arms": ["A2", "A3O", "A3R"],
+      "normalized_rows_sha256": "2ced69cdbc069f837a0e7bf7bd1e5b4229da25623ba0ac57018a079fc9537fcf"
+    }
+  }
+}
