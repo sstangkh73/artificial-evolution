@@ -36,7 +36,7 @@ This bundle contains the focal agent, environment, metabolism, and simulation mo
 
 ## Deliberate exclusions
 
-The release excludes exploratory E6 pilot and pilot-rerun directories, failed or superseded calibration outputs, PID and log files, temporary directories, unrelated experiments and reports, third-party papers under `papers/`, local application PDFs, the draft cover letter, and submission-administration checklists. These files do not support the article's reported quantitative claims or cannot be redistributed under the repository's research-data licence.
+The release excludes exploratory E6 pilot and pilot-rerun directories, failed or superseded calibration outputs, PID and log files, temporary directories, unrelated experiments and reports, third-party papers under `papers/`, local application PDFs, the draft cover letter, formatted submission drafts, and submission-administration checklists. These files do not support the article's reported quantitative claims or cannot be redistributed under the repository's research-data licence.
 
 The independent-reproduction protocol and internal deterministic check are included. A second person's signed execution record must be added only after that person actually completes the protocol. Internal repeatability must not be relabeled as independent reproduction.
 

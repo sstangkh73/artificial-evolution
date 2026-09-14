@@ -8,7 +8,7 @@
 |---|---|---|---|
 | ประเภทบทความ | Article โดยทั่วไป 6,000–12,000 คำ | ผ่านด้านช่วงคำ | ล็อก word count หลัง copyedit |
 | ความเหมาะสมกับวารสาร | ต้องอธิบายใน cover letter | ร่างแล้ว | ผู้เขียนตรวจและเติมข้อมูลติดต่อ |
-| initial submission | ส่ง manuscript เป็น PDF ผ่าน ScholarOne | ยังไม่พร้อม | จัดหน้า single-column, double-spaced และสร้าง PDF ตรวจภาพ |
+| initial submission | ส่ง manuscript เป็น PDF ผ่าน ScholarOne | author-review PDF พร้อมแล้ว 27 หน้า | เติมข้อมูลผู้เขียน/DOI/AI disclosure, copyedit แล้วสร้างและตรวจ PDF รอบสุดท้าย |
 | หน้าปก | title, author, affiliation/address/email, corresponding author, abstract, 5–6 keywords | ขาดข้อมูลผู้เขียน | เติม affiliation, address, email; keywords ลดเหลือ 6 แล้ว |
 | ความใหม่/ไม่ส่งซ้ำ | ผู้เขียนรับรองว่าไม่ตีพิมพ์หรืออยู่ระหว่างพิจารณาที่อื่น | รอผู้เขียนรับรอง | ยืนยันใน cover letter/ระบบส่ง |
 | เนื้อหาหลัก | ต้นฉบับ Article ฉบับเต็ม | เสร็จระดับ first full draft | scientific copyedit และ author line-by-line verification |
@@ -28,6 +28,7 @@
 ## ไฟล์ที่พร้อมใช้
 
 - `manuscript_v0.en.md` — ต้นฉบับฉบับเต็ม
+- `submission/manuscript_initial_submission_draft.pdf` — author-review PDF แบบ single-column, double-spaced พร้อมรูป vector 5 หน้า; ยังมี placeholder ที่ห้ามส่ง
 - `cover_letter_draft.en.md` — cover letter ที่ต้องเติมข้อมูลผู้เขียน
 - `ODD_MODEL_DESCRIPTION_DRAFT.en.md` — model description
 - `supplement/PARAMETER_TABLES.en.md` และ CSV — parameter provenance
