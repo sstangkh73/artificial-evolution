@@ -47,9 +47,13 @@ From the repository root, with all 600 raw dumps restored at their recorded path
 ```powershell
 python scripts\build_publication_release_inventory.py --write
 python scripts\build_publication_release_inventory.py --verify
+python scripts\build_publication_release_archives.py --write
+python scripts\build_publication_release_archives.py --verify
 ```
 
 The build first verifies every entry in the original 616-entry confirmatory checksum file and enforces the registered raw-file counts. It then hashes every release file, writes deterministic JSON and flat SHA-256 inventories, and excludes both generated inventory outputs from self-reference. Verification checks the selected scope, file sizes, hashes, duplicate paths, and agreement between the JSON and flat checksum forms.
+
+The archive builder creates five deterministically ordered ZIP files under `output/publication_release_2026-09-14/`, copies the two release-control files, and writes a deposit README plus package-level JSON and SHA-256 records. Its verifier decompresses and hashes every member, checks ZIP CRCs, compares every member against the release inventory, and verifies all package-level artifacts. The generated upload directory is intentionally not committed to Git.
 
 ## Deposit and download-back gate
 

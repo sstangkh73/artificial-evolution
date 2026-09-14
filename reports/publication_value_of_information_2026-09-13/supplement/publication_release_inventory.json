@@ -24,7 +24,7 @@
   "summary": {
     "bundle_count": 5,
     "file_count": 693,
-    "total_bytes": 234492943
+    "total_bytes": 234493752
   },
   "bundles": [
     {
@@ -3190,7 +3190,7 @@
       "license": "CC-BY-4.0",
       "purpose": "Manuscript, model description, references, disclosure log, parameter/state/version documentation, and reproduction records.",
       "file_count": 18,
-      "total_bytes": 285180,
+      "total_bytes": 285989,
       "files": [
         {
           "path": "LICENSE",
@@ -3204,8 +3204,8 @@
         },
         {
           "path": "reports/publication_value_of_information_2026-09-13/AI_USE_LOG.md",
-          "bytes": 1965,
-          "sha256": "803ab7818dc71678f439c2ac99edec3db226b2bb95eaf2d0756ed69ce2a32dfc"
+          "bytes": 2029,
+          "sha256": "8fff58c1860818164968c7e25cb6297e314f89490398e5d4df4693895438e1df"
         },
         {
           "path": "reports/publication_value_of_information_2026-09-13/ODD_MODEL_DESCRIPTION_DRAFT.en.md",
@@ -3214,8 +3214,8 @@
         },
         {
           "path": "reports/publication_value_of_information_2026-09-13/README.th.md",
-          "bytes": 13808,
-          "sha256": "0c2897e47aebc849461b085d66f631e94c5102dc4d9dcb1f92edc7b5a5b8d2a4"
+          "bytes": 13968,
+          "sha256": "80d3823c5e5d5811425f6fb72fda49eb13af62a46fff74a257796cfc90c63bb5"
         },
         {
           "path": "reports/publication_value_of_information_2026-09-13/manuscript_v0.en.md",
@@ -3244,8 +3244,8 @@
         },
         {
           "path": "reports/publication_value_of_information_2026-09-13/supplement/PUBLIC_ARCHIVE_MANIFEST.en.md",
-          "bytes": 5251,
-          "sha256": "71a44df178bf933dec243beb0f6d04d7a806351d3f8b1168c00fea78b2b42c61"
+          "bytes": 5836,
+          "sha256": "1f5e015df4cc0427dfcd7ad3d67468a4a6ec7cdd56a1169bc349ca7a16d36563"
         },
         {
           "path": "reports/publication_value_of_information_2026-09-13/supplement/STATE_VARIABLE_CATALOGUE.en.md",
