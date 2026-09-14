@@ -17,6 +17,7 @@ where available.
 | Donaldson-Matasci et al. (2010) | Full 12-page Oikos article | Information-theoretic quantity and decision-theoretic/fitness value are distinct; fitness value is defined through an optimized response and long-run fitness consequences | The present fixed learner, survival outcome, and no-birth E-series do not meet this formal fitness-value definition |
 | Giannakakis et al. (2025) | Full preprint corresponding to the published *Artificial Life* article | In an embodied foraging model, environmental/task structure and architectural constraints affect evolved local learning rules and their performance | Their model evolves plasticity rules and uses food values directly; it does not test temporal toxicity, resource-age aliasing, or a capacity-matched sham |
 | Grimm et al. (2020) | Full 20-page JASSS article | ODD provides a standardized structure for describing agent-based and other simulation models and aims to improve clarity and replication | ODD documentation improves reporting but does not itself validate a model |
+| Scholz et al. (2017) | Full open-access PNAS article, including model assumptions, results, and discussion | A data-driven sequential-decision model couples feeding as information sampling with nutrient intake and produces speed-accuracy and exploration-exploitation trade-offs | Their organism estimates ambient food availability; the present agents learn post-ingestive item values and receive resource age directly in B2 |
 
 ## Candidate sources not yet cleared for manuscript claims
 
@@ -25,7 +26,7 @@ where available.
 | Stephens (1989), *Variance and the Value of Information* | Publisher abstract and metadata | Directly links payoff structure and resource subtypes to the value of attending to a cue | Obtain and inspect full text before citing the detailed theoretical result |
 | Kaelbling, Littman, and Cassandra (1998) | Publisher abstract and author-hosted metadata | Canonical POMDP treatment of action under partial observability | Inspect the full relevant sections before using beyond basic bibliographic context |
 | Schmidt, Dall, and van Gils (2010) | Abstract and metadata | Broad ecology-of-information synthesis | Inspect full text and distinguish its definitions from Dall et al. (2005) |
-| Sulikowski (2017) | Abstract and selected full-text extract | Foraging choices combine energetic, ingestion, opportunity, and information tradeoffs | Inspect the full article and trace any specific claim to the cited primary studies |
+| Sulikowski (2017) | Author-hosted abstract and opening full-text sections; complete file was blocked in the current browser | Foraging choices combine energetic, ingestion, opportunity, and information tradeoffs | Inspect the complete article before citing; the manuscript currently does not rely on it |
 | Agarwala, Chiel, and Thomas (2010) | arXiv abstract | A close theoretical parallel: maximizing information can fail to maximize food utility | Establish publication status and inspect the entire manuscript before deciding whether a preprint citation adds value |
 | Borg and Channon (2020) | Publisher abstract | Artificial-life foraging study separating access to social information from behavioral/performance consequences | Inspect full text; use only if the social-information distinction sharpens the related-work section |
 
@@ -55,3 +56,5 @@ Donaldson-Matasci, M. C., Bergstrom, C. T., & Lachmann, M. (2010). The fitness v
 Giannakakis, E., Khajehabdollahi, S., & Levina, A. (2025). Network bottlenecks and task structure control the evolution of interpretable learning rules in a foraging agent. *Artificial Life, 31*(2), 177–194. https://doi.org/10.1162/artl_a_00458
 
 Grimm, V., Railsback, S. F., Vincenot, C. E., Berger, U., Gallagher, C., DeAngelis, D. L., Edmonds, B., Ge, J., Giske, J., Groeneveld, J., Johnston, A. S. A., Miles, A., Nabe-Nielsen, J., Polhill, J. G., Radchuk, V., Rohwäder, M.-S., Stillman, R. A., Thiele, J. C., & Ayllón, D. (2020). The ODD protocol for describing agent-based and other simulation models: A second update to improve clarity, replication, and structural realism. *Journal of Artificial Societies and Social Simulation, 23*(2), Article 7. https://doi.org/10.18564/jasss.4259
+
+Scholz, M., Dinner, A. R., Levine, E., & Biron, D. (2017). Stochastic feeding dynamics arise from the need for information and energy. *Proceedings of the National Academy of Sciences, 114*(35), 9261–9266. https://doi.org/10.1073/pnas.1703958114

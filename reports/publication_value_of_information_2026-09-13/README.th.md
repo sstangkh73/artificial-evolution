@@ -71,8 +71,8 @@ E6 พบ positive slope ตามเกณฑ์ที่ลงทะเบี�
 2. ตรวจและ freeze preregistration addendum: E6 30 seed และ T2 replication 50 seed พร้อม sample-size sensitivity analysis ก่อนเห็นผลชุดยืนยัน — **เสร็จแล้ว 2026-09-14; tag `prereg-resource-age-2026-09-14`**
 3. รันและวิเคราะห์ชุดยืนยันแบบจับคู่ตาม seed รวม 600 รัน — **เสร็จแล้ว 600/600 รัน, 0 failure, validator ผ่านทั้งหมด**
 4. สร้าง Figure 1-5 พร้อม source data — **เสร็จแล้ว 5 รูป ทั้ง PNG 300 dpi และ PDF พร้อมตาราง seed-level 8 ไฟล์**
-5. ค้นและอ่านวรรณกรรมฉบับจริงเรื่อง value of information, state representation, partial observability และ foraging information use — **อ่านฉบับเต็มและผูก claim แล้ว 5 แหล่งหลัก; ยังเหลือ candidate sources ใน evidence matrix**
-6. เขียน manuscript ภาษาอังกฤษใหม่; manuscript เดิมที่มี `lure/trap` ใช้เป็นแหล่งชิ้นส่วนเท่านั้น — **เติม Introduction, Methods และ Results จาก E1-E6/T2-RB พร้อม ODD ส่วนกลไกหลักแล้ว; ยังเหลือขยาย discussion, ตารางพารามิเตอร์ E1-E5 และตรวจถ้อยคำทั้งฉบับ**
+5. ค้นและอ่านวรรณกรรมฉบับจริงเรื่อง value of information, state representation, partial observability และ foraging information use — **อ่านฉบับเต็มและผูก claim แล้ว 6 แหล่งหลัก; ยังเหลือ candidate sources ใน evidence matrix**
+6. เขียน manuscript ภาษาอังกฤษใหม่; manuscript เดิมที่มี `lure/trap` ใช้เป็นแหล่งชิ้นส่วนเท่านั้น — **first full Article draft ครบ Introduction, Methods, Results, Discussion และ figure captions ประมาณ 6,000 คำแล้ว; ยังเหลือตารางพารามิเตอร์ E1-E5, copyedit และการตรวจรับรองโดยผู้เขียน**
 7. ปิดงาน reproducibility, archive/DOI, license, AI disclosure และตรวจ reference ทุกชิ้น
 8. ทำ ODD model description ให้ครบทุก state/parameter และให้บุคคลอื่นทำ clean-clone reproduction อย่างน้อยหนึ่ง seed ต่อแขนก่อนส่ง
 
