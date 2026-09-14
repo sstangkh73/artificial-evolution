@@ -15,7 +15,7 @@
 | รูป | แนะนำ vector สำหรับกราฟ/diagram | พร้อม | ใช้ PDF vector ทั้ง 5 รูปเป็น master; PNG 300 dpi ใช้ preview เท่านั้น |
 | figure source data | ต้องตรวจย้อนกลับได้ | พร้อม 8 ตาราง | ตรวจ caption/เลขรูปหลังจัดหน้า |
 | supplementary material | ต้องแนบพร้อมบทความหรือให้ URL ที่ไม่กระทบ anonymity | โครงสร้างพร้อม | รวม ODD, parameter/state/version/reproduction files เป็น reviewer package |
-| data/code policy | ทำข้อมูลที่รองรับข้อสรุปให้เข้าถึงได้และ cite ในบทความ | ยังขาด public archive | สร้าง versioned archive/DOI พร้อม 600 raw dumps, derived data, code, license |
+| data/code policy | ทำข้อมูลที่รองรับข้อสรุปให้เข้าถึงได้และ cite ในบทความ | release scope และ checksum พร้อมในเครื่อง | ผู้เขียนฝาก 5 bundles ออก DOI ดาวน์โหลดกลับ และตรวจ 693 hashes |
 | reproducibility | reviewer ต้องรันและตรวจได้ | internal deterministic smoke ผ่าน | ให้บุคคลอื่นทำ protocol และลงชื่อผล; ห้ามเรียก independent ก่อนสำเร็จ |
 | citations | APA 7 และทุก claim ต้องอิง source ที่อ่านจริง | 6 แหล่งหลักผูก claim แล้ว | ตรวจ metadata/หน้า/DOI ทีละรายการ; ตัด candidate ที่ไม่ได้ใช้ |
 | AI disclosure | ทุกการใช้ generative AI ต้องระบุชัดและอ้างแหล่ง/เวอร์ชัน/วันที่ | log พร้อม, ข้อความยังรออนุมัติ | ผู้เขียนตรวจ AI log, เติม URL/access dates, อนุมัติข้อความใน manuscript และ cover letter |
@@ -34,6 +34,7 @@
 - `supplement/STATE_VARIABLE_CATALOGUE.en.md` — focal state/process catalogue
 - `supplement/CODE_VERSION_AUDIT.en.md` — audit ความต่าง 5 run revisions
 - `supplement/INDEPENDENT_REPRODUCTION_PROTOCOL.en.md` — ขั้นตอนตรวจโดยบุคคลอื่น
+- `supplement/PUBLIC_ARCHIVE_MANIFEST.en.md` พร้อม JSON inventory และ SHA-256 — ขอบเขต release 5 bundles, 693 ไฟล์
 - `confirmatory/` — analysis, validators, source data, figures และ checksum manifest
 - `AI_USE_LOG.md` — บันทึกการใช้ generative AI
 
@@ -41,7 +42,7 @@
 
 1. ผู้เขียนตรวจทุกบรรทัดของต้นฉบับ ตัวเลข ตาราง รูป และ reference โดยเปิดหลักฐานต้นทางประกอบ
 2. บุคคลอื่นรัน independent reproduction protocol แล้วได้ `PASS` พร้อมบันทึกชื่อ ระบบ และ hash
-3. สร้าง reviewer-safe public archive/DOI และตรวจ checksum 616 รายการหลังดาวน์โหลดกลับ
+3. ฝาก reviewer-safe public archive/DOI ตาม manifest แล้วตรวจ release checksum 693 รายการหลังดาวน์โหลดกลับ (checksum เดิม 616 รายการเป็น core subset)
 4. เติม Data and Code Availability และ AI Disclosure ในต้นฉบับด้วย URL/DOI และข้อความที่ผู้เขียนอนุมัติ
 5. เติมข้อมูลผู้เขียน funding conflict และ ethics statements
 6. จัดหน้า PDF แบบ single-column double-spaced ฝังรูป vector ตรวจทุกหน้า และนับคำครั้งสุดท้าย

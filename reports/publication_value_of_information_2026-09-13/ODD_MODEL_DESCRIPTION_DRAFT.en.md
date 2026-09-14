@@ -5,7 +5,7 @@
 **ODD version followed:** Grimm et al. (2020), https://doi.org/10.18564/jasss.4259
 
 **Code basis:** frozen tag `prereg-resource-age-2026-09-14`
-**Status:** the focal toxin, learning, scheduling, and outcome mechanisms below have been checked against the frozen implementation. Generated launch-parameter tables cover E1–E6 and T2-RB, and the focal state/process and code-version catalogues are complete. Independent reproduction and the public-release cross-check remain to be completed before submission.
+**Status:** the focal toxin, learning, scheduling, and outcome mechanisms below have been checked against the frozen implementation. Generated launch-parameter tables cover E1–E6 and T2-RB, and the focal state/process and code-version catalogues are complete. A 693-file release inventory now defines and locally verifies the archive scope. Independent reproduction, public deposit, and download-back verification remain to be completed before submission.
 
 ## 1. Purpose and patterns
 
@@ -170,4 +170,4 @@ The current evidence package separates code verification from model interpretati
 - E5 and T2-RB test transfer to a higher-drain composite regime;
 - the model remains an abstract artificial ecology with a supplied perfect age cue, fixed learning policy, and no demonstrated reproduction in these experiments.
 
-Before submission, another person still needs to execute `supplement/INDEPENDENT_REPRODUCTION_PROTOCOL.en.md` and sign its record, and the resulting package must be cross-checked against the archived public code release. Two internal clean-worktree smoke runs already produced the same normalized 18-arm signatures, and `scripts/verify_reproduction_smoke.py` verifies those signatures. This is internal determinism evidence, not completed independent reproduction. Batch-level Python, platform, and Git revision records are preserved in `supplement/experiment_design_provenance.csv`.
+Before submission, another person still needs to execute `supplement/INDEPENDENT_REPRODUCTION_PROTOCOL.en.md` and sign its record, and the resulting package must be cross-checked against the archived public code release. Two internal clean-worktree smoke runs already produced the same normalized 18-arm signatures, and `scripts/verify_reproduction_smoke.py` verifies those signatures. This is internal determinism evidence, not completed independent reproduction. Batch-level Python, platform, and Git revision records are preserved in `supplement/experiment_design_provenance.csv`. `supplement/PUBLIC_ARCHIVE_MANIFEST.en.md` defines five release bundles, licensing, exclusions, and the deposit gate; its machine-readable inventory and flat checksum list locally verify 693 files, including all 600 confirmatory raw dumps.

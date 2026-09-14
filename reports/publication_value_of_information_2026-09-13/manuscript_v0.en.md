@@ -204,11 +204,11 @@ Resource-age information solved the hidden-state discrimination problem but redu
 
 ## Data and Code Availability
 
-**[Replace local paths with a versioned public archive and DOI before submission.]**
+The release package has been assembled locally as five licensed bundles containing the 600 confirmatory raw dumps, derived evidence, manuscript and methods files, frozen preregistration, and the focal code and tests. A machine-readable inventory and flat SHA-256 list verify 693 files. **[Insert the versioned public archive citation, DOI, and code-release tag after deposit and download-back verification; do not submit this placeholder.]**
 
 ## Supplementary Materials
 
-The working supplement contains the ODD model description; the complete experiment launch-parameter and code-fixed-setting tables; the focal state/process catalogue; the code-version audit; an independent-reproduction protocol and deterministic smoke signatures; preregistration and validation records; checksum manifest; source-data tables for all figures; and the analysis and figure-generation scripts. File names and public archive links will be finalized at submission.
+The working supplement contains the ODD model description; the complete experiment launch-parameter and code-fixed-setting tables; the focal state/process catalogue; the code-version audit; an independent-reproduction protocol and deterministic smoke signatures; preregistration and validation records; source-data tables for all figures; the analysis and figure-generation scripts; and a public-archive manifest with machine-readable inventory and checksums. Public archive links will be finalized after deposit.
 
 ## Generative-AI Disclosure
 

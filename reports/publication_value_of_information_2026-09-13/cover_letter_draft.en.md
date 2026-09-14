@@ -4,7 +4,8 @@
 
 [Submission date]
 
-Editors  
+Editors
+
 *Artificial Life*
 
 Dear Editors,
@@ -25,8 +26,12 @@ Thank you for considering this work.
 
 Sincerely,
 
-Chisanupong Injun  
-[Affiliation]  
-[Postal address]  
-[Email; corresponding author]  
+Chisanupong Injun
+
+[Affiliation]
+
+[Postal address]
+
+[Email; corresponding author]
+
 [Optional ORCID]
