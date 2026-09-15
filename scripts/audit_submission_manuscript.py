@@ -28,9 +28,12 @@ DEFAULT_OUTPUT = PUBLICATION / "submission/manuscript_submission_audit.json"
 
 WORD = re.compile(r"[A-Za-z0-9]+(?:[-'][A-Za-z0-9]+)*")
 PLACEHOLDER = re.compile(r"\[(?:Author|Insert)[^\]\n]+\]")
-PDF_BRACKET = re.compile(r"\[[^\]]{1,400}\]")
-# APA 7 reference descriptors are bracketed by design and are not placeholders.
-ALLOWED_PDF_BRACKETS = frozenset({"[Large language model]"})
+# The PDF builder adds title-page fields that are absent from the Markdown.
+# Match actionable markers rather than every bracketed span because statistical
+# tables legitimately contain confidence intervals such as [-8.826, -2.037].
+PDF_PLACEHOLDER = re.compile(
+    r"\[(?:(?:Author|Insert)[^\]]+|Affiliation|Postal address|Email; corresponding author)\]"
+)
 # Working-draft front matter that must never reach the rendered manuscript.
 INTERNAL_NOTE_MARKERS = ("Manuscript type:", "Target journal:", "Status:", "must be rechecked")
 
@@ -56,7 +59,12 @@ def bib_records(text: str) -> list[dict[str, str]]:
         if author is None or year is None:
             raise ValueError("each bibliography record must contain author and year")
         first_author = author.group(1).split(" and ", 1)[0].split(",", 1)[0].strip()
-        records.append({"surname": first_author, "year": year.group(1)})
+        journal = re.search(r"journal\s*=\s*\{([^}]+)\}", block)
+        records.append({
+            "surname": first_author,
+            "year": year.group(1),
+            "journal": journal.group(1) if journal else "",
+        })
     if not records:
         raise ValueError("no BibTeX records parsed")
     return records
@@ -65,6 +73,12 @@ def bib_records(text: str) -> list[dict[str, str]]:
 def require(condition: bool, message: str, failures: list[str]) -> None:
     if not condition:
         failures.append(message)
+
+
+def cites_record(text: str, surname: str, year: str) -> bool:
+    """Recognize common APA narrative and parenthetical author-year forms."""
+    pattern = rf"\b{re.escape(surname)}\b[^\n()]{{0,120}}(?:\({year}\)|,\s*{year}\b)"
+    return re.search(pattern, text) is not None
 
 
 def normalize_space(text: str) -> str:
@@ -84,8 +98,7 @@ def display_path(path: Path) -> str:
 
 
 def pdf_placeholders(text: str) -> list[str]:
-    found = {normalize_space(match.group(0)) for match in PDF_BRACKET.finditer(text)}
-    return sorted(found - ALLOWED_PDF_BRACKETS)
+    return sorted({normalize_space(match.group(0)) for match in PDF_PLACEHOLDER.finditer(text)})
 
 
 def pdf_internal_notes(text: str) -> list[str]:
@@ -134,6 +147,7 @@ def audit(pdf_path: Path = SUBMISSION_PDF) -> dict[str, object]:
     title = manuscript.split("\n", 1)[0].lstrip("#").strip()
     abstract = section(manuscript, "## Abstract", "**Keywords:")
     scientific_text = section(manuscript, "## Abstract", "## References")
+    core_article = section(manuscript, "## Abstract", "## Data and Code Availability")
     gross_article = manuscript.split("## Figure captions", 1)[0]
     body_before_references = manuscript.split("## References", 1)[0]
     captions = manuscript.split("## Figure captions", 1)[1]
@@ -165,8 +179,14 @@ def audit(pdf_path: Path = SUBMISSION_PDF) -> dict[str, object]:
 
     gross_words = len(words(gross_article))
     scientific_words = len(words(scientific_text))
+    core_words = len(words(core_article))
     abstract_words = len(words(abstract))
     require(6000 <= gross_words <= 12000, f"gross article word count outside 6000-12000: {gross_words}", failures)
+    require(
+        6000 <= scientific_words <= 12000,
+        f"conservative count excluding references and captions outside 6000-12000: {scientific_words}",
+        failures,
+    )
     require(150 <= abstract_words <= 250, f"abstract word count outside 150-250: {abstract_words}", failures)
     require(5 <= len(keywords) <= 6, f"keyword count outside 5-6: {len(keywords)}", failures)
 
@@ -183,13 +203,21 @@ def audit(pdf_path: Path = SUBMISSION_PDF) -> dict[str, object]:
         )
 
     bibliography_records = bib_records(bibliography)
+    artificial_life_entries = sum(
+        record["journal"].strip().lower() == "artificial life"
+        for record in bibliography_records
+    )
+    require(
+        artificial_life_entries >= 5,
+        f"fewer than five Artificial Life journal sources: {artificial_life_entries}",
+        failures,
+    )
     reference_section = section(manuscript, "## References", "## Figure captions")
     uncited = []
     missing_from_reference_list = []
     for record in bibliography_records:
         surname, year = record["surname"], record["year"]
-        citation_pattern = rf"{re.escape(surname)}(?: et al\.)?[^\n()]{{0,80}}\({year}\)|{re.escape(surname)}(?: et al\.)?, {year}"
-        if re.search(citation_pattern, body_before_references) is None:
+        if not cites_record(body_before_references, surname, year):
             uncited.append(f"{surname} {year}")
         if surname not in reference_section or year not in reference_section:
             missing_from_reference_list.append(f"{surname} {year}")
@@ -210,8 +238,13 @@ def audit(pdf_path: Path = SUBMISSION_PDF) -> dict[str, object]:
         "Eighteen of 30 slopes were positive and 12 were negative",
     ]
     for row in e6_secondary["by_realized_fruit_energy"]:
-        value = row["B2_minus_B3"]["paired_difference"]["mean"]
-        required_fragments.append(f"{value:+.3f}")
+        for contrast_name in (
+            "B2_minus_B3",
+            "B2_minus_B1",
+            "B3_minus_B1_descriptive",
+        ):
+            value = row[contrast_name]["paired_difference"]["mean"]
+            required_fragments.append(f"{value:+.3f}")
     primary = t2["primary"]["paired_difference"]
     secondary = t2["direct_replication_secondary"]["paired_difference"]
     required_fragments.extend(
@@ -236,10 +269,11 @@ def audit(pdf_path: Path = SUBMISSION_PDF) -> dict[str, object]:
     for phrase in disallowed_phrases:
         require(phrase not in manuscript, f"unsupported or imprecise phrase remains: {phrase}", failures)
 
-    placeholders = sorted(set(PLACEHOLDER.findall(manuscript)))
+    source_placeholders = sorted(set(PLACEHOLDER.findall(manuscript)))
     pdf = audit_pdf(pdf_path, title, abstract)
+    placeholders = sorted(set(source_placeholders) | set(pdf["unresolved_placeholders"]))
     expected_author_actions = (
-        "author affiliation, postal address, and corresponding-author email on the title page",
+        "confirm author affiliation, postal address, corresponding-author email, and ORCID against submission/AUTHOR_METADATA_TO_CONFIRM.th.md",
         "public archive citation/DOI/code-release tag",
         "funding statement",
         "competing-interest statement",
@@ -255,12 +289,15 @@ def audit(pdf_path: Path = SUBMISSION_PDF) -> dict[str, object]:
         "word_counts": {
             "gross_article_through_declarations_and_references": gross_words,
             "abstract": abstract_words,
-            "scientific_text_abstract_through_declarations": scientific_words,
+            "conservative_abstract_through_declarations_excluding_references": scientific_words,
+            "core_article_abstract_through_conclusion": core_words,
         },
         "keywords": keywords,
         "figures": 5,
         "bibliography_entries": len(bibliography_records),
+        "artificial_life_journal_entries": artificial_life_entries,
         "unresolved_placeholders": placeholders,
+        "source_markdown_placeholders": source_placeholders,
         "pdf": pdf,
         "author_actions_expected": list(expected_author_actions),
         "failures": failures,
@@ -291,8 +328,9 @@ def main() -> int:
     print(
         f"{result['automated_scientific_checks']}: {result['word_counts']['gross_article_through_declarations_and_references']} gross words, "
         f"{len(result['keywords'])} keywords, {result['figures']} figures, "
-        f"{result['bibliography_entries']} bibliography entries, "
-        f"{len(result['unresolved_placeholders'])} unresolved source placeholders; "
+        f"{result['bibliography_entries']} bibliography entries "
+        f"({result['artificial_life_journal_entries']} from Artificial Life), "
+        f"{len(result['unresolved_placeholders'])} unresolved placeholders; "
         f"PDF {pdf['status']}: matches source={pdf['matches_manuscript']}, "
         f"{len(pdf['unresolved_placeholders'])} placeholders, {len(pdf['internal_notes'])} internal notes"
     )

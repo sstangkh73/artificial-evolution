@@ -24,6 +24,7 @@ class TestConfirmatorySourceRows(unittest.TestCase):
         self.assertEqual(len(result), 5)
         self.assertEqual(result[0]["B2_minus_B3_followup_ticks"], 4)
         self.assertEqual(result[-1]["B2_minus_B1_followup_ticks"], 20)
+        self.assertEqual(result[-1]["B3_minus_B1_followup_ticks"], 10)
 
     def test_t2_rows_preserve_both_controls(self):
         rows = [

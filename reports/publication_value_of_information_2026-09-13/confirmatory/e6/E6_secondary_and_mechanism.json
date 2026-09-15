@@ -130,6 +130,50 @@
           "magnitude": "negligible"
         }
       },
+      "B3_minus_B1_descriptive": {
+        "contrast": "B3-B1",
+        "metric": "founder_mean_followup_ticks",
+        "n_pairs": 30,
+        "seeds_dropped_for_missing_arm": [],
+        "B3": {
+          "n": 30,
+          "mean": 156.144667,
+          "sd": 37.038125,
+          "median": 161.01
+        },
+        "B1": {
+          "n": 30,
+          "mean": 144.238667,
+          "sd": 28.076093,
+          "median": 150.27
+        },
+        "paired_difference": {
+          "n": 30,
+          "mean": 11.906,
+          "sd": 11.197444,
+          "median": 11.54,
+          "t_ci95": {
+            "half_width": 4.180725,
+            "low": 7.725275,
+            "high": 16.086725
+          },
+          "bootstrap_ci95": {
+            "low": 8.048,
+            "high": 15.912667
+          },
+          "method": "monte_carlo_sign_flip",
+          "p": 4.9999750001249995e-06,
+          "draws": 200000,
+          "floor": 4.9999750001249995e-06,
+          "seeds_favouring_left": 26,
+          "seeds_favouring_right": 4,
+          "seeds_tied": 0
+        },
+        "cliffs_delta": {
+          "delta": 0.208889,
+          "magnitude": "small"
+        }
+      },
       "conditions": {
         "B1": {
           "n_runs": 30,
@@ -317,6 +361,50 @@
         "cliffs_delta": {
           "delta": 0.098889,
           "magnitude": "negligible"
+        }
+      },
+      "B3_minus_B1_descriptive": {
+        "contrast": "B3-B1",
+        "metric": "founder_mean_followup_ticks",
+        "n_pairs": 30,
+        "seeds_dropped_for_missing_arm": [],
+        "B3": {
+          "n": 30,
+          "mean": 161.638667,
+          "sd": 37.341823,
+          "median": 160.4
+        },
+        "B1": {
+          "n": 30,
+          "mean": 150.314,
+          "sd": 30.076441,
+          "median": 151.08
+        },
+        "paired_difference": {
+          "n": 30,
+          "mean": 11.324667,
+          "sd": 15.53743,
+          "median": 14.2,
+          "t_ci95": {
+            "half_width": 5.80112,
+            "low": 5.523546,
+            "high": 17.125787
+          },
+          "bootstrap_ci95": {
+            "low": 5.870667,
+            "high": 16.668
+          },
+          "method": "monte_carlo_sign_flip",
+          "p": 0.00042999785001074993,
+          "draws": 200000,
+          "floor": 4.9999750001249995e-06,
+          "seeds_favouring_left": 24,
+          "seeds_favouring_right": 6,
+          "seeds_tied": 0
+        },
+        "cliffs_delta": {
+          "delta": 0.204444,
+          "magnitude": "small"
         }
       },
       "conditions": {
@@ -508,6 +596,50 @@
           "magnitude": "negligible"
         }
       },
+      "B3_minus_B1_descriptive": {
+        "contrast": "B3-B1",
+        "metric": "founder_mean_followup_ticks",
+        "n_pairs": 30,
+        "seeds_dropped_for_missing_arm": [],
+        "B3": {
+          "n": 30,
+          "mean": 166.309333,
+          "sd": 35.763154,
+          "median": 167.7
+        },
+        "B1": {
+          "n": 30,
+          "mean": 156.123333,
+          "sd": 29.508744,
+          "median": 155.77
+        },
+        "paired_difference": {
+          "n": 30,
+          "mean": 10.186,
+          "sd": 12.01414,
+          "median": 12.5,
+          "t_ci95": {
+            "half_width": 4.48565,
+            "low": 5.70035,
+            "high": 14.67165
+          },
+          "bootstrap_ci95": {
+            "low": 5.920667,
+            "high": 14.255333
+          },
+          "method": "monte_carlo_sign_flip",
+          "p": 0.00013499932500337497,
+          "draws": 200000,
+          "floor": 4.9999750001249995e-06,
+          "seeds_favouring_left": 25,
+          "seeds_favouring_right": 5,
+          "seeds_tied": 0
+        },
+        "cliffs_delta": {
+          "delta": 0.202222,
+          "magnitude": "small"
+        }
+      },
       "conditions": {
         "B1": {
           "n_runs": 30,
@@ -697,6 +829,50 @@
           "magnitude": "negligible"
         }
       },
+      "B3_minus_B1_descriptive": {
+        "contrast": "B3-B1",
+        "metric": "founder_mean_followup_ticks",
+        "n_pairs": 30,
+        "seeds_dropped_for_missing_arm": [],
+        "B3": {
+          "n": 30,
+          "mean": 178.991333,
+          "sd": 38.815782,
+          "median": 181.65
+        },
+        "B1": {
+          "n": 30,
+          "mean": 172.624,
+          "sd": 29.417344,
+          "median": 181.67
+        },
+        "paired_difference": {
+          "n": 30,
+          "mean": 6.367333,
+          "sd": 13.979673,
+          "median": 5.75,
+          "t_ci95": {
+            "half_width": 5.21951,
+            "low": 1.147824,
+            "high": 11.586843
+          },
+          "bootstrap_ci95": {
+            "low": 1.404667,
+            "high": 11.267333
+          },
+          "method": "monte_carlo_sign_flip",
+          "p": 0.019344903275483622,
+          "draws": 200000,
+          "floor": 4.9999750001249995e-06,
+          "seeds_favouring_left": 22,
+          "seeds_favouring_right": 8,
+          "seeds_tied": 0
+        },
+        "cliffs_delta": {
+          "delta": 0.12,
+          "magnitude": "negligible"
+        }
+      },
       "conditions": {
         "B1": {
           "n_runs": 30,
@@ -883,6 +1059,50 @@
         },
         "cliffs_delta": {
           "delta": -0.006667,
+          "magnitude": "negligible"
+        }
+      },
+      "B3_minus_B1_descriptive": {
+        "contrast": "B3-B1",
+        "metric": "founder_mean_followup_ticks",
+        "n_pairs": 30,
+        "seeds_dropped_for_missing_arm": [],
+        "B3": {
+          "n": 30,
+          "mean": 205.713333,
+          "sd": 27.806625,
+          "median": 213.43
+        },
+        "B1": {
+          "n": 30,
+          "mean": 207.594667,
+          "sd": 24.916873,
+          "median": 210.14
+        },
+        "paired_difference": {
+          "n": 30,
+          "mean": -1.881333,
+          "sd": 9.450581,
+          "median": -2.42,
+          "t_ci95": {
+            "half_width": 3.528509,
+            "low": -5.409842,
+            "high": 1.647176
+          },
+          "bootstrap_ci95": {
+            "low": -5.450667,
+            "high": 1.223333
+          },
+          "method": "monte_carlo_sign_flip",
+          "p": 0.2992635036824816,
+          "draws": 200000,
+          "floor": 4.9999750001249995e-06,
+          "seeds_favouring_left": 12,
+          "seeds_favouring_right": 18,
+          "seeds_tied": 0
+        },
+        "cliffs_delta": {
+          "delta": -0.044444,
           "magnitude": "negligible"
         }
       },

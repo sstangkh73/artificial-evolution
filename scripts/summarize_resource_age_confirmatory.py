@@ -58,6 +58,7 @@ def summarize_e6(payload: dict, metric: str = "founder_mean_followup_ticks") -> 
         }
         b2_b3 = contrast(rows_by_arm, "B2", "B3", metric)
         b2_b1 = contrast(rows_by_arm, "B2", "B1", metric)
+        b3_b1 = contrast(rows_by_arm, "B3", "B1", metric)
         raw_p[str(energy)] = float(b2_b3["paired_difference"]["p"])
 
         condition_summaries = {}
@@ -121,6 +122,7 @@ def summarize_e6(payload: dict, metric: str = "founder_mean_followup_ticks") -> 
             "realized_fruit_energy": energy,
             "B2_minus_B3": b2_b3,
             "B2_minus_B1": b2_b1,
+            "B3_minus_B1_descriptive": b3_b1,
             "conditions": condition_summaries,
             "mechanism_gate": mechanism,
         })

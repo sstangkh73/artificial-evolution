@@ -18,6 +18,11 @@ RENDERED = "When Does a Better\nRepresentation Pay?\nArtificial foragers learn v
 
 
 class PdfTextAuditTests(unittest.TestCase):
+    def test_citation_recognizes_multi_author_apa_forms(self):
+        self.assertTrue(audit.cites_record("Dorin and Stepney (2024) distinguish forms.", "Dorin", "2024"))
+        self.assertTrue(audit.cites_record("Prior work supports this (Dorin & Stepney, 2024).", "Dorin", "2024"))
+        self.assertFalse(audit.cites_record("Dorin and Stepney discuss the field.", "Dorin", "2024"))
+
     def test_clean_rendering_passes(self):
         result = audit.audit_pdf_text(RENDERED + "\nCodex [Large language model].", TITLE, ABSTRACT)
         self.assertEqual(result["status"], "PASS")
@@ -41,6 +46,9 @@ class PdfTextAuditTests(unittest.TestCase):
 
     def test_apa_descriptor_is_not_a_placeholder(self):
         self.assertEqual(audit.pdf_placeholders("OpenAI. (2026). Codex [Large language model]."), [])
+
+    def test_confidence_interval_is_not_a_placeholder(self):
+        self.assertEqual(audit.pdf_placeholders("B2-B3 [95% CI] = -5.431 [-8.826, -2.037]."), [])
 
     def test_front_matter_leak_is_reported(self):
         text = RENDERED + "\nTarget journal: Artificial Life (final requirements must be\nrechecked at submission)"

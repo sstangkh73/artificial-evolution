@@ -41,6 +41,10 @@ def e6_seed_rows(payload: dict) -> list[dict]:
                     arms["B2"]["founder_mean_followup_ticks"]
                     - arms["B1"]["founder_mean_followup_ticks"]
                 ),
+                "B3_minus_B1_followup_ticks": (
+                    arms["B3"]["founder_mean_followup_ticks"]
+                    - arms["B1"]["founder_mean_followup_ticks"]
+                ),
                 "B1_discrimination_index": arms["B1"]["discrimination_index"],
                 "B2_discrimination_index": arms["B2"]["discrimination_index"],
                 "B3_discrimination_index": arms["B3"]["discrimination_index"],
@@ -115,27 +119,33 @@ def make_figures(e6_rows: list[dict], t2_rows: list[dict], output_dir: Path) -> 
             [row["B2_minus_B3_followup_ticks"] for row in ordered],
             color="#7f8c8d", alpha=0.18, linewidth=0.7,
         )
-    means, lows, highs = [], [], []
-    for energy in ENERGIES:
-        values = [
-            float(row["B2_minus_B3_followup_ticks"])
-            for row in e6_rows if row["realized_fruit_energy"] == energy
-        ]
-        means.append(mean_sd(values)["mean"])
-        ci = t_ci95(values)
-        lows.append(means[-1] - ci["low"])
-        highs.append(ci["high"] - means[-1])
-    axes[0].errorbar(
-        ENERGIES, means, yerr=[lows, highs], color="#1f4e79", marker="o",
-        linewidth=2, capsize=3, label="Mean B2-B3 (95% t CI)",
-    )
+    for field, label, color, marker in (
+        ("B2_minus_B3_followup_ticks", "B2-B3 (registered primary)", "#1f4e79", "o"),
+        ("B2_minus_B1_followup_ticks", "B2-B1", "#009E73", "s"),
+        ("B3_minus_B1_followup_ticks", "B3-B1 (descriptive)", "#D55E00", "^"),
+    ):
+        means, lows, highs = [], [], []
+        for energy in ENERGIES:
+            values = [
+                float(row[field]) for row in e6_rows
+                if row["realized_fruit_energy"] == energy
+            ]
+            means.append(mean_sd(values)["mean"])
+            ci = t_ci95(values)
+            lows.append(means[-1] - ci["low"])
+            highs.append(ci["high"] - means[-1])
+        axes[0].errorbar(
+            ENERGIES, means, yerr=[lows, highs], color=color, marker=marker,
+            linewidth=1.8, capsize=3, label=label,
+        )
     axes[0].axhline(0, color="black", linewidth=0.8)
     axes[0].set_xlabel("Realized safe-fruit energy")
-    axes[0].set_ylabel("B2-B3 restricted mean follow-up (ticks)")
+    axes[0].set_ylabel("Paired restricted mean follow-up difference (ticks)")
     axes[0].set_title("A  Survival effect by resource payoff")
-    axes[0].legend(frameon=False, loc="lower right")
+    axes[0].legend(frameon=False, loc="best", fontsize=8)
 
     for field, label, color in (
+        ("B1_discrimination_index", "Type-only key (B1)", "#333333"),
         ("B2_discrimination_index", "Resource-age key (B2)", "#0072B2"),
         ("B3_discrimination_index", "Capacity-matched sham (B3)", "#D55E00"),
     ):
@@ -208,11 +218,19 @@ def main() -> int:
 
     e6_summary = []
     for energy in ENERGIES:
-        values = [
-            float(row["B2_minus_B3_followup_ticks"])
-            for row in e6_rows if row["realized_fruit_energy"] == energy
-        ]
-        e6_summary.append({"realized_fruit_energy": energy, **_summary_row("B2-B3", values)})
+        for field, label in (
+            ("B2_minus_B3_followup_ticks", "B2-B3"),
+            ("B2_minus_B1_followup_ticks", "B2-B1"),
+            ("B3_minus_B1_followup_ticks", "B3-B1 descriptive"),
+        ):
+            values = [
+                float(row[field]) for row in e6_rows
+                if row["realized_fruit_energy"] == energy
+            ]
+            e6_summary.append({
+                "realized_fruit_energy": energy,
+                **_summary_row(label, values),
+            })
     write_csv(source_dir / "e6_energy_summary.csv", e6_summary)
     write_csv(source_dir / "t2rb_contrast_summary.csv", [
         _summary_row("A2-A3O", [float(row["A2_minus_A3O_followup_ticks"]) for row in t2_rows]),

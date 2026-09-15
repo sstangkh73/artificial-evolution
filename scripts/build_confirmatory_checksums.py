@@ -46,17 +46,61 @@ def build_manifest(root: Path, includes: list[Path], output: Path) -> int:
     return len(files)
 
 
+def refresh_manifest(root: Path, output: Path) -> int:
+    """Rehash the existing path set without silently changing its scope."""
+    root = root.resolve()
+    output = output.resolve()
+    if not output.is_file():
+        raise FileNotFoundError(output)
+    paths: list[Path] = []
+    for line_number, line in enumerate(output.read_text(encoding="utf-8").splitlines(), 1):
+        if not line.strip():
+            continue
+        try:
+            _, relative = line.split("  ", 1)
+        except ValueError as exc:
+            raise ValueError(f"malformed checksum line {line_number}: {line!r}") from exc
+        candidate = (root / relative).resolve()
+        try:
+            candidate.relative_to(root)
+        except ValueError as exc:
+            raise ValueError(f"manifest path is outside root: {relative}") from exc
+        if not candidate.is_file():
+            raise FileNotFoundError(candidate)
+        paths.append(candidate)
+    if len(paths) != len(set(paths)):
+        raise ValueError("manifest contains duplicate paths")
+    lines = [
+        f"{sha256_file(path)}  {path.relative_to(root).as_posix()}"
+        for path in sorted(paths, key=lambda item: item.relative_to(root).as_posix())
+    ]
+    output.write_text("\n".join(lines) + "\n", encoding="utf-8", newline="\n")
+    return len(paths)
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--root", default=".")
-    parser.add_argument("--include", action="append", required=True)
+    parser.add_argument("--include", action="append")
     parser.add_argument("--out", required=True)
+    parser.add_argument(
+        "--refresh-existing",
+        action="store_true",
+        help="rehash exactly the paths already listed in --out",
+    )
     args = parser.parse_args()
     root = Path(args.root)
     output = Path(args.out)
     if not output.is_absolute():
         output = root / output
-    count = build_manifest(root, [Path(path) for path in args.include], output)
+    if args.refresh_existing:
+        if args.include:
+            parser.error("--refresh-existing cannot be combined with --include")
+        count = refresh_manifest(root, output)
+    else:
+        if not args.include:
+            parser.error("at least one --include is required unless --refresh-existing is used")
+        count = build_manifest(root, [Path(path) for path in args.include], output)
     print(f"wrote {count} SHA-256 entries to {output}")
     return 0
 

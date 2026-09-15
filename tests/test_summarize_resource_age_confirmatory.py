@@ -74,6 +74,10 @@ class TestConfirmatorySecondarySummary(unittest.TestCase):
                 level["realized_fruit_energy"],
             )
             self.assertIn("holm_adjusted_p", level["B2_minus_B3"]["paired_difference"])
+            self.assertEqual(
+                level["B3_minus_B1_descriptive"]["paired_difference"]["mean"],
+                0.0,
+            )
 
     def test_gate_fails_when_encounters_are_below_threshold(self):
         payload = self._payload()

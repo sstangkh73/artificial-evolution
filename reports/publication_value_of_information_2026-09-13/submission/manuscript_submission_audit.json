@@ -4,9 +4,10 @@
   "automated_scientific_checks": "PASS",
   "submission_ready": false,
   "word_counts": {
-    "gross_article_through_declarations_and_references": 6157,
-    "abstract": 205,
-    "scientific_text_abstract_through_declarations": 5817
+    "gross_article_through_declarations_and_references": 7319,
+    "abstract": 204,
+    "conservative_abstract_through_declarations_excluding_references": 6799,
+    "core_article_abstract_through_conclusion": 6496
   },
   "keywords": [
     "artificial life",
@@ -17,8 +18,20 @@
     "state representation"
   ],
   "figures": 5,
-  "bibliography_entries": 7,
+  "bibliography_entries": 13,
+  "artificial_life_journal_entries": 7,
   "unresolved_placeholders": [
+    "[Affiliation]",
+    "[Author approval required; add any AI use not recorded here.]",
+    "[Author confirmation required. Complete a CRediT statement covering conceptualization, methodology, software, validation, formal analysis, investigation, data curation, visualization, writing, and project administration.]",
+    "[Author confirmation required. If accurate: The author declares no competing interests.]",
+    "[Author confirmation required. If accurate: This research received no specific grant from any funding agency in the public, commercial, or not-for-profit sectors.]",
+    "[Author confirmation required. Proposed statement: This study used only computer simulations and involved no human participants or live animals; institutional ethics approval was therefore not required.]",
+    "[Email; corresponding author]",
+    "[Insert the versioned public archive citation, DOI, and code-release tag after deposit and download-back verification; do not submit this placeholder.]",
+    "[Postal address]"
+  ],
+  "source_markdown_placeholders": [
     "[Author approval required; add any AI use not recorded here.]",
     "[Author confirmation required. Complete a CRediT statement covering conceptualization, methodology, software, validation, formal analysis, investigation, data curation, visualization, writing, and project administration.]",
     "[Author confirmation required. If accurate: The author declares no competing interests.]",
@@ -29,7 +42,7 @@
   "pdf": {
     "path": "reports/publication_value_of_information_2026-09-13/submission/manuscript_initial_submission_draft.pdf",
     "present": true,
-    "pages": 28,
+    "pages": 31,
     "status": "FAIL",
     "matches_manuscript": true,
     "unresolved_placeholders": [
@@ -46,7 +59,7 @@
     "internal_notes": []
   },
   "author_actions_expected": [
-    "author affiliation, postal address, and corresponding-author email on the title page",
+    "confirm author affiliation, postal address, corresponding-author email, and ORCID against submission/AUTHOR_METADATA_TO_CONFIRM.th.md",
     "public archive citation/DOI/code-release tag",
     "funding statement",
     "competing-interest statement",

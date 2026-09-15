@@ -64,6 +64,7 @@ REPRODUCTION_SCRIPTS = (
 
 REPRODUCTION_TESTS = (
     "tests/test_aging_physics.py",
+    "tests/test_audit_submission_manuscript.py",
     "tests/test_build_confirmatory_checksums.py",
     "tests/test_demographic_telemetry.py",
     "tests/test_e6_representation_payoff_analysis.py",

@@ -3,7 +3,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from scripts.build_confirmatory_checksums import build_manifest, collect_files
+from scripts.build_confirmatory_checksums import build_manifest, collect_files, refresh_manifest
 
 
 class ConfirmatoryChecksumTests(unittest.TestCase):
@@ -32,6 +32,23 @@ class ConfirmatoryChecksumTests(unittest.TestCase):
             outside.write_text("x", encoding="utf-8")
             with self.assertRaises(ValueError):
                 collect_files(root, [outside], root / "checksums.sha256")
+
+    def test_refresh_preserves_existing_path_scope(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "data").mkdir()
+            tracked = root / "data" / "tracked.txt"
+            ignored = root / "data" / "new.txt"
+            tracked.write_bytes(b"old")
+            ignored.write_bytes(b"new")
+            output = root / "checksums.sha256"
+            output.write_text(f"{'0' * 64}  data/tracked.txt\n", encoding="utf-8")
+
+            self.assertEqual(refresh_manifest(root, output), 1)
+            self.assertEqual(
+                output.read_text(encoding="utf-8").splitlines(),
+                [f"{hashlib.sha256(b'old').hexdigest()}  data/tracked.txt"],
+            )
 
 
 if __name__ == "__main__":

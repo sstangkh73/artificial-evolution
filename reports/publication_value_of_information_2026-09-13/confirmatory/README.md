@@ -45,7 +45,7 @@ python scripts\summarize_resource_age_confirmatory.py --e6-runs reports\publicat
 python scripts\validate_e_series_batch.py --runs reports\publication_value_of_information_2026-09-13\confirmatory\t2rb\T2RB_runs.json --out reports\publication_value_of_information_2026-09-13\confirmatory\t2rb\T2RB_validation.json
 python scripts\analyze_t2rb_replication.py --runs reports\publication_value_of_information_2026-09-13\confirmatory\t2rb\T2RB_runs.json --out reports\publication_value_of_information_2026-09-13\confirmatory\t2rb\T2RB_analysis.json
 python scripts\plot_resource_age_confirmatory.py --e6-runs reports\publication_value_of_information_2026-09-13\confirmatory\e6\E6_runs.json --t2-runs reports\publication_value_of_information_2026-09-13\confirmatory\t2rb\T2RB_runs.json --out-dir reports\publication_value_of_information_2026-09-13\confirmatory
-python scripts\build_confirmatory_checksums.py --root . --include data\confirmatory_resource_age_2026-09-14 --include reports\publication_value_of_information_2026-09-13\confirmatory --out reports\publication_value_of_information_2026-09-13\confirmatory\checksums.sha256
+python scripts\build_confirmatory_checksums.py --root . --out reports\publication_value_of_information_2026-09-13\confirmatory\checksums.sha256 --refresh-existing
 ```
 
 The checksum builder excludes its output file, so rerunning it does not create a

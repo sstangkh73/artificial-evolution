@@ -13,6 +13,7 @@ import re
 from pathlib import Path
 
 from pypdf import PdfReader, PdfWriter, Transformation
+from reportlab.lib import colors
 from reportlab.lib.enums import TA_CENTER, TA_LEFT
 from reportlab.lib.pagesizes import LETTER
 from reportlab.lib.styles import ParagraphStyle, getSampleStyleSheet
@@ -20,7 +21,15 @@ from reportlab.lib.units import inch
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.pdfgen import canvas
-from reportlab.platypus import ListFlowable, ListItem, Paragraph, SimpleDocTemplate, Spacer
+from reportlab.platypus import (
+    ListFlowable,
+    ListItem,
+    Paragraph,
+    SimpleDocTemplate,
+    Spacer,
+    Table,
+    TableStyle,
+)
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -165,6 +174,15 @@ def make_styles() -> dict[str, ParagraphStyle]:
             textColor="#000000",
             alignment=TA_LEFT,
         ),
+        "table": ParagraphStyle(
+            "SubmissionTable",
+            parent=base["BodyText"],
+            fontName=FONT_REGULAR,
+            fontSize=8.5,
+            leading=10.5,
+            textColor="#000000",
+            alignment=TA_LEFT,
+        ),
     }
 
 
@@ -259,6 +277,40 @@ def build_text_pdf(title: str, lines: list[str], styles: dict[str, ParagraphStyl
             else:
                 list_options["bulletChar"] = "•"
             story.append(ListFlowable(items, **list_options))
+            continue
+        if stripped.startswith("|") and stripped.endswith("|"):
+            flush()
+            rows: list[list[str]] = []
+            while index < len(lines):
+                table_line = lines[index].strip()
+                if not (table_line.startswith("|") and table_line.endswith("|")):
+                    break
+                cells = [cell.strip() for cell in table_line.strip("|").split("|")]
+                if not all(re.fullmatch(r":?-{3,}:?", cell) for cell in cells):
+                    rows.append(cells)
+                index += 1
+            if not rows:
+                raise ValueError("empty Markdown table")
+            if any(len(row) != len(rows[0]) for row in rows):
+                raise ValueError("Markdown table rows have inconsistent column counts")
+            width = CONTENT_WIDTH / len(rows[0])
+            rendered = [
+                [Paragraph(inline(cell), styles["table"]) for cell in row]
+                for row in rows
+            ]
+            table = Table(rendered, colWidths=[width] * len(rows[0]), repeatRows=1)
+            table.setStyle(TableStyle([
+                ("FONTNAME", (0, 0), (-1, 0), FONT_BOLD),
+                ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#E8E8E8")),
+                ("GRID", (0, 0), (-1, -1), 0.4, colors.HexColor("#777777")),
+                ("VALIGN", (0, 0), (-1, -1), "TOP"),
+                ("LEFTPADDING", (0, 0), (-1, -1), 3),
+                ("RIGHTPADDING", (0, 0), (-1, -1), 3),
+                ("TOPPADDING", (0, 0), (-1, -1), 3),
+                ("BOTTOMPADDING", (0, 0), (-1, -1), 3),
+            ]))
+            story.append(table)
+            story.append(Spacer(1, 8))
             continue
         paragraph.append(stripped)
         index += 1
