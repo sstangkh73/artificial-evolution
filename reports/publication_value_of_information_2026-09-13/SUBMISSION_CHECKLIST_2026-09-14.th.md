@@ -8,7 +8,7 @@
 |---|---|---|---|
 | ประเภทบทความ | Article โดยทั่วไป 6,000–12,000 คำ | ผ่าน: 6,901 คำตั้งแต่ abstract ถึง declarations โดยไม่รวม references/figure captions; 7,407 คำเมื่อรวม references และข้อมูลหน้าปก | ผู้เขียนตรวจว่าระบบส่งนับคำด้วยหลักเดียวกัน |
 | ความเหมาะสมกับวารสาร | ต้องอธิบายใน cover letter | ร่างแล้วและใส่ข้อมูลติดต่อแล้ว | ผู้เขียนตรวจถ้อยคำและเติมวันส่ง |
-| initial submission | ส่ง manuscript เป็น PDF ผ่าน ScholarOne | author-review PDF 33 หน้า; source ตรงกับ PDF และไม่มีโน้ตภายในหลุดไปหน้าปก | เติม DOI/คำรับรอง แล้วสร้าง PDF ใหม่และรัน audit จน `pdf.status` เป็น PASS |
+| initial submission | ส่ง manuscript เป็น PDF ผ่าน ScholarOne | author-review PDF 35 หน้า; source ตรงกับ PDF ไม่มีโน้ตภายใน และแทรกรูป vector ทั้ง 5 ใกล้ Results ที่เกี่ยวข้อง | เติม DOI/คำรับรอง แล้วสร้าง PDF ใหม่และรัน audit จน `pdf.status` เป็น PASS |
 | หน้าปก | title, author, affiliation/address/email, corresponding author, abstract, 5–6 keywords | ข้อมูลผู้เขียนทั้ง 5 ช่องยืนยันแล้วเมื่อ 15 กันยายน 2026 และใส่ใน PDF; keywords มี 6 คำ | คัดลอกข้อมูลเดียวกันลงระบบส่งและตรวจ proof |
 | ความใหม่/ไม่ส่งซ้ำ | ผู้เขียนรับรองว่าไม่ตีพิมพ์หรืออยู่ระหว่างพิจารณาที่อื่น | รอผู้เขียนรับรอง | ยืนยันใน cover letter/ระบบส่ง |
 | เนื้อหาหลัก | ต้นฉบับ Article ฉบับเต็ม | automated scientific audit ผ่าน; source และ PDF เหลือ placeholder 6 รายการใน declarations/archive | author line-by-line verification และปิด placeholder ที่เหลือ |
@@ -28,7 +28,7 @@
 ## ไฟล์ที่พร้อมใช้
 
 - `manuscript_v0.en.md` — ต้นฉบับฉบับเต็ม
-- `submission/manuscript_initial_submission_draft.pdf` — author-review PDF 33 หน้าแบบ single-column, double-spaced พร้อม Table 1 และรูป vector 5 หน้า; ยังมี placeholder 6 รายการที่ห้ามส่ง
+- `submission/manuscript_initial_submission_draft.pdf` — author-review PDF 35 หน้าแบบ single-column, double-spaced พร้อม Table 1 และรูป vector 5 หน้าที่แทรกใน Results; ยังมี placeholder 6 รายการที่ห้ามส่ง
 - `submission/manuscript_submission_audit.json` — ผลตรวจจำนวนคำ abstract keywords รูป citation ตัวเลข confirmatory และ placeholder
 - `cover_letter_draft.en.md` — cover letter ที่ใส่ข้อมูลผู้เขียนแล้ว แต่ยังต้องเติมวันส่ง DOI และคำรับรอง
 - `ODD_MODEL_DESCRIPTION_DRAFT.en.md` — model description

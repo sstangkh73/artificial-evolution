@@ -69,6 +69,11 @@ class PdfTextAuditTests(unittest.TestCase):
         self.assertEqual(result["internal_notes"], ["Target journal:", "must be rechecked"])
         self.assertEqual(result["status"], "FAIL")
 
+    def test_internal_figure_marker_leak_is_reported(self):
+        result = audit.audit_pdf_text(RENDERED + "\nVECTOR_FIGURE_PAGE_3", TITLE, ABSTRACT)
+        self.assertEqual(result["internal_notes"], ["VECTOR_FIGURE_PAGE_"])
+        self.assertEqual(result["status"], "FAIL")
+
     def test_stale_pdf_does_not_match_manuscript(self):
         stale = "When Does a Better Representation Pay?\nArtificial foragers learn old values. A second sentence."
         result = audit.audit_pdf_text(stale, TITLE, ABSTRACT)

@@ -42,7 +42,13 @@ PDF_PLACEHOLDER = re.compile(
     r"\[(?:(?:Author|Insert)[^\]]+|Affiliation|Postal address|Email; corresponding author)\]"
 )
 # Working-draft front matter that must never reach the rendered manuscript.
-INTERNAL_NOTE_MARKERS = ("Manuscript type:", "Target journal:", "Status:", "must be rechecked")
+INTERNAL_NOTE_MARKERS = (
+    "Manuscript type:",
+    "Target journal:",
+    "Status:",
+    "must be rechecked",
+    "VECTOR_FIGURE_PAGE_",
+)
 
 
 def words(text: str) -> list[str]:
@@ -151,9 +157,30 @@ def audit_pdf(
             "missing_author_metadata": list(required_metadata),
         }
     reader = PdfReader(str(path))
-    text = "\n".join(page.extract_text() or "" for page in reader.pages)
+    page_text = [page.extract_text() or "" for page in reader.pages]
+    text = "\n".join(page_text)
     result: dict[str, object] = {"path": display_path(path), "present": True, "pages": len(reader.pages)}
     result.update(audit_pdf_text(text, title, abstract, required_metadata))
+    figure_caption_pages = {
+        str(number): next(
+            (page_number for page_number, value in enumerate(page_text, 1) if f"Figure {number}." in value),
+            None,
+        )
+        for number in range(1, 6)
+    }
+    references_page = next(
+        (page_number for page_number, value in enumerate(page_text, 1) if re.search(r"(?:^|\n)References(?:\n|$)", value)),
+        None,
+    )
+    figures_interleaved = (
+        references_page is not None
+        and all(page is not None and page < references_page for page in figure_caption_pages.values())
+    )
+    result["figure_caption_pages"] = figure_caption_pages
+    result["references_page"] = references_page
+    result["figures_interleaved_before_references"] = figures_interleaved
+    if not figures_interleaved:
+        result["status"] = "FAIL"
     return result
 
 

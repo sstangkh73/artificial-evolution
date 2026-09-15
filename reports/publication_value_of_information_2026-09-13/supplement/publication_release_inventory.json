@@ -24,7 +24,7 @@
   "summary": {
     "bundle_count": 5,
     "file_count": 696,
-    "total_bytes": 234624064
+    "total_bytes": 234627399
   },
   "bundles": [
     {
@@ -3190,7 +3190,7 @@
       "license": "CC-BY-4.0",
       "purpose": "Manuscript, model description, references, disclosure log, parameter/state/version documentation, and reproduction records.",
       "file_count": 18,
-      "total_bytes": 297932,
+      "total_bytes": 297987,
       "files": [
         {
           "path": "LICENSE",
@@ -3214,8 +3214,8 @@
         },
         {
           "path": "reports/publication_value_of_information_2026-09-13/README.th.md",
-          "bytes": 14162,
-          "sha256": "9ff859bf6838cd4ed2b8cacadb23afed6a751935b9c55714085c8dbbd0ff0efa"
+          "bytes": 14217,
+          "sha256": "45fa962ddf514840d75a433e1da6a2358e28c3095cfa8e56e241178dc4252c40"
         },
         {
           "path": "reports/publication_value_of_information_2026-09-13/manuscript_v0.en.md",
@@ -3323,7 +3323,7 @@
       "license": "MIT",
       "purpose": "Focal model, experiment, analysis, figure, inventory, and regression-test code needed for reproduction and audit.",
       "file_count": 45,
-      "total_bytes": 1029361,
+      "total_bytes": 1032641,
       "files": [
         {
           "path": "agents/__init__.py",
@@ -3377,8 +3377,8 @@
         },
         {
           "path": "scripts/audit_submission_manuscript.py",
-          "bytes": 15236,
-          "sha256": "008c7b187add92d48c3890bb73f818d243b3ea613fef5cf965ca4858a253659c"
+          "bytes": 16134,
+          "sha256": "9f6ad49c717224cc240a024941d033bb4cef0114684bcc404d062899ac063ccd"
         },
         {
           "path": "scripts/build_confirmatory_checksums.py",
@@ -3397,8 +3397,8 @@
         },
         {
           "path": "scripts/build_submission_manuscript.py",
-          "bytes": 15665,
-          "sha256": "0aadab07808b16e7c49ca3c74bff88a18a51786775bf0f51e90e438d43bb5778"
+          "bytes": 17767,
+          "sha256": "c7670dc3e82011448b8f3f8ef23f30324c8033a17a0706c7f76f7b4589614306"
         },
         {
           "path": "scripts/export_experiment_parameter_matrix.py",
@@ -3472,8 +3472,8 @@
         },
         {
           "path": "tests/test_audit_submission_manuscript.py",
-          "bytes": 3833,
-          "sha256": "f84b7a81444db6ea8779d6e7c30f3403dd484c270ca08552b1e57a0843c149db"
+          "bytes": 4113,
+          "sha256": "f1b6e4944ab7dee1db675366da3d0ca87dd95714d3a0c52ce5299bb3bbb6a2e3"
         },
         {
           "path": "tests/test_build_confirmatory_checksums.py",

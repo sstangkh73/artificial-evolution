@@ -24,6 +24,7 @@ from reportlab.pdfgen import canvas
 from reportlab.platypus import (
     ListFlowable,
     ListItem,
+    PageBreak,
     Paragraph,
     SimpleDocTemplate,
     Spacer,
@@ -46,6 +47,14 @@ FIGURES = (
     PUBLICATION / "confirmatory/figures/figure_e6_energy_gradient.pdf",
     PUBLICATION / "confirmatory/figures/figure_t2rb_replication.pdf",
 )
+
+FIGURE_INSERT_BEFORE = {
+    "### 3.2 Age information restored discrimination because it carried relevant state information": 1,
+    "### 3.3 Better discrimination did not guarantee longer life": 2,
+    "### 3.6 E6 separated age information from type-only and sham survival effects": 3,
+    "### 3.7 R-B replication within the high-drain configuration": 4,
+    "## 4. Discussion": 5,
+}
 
 FONT_REGULAR = "TimesNewRoman"
 FONT_BOLD = "TimesNewRoman-Bold"
@@ -188,6 +197,14 @@ def make_styles() -> dict[str, ParagraphStyle]:
             textColor="#000000",
             alignment=TA_LEFT,
         ),
+        "figure_marker": ParagraphStyle(
+            "VectorFigurePageMarker",
+            parent=base["BodyText"],
+            fontName=FONT_REGULAR,
+            fontSize=1,
+            leading=1,
+            textColor=colors.white,
+        ),
     }
 
 
@@ -266,6 +283,14 @@ def build_text_pdf(title: str, lines: list[str], styles: dict[str, ParagraphStyl
             flush()
             index += 1
             continue
+        figure_number = FIGURE_INSERT_BEFORE.get(stripped)
+        if figure_number is not None:
+            flush()
+            story.extend([
+                PageBreak(),
+                Paragraph(f"VECTOR_FIGURE_PAGE_{figure_number}", styles["figure_marker"]),
+                PageBreak(),
+            ])
         if stripped.startswith("#### "):
             flush()
             story.append(Paragraph(inline(stripped[5:]), styles["h2"]))
@@ -370,7 +395,7 @@ def build_text_pdf(title: str, lines: list[str], styles: dict[str, ParagraphStyl
     document.build(story, onFirstPage=page_furniture, onLaterPages=page_furniture)
 
 
-def caption_overlay(
+def figure_overlay(
     caption: str,
     styles: dict[str, ParagraphStyle],
     page_number: int,
@@ -388,14 +413,34 @@ def caption_overlay(
     return PdfReader(buffer)
 
 
-def append_vector_figures(
+def place_vector_figures(
     text_pdf: Path, output: Path, captions: list[str], styles: dict[str, ParagraphStyle]
 ) -> None:
     text_reader = PdfReader(str(text_pdf))
     writer = PdfWriter()
-    for page in text_reader.pages:
-        writer.add_page(page)
-    for figure_path, caption in zip(FIGURES, captions, strict=True):
+    marker_pages: dict[int, int] = {}
+    for page_index, page in enumerate(text_reader.pages):
+        text = page.extract_text() or ""
+        match = re.search(r"VECTOR_FIGURE_PAGE_(\d+)", text)
+        if match:
+            figure_number = int(match.group(1))
+            if figure_number in marker_pages:
+                raise ValueError(f"duplicate vector figure marker: {figure_number}")
+            marker_pages[figure_number] = page_index
+    expected = set(range(1, len(FIGURES) + 1))
+    if set(marker_pages) != expected:
+        raise ValueError(
+            f"vector figure markers mismatch: expected {sorted(expected)}, found {sorted(marker_pages)}"
+        )
+
+    figures_by_page = {page_index: figure_number for figure_number, page_index in marker_pages.items()}
+    for page_index, text_page in enumerate(text_reader.pages):
+        figure_number = figures_by_page.get(page_index)
+        if figure_number is None:
+            writer.add_page(text_page)
+            continue
+        figure_path = FIGURES[figure_number - 1]
+        caption = captions[figure_number - 1]
         figure_reader = PdfReader(str(figure_path))
         if len(figure_reader.pages) != 1:
             raise ValueError(f"figure master must have one page: {figure_path}")
@@ -408,14 +453,16 @@ def append_vector_figures(
         height = source_height * scale
         x = (LETTER[0] - width) / 2
         y = LETTER[1] - 1.0 * inch - height
-        page_number = len(writer.pages) + 1
-        target_page = caption_overlay(caption, styles, page_number, y - 14).pages[0]
+        # Replace the marker page instead of merging onto it so the internal
+        # marker never survives in searchable or copied manuscript text.
+        target_page = writer.add_blank_page(width=LETTER[0], height=LETTER[1])
+        overlay = figure_overlay(caption, styles, page_index + 1, y - 14).pages[0]
+        target_page.merge_page(overlay, over=True)
         target_page.merge_transformed_page(
             source_page,
             Transformation().scale(scale).translate(x, y),
             over=True,
         )
-        writer.add_page(target_page)
     with output.open("wb") as handle:
         writer.write(handle)
 
@@ -429,7 +476,7 @@ def main() -> int:
     title, lines, captions = parse_source()
     style_map = make_styles()
     build_text_pdf(title, lines, style_map)
-    append_vector_figures(TEXT_PDF, OUTPUT, captions, style_map)
+    place_vector_figures(TEXT_PDF, OUTPUT, captions, style_map)
     TEXT_PDF.unlink()
     reader = PdfReader(str(OUTPUT))
     print(f"wrote {OUTPUT} ({OUTPUT.stat().st_size} bytes, {len(reader.pages)} pages, 5 vector figure pages)")

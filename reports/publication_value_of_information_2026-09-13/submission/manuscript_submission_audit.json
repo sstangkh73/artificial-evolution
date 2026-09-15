@@ -39,7 +39,7 @@
   "pdf": {
     "path": "reports/publication_value_of_information_2026-09-13/submission/manuscript_initial_submission_draft.pdf",
     "present": true,
-    "pages": 33,
+    "pages": 35,
     "status": "FAIL",
     "matches_manuscript": true,
     "unresolved_placeholders": [
@@ -51,7 +51,16 @@
       "[Insert the versioned public archive citation, DOI, and code-release tag after deposit and download-back verification; do not submit this placeholder.]"
     ],
     "internal_notes": [],
-    "missing_author_metadata": []
+    "missing_author_metadata": [],
+    "figure_caption_pages": {
+      "1": 14,
+      "2": 16,
+      "3": 19,
+      "4": 23,
+      "5": 25
+    },
+    "references_page": 34,
+    "figures_interleaved_before_references": true
   },
   "author_actions_expected": [
     "public archive citation/DOI/code-release tag",
