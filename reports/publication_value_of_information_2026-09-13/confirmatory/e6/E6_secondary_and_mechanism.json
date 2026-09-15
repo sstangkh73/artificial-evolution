@@ -38,6 +38,7 @@
   },
   "all_mechanism_gates_pass": true,
   "holm_family": "B2-B3 across five realized-energy levels",
+  "exploratory_holm_family": "B2-B1 across five realized-energy levels",
   "by_realized_fruit_energy": [
     {
       "realized_fruit_energy": 4,
@@ -123,7 +124,8 @@
           "floor": 4.9999750001249995e-06,
           "seeds_favouring_left": 23,
           "seeds_favouring_right": 7,
-          "seeds_tied": 0
+          "seeds_tied": 0,
+          "holm_adjusted_p": 0.02124989
         },
         "cliffs_delta": {
           "delta": 0.105556,
@@ -356,7 +358,8 @@
           "floor": 4.9999750001249995e-06,
           "seeds_favouring_left": 19,
           "seeds_favouring_right": 10,
-          "seeds_tied": 1
+          "seeds_tied": 1,
+          "holm_adjusted_p": 0.10455948
         },
         "cliffs_delta": {
           "delta": 0.098889,
@@ -589,7 +592,8 @@
           "floor": 4.9999750001249995e-06,
           "seeds_favouring_left": 20,
           "seeds_favouring_right": 10,
-          "seeds_tied": 0
+          "seeds_tied": 0,
+          "holm_adjusted_p": 0.22637887
         },
         "cliffs_delta": {
           "delta": 0.051111,
@@ -822,7 +826,8 @@
           "floor": 4.9999750001249995e-06,
           "seeds_favouring_left": 17,
           "seeds_favouring_right": 13,
-          "seeds_tied": 0
+          "seeds_tied": 0,
+          "holm_adjusted_p": 0.96869516
         },
         "cliffs_delta": {
           "delta": -0.015556,
@@ -1055,7 +1060,8 @@
           "floor": 4.9999750001249995e-06,
           "seeds_favouring_left": 14,
           "seeds_favouring_right": 16,
-          "seeds_tied": 0
+          "seeds_tied": 0,
+          "holm_adjusted_p": 0.96869516
         },
         "cliffs_delta": {
           "delta": -0.006667,

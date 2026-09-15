@@ -74,6 +74,7 @@ class TestConfirmatorySecondarySummary(unittest.TestCase):
                 level["realized_fruit_energy"],
             )
             self.assertIn("holm_adjusted_p", level["B2_minus_B3"]["paired_difference"])
+            self.assertIn("holm_adjusted_p", level["B2_minus_B1"]["paired_difference"])
             self.assertEqual(
                 level["B3_minus_B1_descriptive"]["paired_difference"]["mean"],
                 0.0,

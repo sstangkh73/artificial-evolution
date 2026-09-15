@@ -6,9 +6,9 @@
 
 | รายการ | ข้อกำหนด/เหตุผล | สถานะ | งานถัดไป |
 |---|---|---|---|
-| ประเภทบทความ | Article โดยทั่วไป 6,000–12,000 คำ | ผ่าน: 6,799 คำตั้งแต่ abstract ถึง declarations โดยไม่รวม references/figure captions; 7,319 คำเมื่อรวม references | ผู้เขียนตรวจว่าระบบส่งนับคำด้วยหลักเดียวกัน |
+| ประเภทบทความ | Article โดยทั่วไป 6,000–12,000 คำ | ผ่าน: 6,901 คำตั้งแต่ abstract ถึง declarations โดยไม่รวม references/figure captions; 7,383 คำเมื่อรวม references | ผู้เขียนตรวจว่าระบบส่งนับคำด้วยหลักเดียวกัน |
 | ความเหมาะสมกับวารสาร | ต้องอธิบายใน cover letter | ร่างแล้ว | ผู้เขียนตรวจและเติมข้อมูลติดต่อ |
-| initial submission | ส่ง manuscript เป็น PDF ผ่าน ScholarOne | author-review PDF 31 หน้า; source ตรงกับ PDF และไม่มีโน้ตภายในหลุดไปหน้าปก | เติมข้อมูลผู้เขียน/DOI/คำรับรอง แล้วสร้าง PDF ใหม่และรัน audit จน `pdf.status` เป็น PASS |
+| initial submission | ส่ง manuscript เป็น PDF ผ่าน ScholarOne | author-review PDF 33 หน้า; source ตรงกับ PDF และไม่มีโน้ตภายในหลุดไปหน้าปก | เติมข้อมูลผู้เขียน/DOI/คำรับรอง แล้วสร้าง PDF ใหม่และรัน audit จน `pdf.status` เป็น PASS |
 | หน้าปก | title, author, affiliation/address/email, corresponding author, abstract, 5–6 keywords | ขาด affiliation, address, email และ ORCID ยังรอยืนยัน | ตรวจและยืนยันค่าทั้ง 5 ช่องใน `submission/AUTHOR_METADATA_TO_CONFIRM.th.md`; keywords มี 6 คำแล้ว |
 | ความใหม่/ไม่ส่งซ้ำ | ผู้เขียนรับรองว่าไม่ตีพิมพ์หรืออยู่ระหว่างพิจารณาที่อื่น | รอผู้เขียนรับรอง | ยืนยันใน cover letter/ระบบส่ง |
 | เนื้อหาหลัก | ต้นฉบับ Article ฉบับเต็ม | automated scientific audit ผ่าน; source มี 6 placeholders และ PDF ที่ build แล้วมี 9 (รวมช่องผู้เขียน 3 ช่องที่ builder ใส่บนหน้าปก) | author line-by-line verification และปิด placeholders ทั้งใน source และหน้าปกของ builder |
@@ -17,7 +17,7 @@
 | supplementary material | ต้องแนบพร้อมบทความหรือให้ URL ที่ไม่กระทบ anonymity | โครงสร้างพร้อม | รวม ODD, parameter/state/version/reproduction files เป็น reviewer package |
 | data/code policy | ทำข้อมูลที่รองรับข้อสรุปให้เข้าถึงได้และ cite ในบทความ | 5 ZIP พร้อมในเครื่องและตรวจสมาชิก 696 ไฟล์แล้ว | ผู้เขียนฝาก package ออก DOI ดาวน์โหลดกลับ และตรวจซ้ำ |
 | reproducibility | reviewer ต้องรันและตรวจได้ | internal deterministic smoke ผ่าน | ให้บุคคลอื่นทำ protocol และลงชื่อผล; ห้ามเรียก independent ก่อนสำเร็จ |
-| citations | APA 7 และทุก claim ต้องอยู่ในขอบเขตหลักฐานที่ตรวจ | 12 แหล่งวิชาการและ 1 รายการเครื่องมือ AI; 7 แหล่งมาจาก *Artificial Life*; evidence matrix แยก 9 full-text กับ 3 abstract-only | ผู้เขียนตรวจ metadata/หน้า/DOI/URL และอ่านแหล่ง abstract-only ฉบับเต็มก่อนส่งถ้าเข้าถึงได้ |
+| citations | APA 7 และทุก claim ต้องอยู่ในขอบเขตหลักฐานที่ตรวจ | 11 แหล่งวิชาการและ 1 รายการเครื่องมือ AI; 6 แหล่งมาจาก *Artificial Life*; แหล่งวิชาการที่อ้างทั้งหมดตรวจฉบับเต็มแล้ว | ผู้เขียนตรวจ metadata/หน้า/DOI/URL รอบสุดท้าย |
 | AI disclosure | ทุกการใช้ generative AI ต้องระบุชัดและอ้างแหล่ง/เวอร์ชัน/วันที่ | ร่าง disclosure พร้อมชื่อ รุ่น URL วันที่ งานที่ใช้ และ formal citation แล้ว | ผู้เขียนตรวจ AI log, เติมการใช้ที่อาจตกหล่น และอนุมัติข้อความใน manuscript/cover letter |
 | funding | ต้องรายงานตามจริง | ไม่ทราบ | ผู้เขียนเติม “no specific funding” หรือรายละเอียดทุนตามจริง |
 | competing interests | ต้องรายงานตามจริง | ไม่ทราบ | ผู้เขียนเติม statement |
@@ -28,7 +28,7 @@
 ## ไฟล์ที่พร้อมใช้
 
 - `manuscript_v0.en.md` — ต้นฉบับฉบับเต็ม
-- `submission/manuscript_initial_submission_draft.pdf` — author-review PDF 31 หน้าแบบ single-column, double-spaced พร้อม Table 1 และรูป vector 5 หน้า; ยังมี placeholder 9 รายการที่ห้ามส่ง
+- `submission/manuscript_initial_submission_draft.pdf` — author-review PDF 33 หน้าแบบ single-column, double-spaced พร้อม Table 1 และรูป vector 5 หน้า; ยังมี placeholder 9 รายการที่ห้ามส่ง
 - `submission/manuscript_submission_audit.json` — ผลตรวจจำนวนคำ abstract keywords รูป citation ตัวเลข confirmatory และ placeholder
 - `cover_letter_draft.en.md` — cover letter ที่ต้องเติมข้อมูลผู้เขียน
 - `ODD_MODEL_DESCRIPTION_DRAFT.en.md` — model description

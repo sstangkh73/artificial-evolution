@@ -1,19 +1,19 @@
 # Literature evidence matrix
 
-Last screened: 2026-09-14
+Last screened: 2026-09-15
 
-This ledger distinguishes claims checked against full text from narrower claims
-checked only against a publisher abstract. Full-text sources can support the
-bounded claims recorded below. Abstract-only sources are cited only for results
-stated explicitly in that abstract; the manuscript does not extend those claims
-to methods or mechanisms that were not inspected. Links are the source or
-publisher copies used during screening; the bibliography uses DOI links where
-available.
+This ledger records the full text inspected for every academic source cited in
+the manuscript and the boundary of the claim taken from it. No academic source
+is retained in the manuscript on publisher-abstract evidence alone. Links are
+the source or publisher copies used during screening; the bibliography uses DOI
+links where available.
 
 ## Sources cleared for current manuscript claims
 
 | Source | Evidence inspected | Claim used in the manuscript | Boundary |
 |---|---|---|---|
+| Borg and Channon (2020) | Full 54-page accepted manuscript in the Keele repository: model and action definitions on manuscript pp. 17–21; Results on pp. 22–30; Discussion and Conclusion on pp. 31–33 | Social-information inputs produced persistent movement differences even where task performance was similar, supporting separate measurement of behavioral response and task benefit | The model evolves social-information use in populations. It does not establish the mechanism or survival value of resource-age information in the present fixed learner |
+| Bullinaria (2017) | Full 43-page author-hosted accepted manuscript: Introduction and life-history framework on pp. 2–9; direct and imitative learning frameworks on pp. 10–21; combined-learning results and discussion on pp. 22–28 | The model studies interactions between direct and imitative learning within life-history evolution, where learning parameters and population traits evolve | The manuscript uses this as a population-level comparison; it does not transfer Bullinaria's specific meme, protection, or life-history mechanisms to the present no-birth experiments |
 | Chrisman (1992) | AAAI proceedings PDF, especially pp. 183–184 and conclusion | Perceptual aliasing occurs when the same immediate percept corresponds to states requiring different responses; internal state or added distinctions can address incomplete perception | The paper learns predictive distinctions. It does not support saying that the present agents discovered resource age |
 | Dall et al. (2005) | Full seven-page review | Ecological information must be assessed through its usefulness and consequences for decisions, not ambiguity reduction alone | The review discusses organismal and evolutionary function. It does not make the present simulation outcome a fitness effect |
 | Donaldson-Matasci et al. (2010) | Full 12-page *Oikos* article | Information-theoretic quantity and decision-theoretic fitness value are distinct; fitness value is defined through an optimized response and long-run fitness consequences | The present fixed learner, survival outcome, and no-birth E-series do not meet this formal fitness-value definition |
@@ -24,18 +24,11 @@ available.
 | Ha (2019) | Full publisher article text in *Artificial Life* | Reinforcement learning can evaluate and improve embodied agent design in a task-dependent setting | The present work holds morphology and learner structure fixed apart from the registered representation manipulation |
 | Scholz et al. (2017) | Full open-access PNAS article, including model assumptions, results, and discussion | A data-driven sequential-decision model couples feeding as information sampling with nutrient intake and produces speed-accuracy and exploration-exploitation trade-offs | Their organism estimates ambient food availability; the present agents learn post-ingestive item values and receive resource age directly in B2 |
 
-## Sources cited only for publisher-abstract-level claims
-
-| Source | Evidence inspected | Claim used in the manuscript | Boundary |
-|---|---|---|---|
-| Sasaki and Tokoro (1999) | MIT Press metadata and abstract | The study evolved learnable neural networks in changing environments containing food and poison and compared inheritance regimes | No claim is made here about uninspected implementation details or quantitative results |
-| Bullinaria (2017) | MIT Press metadata and abstract | The model studied interactions between imitative and direct learning in life-history evolution | The manuscript uses it only to contrast population-level learning/evolution with the present no-birth within-lifetime study |
-| Borg and Channon (2020) | MIT Press metadata and abstract | Access to social information altered evolved behavior even when poisonous-food discrimination was not improved | The source is used as a precedent for separating behavioral change from task performance, without importing its mechanism into the present model |
-
 ## Candidate sources not used for current manuscript claims
 
 | Source | Screening completed | Why it remains useful | Required action |
 |---|---|---|---|
+| Sasaki and Tokoro (1999) | MIT Press metadata and abstract; publisher page reports that the PDF is unavailable without access | Early *Artificial Life* food-versus-poison learning study under changing environments | Removed from the manuscript and bibliography on 2026-09-15 under rule R3; inspect the full text before any future citation |
 | Stephens (1989), *Variance and the Value of Information* | Publisher abstract and metadata | Directly links payoff structure and resource subtypes to the value of attending to a cue | Obtain and inspect full text before citing the detailed theoretical result |
 | Kaelbling, Littman, and Cassandra (1998) | Publisher abstract and author-hosted metadata | Canonical POMDP treatment of action under partial observability | Inspect the full relevant sections before using beyond basic bibliographic context |
 | Schmidt, Dall, and van Gils (2010) | Abstract and metadata | Broad ecology-of-information synthesis | Inspect full text and distinguish its definitions from Dall et al. (2005) |
@@ -62,6 +55,10 @@ contribution:
 
 ## References verified at full-text level
 
+Borg, J. M., & Channon, A. (2020). The effect of social information use without learning on the evolution of social behavior. *Artificial Life, 26*(4), 431–454. https://doi.org/10.1162/artl_a_00328
+
+Bullinaria, J. A. (2017). Imitative and direct learning as interacting factors in life history evolution. *Artificial Life, 23*(3), 374–405. https://doi.org/10.1162/ARTL_a_00237
+
 Chrisman, L. (1992). Reinforcement learning with perceptual aliasing: The perceptual distinctions approach. In *Proceedings of the Tenth National Conference on Artificial Intelligence* (pp. 183–188). AAAI Press. https://cdn.aaai.org/AAAI/1992/AAAI92-029.pdf
 
 Dall, S. R. X., Giraldeau, L.-A., Olsson, O., McNamara, J. M., & Stephens, D. W. (2005). Information and its use by animals in evolutionary ecology. *Trends in Ecology & Evolution, 20*(4), 187–193. https://doi.org/10.1016/j.tree.2005.01.010
@@ -79,11 +76,3 @@ Grimm, V., Railsback, S. F., Vincenot, C. E., Berger, U., Gallagher, C., DeAngel
 Ha, D. (2019). Reinforcement learning for improving agent design. *Artificial Life, 25*(4), 352–365. https://doi.org/10.1162/artl_a_00301
 
 Scholz, M., Dinner, A. R., Levine, E., & Biron, D. (2017). Stochastic feeding dynamics arise from the need for information and energy. *Proceedings of the National Academy of Sciences, 114*(35), 9261–9266. https://doi.org/10.1073/pnas.1703958114
-
-## References checked at publisher-abstract level
-
-Borg, J. M., & Channon, A. (2020). The effect of social information use without learning on the evolution of social behavior. *Artificial Life, 26*(4), 431–454. https://doi.org/10.1162/artl_a_00328
-
-Bullinaria, J. A. (2017). Imitative and direct learning as interacting factors in life history evolution. *Artificial Life, 23*(3), 374–405. https://doi.org/10.1162/ARTL_a_00237
-
-Sasaki, T., & Tokoro, M. (1999). Evolving learnable neural networks under changing environments with various rates of inheritance of acquired characters: Comparison of Darwinian and Lamarckian evolution. *Artificial Life, 5*(3), 203–223. https://doi.org/10.1162/106454699568746

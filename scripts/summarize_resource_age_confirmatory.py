@@ -41,7 +41,8 @@ def summarize_e6(payload: dict, metric: str = "founder_mean_followup_ticks") -> 
     rows = payload["rows"]
     by_cell = {(str(row["arm"]), int(row["seed"])): row for row in rows}
     level_results: list[dict] = []
-    raw_p: dict[str, float] = {}
+    raw_p_b2_b3: dict[str, float] = {}
+    raw_p_b2_b1: dict[str, float] = {}
 
     expected_keys = {f"raw_fruit@{index}" for index in range(9)}
     safe_bins = (2, 3)
@@ -59,7 +60,8 @@ def summarize_e6(payload: dict, metric: str = "founder_mean_followup_ticks") -> 
         b2_b3 = contrast(rows_by_arm, "B2", "B3", metric)
         b2_b1 = contrast(rows_by_arm, "B2", "B1", metric)
         b3_b1 = contrast(rows_by_arm, "B3", "B1", metric)
-        raw_p[str(energy)] = float(b2_b3["paired_difference"]["p"])
+        raw_p_b2_b3[str(energy)] = float(b2_b3["paired_difference"]["p"])
+        raw_p_b2_b1[str(energy)] = float(b2_b1["paired_difference"]["p"])
 
         condition_summaries = {}
         for condition, arm in arm_names.items():
@@ -127,10 +129,16 @@ def summarize_e6(payload: dict, metric: str = "founder_mean_followup_ticks") -> 
             "mechanism_gate": mechanism,
         })
 
-    adjusted = holm(raw_p)
+    adjusted_b2_b3 = holm(raw_p_b2_b3)
+    adjusted_b2_b1 = holm(raw_p_b2_b1)
     for result in level_results:
         energy = str(result["realized_fruit_energy"])
-        result["B2_minus_B3"]["paired_difference"]["holm_adjusted_p"] = adjusted[energy]
+        result["B2_minus_B3"]["paired_difference"]["holm_adjusted_p"] = adjusted_b2_b3[energy]
+        # B2-B1 was preregistered as a secondary level-specific comparison
+        # without a multiplicity adjustment.  Store this separate exploratory
+        # correction so the manuscript can distinguish nominal from
+        # family-wise evidence without changing the registered analysis.
+        result["B2_minus_B1"]["paired_difference"]["holm_adjusted_p"] = adjusted_b2_b1[energy]
 
     seeds = sorted({int(row["seed"]) for row in rows})
     leave_one_energy_out = []
@@ -165,6 +173,7 @@ def summarize_e6(payload: dict, metric: str = "founder_mean_followup_ticks") -> 
             for result in level_results
         ),
         "holm_family": "B2-B3 across five realized-energy levels",
+        "exploratory_holm_family": "B2-B1 across five realized-energy levels",
         "by_realized_fruit_energy": level_results,
         "post_hoc_sensitivity": {
             "status": "not preregistered; cannot change the H6.1 decision",

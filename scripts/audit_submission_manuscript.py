@@ -245,6 +245,8 @@ def audit(pdf_path: Path = SUBMISSION_PDF) -> dict[str, object]:
         ):
             value = row[contrast_name]["paired_difference"]["mean"]
             required_fragments.append(f"{value:+.3f}")
+        secondary_adjusted = row["B2_minus_B1"]["paired_difference"]["holm_adjusted_p"]
+        required_fragments.append(f"{secondary_adjusted:.5f}")
     primary = t2["primary"]["paired_difference"]
     secondary = t2["direct_replication_secondary"]["paired_difference"]
     required_fragments.extend(
@@ -265,6 +267,7 @@ def audit(pdf_path: Path = SUBMISSION_PDF) -> dict[str, object]:
         "dose-matched observable toxicity",
         "a supplied heritable trait",
         "independent reproduction was completed",
+        "Sasaki and Tokoro (1999)",
     )
     for phrase in disallowed_phrases:
         require(phrase not in manuscript, f"unsupported or imprecise phrase remains: {phrase}", failures)

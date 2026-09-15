@@ -108,7 +108,11 @@ def make_figures(e6_rows: list[dict], t2_rows: list[dict], output_dir: Path) -> 
         "figure.dpi": 140,
     })
 
-    fig, axes = plt.subplots(1, 2, figsize=(10.2, 4.0), constrained_layout=True)
+    # Figure 4 is rendered at the manuscript's full 6.5-inch text width.  A
+    # taller source aspect ratio and larger source fonts keep axes and legends
+    # legible after the PDF page compositor scales the vector artwork.
+    plt.rcParams.update({"font.size": 11, "axes.titlesize": 12})
+    fig, axes = plt.subplots(1, 2, figsize=(8.0, 5.2), constrained_layout=True)
     by_seed: dict[int, list[dict]] = {}
     for row in e6_rows:
         by_seed.setdefault(int(row["seed"]), []).append(row)
@@ -142,7 +146,7 @@ def make_figures(e6_rows: list[dict], t2_rows: list[dict], output_dir: Path) -> 
     axes[0].set_xlabel("Realized safe-fruit energy")
     axes[0].set_ylabel("Paired restricted mean follow-up difference (ticks)")
     axes[0].set_title("A  Survival effect by resource payoff")
-    axes[0].legend(frameon=False, loc="best", fontsize=8)
+    axes[0].legend(frameon=False, loc="best", fontsize=9.5)
 
     for field, label, color in (
         ("B1_discrimination_index", "Type-only key (B1)", "#333333"),
@@ -173,6 +177,7 @@ def make_figures(e6_rows: list[dict], t2_rows: list[dict], output_dir: Path) -> 
     fig.savefig(output_dir / "figure_e6_energy_gradient.pdf")
     plt.close(fig)
 
+    plt.rcParams.update({"font.size": 9, "axes.titlesize": "large"})
     fig, ax = plt.subplots(figsize=(5.6, 4.2), constrained_layout=True)
     series = [
         [float(row["A2_minus_A3O_followup_ticks"]) for row in t2_rows],

@@ -24,7 +24,7 @@
   "summary": {
     "bundle_count": 5,
     "file_count": 696,
-    "total_bytes": 234588829
+    "total_bytes": 234622249
   },
   "bundles": [
     {
@@ -3041,7 +3041,7 @@
       "license": "CC-BY-4.0",
       "purpose": "Validated summaries, analyses, source tables, figures, and the original 616-entry core checksum manifest.",
       "file_count": 28,
-      "total_bytes": 3614827,
+      "total_bytes": 3645951,
       "files": [
         {
           "path": "reports/publication_value_of_information_2026-09-13/confirmatory/FIGURE_MANIFEST.md",
@@ -3056,7 +3056,7 @@
         {
           "path": "reports/publication_value_of_information_2026-09-13/confirmatory/checksums.sha256",
           "bytes": 84259,
-          "sha256": "66563f733cef18ecd3c6c09a972e0d07b357e2696171a32a4329356f0650bed5"
+          "sha256": "61999946e1ba7adce6484d747e2796b171f825a76831a16df9ea4dbcb03ef319"
         },
         {
           "path": "reports/publication_value_of_information_2026-09-13/confirmatory/e6/E6_analysis.json",
@@ -3070,8 +3070,8 @@
         },
         {
           "path": "reports/publication_value_of_information_2026-09-13/confirmatory/e6/E6_secondary_and_mechanism.json",
-          "bytes": 40615,
-          "sha256": "0a98732b0cec1f1798e06a326e3aa88a73c7e0456899e1248dbb743c9d8c9f59"
+          "bytes": 40899,
+          "sha256": "5c0f65f7e520d5cdfd068c864aec3c03c0f202c42276a25c97d8a7185711458d"
         },
         {
           "path": "reports/publication_value_of_information_2026-09-13/confirmatory/e6/E6_validation.json",
@@ -3110,18 +3110,18 @@
         },
         {
           "path": "reports/publication_value_of_information_2026-09-13/confirmatory/figures/figure_e6_energy_gradient.pdf",
-          "bytes": 25951,
-          "sha256": "5aa7c94158400463a1a8be349dc35f145f4942cb6bd587d3807c6dfeb495a15c"
+          "bytes": 26033,
+          "sha256": "b1e3bc4073871c8ec71ec0688329d5d003da0660d609f4a83071c051dc85efdd"
         },
         {
           "path": "reports/publication_value_of_information_2026-09-13/confirmatory/figures/figure_e6_energy_gradient.png",
-          "bytes": 464741,
-          "sha256": "f77b3a0a1c3bf8ecaec6b8ae1b13ba31b508ce26c2bc1cf80d94ea5741f6d9f9"
+          "bytes": 495499,
+          "sha256": "679c271dde1dcca0cfd019a438d9fe1b63e880779751bb4fd1ced8dc407560d9"
         },
         {
           "path": "reports/publication_value_of_information_2026-09-13/confirmatory/figures/figure_t2rb_replication.pdf",
           "bytes": 19431,
-          "sha256": "d43a7c0b3c977451336f56ed01c0c8aae16a7b7eb4dea69caa434d1550a51edb"
+          "sha256": "bee47fb6e7131f7b4e867ab21c2253066f1d554b4769c82f489f6f1a9e55bc7f"
         },
         {
           "path": "reports/publication_value_of_information_2026-09-13/confirmatory/figures/figure_t2rb_replication.png",
@@ -3190,7 +3190,7 @@
       "license": "CC-BY-4.0",
       "purpose": "Manuscript, model description, references, disclosure log, parameter/state/version documentation, and reproduction records.",
       "file_count": 18,
-      "total_bytes": 297573,
+      "total_bytes": 297662,
       "files": [
         {
           "path": "LICENSE",
@@ -3214,18 +3214,18 @@
         },
         {
           "path": "reports/publication_value_of_information_2026-09-13/README.th.md",
-          "bytes": 14104,
-          "sha256": "ec1d17d04daca02a72f468a83df9e95d462f53a54191308de6497474900f189f"
+          "bytes": 14111,
+          "sha256": "22e884a50f6a95d5ee5dd4c095456d096c7ef6599468377fe48089d46b950bc1"
         },
         {
           "path": "reports/publication_value_of_information_2026-09-13/manuscript_v0.en.md",
-          "bytes": 51669,
-          "sha256": "14e856e1bd60e18b8a1e911175fd005bce3f9ae09e166810a4839aecde5f5f28"
+          "bytes": 52151,
+          "sha256": "67f5b3d5b24cf3749a013996cec9072ae7a0733eee845b75a01cfa6783ee8c83"
         },
         {
           "path": "reports/publication_value_of_information_2026-09-13/references.bib",
-          "bytes": 4650,
-          "sha256": "ca23ba4ae9189e9be4f72cb9bec97b7e9a83129ef9642f295325ec42f6b06020"
+          "bytes": 4250,
+          "sha256": "9b4d744f826d40194f98a3b6ff5daab43846a184a37b098aa28d321c3d6ca887"
         },
         {
           "path": "reports/publication_value_of_information_2026-09-13/supplement/CODE_VERSION_AUDIT.en.md",
@@ -3323,7 +3323,7 @@
       "license": "MIT",
       "purpose": "Focal model, experiment, analysis, figure, inventory, and regression-test code needed for reproduction and audit.",
       "file_count": 45,
-      "total_bytes": 1025609,
+      "total_bytes": 1027816,
       "files": [
         {
           "path": "agents/__init__.py",
@@ -3377,8 +3377,8 @@
         },
         {
           "path": "scripts/audit_submission_manuscript.py",
-          "bytes": 14443,
-          "sha256": "aeda0edb9668f7599b1a9de7457d6ed26927d0ca183647f62168ce8c4d0d7fe9"
+          "bytes": 14630,
+          "sha256": "e5b962bf9fde8931c9e88cac702c8caffe390bc0ea421c9847046cde4e7b64a9"
         },
         {
           "path": "scripts/build_confirmatory_checksums.py",
@@ -3397,8 +3397,8 @@
         },
         {
           "path": "scripts/build_submission_manuscript.py",
-          "bytes": 14261,
-          "sha256": "3634a50e6936a458363789f495d18879f616e9483f98aa756292e26189d24c58"
+          "bytes": 15182,
+          "sha256": "e7528a257fc7edbe15ba87e4d1565d23796ad14d5d4be04ae2676eff8c7417d8"
         },
         {
           "path": "scripts/export_experiment_parameter_matrix.py",
@@ -3417,8 +3417,8 @@
         },
         {
           "path": "scripts/plot_resource_age_confirmatory.py",
-          "bytes": 10069,
-          "sha256": "253f5c1b4f6ea7b993e9e3048668ea135eb5613c13b4a648a672704906bb88bb"
+          "bytes": 10430,
+          "sha256": "62eb242f84fc6ffade96feb9f07ce2d2f5e500d332fdbe202f27ed9fc47879f0"
         },
         {
           "path": "scripts/run_e_series.py",
@@ -3432,8 +3432,8 @@
         },
         {
           "path": "scripts/summarize_resource_age_confirmatory.py",
-          "bytes": 8539,
-          "sha256": "c3812c7f3f431ed7a7fcc0691a0f0e98c042b51ab87d6f8a6c252bfa7d68baed"
+          "bytes": 9189,
+          "sha256": "1eed935b7cbdcfff060a0671dd6af88d95996454eee7395e0616125fb0089b68"
         },
         {
           "path": "scripts/validate_e_series_batch.py",
@@ -3517,8 +3517,8 @@
         },
         {
           "path": "tests/test_summarize_resource_age_confirmatory.py",
-          "bytes": 3975,
-          "sha256": "92bd4667d93cfc654d36f6075392bc21cbe3c495672e68206665d2fca84d4db2"
+          "bytes": 4063,
+          "sha256": "02c8acdcfb75bad7528e6d0839ccb3b52b3dc655e2d24eafa2f655b6dcf37e64"
         },
         {
           "path": "tests/test_t2rb_replication_analysis.py",

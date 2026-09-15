@@ -4,10 +4,10 @@
   "automated_scientific_checks": "PASS",
   "submission_ready": false,
   "word_counts": {
-    "gross_article_through_declarations_and_references": 7319,
-    "abstract": 204,
-    "conservative_abstract_through_declarations_excluding_references": 6799,
-    "core_article_abstract_through_conclusion": 6496
+    "gross_article_through_declarations_and_references": 7383,
+    "abstract": 221,
+    "conservative_abstract_through_declarations_excluding_references": 6901,
+    "core_article_abstract_through_conclusion": 6598
   },
   "keywords": [
     "artificial life",
@@ -18,8 +18,8 @@
     "state representation"
   ],
   "figures": 5,
-  "bibliography_entries": 13,
-  "artificial_life_journal_entries": 7,
+  "bibliography_entries": 12,
+  "artificial_life_journal_entries": 6,
   "unresolved_placeholders": [
     "[Affiliation]",
     "[Author approval required; add any AI use not recorded here.]",
@@ -42,7 +42,7 @@
   "pdf": {
     "path": "reports/publication_value_of_information_2026-09-13/submission/manuscript_initial_submission_draft.pdf",
     "present": true,
-    "pages": 31,
+    "pages": 33,
     "status": "FAIL",
     "matches_manuscript": true,
     "unresolved_placeholders": [

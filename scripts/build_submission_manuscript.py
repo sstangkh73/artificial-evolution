@@ -227,7 +227,16 @@ def build_text_pdf(title: str, lines: list[str], styles: dict[str, ParagraphStyl
     def flush() -> None:
         if paragraph:
             text = " ".join(paragraph)
-            style = styles["keywords"] if text.startswith("**Keywords:") else styles["body"]
+            if text.startswith("**Keywords:"):
+                style = styles["keywords"]
+            elif text.startswith("**Table 1."):
+                style = ParagraphStyle(
+                    "Table1Caption",
+                    parent=styles["body"],
+                    keepWithNext=True,
+                )
+            else:
+                style = styles["body"]
             story.append(Paragraph(inline(text), style))
             paragraph.clear()
 
@@ -293,12 +302,29 @@ def build_text_pdf(title: str, lines: list[str], styles: dict[str, ParagraphStyl
                 raise ValueError("empty Markdown table")
             if any(len(row) != len(rows[0]) for row in rows):
                 raise ValueError("Markdown table rows have inconsistent column counts")
-            width = CONTENT_WIDTH / len(rows[0])
+            if rows[0] == [
+                "Energy", "B1 mean", "B2 mean", "B3 mean",
+                "B2-B1 [95% CI]", "B2-B3 [95% CI]",
+            ]:
+                proportions = (0.08, 0.11, 0.11, 0.11, 0.295, 0.295)
+                col_widths = [CONTENT_WIDTH * value for value in proportions]
+            else:
+                width = CONTENT_WIDTH / len(rows[0])
+                col_widths = [width] * len(rows[0])
             rendered = [
                 [Paragraph(inline(cell), styles["table"]) for cell in row]
                 for row in rows
             ]
-            table = Table(rendered, colWidths=[width] * len(rows[0]), repeatRows=1)
+            is_e6_table = rows[0] == [
+                "Energy", "B1 mean", "B2 mean", "B3 mean",
+                "B2-B1 [95% CI]", "B2-B3 [95% CI]",
+            ]
+            table = Table(
+                rendered,
+                colWidths=col_widths,
+                repeatRows=1,
+                splitByRow=0 if is_e6_table else 1,
+            )
             table.setStyle(TableStyle([
                 ("FONTNAME", (0, 0), (-1, 0), FONT_BOLD),
                 ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#E8E8E8")),
