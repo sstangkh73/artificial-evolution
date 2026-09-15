@@ -28,6 +28,19 @@ class PdfTextAuditTests(unittest.TestCase):
         self.assertEqual(result["status"], "PASS")
         self.assertTrue(result["matches_manuscript"])
 
+    def test_missing_required_author_metadata_fails(self):
+        result = audit.audit_pdf_text(
+            RENDERED,
+            TITLE,
+            ABSTRACT,
+            ("Confirmed School", "https://orcid.org/0000-0000-0000-0000"),
+        )
+        self.assertEqual(result["status"], "FAIL")
+        self.assertEqual(
+            result["missing_author_metadata"],
+            ["Confirmed School", "https://orcid.org/0000-0000-0000-0000"],
+        )
+
     def test_builder_title_page_placeholders_are_reported(self):
         text = RENDERED + "\n[Affiliation]\n[Postal address]\n[Email; corresponding author]"
         result = audit.audit_pdf_text(text, TITLE, ABSTRACT)

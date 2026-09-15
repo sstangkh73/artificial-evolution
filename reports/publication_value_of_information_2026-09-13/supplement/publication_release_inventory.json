@@ -24,7 +24,7 @@
   "summary": {
     "bundle_count": 5,
     "file_count": 696,
-    "total_bytes": 234622249
+    "total_bytes": 234624064
   },
   "bundles": [
     {
@@ -3190,7 +3190,7 @@
       "license": "CC-BY-4.0",
       "purpose": "Manuscript, model description, references, disclosure log, parameter/state/version documentation, and reproduction records.",
       "file_count": 18,
-      "total_bytes": 297662,
+      "total_bytes": 297932,
       "files": [
         {
           "path": "LICENSE",
@@ -3214,13 +3214,13 @@
         },
         {
           "path": "reports/publication_value_of_information_2026-09-13/README.th.md",
-          "bytes": 14111,
-          "sha256": "22e884a50f6a95d5ee5dd4c095456d096c7ef6599468377fe48089d46b950bc1"
+          "bytes": 14162,
+          "sha256": "9ff859bf6838cd4ed2b8cacadb23afed6a751935b9c55714085c8dbbd0ff0efa"
         },
         {
           "path": "reports/publication_value_of_information_2026-09-13/manuscript_v0.en.md",
-          "bytes": 52151,
-          "sha256": "67f5b3d5b24cf3749a013996cec9072ae7a0733eee845b75a01cfa6783ee8c83"
+          "bytes": 52370,
+          "sha256": "47f38e648463e34965e60e1081cea54d391998469d13431651cd11ed30e722f1"
         },
         {
           "path": "reports/publication_value_of_information_2026-09-13/references.bib",
@@ -3323,7 +3323,7 @@
       "license": "MIT",
       "purpose": "Focal model, experiment, analysis, figure, inventory, and regression-test code needed for reproduction and audit.",
       "file_count": 45,
-      "total_bytes": 1027816,
+      "total_bytes": 1029361,
       "files": [
         {
           "path": "agents/__init__.py",
@@ -3377,8 +3377,8 @@
         },
         {
           "path": "scripts/audit_submission_manuscript.py",
-          "bytes": 14630,
-          "sha256": "e5b962bf9fde8931c9e88cac702c8caffe390bc0ea421c9847046cde4e7b64a9"
+          "bytes": 15236,
+          "sha256": "008c7b187add92d48c3890bb73f818d243b3ea613fef5cf965ca4858a253659c"
         },
         {
           "path": "scripts/build_confirmatory_checksums.py",
@@ -3397,8 +3397,8 @@
         },
         {
           "path": "scripts/build_submission_manuscript.py",
-          "bytes": 15182,
-          "sha256": "e7528a257fc7edbe15ba87e4d1565d23796ad14d5d4be04ae2676eff8c7417d8"
+          "bytes": 15665,
+          "sha256": "0aadab07808b16e7c49ca3c74bff88a18a51786775bf0f51e90e438d43bb5778"
         },
         {
           "path": "scripts/export_experiment_parameter_matrix.py",
@@ -3472,8 +3472,8 @@
         },
         {
           "path": "tests/test_audit_submission_manuscript.py",
-          "bytes": 3377,
-          "sha256": "b12176606e7dc142214553c8d3651c46a587c6af98b99b3b2ddf002e79f4725e"
+          "bytes": 3833,
+          "sha256": "f84b7a81444db6ea8779d6e7c30f3403dd484c270ca08552b1e57a0843c149db"
         },
         {
           "path": "tests/test_build_confirmatory_checksums.py",

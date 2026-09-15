@@ -6,12 +6,12 @@
 
 | รายการ | ข้อกำหนด/เหตุผล | สถานะ | งานถัดไป |
 |---|---|---|---|
-| ประเภทบทความ | Article โดยทั่วไป 6,000–12,000 คำ | ผ่าน: 6,901 คำตั้งแต่ abstract ถึง declarations โดยไม่รวม references/figure captions; 7,383 คำเมื่อรวม references | ผู้เขียนตรวจว่าระบบส่งนับคำด้วยหลักเดียวกัน |
-| ความเหมาะสมกับวารสาร | ต้องอธิบายใน cover letter | ร่างแล้ว | ผู้เขียนตรวจและเติมข้อมูลติดต่อ |
-| initial submission | ส่ง manuscript เป็น PDF ผ่าน ScholarOne | author-review PDF 33 หน้า; source ตรงกับ PDF และไม่มีโน้ตภายในหลุดไปหน้าปก | เติมข้อมูลผู้เขียน/DOI/คำรับรอง แล้วสร้าง PDF ใหม่และรัน audit จน `pdf.status` เป็น PASS |
-| หน้าปก | title, author, affiliation/address/email, corresponding author, abstract, 5–6 keywords | ขาด affiliation, address, email และ ORCID ยังรอยืนยัน | ตรวจและยืนยันค่าทั้ง 5 ช่องใน `submission/AUTHOR_METADATA_TO_CONFIRM.th.md`; keywords มี 6 คำแล้ว |
+| ประเภทบทความ | Article โดยทั่วไป 6,000–12,000 คำ | ผ่าน: 6,901 คำตั้งแต่ abstract ถึง declarations โดยไม่รวม references/figure captions; 7,407 คำเมื่อรวม references และข้อมูลหน้าปก | ผู้เขียนตรวจว่าระบบส่งนับคำด้วยหลักเดียวกัน |
+| ความเหมาะสมกับวารสาร | ต้องอธิบายใน cover letter | ร่างแล้วและใส่ข้อมูลติดต่อแล้ว | ผู้เขียนตรวจถ้อยคำและเติมวันส่ง |
+| initial submission | ส่ง manuscript เป็น PDF ผ่าน ScholarOne | author-review PDF 33 หน้า; source ตรงกับ PDF และไม่มีโน้ตภายในหลุดไปหน้าปก | เติม DOI/คำรับรอง แล้วสร้าง PDF ใหม่และรัน audit จน `pdf.status` เป็น PASS |
+| หน้าปก | title, author, affiliation/address/email, corresponding author, abstract, 5–6 keywords | ข้อมูลผู้เขียนทั้ง 5 ช่องยืนยันแล้วเมื่อ 15 กันยายน 2026 และใส่ใน PDF; keywords มี 6 คำ | คัดลอกข้อมูลเดียวกันลงระบบส่งและตรวจ proof |
 | ความใหม่/ไม่ส่งซ้ำ | ผู้เขียนรับรองว่าไม่ตีพิมพ์หรืออยู่ระหว่างพิจารณาที่อื่น | รอผู้เขียนรับรอง | ยืนยันใน cover letter/ระบบส่ง |
-| เนื้อหาหลัก | ต้นฉบับ Article ฉบับเต็ม | automated scientific audit ผ่าน; source มี 6 placeholders และ PDF ที่ build แล้วมี 9 (รวมช่องผู้เขียน 3 ช่องที่ builder ใส่บนหน้าปก) | author line-by-line verification และปิด placeholders ทั้งใน source และหน้าปกของ builder |
+| เนื้อหาหลัก | ต้นฉบับ Article ฉบับเต็ม | automated scientific audit ผ่าน; source และ PDF เหลือ placeholder 6 รายการใน declarations/archive | author line-by-line verification และปิด placeholder ที่เหลือ |
 | รูป | แนะนำ vector สำหรับกราฟ/diagram | พร้อม | ใช้ PDF vector ทั้ง 5 รูปเป็น master; PNG 300 dpi ใช้ preview เท่านั้น |
 | figure source data | ต้องตรวจย้อนกลับได้ | พร้อม 8 ตาราง | ตรวจ caption/เลขรูปหลังจัดหน้า |
 | supplementary material | ต้องแนบพร้อมบทความหรือให้ URL ที่ไม่กระทบ anonymity | โครงสร้างพร้อม | รวม ODD, parameter/state/version/reproduction files เป็น reviewer package |
@@ -28,9 +28,9 @@
 ## ไฟล์ที่พร้อมใช้
 
 - `manuscript_v0.en.md` — ต้นฉบับฉบับเต็ม
-- `submission/manuscript_initial_submission_draft.pdf` — author-review PDF 33 หน้าแบบ single-column, double-spaced พร้อม Table 1 และรูป vector 5 หน้า; ยังมี placeholder 9 รายการที่ห้ามส่ง
+- `submission/manuscript_initial_submission_draft.pdf` — author-review PDF 33 หน้าแบบ single-column, double-spaced พร้อม Table 1 และรูป vector 5 หน้า; ยังมี placeholder 6 รายการที่ห้ามส่ง
 - `submission/manuscript_submission_audit.json` — ผลตรวจจำนวนคำ abstract keywords รูป citation ตัวเลข confirmatory และ placeholder
-- `cover_letter_draft.en.md` — cover letter ที่ต้องเติมข้อมูลผู้เขียน
+- `cover_letter_draft.en.md` — cover letter ที่ใส่ข้อมูลผู้เขียนแล้ว แต่ยังต้องเติมวันส่ง DOI และคำรับรอง
 - `ODD_MODEL_DESCRIPTION_DRAFT.en.md` — model description
 - `supplement/PARAMETER_TABLES.en.md` และ CSV — parameter provenance
 - `supplement/STATE_VARIABLE_CATALOGUE.en.md` — focal state/process catalogue
@@ -47,7 +47,7 @@
 2. บุคคลอื่นรัน independent reproduction protocol แล้วได้ `PASS` พร้อมบันทึกชื่อ ระบบ และ hash
 3. ฝาก reviewer-safe public archive/DOI ตาม manifest แล้วตรวจ release checksum 696 รายการหลังดาวน์โหลดกลับ (checksum เดิม 616 รายการเป็น core subset)
 4. เติม Data and Code Availability และ AI Disclosure ในต้นฉบับด้วย URL/DOI และข้อความที่ผู้เขียนอนุมัติ
-5. เติมข้อมูลผู้เขียน funding conflict และ ethics statements
+5. เติม funding, conflict และ ethics statements
 6. จัดหน้า PDF แบบ single-column double-spaced ฝังรูป vector ตรวจทุกหน้า และนับคำครั้งสุดท้าย
 7. ตรวจว่า cover letter อธิบาย scope fit รับรองความใหม่ และเปิดเผย AI ตรงกับต้นฉบับ
 8. อัปโหลด manuscript, cover letter และ supplement พร้อมกัน แล้วเปิดไฟล์จากระบบส่งเพื่อตรวจอีกครั้งก่อน submit

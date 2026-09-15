@@ -5,6 +5,10 @@
 **Target journal:** *Artificial Life* (author instructions checked September 14, 2026; final requirements must be rechecked at submission)
 
 **Author:** Chisanupong Injun
+**Affiliation:** Deebuk Phangnga Wittayayon School
+**Postal address:** Phang Nga 82000, Thailand
+**Corresponding author:** Chisanupong Injun; chisanupong.injun@gmail.com
+**ORCID:** https://orcid.org/0009-0000-2979-1916
 **Status:** submission-audited Article draft at target length; author verification, independent reproduction, and public archive still incomplete
 
 ## Abstract

@@ -25,6 +25,13 @@ E6_SECONDARY = PUBLICATION / "confirmatory/e6/E6_secondary_and_mechanism.json"
 T2_ANALYSIS = PUBLICATION / "confirmatory/t2rb/T2RB_analysis.json"
 SUBMISSION_PDF = PUBLICATION / "submission/manuscript_initial_submission_draft.pdf"
 DEFAULT_OUTPUT = PUBLICATION / "submission/manuscript_submission_audit.json"
+AUTHOR_METADATA = (
+    "Chisanupong Injun",
+    "Deebuk Phangnga Wittayayon School",
+    "Phang Nga 82000, Thailand",
+    "chisanupong.injun@gmail.com",
+    "https://orcid.org/0009-0000-2979-1916",
+)
 
 WORD = re.compile(r"[A-Za-z0-9]+(?:[-'][A-Za-z0-9]+)*")
 PLACEHOLDER = re.compile(r"\[(?:Author|Insert)[^\]\n]+\]")
@@ -106,21 +113,33 @@ def pdf_internal_notes(text: str) -> list[str]:
     return [marker for marker in INTERNAL_NOTE_MARKERS if marker in flat]
 
 
-def audit_pdf_text(text: str, title: str, abstract: str) -> dict[str, object]:
+def audit_pdf_text(
+    text: str,
+    title: str,
+    abstract: str,
+    required_metadata: tuple[str, ...] = (),
+) -> dict[str, object]:
     """Check extracted PDF text; a title or abstract mismatch means the PDF is stale."""
     flat = normalize_space(text)
     matches = rendered_markdown(title) in flat and rendered_markdown(abstract) in flat
     placeholders = pdf_placeholders(text)
     notes = pdf_internal_notes(text)
+    missing_metadata = [value for value in required_metadata if normalize_space(value) not in flat]
     return {
-        "status": "PASS" if matches and not placeholders and not notes else "FAIL",
+        "status": "PASS" if matches and not placeholders and not notes and not missing_metadata else "FAIL",
         "matches_manuscript": matches,
         "unresolved_placeholders": placeholders,
         "internal_notes": notes,
+        "missing_author_metadata": missing_metadata,
     }
 
 
-def audit_pdf(path: Path, title: str, abstract: str) -> dict[str, object]:
+def audit_pdf(
+    path: Path,
+    title: str,
+    abstract: str,
+    required_metadata: tuple[str, ...] = (),
+) -> dict[str, object]:
     if not path.is_file():
         return {
             "path": display_path(path),
@@ -129,11 +148,12 @@ def audit_pdf(path: Path, title: str, abstract: str) -> dict[str, object]:
             "matches_manuscript": False,
             "unresolved_placeholders": [],
             "internal_notes": [],
+            "missing_author_metadata": list(required_metadata),
         }
     reader = PdfReader(str(path))
     text = "\n".join(page.extract_text() or "" for page in reader.pages)
     result: dict[str, object] = {"path": display_path(path), "present": True, "pages": len(reader.pages)}
-    result.update(audit_pdf_text(text, title, abstract))
+    result.update(audit_pdf_text(text, title, abstract, required_metadata))
     return result
 
 
@@ -176,6 +196,9 @@ def audit(pdf_path: Path = SUBMISSION_PDF) -> dict[str, object]:
     )
     for heading in required_sections:
         require(heading in manuscript, f"missing required section: {heading}", failures)
+
+    for value in AUTHOR_METADATA:
+        require(value in manuscript, f"confirmed author metadata missing from manuscript source: {value}", failures)
 
     gross_words = len(words(gross_article))
     scientific_words = len(words(scientific_text))
@@ -273,10 +296,9 @@ def audit(pdf_path: Path = SUBMISSION_PDF) -> dict[str, object]:
         require(phrase not in manuscript, f"unsupported or imprecise phrase remains: {phrase}", failures)
 
     source_placeholders = sorted(set(PLACEHOLDER.findall(manuscript)))
-    pdf = audit_pdf(pdf_path, title, abstract)
+    pdf = audit_pdf(pdf_path, title, abstract, AUTHOR_METADATA)
     placeholders = sorted(set(source_placeholders) | set(pdf["unresolved_placeholders"]))
     expected_author_actions = (
-        "confirm author affiliation, postal address, corresponding-author email, and ORCID against submission/AUTHOR_METADATA_TO_CONFIRM.th.md",
         "public archive citation/DOI/code-release tag",
         "funding statement",
         "competing-interest statement",

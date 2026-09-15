@@ -54,6 +54,11 @@ FONT_BOLD_ITALIC = "TimesNewRoman-BoldItalic"
 MARGIN = 1.0 * inch
 CONTENT_WIDTH = LETTER[0] - 2 * MARGIN
 TOKEN = re.compile(r"(\*\*.+?\*\*|`.+?`|\*.+?\*)")
+AUTHOR_NAME = "Chisanupong Injun"
+AUTHOR_AFFILIATION = "Deebuk Phangnga Wittayayon School"
+AUTHOR_POSTAL_ADDRESS = "Phang Nga 82000, Thailand"
+AUTHOR_EMAIL = "chisanupong.injun@gmail.com"
+AUTHOR_ORCID = "https://orcid.org/0009-0000-2979-1916"
 
 
 def register_fonts() -> None:
@@ -213,10 +218,11 @@ def build_text_pdf(title: str, lines: list[str], styles: dict[str, ParagraphStyl
     story: list[object] = [Spacer(1, 0.3 * inch), Paragraph(inline(title), styles["title"])]
     for value in (
         "Article",
-        "Chisanupong Injun",
-        "[Affiliation]",
-        "[Postal address]",
-        "[Email; corresponding author]",
+        AUTHOR_NAME,
+        AUTHOR_AFFILIATION,
+        AUTHOR_POSTAL_ADDRESS,
+        f"Corresponding author: {AUTHOR_NAME}; {AUTHOR_EMAIL}",
+        f"ORCID: {AUTHOR_ORCID}",
     ):
         story.append(Paragraph(inline(value), styles["meta"]))
     story.append(Spacer(1, 0.18 * inch))
@@ -244,7 +250,16 @@ def build_text_pdf(title: str, lines: list[str], styles: dict[str, ParagraphStyl
         stripped = lines[index].strip()
         # Working-draft front matter is matched by prefix: an exact-string match
         # silently stopped filtering once the Target journal note was reworded.
-        if stripped.startswith(("**Manuscript type:**", "**Target journal:**", "**Author:**", "**Status:**")):
+        if stripped.startswith((
+            "**Manuscript type:**",
+            "**Target journal:**",
+            "**Author:**",
+            "**Affiliation:**",
+            "**Postal address:**",
+            "**Corresponding author:**",
+            "**ORCID:**",
+            "**Status:**",
+        )):
             index += 1
             continue
         if not stripped:
@@ -349,7 +364,7 @@ def build_text_pdf(title: str, lines: list[str], styles: dict[str, ParagraphStyl
         topMargin=0.85 * inch,
         bottomMargin=0.8 * inch,
         title=title,
-        author="Chisanupong Injun",
+        author=AUTHOR_NAME,
         subject="Initial submission manuscript draft for Artificial Life",
     )
     document.build(story, onFirstPage=page_furniture, onLaterPages=page_furniture)
