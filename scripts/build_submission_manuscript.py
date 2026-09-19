@@ -41,18 +41,18 @@ TEXT_PDF = OUTPUT_DIR / ".manuscript_text.tmp.pdf"
 OUTPUT = OUTPUT_DIR / "manuscript_initial_submission_draft.pdf"
 
 FIGURES = (
-    PUBLICATION / "confirmatory/figures/figure_1_hidden_toxicity.pdf",
     PUBLICATION / "confirmatory/figures/figure_2_information_rescue.pdf",
-    PUBLICATION / "confirmatory/figures/figure_3_selection_and_denominator.pdf",
     PUBLICATION / "confirmatory/figures/figure_e6_energy_gradient.pdf",
+    PUBLICATION / "confirmatory/figures/figure_1_hidden_toxicity.pdf",
     PUBLICATION / "confirmatory/figures/figure_t2rb_replication.pdf",
+    PUBLICATION / "confirmatory/figures/figure_3_selection_and_denominator.pdf",
 )
 
 FIGURE_INSERT_BEFORE = {
-    "### 3.2 Age information restored discrimination because it carried relevant state information": 1,
-    "### 3.3 Better discrimination did not guarantee longer life": 2,
-    "### 3.6 E6 separated age information from type-only and sham survival effects": 3,
-    "### 3.7 R-B replication within the high-drain configuration": 4,
+    "### 3.2 Primary survival contrast: B2 did not outperform the sham": 1,
+    "### 3.3 Energy 10 coincided with a policy-regime change and senescence ceiling": 2,
+    "### 3.6 T2-RB: deficit under constant-payoff controls": 3,
+    "### 3.7 Prediction and deviation audit": 4,
     "## 4. Discussion": 5,
 }
 
@@ -62,7 +62,7 @@ FONT_ITALIC = "TimesNewRoman-Italic"
 FONT_BOLD_ITALIC = "TimesNewRoman-BoldItalic"
 MARGIN = 1.0 * inch
 CONTENT_WIDTH = LETTER[0] - 2 * MARGIN
-TOKEN = re.compile(r"(\*\*.+?\*\*|`.+?`|\*.+?\*)")
+TOKEN = re.compile(r"(\*\*.+?\*\*|`.+?`|\*.+?\*|<sub>[^<]+</sub>)")
 AUTHOR_NAME = "Chisanupong Injun"
 AUTHOR_AFFILIATION = "Deebuk Phangnga Wittayayon School"
 AUTHOR_POSTAL_ADDRESS = "Phang Nga 82000, Thailand"
@@ -95,6 +95,8 @@ def inline(text: str) -> str:
             output.append(f"<b>{html.escape(token[2:-2])}</b>")
         elif token.startswith("`"):
             output.append(f'<font name="Courier" size="10.5">{html.escape(token[1:-1])}</font>')
+        elif token.startswith("<sub>"):
+            output.append(f"<sub>{html.escape(token[5:-6])}</sub>")
         else:
             output.append(f"<i>{html.escape(token[1:-1])}</i>")
         cursor = match.end()
@@ -342,22 +344,31 @@ def build_text_pdf(title: str, lines: list[str], styles: dict[str, ParagraphStyl
                 raise ValueError("empty Markdown table")
             if any(len(row) != len(rows[0]) for row in rows):
                 raise ValueError("Markdown table rows have inconsistent column counts")
-            if rows[0] == [
+            is_e6_table = rows[0] == [
                 "Energy", "B1 mean", "B2 mean", "B3 mean",
-                "B2-B1 [95% CI]", "B2-B3 [95% CI]",
-            ]:
+                "Primary B2-B3 [95% CI]", "Secondary B2-B1 [95% CI]",
+            ]
+            if is_e6_table:
                 proportions = (0.08, 0.11, 0.11, 0.11, 0.295, 0.295)
                 col_widths = [CONTENT_WIDTH * value for value in proportions]
             else:
                 width = CONTENT_WIDTH / len(rows[0])
                 col_widths = [width] * len(rows[0])
+            is_t2_table = rows[0][0] == "Arm" and len(rows[0]) == 11
+            if is_t2_table:
+                proportions = (0.075, 0.10, 0.09, 0.10, 0.09, 0.10, 0.09, 0.10, 0.09, 0.08, 0.085)
+                col_widths = [CONTENT_WIDTH * value for value in proportions]
+            cell_style = styles["table"]
+            if is_t2_table:
+                cell_style = ParagraphStyle(
+                    "T2Table",
+                    parent=styles["table"],
+                    fontSize=8,
+                    leading=9.5,
+                )
             rendered = [
-                [Paragraph(inline(cell), styles["table"]) for cell in row]
+                [Paragraph(inline(cell), cell_style) for cell in row]
                 for row in rows
-            ]
-            is_e6_table = rows[0] == [
-                "Energy", "B1 mean", "B2 mean", "B3 mean",
-                "B2-B1 [95% CI]", "B2-B3 [95% CI]",
             ]
             table = Table(
                 rendered,

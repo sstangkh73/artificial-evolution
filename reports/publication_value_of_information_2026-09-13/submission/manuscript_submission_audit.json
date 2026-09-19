@@ -4,10 +4,10 @@
   "automated_scientific_checks": "PASS",
   "submission_ready": false,
   "word_counts": {
-    "gross_article_through_declarations_and_references": 7407,
-    "abstract": 221,
-    "conservative_abstract_through_declarations_excluding_references": 6901,
-    "core_article_abstract_through_conclusion": 6598
+    "gross_article_through_declarations_and_references": 8231,
+    "abstract": 248,
+    "conservative_abstract_through_declarations_excluding_references": 7608,
+    "core_article_abstract_through_conclusion": 7277
   },
   "keywords": [
     "artificial life",
@@ -18,10 +18,10 @@
     "state representation"
   ],
   "figures": 5,
-  "bibliography_entries": 12,
+  "bibliography_entries": 17,
   "artificial_life_journal_entries": 6,
   "unresolved_placeholders": [
-    "[Author approval required; add any AI use not recorded here.]",
+    "[Author approval required.]",
     "[Author confirmation required. Complete a CRediT statement covering conceptualization, methodology, software, validation, formal analysis, investigation, data curation, visualization, writing, and project administration.]",
     "[Author confirmation required. If accurate: The author declares no competing interests.]",
     "[Author confirmation required. If accurate: This research received no specific grant from any funding agency in the public, commercial, or not-for-profit sectors.]",
@@ -29,7 +29,7 @@
     "[Insert the versioned public archive citation, DOI, and code-release tag after deposit and download-back verification; do not submit this placeholder.]"
   ],
   "source_markdown_placeholders": [
-    "[Author approval required; add any AI use not recorded here.]",
+    "[Author approval required.]",
     "[Author confirmation required. Complete a CRediT statement covering conceptualization, methodology, software, validation, formal analysis, investigation, data curation, visualization, writing, and project administration.]",
     "[Author confirmation required. If accurate: The author declares no competing interests.]",
     "[Author confirmation required. If accurate: This research received no specific grant from any funding agency in the public, commercial, or not-for-profit sectors.]",
@@ -39,11 +39,11 @@
   "pdf": {
     "path": "reports/publication_value_of_information_2026-09-13/submission/manuscript_initial_submission_draft.pdf",
     "present": true,
-    "pages": 35,
+    "pages": 36,
     "status": "FAIL",
     "matches_manuscript": true,
     "unresolved_placeholders": [
-      "[Author approval required; add any AI use not recorded here.]",
+      "[Author approval required.]",
       "[Author confirmation required. Complete a CRediT statement covering conceptualization, methodology, software, validation, formal analysis, investigation, data curation, visualization, writing, and project administration.]",
       "[Author confirmation required. If accurate: The author declares no competing interests.]",
       "[Author confirmation required. If accurate: This research received no specific grant from any funding agency in the public, commercial, or not-for-profit sectors.]",
@@ -53,14 +53,17 @@
     "internal_notes": [],
     "missing_author_metadata": [],
     "figure_caption_pages": {
-      "1": 14,
-      "2": 16,
-      "3": 19,
+      "1": 16,
+      "2": 18,
+      "3": 21,
       "4": 23,
       "5": 25
     },
-    "references_page": 34,
-    "figures_interleaved_before_references": true
+    "references_page": 35,
+    "figures_interleaved_before_references": true,
+    "figures_in_numerical_page_order": true,
+    "results_heading_page": 14,
+    "figures_after_results_heading": true
   },
   "author_actions_expected": [
     "public archive citation/DOI/code-release tag",
@@ -74,6 +77,7 @@
   "evidence_sources": [
     "reports/publication_value_of_information_2026-09-13/confirmatory/e6/E6_analysis.json",
     "reports/publication_value_of_information_2026-09-13/confirmatory/e6/E6_secondary_and_mechanism.json",
-    "reports/publication_value_of_information_2026-09-13/confirmatory/t2rb/T2RB_analysis.json"
+    "reports/publication_value_of_information_2026-09-13/confirmatory/t2rb/T2RB_analysis.json",
+    "reports/publication_value_of_information_2026-09-13/revision_2026-09-15/derived/mechanism_analysis.json"
   ]
 }

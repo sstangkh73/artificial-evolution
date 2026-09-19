@@ -18,6 +18,15 @@ RENDERED = "When Does a Better\nRepresentation Pay?\nArtificial foragers learn v
 
 
 class PdfTextAuditTests(unittest.TestCase):
+    def test_word_count_ignores_supported_subscript_markup(self):
+        self.assertEqual(audit.words("paired *d*<sub>z</sub> effect"), ["paired", "d", "z", "effect"])
+
+    def test_first_figure_citations_must_be_in_numeric_order(self):
+        ordered = "Results cite Figure 1A, then Figure 2, Figure 3, Figure 4, and Figure 5."
+        scrambled = "Results cite Figure 2A, then Figure 4, Figure 1, Figure 5, and Figure 3."
+        self.assertEqual(audit.first_figure_citation_order(ordered), [1, 2, 3, 4, 5])
+        self.assertEqual(audit.first_figure_citation_order(scrambled), [2, 4, 1, 5, 3])
+
     def test_citation_recognizes_multi_author_apa_forms(self):
         self.assertTrue(audit.cites_record("Dorin and Stepney (2024) distinguish forms.", "Dorin", "2024"))
         self.assertTrue(audit.cites_record("Prior work supports this (Dorin & Stepney, 2024).", "Dorin", "2024"))

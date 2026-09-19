@@ -23,6 +23,7 @@ BIBLIOGRAPHY = PUBLICATION / "references.bib"
 E6_ANALYSIS = PUBLICATION / "confirmatory/e6/E6_analysis.json"
 E6_SECONDARY = PUBLICATION / "confirmatory/e6/E6_secondary_and_mechanism.json"
 T2_ANALYSIS = PUBLICATION / "confirmatory/t2rb/T2RB_analysis.json"
+MECHANISM_ANALYSIS = PUBLICATION / "revision_2026-09-15/derived/mechanism_analysis.json"
 SUBMISSION_PDF = PUBLICATION / "submission/manuscript_initial_submission_draft.pdf"
 DEFAULT_OUTPUT = PUBLICATION / "submission/manuscript_submission_audit.json"
 AUTHOR_METADATA = (
@@ -52,7 +53,8 @@ INTERNAL_NOTE_MARKERS = (
 
 
 def words(text: str) -> list[str]:
-    plain = re.sub(r"[`*_#]", " ", text)
+    plain = re.sub(r"</?sub>", " ", text)
+    plain = re.sub(r"[`*_#]", " ", plain)
     return WORD.findall(plain)
 
 
@@ -92,6 +94,15 @@ def cites_record(text: str, surname: str, year: str) -> bool:
     """Recognize common APA narrative and parenthetical author-year forms."""
     pattern = rf"\b{re.escape(surname)}\b[^\n()]{{0,120}}(?:\({year}\)|,\s*{year}\b)"
     return re.search(pattern, text) is not None
+
+
+def first_figure_citation_order(text: str) -> list[int]:
+    """Return figure numbers in the order each is first cited in body text."""
+    positions: dict[int, int] = {}
+    for match in re.finditer(r"\bFigure\s+([1-9]\d*)(?:[A-Z])?\b", text):
+        number = int(match.group(1))
+        positions.setdefault(number, match.start())
+    return [number for number, _ in sorted(positions.items(), key=lambda item: item[1])]
 
 
 def normalize_space(text: str) -> str:
@@ -176,9 +187,27 @@ def audit_pdf(
         references_page is not None
         and all(page is not None and page < references_page for page in figure_caption_pages.values())
     )
+    caption_page_order = [figure_caption_pages[str(number)] for number in range(1, 6)]
+    figures_in_numerical_page_order = (
+        all(page is not None for page in caption_page_order)
+        and caption_page_order == sorted(caption_page_order)
+    )
+    results_page = next(
+        (page_number for page_number, value in enumerate(page_text, 1) if re.search(r"(?:^|\n)3\. Results(?:\n|$)", value)),
+        None,
+    )
+    figures_after_results_heading = (
+        results_page is not None
+        and all(page is not None and page > results_page for page in caption_page_order)
+    )
+    if not figures_in_numerical_page_order or not figures_after_results_heading:
+        result["status"] = "FAIL"
     result["figure_caption_pages"] = figure_caption_pages
     result["references_page"] = references_page
     result["figures_interleaved_before_references"] = figures_interleaved
+    result["figures_in_numerical_page_order"] = figures_in_numerical_page_order
+    result["results_heading_page"] = results_page
+    result["figures_after_results_heading"] = figures_after_results_heading
     if not figures_interleaved:
         result["status"] = "FAIL"
     return result
@@ -190,6 +219,7 @@ def audit(pdf_path: Path = SUBMISSION_PDF) -> dict[str, object]:
     e6 = json.loads(E6_ANALYSIS.read_text(encoding="utf-8"))
     e6_secondary = json.loads(E6_SECONDARY.read_text(encoding="utf-8"))
     t2 = json.loads(T2_ANALYSIS.read_text(encoding="utf-8"))
+    mechanisms = json.loads(MECHANISM_ANALYSIS.read_text(encoding="utf-8"))
 
     title = manuscript.split("\n", 1)[0].lstrip("#").strip()
     abstract = section(manuscript, "## Abstract", "**Keywords:")
@@ -252,6 +282,13 @@ def audit(pdf_path: Path = SUBMISSION_PDF) -> dict[str, object]:
             failures,
         )
 
+    citation_order = first_figure_citation_order(body_before_references)
+    require(
+        citation_order == [1, 2, 3, 4, 5],
+        f"figures are first cited out of numerical order: {citation_order}",
+        failures,
+    )
+
     bibliography_records = bib_records(bibliography)
     artificial_life_entries = sum(
         record["journal"].strip().lower() == "artificial life"
@@ -281,12 +318,28 @@ def audit(pdf_path: Path = SUBMISSION_PDF) -> dict[str, object]:
     slope = e6["primary"]["slope_summary"]["mean"]
     slope_ci = e6["primary"]["t_ci95"]
     slope_p = e6["primary"]["p"]
+    mechanism_slope = mechanisms["E6"]["slope"]
+    leave_out_10 = next(
+        row for row in mechanism_slope["leave_one_energy_out"]
+        if row["excluded_energy"] == 10
+    )
     required_fragments = [
         f"{slope:.3f}",
         f"{slope_ci['low']:.3f} to {slope_ci['high']:.3f}",
         f"p={slope_p:.4f}",
-        "Eighteen of 30 slopes were positive and 12 were negative",
+        f"SD {mechanism_slope['summary']['sd']:.3f}",
+        f"{mechanism_slope['minimum_effect_sensitivity']['one_sided_monte_carlo_sign_flip_p']:.3f}",
+        f"{leave_out_10['slope_summary']['mean']:.3f}",
+        f"{leave_out_10['t_ci95']['low']:.3f} to {leave_out_10['t_ci95']['high']:.3f}",
     ]
+    correlations = mechanisms["E6"]["within_arm_energy_cell_correlations_with_followup"]
+    for metric in (
+        "staple_meals_per_followup_tick",
+        "toxin_excess_per_followup_tick",
+        "fruit_meals_per_followup_tick",
+        "toxin_excess_per_fruit_meal",
+    ):
+        required_fragments.append(f"{correlations[metric]:.3f}")
     for row in e6_secondary["by_realized_fruit_energy"]:
         for contrast_name in (
             "B2_minus_B3",
@@ -295,20 +348,20 @@ def audit(pdf_path: Path = SUBMISSION_PDF) -> dict[str, object]:
         ):
             value = row[contrast_name]["paired_difference"]["mean"]
             required_fragments.append(f"{value:+.3f}")
-        secondary_adjusted = row["B2_minus_B1"]["paired_difference"]["holm_adjusted_p"]
-        required_fragments.append(f"{secondary_adjusted:.5f}")
-    primary = t2["primary"]["paired_difference"]
-    secondary = t2["direct_replication_secondary"]["paired_difference"]
-    required_fragments.extend(
-        [
-            f"{primary['mean']:.3f}",
-            f"{primary['t_ci95']['low']:.3f} to {primary['t_ci95']['high']:.3f}",
-            f"p={primary['p']:.6f}",
-            f"{secondary['mean']:.3f}",
-            f"{secondary['t_ci95']['low']:.3f} to {secondary['t_ci95']['high']:.3f}",
-            f"p={secondary['p']:.6f}",
-        ]
-    )
+        if row["realized_fruit_energy"] == 4:
+            secondary_adjusted = row["B2_minus_B1"]["paired_difference"]["holm_adjusted_p"]
+            required_fragments.append(f"{secondary_adjusted:.5f}")
+    for contrast_name in ("A2-A3R", "A2-A3O"):
+        contrast = next(
+            row for row in mechanisms["T2RB"]["paired_contrasts"]
+            if row["contrast"] == contrast_name
+            and row["metric"] == "founder_mean_followup_ticks"
+        )
+        required_fragments.extend([
+            f"{abs(contrast['paired_difference']['mean']):.3f}",
+            f"{contrast['paired_t_ci95']['low']:.3f} to {contrast['paired_t_ci95']['high']:.3f}",
+            f"*d*<sub>z</sub> = {contrast['paired_standardized_mean_difference_dz']:.3f}",
+        ])
     for fragment in required_fragments:
         require(fragment in manuscript, f"evidence-bound numeric text missing: {fragment}", failures)
 
@@ -318,6 +371,10 @@ def audit(pdf_path: Path = SUBMISSION_PDF) -> dict[str, object]:
         "a supplied heritable trait",
         "independent reproduction was completed",
         "Sasaki and Tokoro (1999)",
+        "structural noise floor",
+        "For this major revision",
+        "red-team mechanism tables",
+        "Supplementary Red-team Revision Tables",
     )
     for phrase in disallowed_phrases:
         require(phrase not in manuscript, f"unsupported or imprecise phrase remains: {phrase}", failures)
@@ -357,6 +414,7 @@ def audit(pdf_path: Path = SUBMISSION_PDF) -> dict[str, object]:
             E6_ANALYSIS.relative_to(ROOT).as_posix(),
             E6_SECONDARY.relative_to(ROOT).as_posix(),
             T2_ANALYSIS.relative_to(ROOT).as_posix(),
+            MECHANISM_ANALYSIS.relative_to(ROOT).as_posix(),
         ],
     }
 

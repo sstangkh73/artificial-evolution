@@ -2,11 +2,13 @@
 
 Last screened: 2026-09-15
 
-This ledger records the full text inspected for every academic source cited in
-the manuscript and the boundary of the claim taken from it. No academic source
-is retained in the manuscript on publisher-abstract evidence alone. Links are
-the source or publisher copies used during screening; the bibliography uses DOI
-links where available.
+This ledger records the evidence actually inspected for every academic source
+cited in the manuscript and the boundary of the claim taken from it. Evidence
+level is stated explicitly: metadata or abstract screening is used only for
+broad orientation, whereas detailed methodological or empirical claims require
+inspection of the relevant full-text sections. Links are the repository,
+publisher, or accessible author copies used during screening; the bibliography
+uses DOI links where available.
 
 ## Sources cleared for current manuscript claims
 
@@ -22,6 +24,10 @@ links where available.
 | Giannakakis et al. (2025) | Full preprint corresponding to the published *Artificial Life* article | In an embodied foraging model, task structure and architectural constraints affect evolved local learning rules and performance | Their model evolves plasticity rules and does not test temporal toxicity, resource-age aliasing, or a capacity-matched sham |
 | Grimm et al. (2020) | Full 20-page JASSS article | ODD provides a standardized structure for describing agent-based and other simulation models and aims to improve clarity and replication | ODD documentation improves reporting but does not itself validate a model |
 | Ha (2019) | Full publisher article text in *Artificial Life* | Reinforcement learning can evaluate and improve embodied agent design in a task-dependent setting | The present work holds morphology and learner structure fixed apart from the registered representation manipulation |
+| McCallum (1996) | University of Rochester repository record and abstract; repository file availability confirmed | Selective perception can remove irrelevant distinctions, whereas memory can augment a state representation when crucial features are hidden | Used as a broad hidden-state/representation precedent, not as evidence that the present agents discover resource age or use McCallum's algorithms |
+| Provenza (1995) | Utah State University repository metadata and abstract; publisher full-text link confirmed | Post-ingestive consequences can condition food preference and intake, with nutrient adequacy and toxin-related malaise affecting learned preference | Used as biological motivation only; the present numerical update is not a physiological model of ruminant learning |
+| Stephens and Krebs (1986) | JSTOR and Princeton University Press book metadata and description | Classic foraging theory frames item acceptance as part of an energetic decision problem with background opportunities and constraints | No claim is made that the present fixed threshold is an optimal-foraging solution; no chapter-specific empirical claim is taken from metadata alone |
+| Cipollini and Levey (1997) | Full accessible article text plus Wiley/ESA publisher metadata; Introduction, experimental design, discussion, and conclusion inspected | Fruit secondary metabolites can affect vertebrate fruit choice, and nutrient-toxin titration can test their joint influence | Used to motivate a stylized nutrient-toxin analogy, not the model's exact toxic-safe-toxic age profile, coefficients, or universality |
 | Scholz et al. (2017) | Full open-access PNAS article, including model assumptions, results, and discussion | A data-driven sequential-decision model couples feeding as information sampling with nutrient intake and produces speed-accuracy and exploration-exploitation trade-offs | Their organism estimates ambient food availability; the present agents learn post-ingestive item values and receive resource age directly in B2 |
 
 ## Candidate sources not used for current manuscript claims
@@ -53,7 +59,7 @@ contribution:
    of the registered survival cost, with a separate within-configuration
    replication under monotonic toxicity.
 
-## References verified at full-text level
+## References and evidence levels
 
 Borg, J. M., & Channon, A. (2020). The effect of social information use without learning on the evolution of social behavior. *Artificial Life, 26*(4), 431–454. https://doi.org/10.1162/artl_a_00328
 
@@ -74,5 +80,13 @@ Giannakakis, E., Khajehabdollahi, S., & Levina, A. (2025). Network bottlenecks a
 Grimm, V., Railsback, S. F., Vincenot, C. E., Berger, U., Gallagher, C., DeAngelis, D. L., Edmonds, B., Ge, J., Giske, J., Groeneveld, J., Johnston, A. S. A., Miles, A., Nabe-Nielsen, J., Polhill, J. G., Radchuk, V., Rohwäder, M.-S., Stillman, R. A., Thiele, J. C., & Ayllón, D. (2020). The ODD protocol for describing agent-based and other simulation models: A second update to improve clarity, replication, and structural realism. *Journal of Artificial Societies and Social Simulation, 23*(2), Article 7. https://doi.org/10.18564/jasss.4259
 
 Ha, D. (2019). Reinforcement learning for improving agent design. *Artificial Life, 25*(4), 352–365. https://doi.org/10.1162/artl_a_00301
+
+McCallum, R. A. (1996). *Reinforcement learning with selective perception and hidden state* (Doctoral dissertation, University of Rochester). http://hdl.handle.net/1802/842
+
+Provenza, F. D. (1995). Postingestive feedback as an elementary determinant of food preference and intake in ruminants. *Journal of Range Management, 48*(1), 2–17. https://doi.org/10.2307/4002498
+
+Stephens, D. W., & Krebs, J. R. (1986). *Foraging theory*. Princeton University Press. https://doi.org/10.2307/j.ctvs32s6b
+
+Cipollini, M. L., & Levey, D. J. (1997). Why are some fruits toxic? Glycoalkaloids in *Solanum* and fruit choice by vertebrates. *Ecology, 78*(3), 782–798. https://doi.org/10.1890/0012-9658(1997)078[0782:WASFTG]2.0.CO;2
 
 Scholz, M., Dinner, A. R., Levine, E., & Biron, D. (2017). Stochastic feeding dynamics arise from the need for information and energy. *Proceedings of the National Academy of Sciences, 114*(35), 9261–9266. https://doi.org/10.1073/pnas.1703958114

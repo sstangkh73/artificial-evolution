@@ -147,8 +147,14 @@ def make_figure_1(e1: list[dict], output_dir: Path) -> None:
     for index, (arm, color) in enumerate(zip(E1_ARMS, colors)):
         draw_points(axes[0], index, values(e1, "founder_mean_attained_age", arm=arm), color)
         draw_points(axes[1], index, values(e1, "fruit_p_eat_given_encounter", arm=arm), color)
+    arm_labels = (
+        "A0\nnontoxic",
+        "A1\nconstant full toxin",
+        "A2\nage-varying",
+        "A3\nconstant net 6",
+    )
     for ax in axes:
-        ax.set_xticks(range(4), E1_ARMS)
+        ax.set_xticks(range(4), arm_labels)
         ax.grid(axis="y", alpha=0.2)
     axes[0].set_ylabel("Mean founder attained age (ticks)")
     axes[0].set_title("A  Survival outcome")
@@ -175,7 +181,10 @@ def make_figure_2(e2: list[dict], output_dir: Path) -> None:
     axes[0].set_title("A  State discrimination")
     axes[0].grid(axis="y", alpha=0.2)
     handles = [plt.Line2D([0], [0], marker="o", linestyle="", color=colors[arm], label=arm) for arm in E2_ARMS]
-    axes[0].legend(handles=handles, frameon=False, ncol=4, loc="lower center")
+    axes[0].legend(
+        handles=handles, frameon=False, ncol=4, loc="upper center",
+        bbox_to_anchor=(0.5, -0.14),
+    )
 
     indexed = {(row["profile"], row["arm"], row["seed"]): row for row in e2}
     contrast_arms = ("B2", "B3", "B4")
@@ -192,7 +201,10 @@ def make_figure_2(e2: list[dict], output_dir: Path) -> None:
     axes[1].set_title("B  Survival consequence")
     axes[1].grid(axis="y", alpha=0.2)
     handles = [plt.Line2D([0], [0], marker="o", linestyle="", color=colors[arm], label=f"{arm}-B1") for arm in contrast_arms]
-    axes[1].legend(handles=handles, frameon=False, ncol=3, loc="lower center")
+    axes[1].legend(
+        handles=handles, frameon=False, ncol=3, loc="upper center",
+        bbox_to_anchor=(0.5, -0.14),
+    )
     fig.savefig(output_dir / "figure_2_information_rescue.png", dpi=300)
     fig.savefig(output_dir / "figure_2_information_rescue.pdf")
     plt.close(fig)
@@ -208,22 +220,23 @@ def make_figure_3(e3: list[dict], e4: list[dict], output_dir: Path) -> None:
     axes[0].set_xticks(range(3), E3_ARMS)
     axes[0].axhline(0, color="black", linewidth=0.8)
     axes[0].set_ylabel("Within-founder selection differential")
-    axes[0].set_title("A  Toxin-tolerance selection")
+    axes[0].set_title("A  Toxin-tolerance selection", loc="left")
     axes[0].grid(axis="y", alpha=0.2)
 
-    labels = ("No learning", "Value learning")
+    labels = []
     for index, arm in enumerate(E4_ARMS):
         vals = values(e4, "raw_seed_p_eat_given_encounter", arm=arm)
         draw_points(axes[1], index, vals, colors[arm])
         mean_meals = mean_sd(values(e4, "raw_seed_meals", arm=arm))["mean"]
         mean_encounters = mean_sd(values(e4, "raw_seed_encounters", arm=arm))["mean"]
-        axes[1].text(index, 0.56 if index == 0 else 0.23,
-                     f"mean meals = {mean_meals:,.1f}\nmean encounters = {mean_encounters:,.1f}",
-                     ha="center", va="center", fontsize=8)
+        label = "No learning" if arm == "A_no_learning" else "Value learning"
+        labels.append(
+            f"{label}\nmeals {mean_meals:,.1f}; encounters {mean_encounters:,.1f}"
+        )
     axes[1].set_xticks(range(2), labels)
     axes[1].set_ylim(-0.04, 1.05)
     axes[1].set_ylabel("P(eat | raw-seed encounter)")
-    axes[1].set_title("B  Exposure denominator check")
+    axes[1].set_title("B  Exposure denominator check", loc="left")
     axes[1].grid(axis="y", alpha=0.2)
     fig.savefig(output_dir / "figure_3_selection_and_denominator.png", dpi=300)
     fig.savefig(output_dir / "figure_3_selection_and_denominator.pdf")

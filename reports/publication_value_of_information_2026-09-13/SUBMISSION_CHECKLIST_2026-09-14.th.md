@@ -1,23 +1,23 @@
 # Checklist ก่อนส่ง *Artificial Life*
 
-อ้างอิงข้อกำหนดวารสารที่ตรวจเมื่อ 2026-09-14: `https://direct.mit.edu/artl/pages/submission-guidelines` และนโยบาย AI ของวารสาร `https://direct.mit.edu/artl/article/29/2/141/116359/Editorial-What-Have-Large-Language-Models-and`
+อ้างอิงข้อกำหนดวารสารและนโยบาย MIT Press ที่ตรวจซ้ำเมื่อ 2026-09-16: `https://direct.mit.edu/artl/pages/submission-guidelines`, `https://direct.mit.edu/journals/pages/authors` และนโยบาย AI ของวารสาร `https://direct.mit.edu/artl/article/29/2/141/116359/Editorial-What-Have-Large-Language-Models-and`
 
 ## สถานะปัจจุบัน
 
 | รายการ | ข้อกำหนด/เหตุผล | สถานะ | งานถัดไป |
 |---|---|---|---|
-| ประเภทบทความ | Article โดยทั่วไป 6,000–12,000 คำ | ผ่าน: 6,901 คำตั้งแต่ abstract ถึง declarations โดยไม่รวม references/figure captions; 7,407 คำเมื่อรวม references และข้อมูลหน้าปก | ผู้เขียนตรวจว่าระบบส่งนับคำด้วยหลักเดียวกัน |
+| ประเภทบทความ | Article โดยทั่วไป 6,000–12,000 คำ | ผ่าน: 7,415 คำตั้งแต่ abstract ถึง declarations โดยไม่รวม references/figure captions; 8,043 คำเมื่อรวม references | ผู้เขียนตรวจว่าระบบส่งนับคำด้วยหลักเดียวกัน |
 | ความเหมาะสมกับวารสาร | ต้องอธิบายใน cover letter | ร่างแล้วและใส่ข้อมูลติดต่อแล้ว | ผู้เขียนตรวจถ้อยคำและเติมวันส่ง |
-| initial submission | ส่ง manuscript เป็น PDF ผ่าน ScholarOne | author-review PDF 35 หน้า; source ตรงกับ PDF ไม่มีโน้ตภายใน และแทรกรูป vector ทั้ง 5 ใกล้ Results ที่เกี่ยวข้อง | เติม DOI/คำรับรอง แล้วสร้าง PDF ใหม่และรัน audit จน `pdf.status` เป็น PASS |
+| initial submission | ส่ง manuscript เป็น PDF ผ่าน ScholarOne | author-review PDF 36 หน้า; source ตรงกับ PDF ไม่มีโน้ตภายใน และแทรกรูป vector ทั้ง 5 ใกล้ Results ที่เกี่ยวข้อง; `pdf.status` ยัง FAIL เพราะมี placeholder 6 จุด | เติม DOI/คำรับรอง แล้วสร้าง PDF ใหม่และรัน audit จน `pdf.status` เป็น PASS |
 | หน้าปก | title, author, affiliation/address/email, corresponding author, abstract, 5–6 keywords | ข้อมูลผู้เขียนทั้ง 5 ช่องยืนยันแล้วเมื่อ 15 กันยายน 2026 และใส่ใน PDF; keywords มี 6 คำ | คัดลอกข้อมูลเดียวกันลงระบบส่งและตรวจ proof |
 | ความใหม่/ไม่ส่งซ้ำ | ผู้เขียนรับรองว่าไม่ตีพิมพ์หรืออยู่ระหว่างพิจารณาที่อื่น | รอผู้เขียนรับรอง | ยืนยันใน cover letter/ระบบส่ง |
-| เนื้อหาหลัก | ต้นฉบับ Article ฉบับเต็ม | automated scientific audit ผ่าน; source และ PDF เหลือ placeholder 6 รายการใน declarations/archive | author line-by-line verification และปิด placeholder ที่เหลือ |
+| เนื้อหาหลัก | ต้นฉบับ Article ฉบับเต็ม | major rewrite ตาม Red Team เสร็จและ automated scientific audit ผ่าน; source/PDF ยังมี placeholder 6 รายการใน declarations/archive | author line-by-line verification และปิด placeholder ที่เหลือ |
 | รูป | แนะนำ vector สำหรับกราฟ/diagram | พร้อม | ใช้ PDF vector ทั้ง 5 รูปเป็น master; PNG 300 dpi ใช้ preview เท่านั้น |
-| figure source data | ต้องตรวจย้อนกลับได้ | พร้อม 8 ตาราง | ตรวจ caption/เลขรูปหลังจัดหน้า |
+| figure source data | ต้องตรวจย้อนกลับได้ | สร้างรูป vector/PNG ใหม่ครบ 5 รูป พร้อม source tables เดิมและ revision CSV/JSON ชุดกลไก | ผู้เขียนตรวจ caption และ interpretation รอบสุดท้าย |
 | supplementary material | ต้องแนบพร้อมบทความหรือให้ URL ที่ไม่กระทบ anonymity | โครงสร้างพร้อม | รวม ODD, parameter/state/version/reproduction files เป็น reviewer package |
-| data/code policy | ทำข้อมูลที่รองรับข้อสรุปให้เข้าถึงได้และ cite ในบทความ | 5 ZIP พร้อมในเครื่องและตรวจสมาชิก 696 ไฟล์แล้ว | ผู้เขียนฝาก package ออก DOI ดาวน์โหลดกลับ และตรวจซ้ำ |
+| data/code policy | ทำข้อมูลที่รองรับข้อสรุปให้เข้าถึงได้และ cite ในบทความ | revision inventory ตรวจ 52 artifacts และ rehash raw 600 ไฟล์ผ่านแล้ว; pre-revision 5 ZIP/696-file inventory ยังไม่ใช่ package ของต้นฉบับรอบนี้ | หลังผู้เขียนปิดข้อความ ให้ rebuild 5 bundles ฝาก DOI ดาวน์โหลดกลับ และตรวจซ้ำ |
 | reproducibility | reviewer ต้องรันและตรวจได้ | internal deterministic smoke ผ่าน | ให้บุคคลอื่นทำ protocol และลงชื่อผล; ห้ามเรียก independent ก่อนสำเร็จ |
-| citations | APA 7 และทุก claim ต้องอยู่ในขอบเขตหลักฐานที่ตรวจ | 11 แหล่งวิชาการและ 1 รายการเครื่องมือ AI; 6 แหล่งมาจาก *Artificial Life*; แหล่งวิชาการที่อ้างทั้งหมดตรวจฉบับเต็มแล้ว | ผู้เขียนตรวจ metadata/หน้า/DOI/URL รอบสุดท้าย |
+| citations | APA 7 และทุก claim ต้องอยู่ในขอบเขตหลักฐานที่ตรวจ | 15 แหล่งวิชาการและ 2 รายการเครื่องมือ AI; 6 แหล่งมาจาก *Artificial Life*; แหล่งที่เพิ่มใน revision ตรวจ metadata จาก publisher/repository records แล้ว | ผู้เขียนเปิดตรวจฉบับเต็มและยืนยัน metadata/หน้า/DOI/URL รอบสุดท้าย |
 | AI disclosure | ทุกการใช้ generative AI ต้องระบุชัดและอ้างแหล่ง/เวอร์ชัน/วันที่ | ร่าง disclosure พร้อมชื่อ รุ่น URL วันที่ งานที่ใช้ และ formal citation แล้ว | ผู้เขียนตรวจ AI log, เติมการใช้ที่อาจตกหล่น และอนุมัติข้อความใน manuscript/cover letter |
 | funding | ต้องรายงานตามจริง | ไม่ทราบ | ผู้เขียนเติม “no specific funding” หรือรายละเอียดทุนตามจริง |
 | competing interests | ต้องรายงานตามจริง | ไม่ทราบ | ผู้เขียนเติม statement |
@@ -28,7 +28,7 @@
 ## ไฟล์ที่พร้อมใช้
 
 - `manuscript_v0.en.md` — ต้นฉบับฉบับเต็ม
-- `submission/manuscript_initial_submission_draft.pdf` — author-review PDF 35 หน้าแบบ single-column, double-spaced พร้อม Table 1 และรูป vector 5 หน้าที่แทรกใน Results; ยังมี placeholder 6 รายการที่ห้ามส่ง
+- `submission/manuscript_initial_submission_draft.pdf` — author-review PDF 36 หน้าแบบ single-column, double-spaced พร้อมตารางหลัก 3 ตารางและรูป vector 5 หน้าที่แทรกใน Results; ยังมี placeholder 6 รายการที่ห้ามส่ง
 - `submission/manuscript_submission_audit.json` — ผลตรวจจำนวนคำ abstract keywords รูป citation ตัวเลข confirmatory และ placeholder
 - `cover_letter_draft.en.md` — cover letter ที่ใส่ข้อมูลผู้เขียนแล้ว แต่ยังต้องเติมวันส่ง DOI และคำรับรอง
 - `ODD_MODEL_DESCRIPTION_DRAFT.en.md` — model description
@@ -36,16 +36,18 @@
 - `supplement/STATE_VARIABLE_CATALOGUE.en.md` — focal state/process catalogue
 - `supplement/CODE_VERSION_AUDIT.en.md` — audit ความต่าง 5 run revisions
 - `supplement/INDEPENDENT_REPRODUCTION_PROTOCOL.en.md` — ขั้นตอนตรวจโดยบุคคลอื่น
-- `supplement/PUBLIC_ARCHIVE_MANIFEST.en.md` พร้อม JSON inventory และ SHA-256 — ขอบเขต release 5 bundles, 696 ไฟล์
+- `supplement/PUBLIC_ARCHIVE_MANIFEST.en.md` — ขอบเขต release 5 bundles; package 696 ไฟล์เดิมเป็น pre-revision baseline
 - `output/publication_release_2026-09-14/` — ชุดอัปโหลด 5 ZIP พร้อม package-level checksum; ไม่เก็บ ZIP ซ้ำใน Git
 - `confirmatory/` — analysis, validators, source data, figures และ checksum manifest
 - `AI_USE_LOG.md` — บันทึกการใช้ generative AI
+- `revision_2026-09-15/` — baseline manifest, claim-to-evidence checklist, mechanism report, prediction/deviation audits และ revision source tables
+- `revision_2026-09-15/revision_release_inventory.json` และ `revision_release_checksums.sha256` — ตรวจ 52 revision artifacts และยืนยัน raw baseline 600 ไฟล์
 
 ## Gate ที่ต้องผ่านก่อนกดส่ง
 
 1. ผู้เขียนตรวจทุกบรรทัดของต้นฉบับ ตัวเลข ตาราง รูป และ reference โดยเปิดหลักฐานต้นทางประกอบ
 2. บุคคลอื่นรัน independent reproduction protocol แล้วได้ `PASS` พร้อมบันทึกชื่อ ระบบ และ hash
-3. ฝาก reviewer-safe public archive/DOI ตาม manifest แล้วตรวจ release checksum 696 รายการหลังดาวน์โหลดกลับ (checksum เดิม 616 รายการเป็น core subset)
+3. หลังปิด declarations/disclosure แล้ว rebuild 5 release bundles จาก revision inventory ฝาก reviewer-safe public archive/DOI และตรวจ checksum หลังดาวน์โหลดกลับ (pre-revision inventory 696 ไฟล์และ core checksum 616 รายการใช้เป็น baseline เท่านั้น)
 4. เติม Data and Code Availability และ AI Disclosure ในต้นฉบับด้วย URL/DOI และข้อความที่ผู้เขียนอนุมัติ
 5. เติม funding, conflict และ ethics statements
 6. จัดหน้า PDF แบบ single-column double-spaced ฝังรูป vector ตรวจทุกหน้า และนับคำครั้งสุดท้าย

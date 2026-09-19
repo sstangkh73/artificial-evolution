@@ -116,17 +116,18 @@ def make_figures(e6_rows: list[dict], t2_rows: list[dict], output_dir: Path) -> 
     by_seed: dict[int, list[dict]] = {}
     for row in e6_rows:
         by_seed.setdefault(int(row["seed"]), []).append(row)
-    for seed_rows in by_seed.values():
+    for seed_index, seed_rows in enumerate(by_seed.values()):
         ordered = sorted(seed_rows, key=lambda row: row["realized_fruit_energy"])
         axes[0].plot(
             [row["realized_fruit_energy"] for row in ordered],
             [row["B2_minus_B3_followup_ticks"] for row in ordered],
             color="#7f8c8d", alpha=0.18, linewidth=0.7,
+            label="Within-seed B2-B3" if seed_index == 0 else None,
         )
-    for field, label, color, marker in (
-        ("B2_minus_B3_followup_ticks", "B2-B3 (registered primary)", "#1f4e79", "o"),
-        ("B2_minus_B1_followup_ticks", "B2-B1", "#009E73", "s"),
-        ("B3_minus_B1_followup_ticks", "B3-B1 (descriptive)", "#D55E00", "^"),
+    for field, label, color, marker, offset in (
+        ("B2_minus_B3_followup_ticks", "B2-B3 (frozen primary)", "#1f4e79", "o", -0.10),
+        ("B2_minus_B1_followup_ticks", "B2-B1", "#009E73", "s", 0.00),
+        ("B3_minus_B1_followup_ticks", "B3-B1 (descriptive)", "#D55E00", "^", 0.10),
     ):
         means, lows, highs = [], [], []
         for energy in ENERGIES:
@@ -139,14 +140,21 @@ def make_figures(e6_rows: list[dict], t2_rows: list[dict], output_dir: Path) -> 
             lows.append(means[-1] - ci["low"])
             highs.append(ci["high"] - means[-1])
         axes[0].errorbar(
-            ENERGIES, means, yerr=[lows, highs], color=color, marker=marker,
+            [energy + offset for energy in ENERGIES], means,
+            yerr=[lows, highs], color=color, marker=marker,
             linewidth=1.8, capsize=3, label=label,
         )
     axes[0].axhline(0, color="black", linewidth=0.8)
+    policy_boundary = 5.0 / 0.6
+    axes[0].axvline(policy_boundary, color="#555555", linestyle="--", linewidth=0.9)
+    axes[0].text(
+        policy_boundary + 0.04, 0.98, "policy boundary", transform=axes[0].get_xaxis_transform(),
+        rotation=90, ha="left", va="top", fontsize=8.5, color="#555555",
+    )
     axes[0].set_xlabel("Realized safe-fruit energy")
-    axes[0].set_ylabel("Paired restricted mean follow-up difference (ticks)")
+    axes[0].set_ylabel("Paired follow-up difference (ticks)")
     axes[0].set_title("A  Survival effect by resource payoff")
-    axes[0].legend(frameon=False, loc="best", fontsize=9.5)
+    axes[0].legend(frameon=False, loc="lower left", fontsize=8.3)
 
     for field, label, color in (
         ("B1_discrimination_index", "Type-only key (B1)", "#333333"),
@@ -178,7 +186,7 @@ def make_figures(e6_rows: list[dict], t2_rows: list[dict], output_dir: Path) -> 
     plt.close(fig)
 
     plt.rcParams.update({"font.size": 9, "axes.titlesize": "large"})
-    fig, ax = plt.subplots(figsize=(5.6, 4.2), constrained_layout=True)
+    fig, ax = plt.subplots(figsize=(6.2, 4.2), constrained_layout=True)
     series = [
         [float(row["A2_minus_A3O_followup_ticks"]) for row in t2_rows],
         [float(row["A2_minus_A3R_followup_ticks"]) for row in t2_rows],
@@ -195,11 +203,11 @@ def make_figures(e6_rows: list[dict], t2_rows: list[dict], output_dir: Path) -> 
             marker="D", color="black", capsize=5, markersize=6, linewidth=1.8,
         )
     ax.axhline(0, color="black", linewidth=0.8)
-    ax.axhline(-5, color="#555555", linestyle="--", linewidth=0.9, label="SESOI = -5 ticks")
-    ax.set_xticks([0, 1], ["A2-A3O\noriginal control", "A2-A3R\nrecalibrated control"])
-    ax.set_ylabel("Paired restricted mean follow-up difference (ticks)")
+    ax.axhline(-5, color="#555555", linestyle="--", linewidth=0.9, label="Frozen effect scale = -5")
+    ax.set_xticks([0, 1], ["A2-A3O\noriginal", "A2-A3R\nrecalibrated"])
+    ax.set_ylabel("Paired follow-up difference (ticks)")
     ax.set_title("T2-RB replication across 50 matched seeds")
-    ax.legend(frameon=False, loc="lower right")
+    ax.legend(frameon=False, loc="upper right")
     fig.savefig(output_dir / "figure_t2rb_replication.png", dpi=300)
     fig.savefig(output_dir / "figure_t2rb_replication.pdf")
     plt.close(fig)
