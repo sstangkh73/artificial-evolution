@@ -4,10 +4,10 @@
   "automated_scientific_checks": "PASS",
   "submission_ready": false,
   "word_counts": {
-    "gross_article_through_declarations_and_references": 8231,
+    "gross_article_through_declarations_and_references": 8445,
     "abstract": 248,
-    "conservative_abstract_through_declarations_excluding_references": 7608,
-    "core_article_abstract_through_conclusion": 7277
+    "conservative_abstract_through_declarations_excluding_references": 7839,
+    "core_article_abstract_through_conclusion": 7517
   },
   "keywords": [
     "artificial life",
@@ -62,7 +62,7 @@
     "references_page": 35,
     "figures_interleaved_before_references": true,
     "figures_in_numerical_page_order": true,
-    "results_heading_page": 14,
+    "results_heading_page": 15,
     "figures_after_results_heading": true
   },
   "author_actions_expected": [

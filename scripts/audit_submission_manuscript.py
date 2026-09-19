@@ -375,6 +375,14 @@ def audit(pdf_path: Path = SUBMISSION_PDF) -> dict[str, object]:
         "For this major revision",
         "red-team mechanism tables",
         "Supplementary Red-team Revision Tables",
+        "H1.2",
+        "H3.2",
+        "Before revision",
+        "the separate revision inventory",
+        "accompanies this draft",
+        "The working supplement",
+        "is being rebuilt",
+        "|0.1|",
     )
     for phrase in disallowed_phrases:
         require(phrase not in manuscript, f"unsupported or imprecise phrase remains: {phrase}", failures)

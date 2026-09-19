@@ -51,7 +51,7 @@ FIGURES = (
 FIGURE_INSERT_BEFORE = {
     "### 3.2 Primary survival contrast: B2 did not outperform the sham": 1,
     "### 3.3 Energy 10 coincided with a policy-regime change and senescence ceiling": 2,
-    "### 3.6 T2-RB: deficit under constant-payoff controls": 3,
+    "### 3.6 High-drain replication (T2-RB): deficit under constant-payoff controls": 3,
     "### 3.7 Prediction and deviation audit": 4,
     "## 4. Discussion": 5,
 }
@@ -401,7 +401,7 @@ def build_text_pdf(title: str, lines: list[str], styles: dict[str, ParagraphStyl
         bottomMargin=0.8 * inch,
         title=title,
         author=AUTHOR_NAME,
-        subject="Initial submission manuscript draft for Artificial Life",
+        subject="Initial submission manuscript for Artificial Life",
     )
     document.build(story, onFirstPage=page_furniture, onLaterPages=page_furniture)
 

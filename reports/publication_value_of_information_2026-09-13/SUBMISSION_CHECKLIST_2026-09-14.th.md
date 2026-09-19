@@ -6,7 +6,7 @@
 
 | รายการ | ข้อกำหนด/เหตุผล | สถานะ | งานถัดไป |
 |---|---|---|---|
-| ประเภทบทความ | Article โดยทั่วไป 6,000–12,000 คำ | ผ่าน: 7,415 คำตั้งแต่ abstract ถึง declarations โดยไม่รวม references/figure captions; 8,043 คำเมื่อรวม references | ผู้เขียนตรวจว่าระบบส่งนับคำด้วยหลักเดียวกัน |
+| ประเภทบทความ | Article โดยทั่วไป 6,000–12,000 คำ | ผ่าน: audit ปัจจุบันนับ 7,839 คำตั้งแต่ abstract ถึง declarations โดยไม่รวม references/figure captions; 8,445 คำเมื่อรวม references; 7,517 คำตั้งแต่ abstract ถึง conclusion; abstract 248 คำ | ผู้เขียนตรวจว่าระบบส่งนับคำด้วยหลักเดียวกัน |
 | ความเหมาะสมกับวารสาร | ต้องอธิบายใน cover letter | ร่างแล้วและใส่ข้อมูลติดต่อแล้ว | ผู้เขียนตรวจถ้อยคำและเติมวันส่ง |
 | initial submission | ส่ง manuscript เป็น PDF ผ่าน ScholarOne | author-review PDF 36 หน้า; source ตรงกับ PDF ไม่มีโน้ตภายใน และแทรกรูป vector ทั้ง 5 ใกล้ Results ที่เกี่ยวข้อง; `pdf.status` ยัง FAIL เพราะมี placeholder 6 จุด | เติม DOI/คำรับรอง แล้วสร้าง PDF ใหม่และรัน audit จน `pdf.status` เป็น PASS |
 | หน้าปก | title, author, affiliation/address/email, corresponding author, abstract, 5–6 keywords | ข้อมูลผู้เขียนทั้ง 5 ช่องยืนยันแล้วเมื่อ 15 กันยายน 2026 และใส่ใน PDF; keywords มี 6 คำ | คัดลอกข้อมูลเดียวกันลงระบบส่งและตรวจ proof |
