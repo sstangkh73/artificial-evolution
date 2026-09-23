@@ -2,7 +2,6 @@
 
 import os
 import sys
-import tempfile
 import unittest
 from pathlib import Path
 
@@ -90,8 +89,9 @@ class PdfTextAuditTests(unittest.TestCase):
         self.assertEqual(result["status"], "FAIL")
 
     def test_missing_pdf_is_reported_not_raised(self):
-        with tempfile.TemporaryDirectory() as tmp:
-            result = audit.audit_pdf(Path(tmp) / "absent.pdf", TITLE, ABSTRACT)
+        absent = Path(__file__).with_name("definitely_absent_submission_test.pdf")
+        self.assertFalse(absent.exists())
+        result = audit.audit_pdf(absent, TITLE, ABSTRACT)
         self.assertFalse(result["present"])
         self.assertEqual(result["status"], "MISSING")
 

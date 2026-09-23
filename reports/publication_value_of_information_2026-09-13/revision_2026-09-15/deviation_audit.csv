@@ -1,0 +1,8 @@
+date,item,timing,impact,source
+2026-09-13,E2 oracle B4 and discrimination index implemented after initial freeze,before E2 runs; after narrative freeze,implementation was not fixed by the original code revision,reports/prereg/PREREG_toxin_ecological_trap_2026-09-12.th.md section 11
+2026-09-13,E4 runnable specification added after initial freeze,retroactive denominator check,"E4 is measurement validation, not a co-frozen confirmatory toxin result",reports/prereg/PREREG_toxin_ecological_trap_2026-09-12.th.md section 11
+2026-09-13,E5 A2-A3 classified exploratory,after E1 falsified H1.2,E5 generated the T2-RB replication question,reports/prereg/PREREG_toxin_ecological_trap_2026-09-12.th.md section 11
+2026-09-14,E6 encounter gate interpreted as level mean,analysis code written after primary-result reveal,level-mean gate passes; stricter per-run reading fails at energies 4-6,confirmatory/e6/E6_secondary_and_mechanism.json
+2026-09-15,No externally timestamped preregistration located for E1-E6/T2-RB,red-team provenance audit,manuscript must say internally frozen at a Git tag,REDTEAM_manuscript_initial_submission_2026-09-15.th.md
+2026-09-16,Starvation-override meals cannot be identified from archived telemetry,post hoc raw-data audit,causal path through override timing remains unresolved,revision_2026-09-15/derived/mechanism_analysis.json
+2026-09-16,Skip/encounter counts can include repeated contact with the same item,post hoc raw-data audit,counts are descriptive and not independent item encounters,revision_2026-09-15/derived/mechanism_analysis.json

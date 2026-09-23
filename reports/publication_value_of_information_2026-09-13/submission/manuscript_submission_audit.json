@@ -4,10 +4,10 @@
   "automated_scientific_checks": "PASS",
   "submission_ready": false,
   "word_counts": {
-    "gross_article_through_declarations_and_references": 8445,
-    "abstract": 248,
-    "conservative_abstract_through_declarations_excluding_references": 7839,
-    "core_article_abstract_through_conclusion": 7517
+    "gross_article_through_declarations_and_references": 8473,
+    "abstract": 249,
+    "conservative_abstract_through_declarations_excluding_references": 7868,
+    "core_article_abstract_through_conclusion": 7526
   },
   "keywords": [
     "artificial life",
@@ -21,33 +21,27 @@
   "bibliography_entries": 17,
   "artificial_life_journal_entries": 6,
   "unresolved_placeholders": [
-    "[Author approval required.]",
     "[Author confirmation required. Complete a CRediT statement covering conceptualization, methodology, software, validation, formal analysis, investigation, data curation, visualization, writing, and project administration.]",
     "[Author confirmation required. If accurate: The author declares no competing interests.]",
     "[Author confirmation required. If accurate: This research received no specific grant from any funding agency in the public, commercial, or not-for-profit sectors.]",
-    "[Author confirmation required. Proposed statement: This study used only computer simulations and involved no human participants or live animals; institutional ethics approval was therefore not required.]",
     "[Insert the versioned public archive citation, DOI, and code-release tag after deposit and download-back verification; do not submit this placeholder.]"
   ],
   "source_markdown_placeholders": [
-    "[Author approval required.]",
     "[Author confirmation required. Complete a CRediT statement covering conceptualization, methodology, software, validation, formal analysis, investigation, data curation, visualization, writing, and project administration.]",
     "[Author confirmation required. If accurate: The author declares no competing interests.]",
     "[Author confirmation required. If accurate: This research received no specific grant from any funding agency in the public, commercial, or not-for-profit sectors.]",
-    "[Author confirmation required. Proposed statement: This study used only computer simulations and involved no human participants or live animals; institutional ethics approval was therefore not required.]",
     "[Insert the versioned public archive citation, DOI, and code-release tag after deposit and download-back verification; do not submit this placeholder.]"
   ],
   "pdf": {
     "path": "reports/publication_value_of_information_2026-09-13/submission/manuscript_initial_submission_draft.pdf",
     "present": true,
-    "pages": 36,
+    "pages": 37,
     "status": "FAIL",
     "matches_manuscript": true,
     "unresolved_placeholders": [
-      "[Author approval required.]",
       "[Author confirmation required. Complete a CRediT statement covering conceptualization, methodology, software, validation, formal analysis, investigation, data curation, visualization, writing, and project administration.]",
       "[Author confirmation required. If accurate: The author declares no competing interests.]",
       "[Author confirmation required. If accurate: This research received no specific grant from any funding agency in the public, commercial, or not-for-profit sectors.]",
-      "[Author confirmation required. Proposed statement: This study used only computer simulations and involved no human participants or live animals; institutional ethics approval was therefore not required.]",
       "[Insert the versioned public archive citation, DOI, and code-release tag after deposit and download-back verification; do not submit this placeholder.]"
     ],
     "internal_notes": [],
@@ -69,9 +63,7 @@
     "public archive citation/DOI/code-release tag",
     "funding statement",
     "competing-interest statement",
-    "ethics confirmation",
-    "author-contribution statement",
-    "AI-disclosure approval and any additional AI use"
+    "author-contribution statement"
   ],
   "failures": [],
   "evidence_sources": [

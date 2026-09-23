@@ -185,8 +185,8 @@ def make_styles() -> dict[str, ParagraphStyle]:
             "SubmissionCaption",
             parent=base["BodyText"],
             fontName=FONT_REGULAR,
-            fontSize=10.5,
-            leading=14,
+            fontSize=11,
+            leading=22,
             textColor="#000000",
             alignment=TA_LEFT,
         ),
@@ -429,6 +429,11 @@ def place_vector_figures(
 ) -> None:
     text_reader = PdfReader(str(text_pdf))
     writer = PdfWriter()
+    writer.add_metadata({
+        "/Title": text_reader.metadata.title or "Correct State Information Is Not Enough",
+        "/Author": AUTHOR_NAME,
+        "/Subject": "Initial submission manuscript for Artificial Life",
+    })
     marker_pages: dict[int, int] = {}
     for page_index, page in enumerate(text_reader.pages):
         text = page.extract_text() or ""
@@ -458,16 +463,23 @@ def place_vector_figures(
         source_page = figure_reader.pages[0]
         source_width = float(source_page.mediabox.width)
         source_height = float(source_page.mediabox.height)
-        available_height = 5.6 * inch
+        caption_flowable = Paragraph(inline(caption), styles["caption"])
+        _, caption_height = caption_flowable.wrap(CONTENT_WIDTH, 3.0 * inch)
+        figure_top = LETTER[1] - 0.9 * inch
+        caption_gap = 0.18 * inch
+        caption_floor = 0.85 * inch
+        available_height = figure_top - caption_floor - caption_gap - caption_height
+        if available_height <= 0:
+            raise ValueError(f"caption leaves no room for figure {figure_number}")
         scale = min(CONTENT_WIDTH / source_width, available_height / source_height)
         width = source_width * scale
         height = source_height * scale
         x = (LETTER[0] - width) / 2
-        y = LETTER[1] - 1.0 * inch - height
+        y = figure_top - height
         # Replace the marker page instead of merging onto it so the internal
         # marker never survives in searchable or copied manuscript text.
         target_page = writer.add_blank_page(width=LETTER[0], height=LETTER[1])
-        overlay = figure_overlay(caption, styles, page_index + 1, y - 14).pages[0]
+        overlay = figure_overlay(caption, styles, page_index + 1, y - caption_gap).pages[0]
         target_page.merge_page(overlay, over=True)
         target_page.merge_transformed_page(
             source_page,

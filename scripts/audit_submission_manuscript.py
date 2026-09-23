@@ -363,7 +363,14 @@ def audit(pdf_path: Path = SUBMISSION_PDF) -> dict[str, object]:
             f"*d*<sub>z</sub> = {contrast['paired_standardized_mean_difference_dz']:.3f}",
         ])
     for fragment in required_fragments:
-        require(fragment in manuscript, f"evidence-bound numeric text missing: {fragment}", failures)
+        alternatives = {fragment}
+        if fragment.startswith("p="):
+            alternatives.add(fragment.replace("p=", "p = ", 1))
+        require(
+            any(candidate in manuscript for candidate in alternatives),
+            f"evidence-bound numeric text missing: {fragment}",
+            failures,
+        )
 
     disallowed_phrases = (
         "indistinguishable from zero at 10",
@@ -390,14 +397,17 @@ def audit(pdf_path: Path = SUBMISSION_PDF) -> dict[str, object]:
     source_placeholders = sorted(set(PLACEHOLDER.findall(manuscript)))
     pdf = audit_pdf(pdf_path, title, abstract, AUTHOR_METADATA)
     placeholders = sorted(set(source_placeholders) | set(pdf["unresolved_placeholders"]))
-    expected_author_actions = (
-        "public archive citation/DOI/code-release tag",
-        "funding statement",
-        "competing-interest statement",
-        "ethics confirmation",
-        "author-contribution statement",
-        "AI-disclosure approval and any additional AI use",
+    action_markers = (
+        ("public archive citation", "public archive citation/DOI/code-release tag"),
+        ("specific grant", "funding statement"),
+        ("competing interests", "competing-interest statement"),
+        ("CRediT statement", "author-contribution statement"),
     )
+    expected_author_actions = [
+        action
+        for marker, action in action_markers
+        if any(marker.lower() in placeholder.lower() for placeholder in placeholders)
+    ]
     return {
         "schema_version": 2,
         "manuscript": MANUSCRIPT.relative_to(ROOT).as_posix(),
@@ -416,7 +426,7 @@ def audit(pdf_path: Path = SUBMISSION_PDF) -> dict[str, object]:
         "unresolved_placeholders": placeholders,
         "source_markdown_placeholders": source_placeholders,
         "pdf": pdf,
-        "author_actions_expected": list(expected_author_actions),
+        "author_actions_expected": expected_author_actions,
         "failures": failures,
         "evidence_sources": [
             E6_ANALYSIS.relative_to(ROOT).as_posix(),

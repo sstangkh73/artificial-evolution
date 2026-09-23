@@ -1,0 +1,15 @@
+id,status,prediction,observed,verdict,source
+H1.1,frozen/registered,A2-A0 founder age < 0,"-27.729, 95% CI -33.691 to -21.767",supported,reports/e1_20260912/E1_T1_A2_vs_A0.json
+H1.2,frozen/registered,A2-A3 founder age < 0,"1.080, 95% CI -2.390 to 4.550",falsified,reports/e1_20260912/E1_T2_A2_vs_A3.json
+H1.3,frozen/registered,A2-A1 fruit acceptance > 0,"0.357, 95% CI 0.323 to 0.391",supported,reports/e1_20260912/E1_T3_peat.json
+H2.1,frozen/registered,D(B2) > 0 in M and W,"B2-B3 0.786 (M), 0.751 (W)",supported,reports/e2_20260913/E2_M_primary.json; E2_W_primary.json
+H2.2,frozen/registered,D(B3) approximately 0,"-0.083 (M), -0.094 (W)",exact zero-like prediction not met; B3 remains far below B2,confirmatory/source_data/e2_seed_outcomes.csv
+H2.3,frozen/registered,D(B1) = 0 by structure,"0.062 (M), -0.052 (W)",structural-zero prediction not met,confirmatory/source_data/e2_seed_outcomes.csv
+H2.4,frozen/registered,D(B4) > D(B2),0.900 > 0.702; 0.854 > 0.657,supported,confirmatory/source_data/e2_seed_outcomes.csv
+H3.1,frozen/registered,S(A2)-S(A0) > 0,"0.0255, 95% CI 0.0191 to 0.0319",supported,reports/e3_20260913/E3_H31.json
+H3.2,frozen/registered,S(A2)-S(A3) > 0,"-0.0083, 95% CI -0.0135 to -0.0032",falsified in the opposite direction,reports/e3_20260913/E3_H32.json
+E5 regime prediction,frozen narrative prediction; exploratory contrast,A2-A3 deficit should weaken under higher drain,"A2-A3 -6.150, 95% CI -12.010 to -0.290",prediction failed; exploratory result motivated T2-RB,reports/e5_20260913/E5_T2.json
+H6.1 directional rule,frozen/registered,mean B2-B3 slope > 0 and 95% CI excludes 0,"0.890, 95% CI 0.059 to 1.722",registered statistical rule met,revision_2026-09-15/derived/mechanism_analysis.json
+H6.1 mechanistic rationale,registered directional rationale,age information becomes more survival-beneficial as safe fruit energy rises,E4=-5.431; E5=-5.576; E6=-6.141; E8=-7.650; E10=1.365,not supported at levels 4-8; non-negative only at the regime-changing endpoint 10,revision_2026-09-15/derived/mechanism_analysis.json
+H6.1 SESOI sensitivity,post hoc minimum-effect test,mean slope > 1 tick per energy,one-sided sign-flip p=0.607,effect above SESOI not established,revision_2026-09-15/derived/mechanism_analysis.json
+T2-RB primary,frozen/registered,A2-A3R follow-up < 0,"-7.928 [-11.046, -4.810]",supported; minimum effect beyond -5 not established because CI crosses -5,revision_2026-09-15/derived/mechanism_analysis.json
