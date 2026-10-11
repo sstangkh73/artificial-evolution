@@ -47,3 +47,18 @@ utmt_release.json
 
 # Third-party paper PDFs are copyrighted; only the reading list is published
 papers/*.pdf
+
+# Local scratch and large generated outputs (kept out of git)
+/tmp/
+/output/
+/.codex_tmp/
+data/*.pid
+data/confirmatory_resource_age_2026-09-14/
+data/e0_pilot_20260912/
+data/e1_20260912/
+data/e2_20260913/
+data/e3_20260913/
+data/e4_20260913/
+data/e5_20260913/
+data/multiseed/
+data/phase5_5_state_decoupled_confirm01_20260613/
