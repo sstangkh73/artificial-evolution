@@ -62,3 +62,6 @@ data/e4_20260913/
 data/e5_20260913/
 data/multiseed/
 data/phase5_5_state_decoupled_confirm01_20260613/
+
+# YSC 2027 tool-discovery smoke/pilot raw runs (summaries + manifests are committed)
+data/tool_discovery_smoke_*/runs/

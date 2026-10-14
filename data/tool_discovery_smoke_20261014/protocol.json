@@ -1,0 +1,66 @@
+{
+  "created": "2026-10-14T13:39:02",
+  "git_commit": "55dbc91ea3c270dc71682985fbf8b8a0eb81726a",
+  "code_dirty": true,
+  "python": "3.14.3",
+  "conditions": [
+    "C0",
+    "C1",
+    "C2",
+    "C3",
+    "C4"
+  ],
+  "seeds": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "overrides": {},
+  "base_config": {
+    "seed": 0,
+    "condition": "C1",
+    "n_agents": 20,
+    "ticks": 800,
+    "width": 40,
+    "height": 40,
+    "start_energy": 100.0,
+    "max_energy": 150.0,
+    "drain_per_tick": 0.3,
+    "gather_cost": 1.0,
+    "craft_cost_per_material": 2.0,
+    "craft_energy_reserve": 20.0,
+    "use_effort_base": 0.5,
+    "use_effort_per_mass": 0.25,
+    "target_prob": 0.35,
+    "bare_yield": {
+      "plant": 2.0,
+      "prey": 0.5,
+      "soil": 1.5
+    },
+    "success_yield": {
+      "plant": 5.0,
+      "prey": 9.0,
+      "soil": 6.0
+    },
+    "threshold": {
+      "plant": 12.0,
+      "prey": 14.0,
+      "soil": 10.0
+    },
+    "max_materials": 6,
+    "max_objects": 2,
+    "min_mix_size": 2,
+    "max_mix_size": 4,
+    "alpha": 0.2,
+    "epsilon": 0.1,
+    "q_init": 0.0,
+    "feature_bin_width": 3,
+    "shuffle_window": 50,
+    "c0_discard_prob": 0.5,
+    "transfer_tick": null,
+    "blocked_materials_after_transfer": [],
+    "freeze_memory_tick": null
+  }
+}
