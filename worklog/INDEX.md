@@ -1,3 +1,4 @@
+- 2026-10-14 — YSC 2027 เฟส 3: pilot + ตรึง protocol ยืนยัน (ysc-loop, ยังไม่รัน seeds 5000+) — Done — [plan](2026-10-14-ysc-phase3-loop/plan.md) · [report](2026-10-14-ysc-phase3-loop/report.md)
 - 2026-10-14 — ตรวจสอบงาน YSC เฟส 0–2 (commit 18afb12) — Done — [plan](2026-10-14-ysc-review/plan.md) · [report](2026-10-14-ysc-review/report.md)
 - 2026-10-14 — YSC 2027 แผนเร่ง + เฟส 0–2 สนามทดลองค้นพบเครื่องมือ — Done — [plan](2026-10-14-ysc-phase0-2-tool-arena/plan.md) · [report](2026-10-14-ysc-phase0-2-tool-arena/report.md)
 - 2026-10-14 — เช็คสถานะงาน YSC 2027 เทียบกับข้อเสนอ — Done — [plan](2026-10-14-ysc-status-check/plan.md) · [report](2026-10-14-ysc-status-check/report.md)
