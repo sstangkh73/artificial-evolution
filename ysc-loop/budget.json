@@ -1,0 +1,5 @@
+{
+  "_comment": "Token budget per agent for this loop. Edit before starting. Usage is logged to ysc-loop/.loop/usage.csv. Claude counts input + output + cache-creation tokens (cache reads excluded); Codex counts the 'tokens used' line of codex exec.",
+  "claude_tokens": 30000000,
+  "codex_tokens": 10000000
+}
