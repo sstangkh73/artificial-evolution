@@ -16,6 +16,11 @@
   - `platform_normal` เป็น 2D ใน 3D → แก้ให้ตรงมิติ
   - เทสต์: อ่าน spec จาก path ของเทสต์เอง, ตรวจ `MATERIAL_NAMES` เป็น tuple, ตรวจค่าแร่ทุกฟิลด์และค่า Phase, เพิ่ม EPA 110°, เพิ่มกรณี depth ไม่ลงตัว และกรณี Stone ผิด
   - ไม่แก้: "เทสต์ containment ของ polygon จริง" เพราะเทสต์พื้นที่เทียบสูตรรูปหลายเหลี่ยม (คลาด ≤2%) และเทสต์มุมหน้าแกน (±1°) ครอบคลุมแล้ว
+- **รอบ 2 (ขั้น 2 ก) Codex รีวิวงาน Claude** (log: `physics-loop/.loop/codex/20261015-012643.log`) พบ 11 ข้อ แก้ 10 ข้อ:
+  - 02: E′ ขึ้นกับโหมด (plane stress ใช้ E′ = E) → เขียนให้ชัด; คำว่า "กำหนดแน่นอน" ของ spsolve → แก้เป็นคาดว่าเท่าเดิมใน environment เดียวกันและจะตรวจจริงใน V10; ขอบรูเป็น polygon → บันทึกเป็นแหล่ง error
+  - `fem2d`: ปฏิเสธ quadrature point ที่ r ≤ 0 และปฏิเสธการกำหนด u_r ≠ 0 บนแกน axisymmetric (+ เทสต์)
+  - เทสต์: Kirsch extrapolation ดีกรี 2 จาก 3 จุดไม่มีจุดตรวจ → เพิ่มเทสต์โปรไฟล์ σ_yy ที่ r = 1.1a–3a เทียบสูตร Kirsch (<3%); ลบ assertion 1% ที่ซ้ำ; convergence ต้องลดลงทุกระดับ; เพิ่ม patch test บน quad บิดเบี้ยว และแท่งสองวัสดุ (E ต่อ element)
+  - ไม่แก้ข้อ 1 (V11 ยังไม่ครบ Hertz/SEN): เป็นขอบเขตที่ตั้งใจแบ่งไว้ ทำในส่วน ข รอบหน้า
 
 ## Log
 
@@ -25,3 +30,10 @@
 - **หมายเหตุ:** โฟลเดอร์ `agents/.skills` ว่างเปล่า (ไม่มี SKILL.md ให้อ่าน) จึงทำงานตาม PROMPT.md และ plan.md
 - **verify -Quick:** ผ่านข้อ package, คำต้องห้าม, pytest (243), วัสดุ 3 ข้อ; ยังไม่ผ่าน plan เปิด, เอกสาร 02/03, results.json, และ uncommitted (ลูปจะ commit)
 - **งานถัดไป:** ขั้น 2 solver ยืดหยุ่น 2D (plane strain + axisymmetric, assembly vectorized) และเทสต์ V11 (แท่ง, Kirsch, Hertz p_max, SEN K_I) อาจแบ่งเป็น 2 รอบ: (ก) solver + แท่ง + Kirsch, (ข) axisymmetric + Hertz + SEN + เขียน 02 ส่วน solver
+
+### รอบ 2 — 2026-10-15 (LEAD=claude, Codex รีวิว)
+- **ทำ:** ขั้น 2 ส่วน ก: `lithics/fem2d.py` (Q4 isoparametric, plane strain/plane stress/axisymmetric, assembly vectorized + sparse, `traction_forces`, `boundary_edges`, `quad_mesh` สำหรับ mesh แนบรูปทรง), `tests/lithics/test_lithics_fem2d.py` (15 เทสต์), เขียน `docs/physics_world/02_physics_spec.md` ส่วน 1–2
+- **ผล:** แท่ง/ทรงกระบอก/patch แม่นตรงระดับ 1e-8; Lamé u_r < 0.5%; Kirsch SCF 3.005 บน mesh เชิงขั้ว
+- **ปัญหาที่เจอ:** รูวงกลมแบบขั้นบันไดบนกริดเซลล์ให้ SCF 2.55 (a = 16h) และ 2.64 (a = 24h) ต่ำไป 12–15% → V11 Kirsch วัดบน mesh แนบรูปทรง (ตรวจ solver) และบันทึกผลขั้นบันไดใน 02 §2.3 ให้รายงานใน 03 และพิจารณาใน V6
+- **verify -Quick:** pytest 258 ผ่าน, 02 มีแล้ว; ยังไม่ผ่าน plan เปิด, 03, results.json, uncommitted (ลูป commit)
+- **งานถัดไป:** ขั้น 2 ส่วน ข: Hertz p_max (axisymmetric, ทรงกลมแข็ง/ยืดหยุ่นกดผิวเรียบ, เทียบ Johnson 1985) และ SEN K_I (J-integral หรือ displacement extrapolation เทียบ Tada et al. สูตร SEN) แล้วติ๊กขั้น 2
