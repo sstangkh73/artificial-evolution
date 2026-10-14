@@ -1,0 +1,178 @@
+{
+  "dir": "tool_discovery_pilot_s2_selected",
+  "epsilon": 0.05,
+  "q_init": 0.0,
+  "ticks": 1600,
+  "seeds": [
+    1050,
+    1099
+  ],
+  "gates_s2": {
+    "gate_a": true,
+    "gate_a_cmp": {
+      "metric": "final_net_per_alive_tick",
+      "treatment": "C3",
+      "control": "C0",
+      "n_seeds_paired": 50,
+      "n_pairs": 50,
+      "n_dropped_missing": 0,
+      "mean_treatment": 0.45973875,
+      "mean_control": -1.01685875,
+      "mean_diff": 1.4765975,
+      "sd_diff": 0.23144577091759044,
+      "dz": 6.379885422601926,
+      "n_treatment_higher": 50,
+      "n_ties": 0,
+      "n_control_higher": 0,
+      "ci95_mean_diff": [
+        1.41339,
+        1.540444375
+      ]
+    },
+    "gate_a_components": {
+      "food_minus_effort_per_tick": {
+        "metric": "food_minus_effort_per_tick",
+        "treatment": "C3",
+        "control": "C0",
+        "n_seeds_paired": 50,
+        "n_pairs": 50,
+        "n_dropped_missing": 0,
+        "mean_treatment": 1.44330125,
+        "mean_control": 0.21326375,
+        "mean_diff": 1.2300375000000001,
+        "sd_diff": 0.19356498387235513,
+        "dz": 6.354648838816521,
+        "n_treatment_higher": 50,
+        "n_ties": 0,
+        "n_control_higher": 0,
+        "ci95_mean_diff": [
+          1.177611875,
+          1.2839775
+        ]
+      },
+      "craft_cost_per_tick": {
+        "metric": "craft_cost_per_tick",
+        "treatment": "C3",
+        "control": "C0",
+        "n_seeds_paired": 50,
+        "n_pairs": 50,
+        "n_dropped_missing": 0,
+        "mean_treatment": 0.6156699999999999,
+        "mean_control": 0.78829,
+        "mean_diff": -0.17262,
+        "sd_diff": 0.026494716454417852,
+        "dz": -6.515261270939797,
+        "n_treatment_higher": 0,
+        "n_ties": 0,
+        "n_control_higher": 50,
+        "ci95_mean_diff": [
+          -0.17968,
+          -0.16531
+        ]
+      },
+      "gather_cost_per_tick": {
+        "metric": "gather_cost_per_tick",
+        "treatment": "C3",
+        "control": "C0",
+        "n_seeds_paired": 50,
+        "n_pairs": 50,
+        "n_dropped_missing": 0,
+        "mean_treatment": 0.3678925,
+        "mean_control": 0.4418325,
+        "mean_diff": -0.07394,
+        "sd_diff": 0.020863322225516106,
+        "dz": -3.544018502938638,
+        "n_treatment_higher": 0,
+        "n_ties": 0,
+        "n_control_higher": 50,
+        "ci95_mean_diff": [
+          -0.0797575,
+          -0.0682175
+        ]
+      }
+    },
+    "gate_b1": true,
+    "gate_b1_c0_fraction_functional": 1.0,
+    "gate_b2": true,
+    "gate_b2_cmp": {
+      "metric": "functional_rate",
+      "treatment": "C3",
+      "control": "C0",
+      "n_seeds_paired": 50,
+      "n_pairs": 50,
+      "n_dropped_missing": 0,
+      "mean_treatment": 0.14649036918013014,
+      "mean_control": 0.030238314233043264,
+      "mean_diff": 0.11625205494708687,
+      "sd_diff": 0.028873089091101378,
+      "dz": 4.026311648895078,
+      "n_treatment_higher": 50,
+      "n_ties": 0,
+      "n_control_higher": 0,
+      "ci95_mean_diff": [
+        0.10851170852170176,
+        0.12440287724170217
+      ]
+    },
+    "pass": true
+  },
+  "c1_minus_c2": {
+    "metric": "final_net_per_alive_tick",
+    "treatment": "C1",
+    "control": "C2",
+    "n_seeds_paired": 50,
+    "n_pairs": 50,
+    "n_dropped_missing": 0,
+    "mean_treatment": 0.39690875,
+    "mean_control": 0.118056875,
+    "mean_diff": 0.27885187499999997,
+    "sd_diff": 0.18456237309792142,
+    "dz": 1.5108814994053652,
+    "n_treatment_higher": 50,
+    "n_ties": 0,
+    "n_control_higher": 0,
+    "ci95_mean_diff": [
+      0.231044375,
+      0.331238125
+    ]
+  },
+  "c1_minus_c2_food_minus_effort": {
+    "metric": "food_minus_effort_per_tick",
+    "treatment": "C1",
+    "control": "C2",
+    "n_seeds_paired": 50,
+    "n_pairs": 50,
+    "n_dropped_missing": 0,
+    "mean_treatment": 0.49462875,
+    "mean_control": 0.395864375,
+    "mean_diff": 0.09876437500000002,
+    "sd_diff": 0.053063577641186896,
+    "dz": 1.861246063502154,
+    "n_treatment_higher": 49,
+    "n_ties": 0,
+    "n_control_higher": 1,
+    "ci95_mean_diff": [
+      0.08446187499999999,
+      0.113450625
+    ]
+  },
+  "power": {
+    "mean_diff": 0.27885187499999997,
+    "sd_diff": 0.18456237309792142,
+    "dz": 1.5108814994053652,
+    "dz_safe": 1.445797613061113,
+    "dz_boot_ci95": [
+      1.34197840460225,
+      1.8237891282448706
+    ],
+    "n_guenther": 7,
+    "power_checks": [
+      {
+        "n": 50,
+        "power": 1.0
+      }
+    ],
+    "n": 50,
+    "stop": null
+  }
+}

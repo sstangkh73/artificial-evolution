@@ -1,0 +1,642 @@
+{
+  "run_dir": "data\\tool_discovery_pilot_s2_selected",
+  "comparisons": [
+    {
+      "metric": "reuse_delta",
+      "treatment": "C1",
+      "control": "C2",
+      "n_seeds_paired": 50,
+      "n_pairs": 50,
+      "n_dropped_missing": 0,
+      "mean_treatment": 0.29288278229258213,
+      "mean_control": 0.05090553039394829,
+      "mean_diff": 0.24197725189863384,
+      "sd_diff": 0.11338962154252669,
+      "dz": 2.134033508594792,
+      "n_treatment_higher": 49,
+      "n_ties": 0,
+      "n_control_higher": 1,
+      "ci95_mean_diff": [
+        0.2101010914253158,
+        0.27293498822935597
+      ]
+    },
+    {
+      "metric": "level_b_run",
+      "treatment": "C1",
+      "control": "C2",
+      "n_seeds_paired": 50,
+      "n_pairs": 50,
+      "n_dropped_missing": 0,
+      "mean_treatment": 1.0,
+      "mean_control": 0.7,
+      "mean_diff": 0.3,
+      "sd_diff": 0.4629100498862757,
+      "dz": 0.6480740698407861,
+      "n_treatment_higher": 15,
+      "n_ties": 35,
+      "n_control_higher": 0,
+      "ci95_mean_diff": [
+        0.18,
+        0.44
+      ]
+    },
+    {
+      "metric": "functional_rate",
+      "treatment": "C1",
+      "control": "C2",
+      "n_seeds_paired": 50,
+      "n_pairs": 50,
+      "n_dropped_missing": 0,
+      "mean_treatment": 0.06030694119515752,
+      "mean_control": 0.01662481386655472,
+      "mean_diff": 0.0436821273286028,
+      "sd_diff": 0.023821739271342585,
+      "dz": 1.8337085647290308,
+      "n_treatment_higher": 48,
+      "n_ties": 0,
+      "n_control_higher": 2,
+      "ci95_mean_diff": [
+        0.037186364962654525,
+        0.05016877884694959
+      ]
+    },
+    {
+      "metric": "functional_per_agent",
+      "treatment": "C1",
+      "control": "C2",
+      "n_seeds_paired": 50,
+      "n_pairs": 50,
+      "n_dropped_missing": 0,
+      "mean_treatment": 1.974,
+      "mean_control": 1.384,
+      "mean_diff": 0.59,
+      "sd_diff": 1.355111261340649,
+      "dz": 0.4353886037492572,
+      "n_treatment_higher": 39,
+      "n_ties": 0,
+      "n_control_higher": 11,
+      "ci95_mean_diff": [
+        0.186,
+        0.9349999999999999
+      ]
+    },
+    {
+      "metric": "rebuild_rate",
+      "treatment": "C1",
+      "control": "C2",
+      "n_seeds_paired": 50,
+      "n_pairs": 49,
+      "n_dropped_missing": 1,
+      "mean_treatment": 0.13922599839019348,
+      "mean_control": 0.09090077332358715,
+      "mean_diff": 0.048325225066606324,
+      "sd_diff": 0.06939635182940787,
+      "dz": 0.696365497503396,
+      "n_treatment_higher": 37,
+      "n_ties": 0,
+      "n_control_higher": 12,
+      "ci95_mean_diff": [
+        0.029643741740904627,
+        0.06815669140823882
+      ]
+    },
+    {
+      "metric": "first_discovery_tick",
+      "treatment": "C1",
+      "control": "C2",
+      "n_seeds_paired": 50,
+      "n_pairs": 50,
+      "n_dropped_missing": 0,
+      "mean_treatment": 49.6,
+      "mean_control": 156.0,
+      "mean_diff": -106.4,
+      "sd_diff": 282.8259723084938,
+      "dz": -0.37620307332999703,
+      "n_treatment_higher": 19,
+      "n_ties": 0,
+      "n_control_higher": 31,
+      "ci95_mean_diff": [
+        -194.36,
+        -41.52
+      ]
+    },
+    {
+      "metric": "final_tool_use_rate",
+      "treatment": "C1",
+      "control": "C2",
+      "n_seeds_paired": 50,
+      "n_pairs": 50,
+      "n_dropped_missing": 0,
+      "mean_treatment": 0.08090022838008867,
+      "mean_control": 0.24281481699643284,
+      "mean_diff": -0.1619145886163442,
+      "sd_diff": 0.16020169619445587,
+      "dz": -1.0106920991636017,
+      "n_treatment_higher": 0,
+      "n_ties": 0,
+      "n_control_higher": 50,
+      "ci95_mean_diff": [
+        -0.20804440096832574,
+        -0.12073776252427731
+      ]
+    },
+    {
+      "metric": "final_net_per_alive_tick",
+      "treatment": "C1",
+      "control": "C2",
+      "n_seeds_paired": 50,
+      "n_pairs": 50,
+      "n_dropped_missing": 0,
+      "mean_treatment": 0.39690875,
+      "mean_control": 0.118056875,
+      "mean_diff": 0.27885187499999997,
+      "sd_diff": 0.18456237309792142,
+      "dz": 1.5108814994053652,
+      "n_treatment_higher": 50,
+      "n_ties": 0,
+      "n_control_higher": 0,
+      "ci95_mean_diff": [
+        0.231044375,
+        0.331238125
+      ]
+    },
+    {
+      "metric": "reuse_delta",
+      "treatment": "C1",
+      "control": "C0",
+      "n_seeds_paired": 50,
+      "n_pairs": 50,
+      "n_dropped_missing": 0,
+      "mean_treatment": 0.29288278229258213,
+      "mean_control": -0.015505441619387737,
+      "mean_diff": 0.30838822391196985,
+      "sd_diff": 0.07895269883983497,
+      "dz": 3.905987109288973,
+      "n_treatment_higher": 50,
+      "n_ties": 0,
+      "n_control_higher": 0,
+      "ci95_mean_diff": [
+        0.28648347646964334,
+        0.32911611582802225
+      ]
+    },
+    {
+      "metric": "level_b_run",
+      "treatment": "C1",
+      "control": "C0",
+      "n_seeds_paired": 50,
+      "n_pairs": 50,
+      "n_dropped_missing": 0,
+      "mean_treatment": 1.0,
+      "mean_control": 0.22,
+      "mean_diff": 0.78,
+      "sd_diff": 0.4184519575964803,
+      "dz": 1.8640132656570485,
+      "n_treatment_higher": 39,
+      "n_ties": 11,
+      "n_control_higher": 0,
+      "ci95_mean_diff": [
+        0.66,
+        0.88
+      ]
+    },
+    {
+      "metric": "functional_rate",
+      "treatment": "C1",
+      "control": "C0",
+      "n_seeds_paired": 50,
+      "n_pairs": 50,
+      "n_dropped_missing": 0,
+      "mean_treatment": 0.06030694119515752,
+      "mean_control": 0.030238314233043264,
+      "mean_diff": 0.030068626962114254,
+      "sd_diff": 0.02374183250395149,
+      "dz": 1.2664829876594303,
+      "n_treatment_higher": 44,
+      "n_ties": 0,
+      "n_control_higher": 6,
+      "ci95_mean_diff": [
+        0.023659887148195644,
+        0.03655468358471098
+      ]
+    },
+    {
+      "metric": "functional_per_agent",
+      "treatment": "C1",
+      "control": "C0",
+      "n_seeds_paired": 50,
+      "n_pairs": 50,
+      "n_dropped_missing": 0,
+      "mean_treatment": 1.974,
+      "mean_control": 6.983,
+      "mean_diff": -5.009,
+      "sd_diff": 1.2621123369258411,
+      "dz": -3.9687433942691253,
+      "n_treatment_higher": 0,
+      "n_ties": 0,
+      "n_control_higher": 50,
+      "ci95_mean_diff": [
+        -5.375,
+        -4.674
+      ]
+    },
+    {
+      "metric": "rebuild_rate",
+      "treatment": "C1",
+      "control": "C0",
+      "n_seeds_paired": 50,
+      "n_pairs": 50,
+      "n_dropped_missing": 0,
+      "mean_treatment": 0.13760549958641077,
+      "mean_control": 0.09347608389565507,
+      "mean_diff": 0.0441294156907557,
+      "sd_diff": 0.050238283088492965,
+      "dz": 0.878402146287987,
+      "n_treatment_higher": 40,
+      "n_ties": 0,
+      "n_control_higher": 10,
+      "ci95_mean_diff": [
+        0.030142673186659218,
+        0.057745269841814814
+      ]
+    },
+    {
+      "metric": "first_discovery_tick",
+      "treatment": "C1",
+      "control": "C0",
+      "n_seeds_paired": 50,
+      "n_pairs": 50,
+      "n_dropped_missing": 0,
+      "mean_treatment": 49.6,
+      "mean_control": 33.36,
+      "mean_diff": 16.24,
+      "sd_diff": 32.206958305082246,
+      "dz": 0.5042388618684719,
+      "n_treatment_higher": 34,
+      "n_ties": 0,
+      "n_control_higher": 16,
+      "ci95_mean_diff": [
+        7.82,
+        24.94
+      ]
+    },
+    {
+      "metric": "final_tool_use_rate",
+      "treatment": "C1",
+      "control": "C0",
+      "n_seeds_paired": 50,
+      "n_pairs": 50,
+      "n_dropped_missing": 0,
+      "mean_treatment": 0.08090022838008867,
+      "mean_control": 0.8690190484342721,
+      "mean_diff": -0.7881188200541834,
+      "sd_diff": 0.022016547046364455,
+      "dz": -35.79665868560092,
+      "n_treatment_higher": 0,
+      "n_ties": 0,
+      "n_control_higher": 50,
+      "ci95_mean_diff": [
+        -0.793877458949133,
+        -0.7818180360467636
+      ]
+    },
+    {
+      "metric": "final_net_per_alive_tick",
+      "treatment": "C1",
+      "control": "C0",
+      "n_seeds_paired": 50,
+      "n_pairs": 50,
+      "n_dropped_missing": 0,
+      "mean_treatment": 0.39690875,
+      "mean_control": -1.01685875,
+      "mean_diff": 1.4137675,
+      "sd_diff": 0.04402002591730501,
+      "dz": 32.11646223598029,
+      "n_treatment_higher": 50,
+      "n_ties": 0,
+      "n_control_higher": 0,
+      "ci95_mean_diff": [
+        1.4014425,
+        1.425770625
+      ]
+    },
+    {
+      "metric": "reuse_delta",
+      "treatment": "C1",
+      "control": "C4",
+      "n_seeds_paired": 50,
+      "n_pairs": 50,
+      "n_dropped_missing": 0,
+      "mean_treatment": 0.29288278229258213,
+      "mean_control": 0.27107213106585926,
+      "mean_diff": 0.021810651226722856,
+      "sd_diff": 0.11374115489795145,
+      "dz": 0.19175689965774806,
+      "n_treatment_higher": 28,
+      "n_ties": 0,
+      "n_control_higher": 22,
+      "ci95_mean_diff": [
+        -0.00916558903598967,
+        0.05265120515991279
+      ]
+    },
+    {
+      "metric": "level_b_run",
+      "treatment": "C1",
+      "control": "C4",
+      "n_seeds_paired": 50,
+      "n_pairs": 50,
+      "n_dropped_missing": 0,
+      "mean_treatment": 1.0,
+      "mean_control": 0.98,
+      "mean_diff": 0.02,
+      "sd_diff": 0.1414213562373095,
+      "dz": 0.1414213562373095,
+      "n_treatment_higher": 1,
+      "n_ties": 49,
+      "n_control_higher": 0,
+      "ci95_mean_diff": [
+        0.0,
+        0.06
+      ]
+    },
+    {
+      "metric": "functional_rate",
+      "treatment": "C1",
+      "control": "C4",
+      "n_seeds_paired": 50,
+      "n_pairs": 50,
+      "n_dropped_missing": 0,
+      "mean_treatment": 0.06030694119515752,
+      "mean_control": 0.03139844358738719,
+      "mean_diff": 0.028908497607770325,
+      "sd_diff": 0.02172548580468333,
+      "dz": 1.3306260613762002,
+      "n_treatment_higher": 46,
+      "n_ties": 0,
+      "n_control_higher": 4,
+      "ci95_mean_diff": [
+        0.023025658303955195,
+        0.03483319494194255
+      ]
+    },
+    {
+      "metric": "functional_per_agent",
+      "treatment": "C1",
+      "control": "C4",
+      "n_seeds_paired": 50,
+      "n_pairs": 50,
+      "n_dropped_missing": 0,
+      "mean_treatment": 1.974,
+      "mean_control": 0.774,
+      "mean_diff": 1.2,
+      "sd_diff": 0.7484678227102706,
+      "dz": 1.603275336078831,
+      "n_treatment_higher": 47,
+      "n_ties": 1,
+      "n_control_higher": 2,
+      "ci95_mean_diff": [
+        0.999,
+        1.405
+      ]
+    },
+    {
+      "metric": "rebuild_rate",
+      "treatment": "C1",
+      "control": "C4",
+      "n_seeds_paired": 50,
+      "n_pairs": 50,
+      "n_dropped_missing": 0,
+      "mean_treatment": 0.13760549958641077,
+      "mean_control": 0.13472970939710818,
+      "mean_diff": 0.0028757901893025745,
+      "sd_diff": 0.06360951706441931,
+      "dz": 0.04521006167033423,
+      "n_treatment_higher": 28,
+      "n_ties": 0,
+      "n_control_higher": 22,
+      "ci95_mean_diff": [
+        -0.014720938668205218,
+        0.019914224587357598
+      ]
+    },
+    {
+      "metric": "first_discovery_tick",
+      "treatment": "C1",
+      "control": "C4",
+      "n_seeds_paired": 50,
+      "n_pairs": 50,
+      "n_dropped_missing": 0,
+      "mean_treatment": 49.6,
+      "mean_control": 63.34,
+      "mean_diff": -13.74,
+      "sd_diff": 123.62002512637221,
+      "dz": -0.11114704099076264,
+      "n_treatment_higher": 24,
+      "n_ties": 2,
+      "n_control_higher": 24,
+      "ci95_mean_diff": [
+        -52.64,
+        10.56
+      ]
+    },
+    {
+      "metric": "final_tool_use_rate",
+      "treatment": "C1",
+      "control": "C4",
+      "n_seeds_paired": 50,
+      "n_pairs": 50,
+      "n_dropped_missing": 0,
+      "mean_treatment": 0.08090022838008867,
+      "mean_control": 0.0512593000118033,
+      "mean_diff": 0.029640928368285368,
+      "sd_diff": 0.020628994812341574,
+      "dz": 1.4368576189932571,
+      "n_treatment_higher": 49,
+      "n_ties": 0,
+      "n_control_higher": 1,
+      "ci95_mean_diff": [
+        0.0241284589369556,
+        0.035483612139342924
+      ]
+    },
+    {
+      "metric": "final_net_per_alive_tick",
+      "treatment": "C1",
+      "control": "C4",
+      "n_seeds_paired": 50,
+      "n_pairs": 50,
+      "n_dropped_missing": 0,
+      "mean_treatment": 0.39690875,
+      "mean_control": 0.3871825,
+      "mean_diff": 0.009726249999999994,
+      "sd_diff": 0.03433952167291341,
+      "dz": 0.2832377833518846,
+      "n_treatment_higher": 33,
+      "n_ties": 0,
+      "n_control_higher": 17,
+      "ci95_mean_diff": [
+        0.00016062499999999202,
+        0.018891249999999995
+      ]
+    },
+    {
+      "metric": "reuse_delta",
+      "treatment": "C3",
+      "control": "C0",
+      "n_seeds_paired": 50,
+      "n_pairs": 0,
+      "n_dropped_missing": 50,
+      "mean_treatment": null,
+      "mean_control": null,
+      "mean_diff": null,
+      "sd_diff": null,
+      "dz": null,
+      "n_treatment_higher": 0,
+      "n_ties": 0,
+      "n_control_higher": 0,
+      "ci95_mean_diff": null
+    },
+    {
+      "metric": "level_b_run",
+      "treatment": "C3",
+      "control": "C0",
+      "n_seeds_paired": 50,
+      "n_pairs": 50,
+      "n_dropped_missing": 0,
+      "mean_treatment": 1.0,
+      "mean_control": 0.22,
+      "mean_diff": 0.78,
+      "sd_diff": 0.4184519575964803,
+      "dz": 1.8640132656570485,
+      "n_treatment_higher": 39,
+      "n_ties": 11,
+      "n_control_higher": 0,
+      "ci95_mean_diff": [
+        0.66,
+        0.88
+      ]
+    },
+    {
+      "metric": "functional_rate",
+      "treatment": "C3",
+      "control": "C0",
+      "n_seeds_paired": 50,
+      "n_pairs": 50,
+      "n_dropped_missing": 0,
+      "mean_treatment": 0.14649036918013014,
+      "mean_control": 0.030238314233043264,
+      "mean_diff": 0.11625205494708687,
+      "sd_diff": 0.028873089091101378,
+      "dz": 4.026311648895078,
+      "n_treatment_higher": 50,
+      "n_ties": 0,
+      "n_control_higher": 0,
+      "ci95_mean_diff": [
+        0.10851170852170176,
+        0.12440287724170217
+      ]
+    },
+    {
+      "metric": "functional_per_agent",
+      "treatment": "C3",
+      "control": "C0",
+      "n_seeds_paired": 50,
+      "n_pairs": 50,
+      "n_dropped_missing": 0,
+      "mean_treatment": 31.547,
+      "mean_control": 6.983,
+      "mean_diff": 24.564,
+      "sd_diff": 3.9281563417076413,
+      "dz": 6.253315261205103,
+      "n_treatment_higher": 50,
+      "n_ties": 0,
+      "n_control_higher": 0,
+      "ci95_mean_diff": [
+        23.504,
+        25.673000000000002
+      ]
+    },
+    {
+      "metric": "rebuild_rate",
+      "treatment": "C3",
+      "control": "C0",
+      "n_seeds_paired": 50,
+      "n_pairs": 50,
+      "n_dropped_missing": 0,
+      "mean_treatment": 0.14618361008261332,
+      "mean_control": 0.09347608389565507,
+      "mean_diff": 0.052707526186958245,
+      "sd_diff": 0.018748868431281034,
+      "dz": 2.811237722433415,
+      "n_treatment_higher": 50,
+      "n_ties": 0,
+      "n_control_higher": 0,
+      "ci95_mean_diff": [
+        0.04762734003132703,
+        0.05804389212652631
+      ]
+    },
+    {
+      "metric": "first_discovery_tick",
+      "treatment": "C3",
+      "control": "C0",
+      "n_seeds_paired": 50,
+      "n_pairs": 50,
+      "n_dropped_missing": 0,
+      "mean_treatment": 13.5,
+      "mean_control": 33.36,
+      "mean_diff": -19.86,
+      "sd_diff": 12.822190586189686,
+      "dz": -1.5488773050519529,
+      "n_treatment_higher": 2,
+      "n_ties": 0,
+      "n_control_higher": 48,
+      "ci95_mean_diff": [
+        -23.44,
+        -16.42
+      ]
+    },
+    {
+      "metric": "final_tool_use_rate",
+      "treatment": "C3",
+      "control": "C0",
+      "n_seeds_paired": 50,
+      "n_pairs": 50,
+      "n_dropped_missing": 0,
+      "mean_treatment": 0.4173471581479716,
+      "mean_control": 0.8690190484342721,
+      "mean_diff": -0.4516718902863005,
+      "sd_diff": 0.0849299678407489,
+      "dz": -5.318168624921944,
+      "n_treatment_higher": 0,
+      "n_ties": 0,
+      "n_control_higher": 50,
+      "ci95_mean_diff": [
+        -0.47472980450062574,
+        -0.42792984677810125
+      ]
+    },
+    {
+      "metric": "final_net_per_alive_tick",
+      "treatment": "C3",
+      "control": "C0",
+      "n_seeds_paired": 50,
+      "n_pairs": 50,
+      "n_dropped_missing": 0,
+      "mean_treatment": 0.45973875,
+      "mean_control": -1.01685875,
+      "mean_diff": 1.4765975,
+      "sd_diff": 0.23144577091759044,
+      "dz": 6.379885422601926,
+      "n_treatment_higher": 50,
+      "n_ties": 0,
+      "n_control_higher": 0,
+      "ci95_mean_diff": [
+        1.41339,
+        1.540444375
+      ]
+    }
+  ]
+}
