@@ -267,3 +267,28 @@ def test_feature_key_ignores_durability():
     props = {"mass": 4, "sharpness": 6, "hardness": 7, "length": 2, "flexibility": 0, "durability": 9, "portability": 1}
     worn = dict(props, durability=1)
     assert feature_key(props, 3) == feature_key(worn, 3)
+
+
+def test_immortal_agents_never_die_and_keep_acting():
+    harsh = dict(n_agents=6, ticks=300, drain_per_tick=1.5, start_energy=10.0)
+    mortal = run_arena(ArenaConfig(seed=4, condition="C0", **harsh))
+    assert any(e["type"] == "death" for e in mortal.events)
+    arena = run_arena(ArenaConfig(seed=4, condition="C0", immortal=True, **harsh))
+    assert not any(e["type"] == "death" for e in arena.events)
+    assert all(a.alive for a in arena.agents)
+    assert len(arena.ledger) == harsh["n_agents"] * harsh["ticks"]
+    assert any(a.energy < 0 for a in arena.agents)
+    # Crafting is not gated by the energy reserve once agents cannot die.
+    assert any(e["type"] == "craft" and e["tick"] > 200 for e in arena.events)
+    ends = [e for e in arena.events if e["type"] == "agent_end"]
+    assert len(ends) == harsh["n_agents"]
+    summary = summarize_run(arena.events, arena.ledger, config_dict(arena.config))
+    assert summary["survivors"] == harsh["n_agents"]
+    assert summary["agents_ever_below_zero"] >= 1
+
+
+def test_default_config_is_not_immortal_and_emits_no_agent_end():
+    arena = run_arena(ArenaConfig(seed=1, condition="C1", **SHORT))
+    assert not any(e["type"] == "agent_end" for e in arena.events)
+    summary = summarize_run(arena.events, arena.ledger, config_dict(arena.config))
+    assert "agents_ever_below_zero" not in summary

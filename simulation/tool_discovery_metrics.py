@@ -117,6 +117,14 @@ def summarize_run(events: list[dict], ledger: list[dict], config: dict, bin_widt
     level_b = level_a and reuse_up and rebuilds >= 1
 
     deaths = [e for e in events if e["type"] == "death"]
+    agent_end = [e for e in events if e["type"] == "agent_end"]
+    immortal_fields = {}
+    if agent_end:
+        immortal_fields = {
+            "agents_ever_below_zero": sum(e["ticks_below_zero"] > 0 for e in agent_end),
+            "mean_ticks_below_zero": mean(e["ticks_below_zero"] for e in agent_end),
+            "mean_final_energy": mean(e["energy"] for e in agent_end),
+        }
     return {
         "seed": config["seed"],
         "condition": config["condition"],
@@ -149,4 +157,5 @@ def summarize_run(events: list[dict], ledger: list[dict], config: dict, bin_widt
         "crafts_after_success": crafts_after_success,
         "rebuild_rate": rebuilds / crafts_after_success if crafts_after_success else None,
         **{f"bare_baseline_{c}": baselines[c] for c in CONTEXTS},
+        **immortal_fields,
     }

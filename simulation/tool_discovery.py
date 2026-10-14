@@ -99,6 +99,10 @@ class ArenaConfig:
     # Phase 5 falsification: from this tick on, learners stop updating and
     # stop exploring (memory frozen); None keeps learning on.
     freeze_memory_tick: int | None = None
+    # Immortal agents (2026-10-14 decision): nobody dies, energy may go
+    # negative as a ledger, and the craft energy reserve is ignored, so the
+    # study measures tool discovery rather than survival.
+    immortal: bool = False
 
     def validate(self) -> None:
         if self.condition not in CONDITIONS:
@@ -424,6 +428,7 @@ class ArenaAgent:
     object_mix: dict[int, str] = field(default_factory=dict)
     alive: bool = True
     death_tick: int | None = None
+    ticks_below_zero: int = 0
 
     def material_count(self) -> int:
         return sum(self.materials.values())
@@ -587,7 +592,8 @@ class Arena:
         """No food target this tick: craft, gather, or rest (same rule for every condition)."""
         cfg = self.config
         costs = {"craft": 0.0, "gather": 0.0}
-        can_craft = agent.material_count() >= cfg.min_mix_size and agent.energy > cfg.craft_energy_reserve
+        has_reserve = cfg.immortal or agent.energy > cfg.craft_energy_reserve
+        can_craft = agent.material_count() >= cfg.min_mix_size and has_reserve
         if can_craft and len(agent.objects) >= cfg.max_objects and agent.material_count() >= cfg.max_materials:
             obs = self._observation(agent, None)
             handle = agent.policy.choose_discard(obs, rng)
@@ -638,7 +644,10 @@ class Arena:
             else:
                 row.update(self._idle_step(agent, policy_rng))
             self.ledger.append(row)
-            if agent.energy <= 0:
+            if cfg.immortal:
+                if agent.energy <= 0:
+                    agent.ticks_below_zero += 1
+            elif agent.energy <= 0:
                 agent.alive = False
                 agent.death_tick = self.tick
                 self.events.append({"type": "death", "tick": self.tick, "agent": agent.agent_id})
@@ -647,6 +656,17 @@ class Arena:
     def run(self) -> "Arena":
         while self.tick < self.config.ticks:
             self.step()
+        if self.config.immortal:
+            for agent in self.agents:
+                self.events.append(
+                    {
+                        "type": "agent_end",
+                        "tick": self.tick,
+                        "agent": agent.agent_id,
+                        "energy": agent.energy,
+                        "ticks_below_zero": agent.ticks_below_zero,
+                    }
+                )
         return self
 
 

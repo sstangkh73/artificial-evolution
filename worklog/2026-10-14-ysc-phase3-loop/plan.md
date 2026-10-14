@@ -19,7 +19,9 @@ Date: 2026-10-14 · ต่อจาก `worklog/2026-10-14-ysc-review/report.md`
 - เขียนเอกสารเป็นภาษาไทยวิชาการ เรียบง่าย ซื่อตรง ไม่อ้างเกินหลักฐาน
 
 ## ขั้นตอน
-- [ ] 1. **โหมดอมตะ** `ArenaConfig.immortal` (ค่าเริ่มต้น False): ไม่มีการตาย, พลังงานติดลบได้ (เป็นบัญชี), ไม่ใช้ craft_energy_reserve เมื่อเป็นอมตะ, เก็บ `ticks_below_zero` ไว้เป็นตัวชี้วัดรอง + เทสต์ + ยืนยันว่าค่าเริ่มต้นยังให้ผล smoke เดิม
+- [x] 1. **โหมดอมตะ** `ArenaConfig.immortal` (ค่าเริ่มต้น False): ไม่มีการตาย, พลังงานติดลบได้ (เป็นบัญชี), ไม่ใช้ craft_energy_reserve เมื่อเป็นอมตะ, เก็บ `ticks_below_zero` ไว้เป็นตัวชี้วัดรอง + เทสต์ + ยืนยันว่าค่าเริ่มต้นยังให้ผล smoke เดิม
+  - เสร็จ 14 ต.ค.: `immortal` เป็น opt-in, มี event `agent_end` (เฉพาะโหมดอมตะ), summary มี `agents_ever_below_zero`, `mean_ticks_below_zero`, `mean_final_energy`; เทสต์ใหม่ 2 ข้อ; ค่าเริ่มต้นได้ผล smoke เดิมทุกค่า; ทั้ง repo 198 passed
+  - ดูคร่าว ๆ (seeds 0–4 ซึ่งใช้ไปแล้ว ไม่ใช่ผล): net C0 −1.01, C1 0.35, C2 0.08, C3 0.51, C4 0.31 และ C0 ใช้เครื่องมือ 86% เพราะเมื่อไม่มีเกณฑ์พลังงานสำรอง C0 จะถือวัตถุครบ 2 ชิ้นตลอดและสุ่มเลือกได้ 10 จาก 11 ทาง → pilot ต้องตัดสินว่าจะเก็บต้นทุนการสร้างแบบนี้ไว้หรือไม่ (บันทึกเป็นประเด็นใน protocol)
 - [ ] 2. **แก้ตัวชี้วัด**: ระดับ A แบบอัตรา (`functional_rate` = functional/crafted, functional ต่อเอเจนต์), เปลี่ยนชื่อเป็น `level_b_run`, เพิ่ม `reuse_delta` (good−bad), เขียนสคริปต์วิเคราะห์ระดับ B ระหว่างเงื่อนไข (C1 เทียบ C0/C2 แบบจับคู่ seed) + เทสต์
 - [ ] 3. **ความเรียบร้อยของ runner**: ปฏิเสธการรันถ้า code_dirty (ยกเว้นใส่ `--allow-dirty`), `--resume` ต้องตรวจว่า overrides ตรงกับ protocol.json, ค่าเริ่มต้นของ conditions รวม C4 + เทสต์
 - [ ] 4. **เขียน pilot protocol** `docs/ysc2027_tool_discovery/03_pilot_protocol.md` และ commit ก่อนรัน: คำถาม, grid (ε, softmax τ, q_init แบบ optimistic, จำนวน tick), ตัวชี้วัดหลัก (อาหารสุทธิต่อ agent-tick ช่วงท้าย), หลักฐานการค้นพบ (ระดับ A อัตรา, reuse_delta, rebuild, เวลาถึงการค้นพบ, C1−C2), Gate A/B, **กฎการเลือกค่าที่เขียนไว้ก่อนรัน**, วิธีทำ power analysis จากผลต่าง C1−C2, H5 วัดเฉพาะฝั่งการใช้
