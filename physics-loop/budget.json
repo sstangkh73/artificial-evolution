@@ -1,0 +1,5 @@
+{
+  "_comment": "Token budget per agent for physics-loop round 1. Edit before starting. Usage is logged to physics-loop/.loop/usage.csv. Claude counts input + output + cache-creation tokens (cache reads excluded); Codex counts the 'tokens used' line of codex exec (including red-team runs).",
+  "claude_tokens": 30000000,
+  "codex_tokens": 10000000
+}

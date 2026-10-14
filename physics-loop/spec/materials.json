@@ -1,0 +1,78 @@
+{
+  "_comment": "Physical constants for the lithic fracture world. SI units. Prepared 2026-10-15 before the loop; the loop must not edit this file. Every value carries its source. 'range' gives the spread across sources; 'value' is what the code uses. Values flagged 'secondary' come from a database or a secondary citation and should be replaced by a primary source when one is found (record that as a deviation, do not edit here).",
+  "materials": {
+    "glass_soda_lime": {
+      "role": "validation (Dibble experiments used soda-lime glass)",
+      "youngs_modulus_pa": {"value": 71e9, "range": [71e9, 72e9], "source": "MakeItFrom 'Annealed Soda-Lime Glass' (71 GPa, secondary); Pilkington technical bulletin ATS-129 (72 GPa, secondary)"},
+      "poisson_ratio": {"value": 0.22, "range": [0.22, 0.23], "source": "TU Darmstadt thesis on glass fracture (0.22); MakeItFrom (0.23, secondary)"},
+      "density_kg_m3": {"value": 2500, "range": [2400, 2500], "source": "MakeItFrom 2.4 g/cm3 (secondary); Husien 2010 MSc thesis Table 3.1 lists soda lime glass 2.4 g/cm3; 2500 is the common float-glass value (secondary)"},
+      "fracture_toughness_pa_sqrt_m": {"value": 0.75e6, "range": [0.66e6, 0.78e6], "source": "MakeItFrom 0.75 (secondary); Univ. Trento sandwiched-beam measurement 0.74 MPa m^0.5 (iris.unitn.it/handle/11572/74685). Quasi-static value; dynamic toughness rises with loading rate (Purdue dissertation AAI1490606: 0.66-2.22)"},
+      "tensile_strength_pa": {"value": 41e6, "range": [41e6, 100e6], "source": "MakeItFrom UTS 41 MPa, flexural 100 MPa (secondary). Glass strength is flaw-controlled"},
+      "microstructure_scale_m": {"value": 1e-9, "source": "amorphous; no grains. Order-of-magnitude network scale, assumption"},
+      "heterogeneity": "homogeneous",
+      "hertzian_cone_included_angle_deg": {"value": 136, "source": "McPherron et al. 2020 PLOS ONE 15:e0241714 (PSIA 136.49 +/- 7.56 on Dibble glass flakes; ~136 deg from fracture-mechanics refs). VALIDATION TARGET ONLY - must not be used as a model input"}
+    },
+    "obsidian": {
+      "role": "fine-grained natural glass, excellent knapping material",
+      "youngs_modulus_pa": {"value": 67.5e9, "range": [56.9e9, 69.1e9], "source": "Husien 2010, Fracture behavior and mechanical characterization of obsidian, MSc thesis, Oklahoma State Univ., Table 3.6 (pulse echo 67.5 GPa; nano-indentation 56.9-61.2)"},
+      "poisson_ratio": {"value": 0.18, "range": [0.17, 0.18], "source": "Husien 2010 (nano-indentation, ~0.17-0.18)"},
+      "density_kg_m3": {"value": 2370, "range": [2220, 2460], "source": "Husien 2010 Table 3.1 and text (mean 2.37 +/- 0.02 g/cm3)"},
+      "fracture_toughness_pa_sqrt_m": {"value": 1.31e6, "range": [1.28e6, 1.76e6], "source": "Husien 2010 Table 3.8 SEVNB black obsidian 1.31 (the same method gave soda-lime 0.58, i.e. biased low); natural obsidian 1.65 in J. Non-Cryst. Solids 2021 (S0022309321004671)"},
+      "tensile_strength_pa": {"value": 35e6, "range": [35e6, 57e6], "source": "Husien 2010 Table 3.7 biaxial (ring-on-ring) strength: black 35 +/- 6.7, red tiger 56.9 +/- 11.2 MPa"},
+      "microstructure_scale_m": {"value": 1e-9, "source": "amorphous volcanic glass; nanometre-scale edges are reported in the archaeological literature (assumption pending a cited edge-radius measurement)"},
+      "heterogeneity": "homogeneous"
+    },
+    "chert_flint": {
+      "role": "cryptocrystalline silica, excellent knapping material",
+      "youngs_modulus_pa": {"value": 77e9, "range": [60e9, 90e9], "source": "Kazakhstan chert UT-22, indentation estimate 77 GPa (PLOS ONE 2022, 10.1371/journal.pone.0265640); Schmidt et al. 2019 (10.1007/s12520-018-0710-y) report bar-to-bar variation up to +/-15 GPa"},
+      "poisson_ratio": {"value": 0.2, "range": [0.2, 0.3], "source": "Nickel & Schmidt 2022 PLOS ONE 17:e0278643 give 0.2-0.3 for most brittle materials; no flint-specific value found (assumption)"},
+      "density_kg_m3": {"value": 2600, "range": [2550, 2650], "source": "ASSUMPTION: alpha-quartz/chalcedony density; no flint-specific measurement cited yet"},
+      "fracture_toughness_pa_sqrt_m": {"value": 1.6e6, "range": [1.3e6, 2.4e6], "source": "Schmidt et al. 2019 via PLOS ONE 2022 (chert and silcrete 1.3-1.85, indentation fracture resistance); Kazakhstan chert 2.4 (indentation)"},
+      "tensile_strength_pa": {"value": 164e6, "range": [100e6, 189e6], "source": "Nickel & Schmidt 2022 citing Schmidt et al. 2019: flint characteristic 4-point-bending strength 164-189 MPa at 30 mm3 effective volume; Aliyu et al. 2017 report <100 MPa"},
+      "microstructure_scale_m": {"value": 1e-6, "range": [1e-7, 1e-6], "source": "cryptocrystalline (<1 um grains), PLOS ONE 2022 Kazakhstan study"},
+      "heterogeneity": "homogeneous at simulated resolution"
+    },
+    "basalt": {
+      "role": "fine-to-medium-grained lava, workable but tougher",
+      "youngs_modulus_pa": {"value": 73e9, "range": [25e9, 100e9], "source": "EarthRef ERR 60452 representative intact basalt 73 GPa; Etna basalt 25 GPa (microcracked) and fresh Icelandic intrusive basalt 36 GPa (EGU2007-J-06750)"},
+      "poisson_ratio": {"value": 0.25, "range": [0.14, 0.25], "source": "EarthRef ERR 60452 (0.25)"},
+      "density_kg_m3": {"value": 2900, "range": [2700, 3000], "source": "engineering tables give 3.00 t/m3 solid density (secondary); 2900 is a central value (assumption within range)"},
+      "fracture_toughness_pa_sqrt_m": {"value": 2.4e6, "range": [1.0e6, 2.58e6], "source": "Balme et al. 2004 J. Volcanol. Geotherm. Res. (Icelandic basalt ~2.4, Etna ~2.2 MPa m^0.5 at STP); Atkinson & Meredith 1987 average 2.58; EarthRef 1-3"},
+      "tensile_strength_pa": {"value": 14e6, "range": [10e6, 20e6], "source": "EarthRef ERR 60452 intact basalt tensile strength 14 MPa"},
+      "microstructure_scale_m": {"value": 3e-4, "range": [1e-4, 1e-3], "source": "ASSUMPTION: typical groundmass crystal size of fine-grained basalt; needs a cited value"},
+      "heterogeneity": "homogeneous at simulated resolution (crystals below grid scale)"
+    },
+    "granite": {
+      "role": "coarse-grained, poor knapping material (hammerstone / anvil)",
+      "youngs_modulus_pa": {"value": 65.3e9, "range": [40e9, 80e9], "source": "granite blast study (Springer Professional 'Internal fractures after blasting confined rock and mortar cylinders'): 65.30 +/- 0.83 GPa"},
+      "poisson_ratio": {"value": 0.24, "source": "same study: 0.24 +/- 0.02"},
+      "density_kg_m3": {"value": 2700, "source": "same study: 2.70 +/- 0.01 g/cm3"},
+      "fracture_toughness_pa_sqrt_m": {"value": 2.24e6, "range": [1.73e6, 2.24e6], "source": "Yu et al. 2018 PLOS ONE 13:e0180880 (grain 1.01 mm: 2.24; 2.12 mm: 1.91; 3 mm: 1.87); Atkinson & Meredith 1987 average 1.73"},
+      "tensile_strength_pa": {"value": 9.5e6, "range": [8.51e6, 10.85e6], "source": "Yu et al. 2018 (9.5 MPa at 1.01 mm grain); blast study Brazilian 10.85 +/- 1.52 MPa"},
+      "microstructure_scale_m": {"value": 1.01e-3, "range": [1e-3, 3e-3], "source": "Yu et al. 2018 grain size 1.01 mm (paired with the toughness/strength above); blast study 1-3 mm"},
+      "heterogeneity": "mineral_mosaic",
+      "mosaic": {
+        "_comment": "Grain-scale mineral mosaic. Mineral micro-parameters from Yu et al. 2018 Table 4 (RFPA micro-mechanical parameters, their ref. 41). Volume fractions are an ASSUMPTION for a typical granite; grain-boundary strength is a CALIBRATED parameter (see calibration).",
+        "grain_size_m": 1.01e-3,
+        "minerals": {
+          "quartz":   {"fraction": 0.30, "youngs_modulus_pa": 96e9, "poisson_ratio": 0.08, "tensile_strength_pa": 373e6},
+          "feldspar": {"fraction": 0.60, "youngs_modulus_pa": 67e9, "poisson_ratio": 0.27, "tensile_strength_pa": 172e6},
+          "mica":     {"fraction": 0.10, "youngs_modulus_pa": 40e9, "poisson_ratio": 0.25, "tensile_strength_pa": 90e6}
+        },
+        "fraction_source": "ASSUMPTION (typical granite modal composition); replace with a cited modal analysis if found"
+      }
+    }
+  },
+  "calibration": {
+    "_comment": "The ONLY parameters the loop may fit. Each is fitted to a bulk material property, never to a validation target (Dibble data, cone angle, cutting data).",
+    "granite_grain_boundary_strength": {
+      "target": "simulated bulk tensile strength of the granite mosaic equals tensile_strength_pa of granite (9.5 MPa) within 10%",
+      "procedure": "simulated direct-tension or Brazilian test on >= 10 random mosaics (seeds 0-9); report the fitted value and its spread"
+    }
+  },
+  "forbidden_inputs": [
+    "Dibble/Li 2023 flake data (validation only)",
+    "Hertzian cone angle (validation only)",
+    "Any per-material 'sharpness', 'quality' or 'knappability' score"
+  ]
+}

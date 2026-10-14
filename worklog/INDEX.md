@@ -1,3 +1,5 @@
+- 2026-10-15 — physics-loop รอบ 1: สร้างฟิสิกส์ lithics/ ให้ผ่าน V1–V11 + red team (รันโดยผู้ใช้) — Planned — [plan](2026-10-15-physics-loop-r1/plan.md)
+- 2026-10-15 — เตรียม physics-loop (ค่าวัสดุ, เกณฑ์ลงทะเบียนล่วงหน้า, verify, red team) — Done — [plan](2026-10-15-physics-loop-prep/plan.md) · [report](2026-10-15-physics-loop-prep/report.md)
 - 2026-10-15 — ตรวจเอกสารกะเทาะหิน (Dibble/PSIA/Snyder ฯลฯ) และเป้าตรวจความสมจริงของโลกฟิสิกส์ — Done — [plan](2026-10-15-lithic-literature/plan.md) · [report](2026-10-15-lithic-literature/report.md)
 - 2026-10-14 — ออกแบบโลกฟิสิกส์การแตก + ต้นแบบ 2D พิสูจน์ความเร็ว — Done — [plan](2026-10-14-physics-world-design/plan.md) · [report](2026-10-14-physics-world-design/report.md)
 - 2026-10-14 — YSC 2027 เล่มรายงานฉบับเต็ม (ร่าง .md, ผล pilot) — Done — [plan](2026-10-14-ysc-full-report-draft/plan.md) · [report](2026-10-14-ysc-full-report-draft/report.md)
