@@ -36,6 +36,9 @@ Date: 2026-10-14 · ต่อจาก `worklog/2026-10-14-ysc-review/report.md`
   - ตาม 03 ข้อ 3 ส่วน S2 (seeds 1050–1099) รันได้หลังเลือกเซลล์เท่านั้น → ย้ายไปทำในขั้น 6 (คำสั่งเดียวกัน, `--out data/tool_discovery_pilot_s2_selected`, ใช้เวลาราว 5–10 นาที)
   - ข้อสังเกตเบื้องต้น (ยังไม่ใช่ผลตามกฎ): q_init=10 ทำให้ C1/C2/C4 ติดลบทุกเซลล์; ใน q0 ค่า C1 > C2 ทุกเซลล์และช่องว่างกว้างขึ้นเมื่อ ε สูง
 - [ ] 6. **วิเคราะห์ pilot**: เลือกค่าตามกฎ, ตรวจ Gate, power analysis เพื่อหาจำนวน seed ที่ต้องใช้ในรันยืนยัน → `docs/ysc2027_tool_discovery/04_ผล_pilot.md`
+  - 6a เสร็จรอบ 5 (Claude นำ, Codex รีวิว): สคริปต์ `scripts/analyze_tool_discovery_pilot.py` (`s1` = Gate + กฎเลือก + เงื่อนไขหยุด; `power` = Gate บน S2 + dz_safe + Guenther + จำลอง t-test) ปฏิเสธข้อมูลที่ไม่ครบ 16 เซลล์ × C0–C4 × 50 seeds; เทสต์ใหม่ `tests/test_tool_discovery_pilot_analysis.py` 11 ข้อ; ผล S1 ใน `docs/ysc2027_tool_discovery/pilot_s1_analysis.json`: ผ่าน Gate A/B ทั้ง 16 เซลล์ (B1 = 1.00 ทุกเซลล์ คือ C0 มีวัตถุที่ผ่านระดับ A ทุกรัน → B1 ผ่านง่าย ต้องเขียนใน 04), C1−C2 CI ไม่คร่อม 0 ทุกเซลล์, **เซลล์ที่เลือก: ε = 0.05, q_init = 0, ticks = 1600** (`e005_q0_t1600`, C1 = 0.398, SE 0.005, ไม่มีเซลล์เสมอใน 1 SE)
+  - 6b (รอบถัดไป, ต้องให้ `scripts/` สะอาดหลังลูป commit ก่อน): รัน S2 `python scripts/run_tool_discovery.py --out data/tool_discovery_pilot_s2_selected --conditions C0 C1 C2 C3 C4 --seeds 1050-1099 --ticks 1600 --set immortal=true --set epsilon=0.05 --set q_init=0` แล้ว `python scripts/analyze_tool_discovery_pilot.py power data/tool_discovery_pilot_s2_selected --out docs/ysc2027_tool_discovery/pilot_s2_power.json`
+  - 6c: เขียน `04_ผล_pilot.md` จาก 2 ไฟล์ JSON
 - [ ] 7. **ตรึง protocol ยืนยัน**: `docs/ysc2027_tool_discovery/05_confirmatory_protocol.md` + config JSON + SHA-256, commit, เขียน `report.md`, อัปเดต worklog/INDEX.md และ memory แล้ว**หยุด loop**
 
 ## เงื่อนไขให้หยุดถามผู้ใช้ (หยุด loop แล้วรายงาน)

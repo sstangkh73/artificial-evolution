@@ -1,0 +1,2549 @@
+{
+  "n_cells": 16,
+  "cells": [
+    {
+      "dir": "tool_discovery_pilot_s1_e005_q0_t1600",
+      "epsilon": 0.05,
+      "q_init": 0.0,
+      "ticks": 1600,
+      "c1_n": 50,
+      "c1_mean": 0.398326875,
+      "c1_sd": 0.035118632771586306,
+      "c1_se": 0.004966524675757759,
+      "c1_minus_c2": {
+        "metric": "final_net_per_alive_tick",
+        "treatment": "C1",
+        "control": "C2",
+        "n_seeds_paired": 50,
+        "n_pairs": 50,
+        "n_dropped_missing": 0,
+        "mean_treatment": 0.398326875,
+        "mean_control": 0.177713125,
+        "mean_diff": 0.22061375,
+        "sd_diff": 0.1472337459249556,
+        "dz": 1.4983912051823083,
+        "n_treatment_higher": 50,
+        "n_ties": 0,
+        "n_control_higher": 0,
+        "ci95_mean_diff": [
+          0.183175,
+          0.26404
+        ]
+      },
+      "c1_minus_c2_food_minus_effort": {
+        "metric": "food_minus_effort_per_tick",
+        "treatment": "C1",
+        "control": "C2",
+        "n_seeds_paired": 50,
+        "n_pairs": 50,
+        "n_dropped_missing": 0,
+        "mean_treatment": 0.495911875,
+        "mean_control": 0.409195625,
+        "mean_diff": 0.08671625,
+        "sd_diff": 0.045895827811719,
+        "dz": 1.889414662172363,
+        "n_treatment_higher": 50,
+        "n_ties": 0,
+        "n_control_higher": 0,
+        "ci95_mean_diff": [
+          0.07464124999999999,
+          0.09980625
+        ]
+      },
+      "c1_c2_ci_excludes_zero": true,
+      "gate_a": true,
+      "gate_a_cmp": {
+        "metric": "final_net_per_alive_tick",
+        "treatment": "C3",
+        "control": "C0",
+        "n_seeds_paired": 50,
+        "n_pairs": 50,
+        "n_dropped_missing": 0,
+        "mean_treatment": 0.410905,
+        "mean_control": -1.024520625,
+        "mean_diff": 1.435425625,
+        "sd_diff": 0.2259652322553571,
+        "dz": 6.352418071899949,
+        "n_treatment_higher": 50,
+        "n_ties": 0,
+        "n_control_higher": 0,
+        "ci95_mean_diff": [
+          1.374858125,
+          1.498658125
+        ]
+      },
+      "gate_a_components": {
+        "food_minus_effort_per_tick": {
+          "metric": "food_minus_effort_per_tick",
+          "treatment": "C3",
+          "control": "C0",
+          "n_seeds_paired": 50,
+          "n_pairs": 50,
+          "n_dropped_missing": 0,
+          "mean_treatment": 1.4060525,
+          "mean_control": 0.211509375,
+          "mean_diff": 1.194543125,
+          "sd_diff": 0.18550059713055916,
+          "dz": 6.4395648503452305,
+          "n_treatment_higher": 50,
+          "n_ties": 0,
+          "n_control_higher": 0,
+          "ci95_mean_diff": [
+            1.144988125,
+            1.246189375
+          ]
+        },
+        "craft_cost_per_tick": {
+          "metric": "craft_cost_per_tick",
+          "treatment": "C3",
+          "control": "C0",
+          "n_seeds_paired": 50,
+          "n_pairs": 50,
+          "n_dropped_missing": 0,
+          "mean_treatment": 0.62322,
+          "mean_control": 0.793735,
+          "mean_diff": -0.170515,
+          "sd_diff": 0.02980354082853859,
+          "dz": -5.721300062330922,
+          "n_treatment_higher": 0,
+          "n_ties": 0,
+          "n_control_higher": 50,
+          "ci95_mean_diff": [
+            -0.178805,
+            -0.162435
+          ]
+        },
+        "gather_cost_per_tick": {
+          "metric": "gather_cost_per_tick",
+          "treatment": "C3",
+          "control": "C0",
+          "n_seeds_paired": 50,
+          "n_pairs": 50,
+          "n_dropped_missing": 0,
+          "mean_treatment": 0.3719275,
+          "mean_control": 0.442295,
+          "mean_diff": -0.0703675,
+          "sd_diff": 0.022555351558523118,
+          "dz": -3.1197695951411513,
+          "n_treatment_higher": 0,
+          "n_ties": 0,
+          "n_control_higher": 50,
+          "ci95_mean_diff": [
+            -0.076705,
+            -0.0643475
+          ]
+        }
+      },
+      "gate_b1": true,
+      "gate_b1_c0_fraction_functional": 1.0,
+      "gate_b2": true,
+      "gate_b2_cmp": {
+        "metric": "functional_rate",
+        "treatment": "C3",
+        "control": "C0",
+        "n_seeds_paired": 50,
+        "n_pairs": 50,
+        "n_dropped_missing": 0,
+        "mean_treatment": 0.13983783909419994,
+        "mean_control": 0.02919030735832688,
+        "mean_diff": 0.11064753173587305,
+        "sd_diff": 0.02648420179076537,
+        "dz": 4.177869229740355,
+        "n_treatment_higher": 50,
+        "n_ties": 0,
+        "n_control_higher": 0,
+        "ci95_mean_diff": [
+          0.10366013397591115,
+          0.11809068265969956
+        ]
+      },
+      "pass": true
+    },
+    {
+      "dir": "tool_discovery_pilot_s1_e005_q0_t800",
+      "epsilon": 0.05,
+      "q_init": 0.0,
+      "ticks": 800,
+      "c1_n": 50,
+      "c1_mean": 0.3644925,
+      "c1_sd": 0.03784073439888474,
+      "c1_se": 0.00535148797970609,
+      "c1_minus_c2": {
+        "metric": "final_net_per_alive_tick",
+        "treatment": "C1",
+        "control": "C2",
+        "n_seeds_paired": 50,
+        "n_pairs": 50,
+        "n_dropped_missing": 0,
+        "mean_treatment": 0.3644925,
+        "mean_control": 0.10710125,
+        "mean_diff": 0.25739125,
+        "sd_diff": 0.13758483978749073,
+        "dz": 1.87078205998247,
+        "n_treatment_higher": 50,
+        "n_ties": 0,
+        "n_control_higher": 0,
+        "ci95_mean_diff": [
+          0.22138875,
+          0.29679
+        ]
+      },
+      "c1_minus_c2_food_minus_effort": {
+        "metric": "food_minus_effort_per_tick",
+        "treatment": "C1",
+        "control": "C2",
+        "n_seeds_paired": 50,
+        "n_pairs": 50,
+        "n_dropped_missing": 0,
+        "mean_treatment": 0.4936625,
+        "mean_control": 0.39404625,
+        "mean_diff": 0.09961624999999999,
+        "sd_diff": 0.04948336083011508,
+        "dz": 2.013126196945268,
+        "n_treatment_higher": 50,
+        "n_ties": 0,
+        "n_control_higher": 0,
+        "ci95_mean_diff": [
+          0.08621874999999998,
+          0.11363249999999998
+        ]
+      },
+      "c1_c2_ci_excludes_zero": true,
+      "gate_a": true,
+      "gate_a_cmp": {
+        "metric": "final_net_per_alive_tick",
+        "treatment": "C3",
+        "control": "C0",
+        "n_seeds_paired": 50,
+        "n_pairs": 50,
+        "n_dropped_missing": 0,
+        "mean_treatment": 0.439315,
+        "mean_control": -1.01933,
+        "mean_diff": 1.458645,
+        "sd_diff": 0.24339459386499135,
+        "dz": 5.992922754928141,
+        "n_treatment_higher": 50,
+        "n_ties": 0,
+        "n_control_higher": 0,
+        "ci95_mean_diff": [
+          1.3926775,
+          1.52633625
+        ]
+      },
+      "gate_a_components": {
+        "food_minus_effort_per_tick": {
+          "metric": "food_minus_effort_per_tick",
+          "treatment": "C3",
+          "control": "C0",
+          "n_seeds_paired": 50,
+          "n_pairs": 50,
+          "n_dropped_missing": 0,
+          "mean_treatment": 1.429895,
+          "mean_control": 0.213,
+          "mean_diff": 1.216895,
+          "sd_diff": 0.20177883460143245,
+          "dz": 6.0308357038719915,
+          "n_treatment_higher": 50,
+          "n_ties": 0,
+          "n_control_higher": 0,
+          "ci95_mean_diff": [
+            1.16271125,
+            1.2728725
+          ]
+        },
+        "craft_cost_per_tick": {
+          "metric": "craft_cost_per_tick",
+          "treatment": "C3",
+          "control": "C0",
+          "n_seeds_paired": 50,
+          "n_pairs": 50,
+          "n_dropped_missing": 0,
+          "mean_treatment": 0.62075,
+          "mean_control": 0.78984,
+          "mean_diff": -0.16909000000000002,
+          "sd_diff": 0.035581136082170825,
+          "dz": -4.752237241933613,
+          "n_treatment_higher": 0,
+          "n_ties": 0,
+          "n_control_higher": 50,
+          "ci95_mean_diff": [
+            -0.17884000000000003,
+            -0.1592
+          ]
+        },
+        "gather_cost_per_tick": {
+          "metric": "gather_cost_per_tick",
+          "treatment": "C3",
+          "control": "C0",
+          "n_seeds_paired": 50,
+          "n_pairs": 50,
+          "n_dropped_missing": 0,
+          "mean_treatment": 0.36983,
+          "mean_control": 0.44249,
+          "mean_diff": -0.07266,
+          "sd_diff": 0.025790302322337186,
+          "dz": -2.817338047916895,
+          "n_treatment_higher": 0,
+          "n_ties": 0,
+          "n_control_higher": 50,
+          "ci95_mean_diff": [
+            -0.07972499999999999,
+            -0.065705
+          ]
+        }
+      },
+      "gate_b1": true,
+      "gate_b1_c0_fraction_functional": 1.0,
+      "gate_b2": true,
+      "gate_b2_cmp": {
+        "metric": "functional_rate",
+        "treatment": "C3",
+        "control": "C0",
+        "n_seeds_paired": 50,
+        "n_pairs": 50,
+        "n_dropped_missing": 0,
+        "mean_treatment": 0.1405635327256565,
+        "mean_control": 0.028796716067652554,
+        "mean_diff": 0.11176681665800393,
+        "sd_diff": 0.02799912457231895,
+        "dz": 3.9917968281230145,
+        "n_treatment_higher": 50,
+        "n_ties": 0,
+        "n_control_higher": 0,
+        "ci95_mean_diff": [
+          0.1044278550665715,
+          0.11959127397618535
+        ]
+      },
+      "pass": true
+    },
+    {
+      "dir": "tool_discovery_pilot_s1_e005_q10_t1600",
+      "epsilon": 0.05,
+      "q_init": 10.0,
+      "ticks": 1600,
+      "c1_n": 50,
+      "c1_mean": -0.307291875,
+      "c1_sd": 0.15884520518787043,
+      "c1_se": 0.022464104349462347,
+      "c1_minus_c2": {
+        "metric": "final_net_per_alive_tick",
+        "treatment": "C1",
+        "control": "C2",
+        "n_seeds_paired": 50,
+        "n_pairs": 50,
+        "n_dropped_missing": 0,
+        "mean_treatment": -0.307291875,
+        "mean_control": -0.627348125,
+        "mean_diff": 0.32005625,
+        "sd_diff": 0.09564785870410861,
+        "dz": 3.346193572300556,
+        "n_treatment_higher": 50,
+        "n_ties": 0,
+        "n_control_higher": 0,
+        "ci95_mean_diff": [
+          0.294784375,
+          0.34709125
+        ]
+      },
+      "c1_minus_c2_food_minus_effort": {
+        "metric": "food_minus_effort_per_tick",
+        "treatment": "C1",
+        "control": "C2",
+        "n_seeds_paired": 50,
+        "n_pairs": 50,
+        "n_dropped_missing": 0,
+        "mean_treatment": 0.570598125,
+        "mean_control": 0.253801875,
+        "mean_diff": 0.31679625,
+        "sd_diff": 0.0910350402706512,
+        "dz": 3.479937495036535,
+        "n_treatment_higher": 50,
+        "n_ties": 0,
+        "n_control_higher": 0,
+        "ci95_mean_diff": [
+          0.29255749999999997,
+          0.34267
+        ]
+      },
+      "c1_c2_ci_excludes_zero": true,
+      "gate_a": true,
+      "gate_a_cmp": {
+        "metric": "final_net_per_alive_tick",
+        "treatment": "C3",
+        "control": "C0",
+        "n_seeds_paired": 50,
+        "n_pairs": 50,
+        "n_dropped_missing": 0,
+        "mean_treatment": 0.410905,
+        "mean_control": -1.024520625,
+        "mean_diff": 1.435425625,
+        "sd_diff": 0.2259652322553571,
+        "dz": 6.352418071899949,
+        "n_treatment_higher": 50,
+        "n_ties": 0,
+        "n_control_higher": 0,
+        "ci95_mean_diff": [
+          1.374858125,
+          1.498658125
+        ]
+      },
+      "gate_a_components": {
+        "food_minus_effort_per_tick": {
+          "metric": "food_minus_effort_per_tick",
+          "treatment": "C3",
+          "control": "C0",
+          "n_seeds_paired": 50,
+          "n_pairs": 50,
+          "n_dropped_missing": 0,
+          "mean_treatment": 1.4060525,
+          "mean_control": 0.211509375,
+          "mean_diff": 1.194543125,
+          "sd_diff": 0.18550059713055916,
+          "dz": 6.4395648503452305,
+          "n_treatment_higher": 50,
+          "n_ties": 0,
+          "n_control_higher": 0,
+          "ci95_mean_diff": [
+            1.144988125,
+            1.246189375
+          ]
+        },
+        "craft_cost_per_tick": {
+          "metric": "craft_cost_per_tick",
+          "treatment": "C3",
+          "control": "C0",
+          "n_seeds_paired": 50,
+          "n_pairs": 50,
+          "n_dropped_missing": 0,
+          "mean_treatment": 0.62322,
+          "mean_control": 0.793735,
+          "mean_diff": -0.170515,
+          "sd_diff": 0.02980354082853859,
+          "dz": -5.721300062330922,
+          "n_treatment_higher": 0,
+          "n_ties": 0,
+          "n_control_higher": 50,
+          "ci95_mean_diff": [
+            -0.178805,
+            -0.162435
+          ]
+        },
+        "gather_cost_per_tick": {
+          "metric": "gather_cost_per_tick",
+          "treatment": "C3",
+          "control": "C0",
+          "n_seeds_paired": 50,
+          "n_pairs": 50,
+          "n_dropped_missing": 0,
+          "mean_treatment": 0.3719275,
+          "mean_control": 0.442295,
+          "mean_diff": -0.0703675,
+          "sd_diff": 0.022555351558523118,
+          "dz": -3.1197695951411513,
+          "n_treatment_higher": 0,
+          "n_ties": 0,
+          "n_control_higher": 50,
+          "ci95_mean_diff": [
+            -0.076705,
+            -0.0643475
+          ]
+        }
+      },
+      "gate_b1": true,
+      "gate_b1_c0_fraction_functional": 1.0,
+      "gate_b2": true,
+      "gate_b2_cmp": {
+        "metric": "functional_rate",
+        "treatment": "C3",
+        "control": "C0",
+        "n_seeds_paired": 50,
+        "n_pairs": 50,
+        "n_dropped_missing": 0,
+        "mean_treatment": 0.13983783909419994,
+        "mean_control": 0.02919030735832688,
+        "mean_diff": 0.11064753173587305,
+        "sd_diff": 0.02648420179076537,
+        "dz": 4.177869229740355,
+        "n_treatment_higher": 50,
+        "n_ties": 0,
+        "n_control_higher": 0,
+        "ci95_mean_diff": [
+          0.10366013397591115,
+          0.11809068265969956
+        ]
+      },
+      "pass": true
+    },
+    {
+      "dir": "tool_discovery_pilot_s1_e005_q10_t800",
+      "epsilon": 0.05,
+      "q_init": 10.0,
+      "ticks": 800,
+      "c1_n": 50,
+      "c1_mean": -0.35003625,
+      "c1_sd": 0.15674538210189115,
+      "c1_se": 0.022167144520784745,
+      "c1_minus_c2": {
+        "metric": "final_net_per_alive_tick",
+        "treatment": "C1",
+        "control": "C2",
+        "n_seeds_paired": 50,
+        "n_pairs": 50,
+        "n_dropped_missing": 0,
+        "mean_treatment": -0.35003625,
+        "mean_control": -0.62585375,
+        "mean_diff": 0.2758175,
+        "sd_diff": 0.10467425924490409,
+        "dz": 2.6350078996468063,
+        "n_treatment_higher": 50,
+        "n_ties": 0,
+        "n_control_higher": 0,
+        "ci95_mean_diff": [
+          0.24732749999999998,
+          0.30461499999999997
+        ]
+      },
+      "c1_minus_c2_food_minus_effort": {
+        "metric": "food_minus_effort_per_tick",
+        "treatment": "C1",
+        "control": "C2",
+        "n_seeds_paired": 50,
+        "n_pairs": 50,
+        "n_dropped_missing": 0,
+        "mean_treatment": 0.53730375,
+        "mean_control": 0.25765625,
+        "mean_diff": 0.2796475,
+        "sd_diff": 0.09886016181651613,
+        "dz": 2.8287178056518263,
+        "n_treatment_higher": 50,
+        "n_ties": 0,
+        "n_control_higher": 0,
+        "ci95_mean_diff": [
+          0.25295375000000003,
+          0.30675500000000006
+        ]
+      },
+      "c1_c2_ci_excludes_zero": true,
+      "gate_a": true,
+      "gate_a_cmp": {
+        "metric": "final_net_per_alive_tick",
+        "treatment": "C3",
+        "control": "C0",
+        "n_seeds_paired": 50,
+        "n_pairs": 50,
+        "n_dropped_missing": 0,
+        "mean_treatment": 0.439315,
+        "mean_control": -1.01933,
+        "mean_diff": 1.458645,
+        "sd_diff": 0.24339459386499135,
+        "dz": 5.992922754928141,
+        "n_treatment_higher": 50,
+        "n_ties": 0,
+        "n_control_higher": 0,
+        "ci95_mean_diff": [
+          1.3926775,
+          1.52633625
+        ]
+      },
+      "gate_a_components": {
+        "food_minus_effort_per_tick": {
+          "metric": "food_minus_effort_per_tick",
+          "treatment": "C3",
+          "control": "C0",
+          "n_seeds_paired": 50,
+          "n_pairs": 50,
+          "n_dropped_missing": 0,
+          "mean_treatment": 1.429895,
+          "mean_control": 0.213,
+          "mean_diff": 1.216895,
+          "sd_diff": 0.20177883460143245,
+          "dz": 6.0308357038719915,
+          "n_treatment_higher": 50,
+          "n_ties": 0,
+          "n_control_higher": 0,
+          "ci95_mean_diff": [
+            1.16271125,
+            1.2728725
+          ]
+        },
+        "craft_cost_per_tick": {
+          "metric": "craft_cost_per_tick",
+          "treatment": "C3",
+          "control": "C0",
+          "n_seeds_paired": 50,
+          "n_pairs": 50,
+          "n_dropped_missing": 0,
+          "mean_treatment": 0.62075,
+          "mean_control": 0.78984,
+          "mean_diff": -0.16909000000000002,
+          "sd_diff": 0.035581136082170825,
+          "dz": -4.752237241933613,
+          "n_treatment_higher": 0,
+          "n_ties": 0,
+          "n_control_higher": 50,
+          "ci95_mean_diff": [
+            -0.17884000000000003,
+            -0.1592
+          ]
+        },
+        "gather_cost_per_tick": {
+          "metric": "gather_cost_per_tick",
+          "treatment": "C3",
+          "control": "C0",
+          "n_seeds_paired": 50,
+          "n_pairs": 50,
+          "n_dropped_missing": 0,
+          "mean_treatment": 0.36983,
+          "mean_control": 0.44249,
+          "mean_diff": -0.07266,
+          "sd_diff": 0.025790302322337186,
+          "dz": -2.817338047916895,
+          "n_treatment_higher": 0,
+          "n_ties": 0,
+          "n_control_higher": 50,
+          "ci95_mean_diff": [
+            -0.07972499999999999,
+            -0.065705
+          ]
+        }
+      },
+      "gate_b1": true,
+      "gate_b1_c0_fraction_functional": 1.0,
+      "gate_b2": true,
+      "gate_b2_cmp": {
+        "metric": "functional_rate",
+        "treatment": "C3",
+        "control": "C0",
+        "n_seeds_paired": 50,
+        "n_pairs": 50,
+        "n_dropped_missing": 0,
+        "mean_treatment": 0.1405635327256565,
+        "mean_control": 0.028796716067652554,
+        "mean_diff": 0.11176681665800393,
+        "sd_diff": 0.02799912457231895,
+        "dz": 3.9917968281230145,
+        "n_treatment_higher": 50,
+        "n_ties": 0,
+        "n_control_higher": 0,
+        "ci95_mean_diff": [
+          0.1044278550665715,
+          0.11959127397618535
+        ]
+      },
+      "pass": true
+    },
+    {
+      "dir": "tool_discovery_pilot_s1_e010_q0_t1600",
+      "epsilon": 0.1,
+      "q_init": 0.0,
+      "ticks": 1600,
+      "c1_n": 50,
+      "c1_mean": 0.36481375,
+      "c1_sd": 0.0383818552342704,
+      "c1_se": 0.005428014022134596,
+      "c1_minus_c2": {
+        "metric": "final_net_per_alive_tick",
+        "treatment": "C1",
+        "control": "C2",
+        "n_seeds_paired": 50,
+        "n_pairs": 50,
+        "n_dropped_missing": 0,
+        "mean_treatment": 0.36481375,
+        "mean_control": 0.056286875,
+        "mean_diff": 0.308526875,
+        "sd_diff": 0.15953657263777574,
+        "dz": 1.9338943409578155,
+        "n_treatment_higher": 50,
+        "n_ties": 0,
+        "n_control_higher": 0,
+        "ci95_mean_diff": [
+          0.266891875,
+          0.353130625
+        ]
+      },
+      "c1_minus_c2_food_minus_effort": {
+        "metric": "food_minus_effort_per_tick",
+        "treatment": "C1",
+        "control": "C2",
+        "n_seeds_paired": 50,
+        "n_pairs": 50,
+        "n_dropped_missing": 0,
+        "mean_treatment": 0.53016125,
+        "mean_control": 0.388586875,
+        "mean_diff": 0.141574375,
+        "sd_diff": 0.06358298321519686,
+        "dz": 2.2266079356616686,
+        "n_treatment_higher": 50,
+        "n_ties": 0,
+        "n_control_higher": 0,
+        "ci95_mean_diff": [
+          0.1251325,
+          0.159769375
+        ]
+      },
+      "c1_c2_ci_excludes_zero": true,
+      "gate_a": true,
+      "gate_a_cmp": {
+        "metric": "final_net_per_alive_tick",
+        "treatment": "C3",
+        "control": "C0",
+        "n_seeds_paired": 50,
+        "n_pairs": 50,
+        "n_dropped_missing": 0,
+        "mean_treatment": 0.410905,
+        "mean_control": -1.024520625,
+        "mean_diff": 1.435425625,
+        "sd_diff": 0.2259652322553571,
+        "dz": 6.352418071899949,
+        "n_treatment_higher": 50,
+        "n_ties": 0,
+        "n_control_higher": 0,
+        "ci95_mean_diff": [
+          1.374858125,
+          1.498658125
+        ]
+      },
+      "gate_a_components": {
+        "food_minus_effort_per_tick": {
+          "metric": "food_minus_effort_per_tick",
+          "treatment": "C3",
+          "control": "C0",
+          "n_seeds_paired": 50,
+          "n_pairs": 50,
+          "n_dropped_missing": 0,
+          "mean_treatment": 1.4060525,
+          "mean_control": 0.211509375,
+          "mean_diff": 1.194543125,
+          "sd_diff": 0.18550059713055916,
+          "dz": 6.4395648503452305,
+          "n_treatment_higher": 50,
+          "n_ties": 0,
+          "n_control_higher": 0,
+          "ci95_mean_diff": [
+            1.144988125,
+            1.246189375
+          ]
+        },
+        "craft_cost_per_tick": {
+          "metric": "craft_cost_per_tick",
+          "treatment": "C3",
+          "control": "C0",
+          "n_seeds_paired": 50,
+          "n_pairs": 50,
+          "n_dropped_missing": 0,
+          "mean_treatment": 0.62322,
+          "mean_control": 0.793735,
+          "mean_diff": -0.170515,
+          "sd_diff": 0.02980354082853859,
+          "dz": -5.721300062330922,
+          "n_treatment_higher": 0,
+          "n_ties": 0,
+          "n_control_higher": 50,
+          "ci95_mean_diff": [
+            -0.178805,
+            -0.162435
+          ]
+        },
+        "gather_cost_per_tick": {
+          "metric": "gather_cost_per_tick",
+          "treatment": "C3",
+          "control": "C0",
+          "n_seeds_paired": 50,
+          "n_pairs": 50,
+          "n_dropped_missing": 0,
+          "mean_treatment": 0.3719275,
+          "mean_control": 0.442295,
+          "mean_diff": -0.0703675,
+          "sd_diff": 0.022555351558523118,
+          "dz": -3.1197695951411513,
+          "n_treatment_higher": 0,
+          "n_ties": 0,
+          "n_control_higher": 50,
+          "ci95_mean_diff": [
+            -0.076705,
+            -0.0643475
+          ]
+        }
+      },
+      "gate_b1": true,
+      "gate_b1_c0_fraction_functional": 1.0,
+      "gate_b2": true,
+      "gate_b2_cmp": {
+        "metric": "functional_rate",
+        "treatment": "C3",
+        "control": "C0",
+        "n_seeds_paired": 50,
+        "n_pairs": 50,
+        "n_dropped_missing": 0,
+        "mean_treatment": 0.13983783909419994,
+        "mean_control": 0.02919030735832688,
+        "mean_diff": 0.11064753173587305,
+        "sd_diff": 0.02648420179076537,
+        "dz": 4.177869229740355,
+        "n_treatment_higher": 50,
+        "n_ties": 0,
+        "n_control_higher": 0,
+        "ci95_mean_diff": [
+          0.10366013397591115,
+          0.11809068265969956
+        ]
+      },
+      "pass": true
+    },
+    {
+      "dir": "tool_discovery_pilot_s1_e010_q0_t800",
+      "epsilon": 0.1,
+      "q_init": 0.0,
+      "ticks": 800,
+      "c1_n": 50,
+      "c1_mean": 0.3363,
+      "c1_sd": 0.05806453268008917,
+      "c1_se": 0.00821156496090379,
+      "c1_minus_c2": {
+        "metric": "final_net_per_alive_tick",
+        "treatment": "C1",
+        "control": "C2",
+        "n_seeds_paired": 50,
+        "n_pairs": 50,
+        "n_dropped_missing": 0,
+        "mean_treatment": 0.3363,
+        "mean_control": 0.020345000000000002,
+        "mean_diff": 0.315955,
+        "sd_diff": 0.16268464491955606,
+        "dz": 1.9421316631095253,
+        "n_treatment_higher": 50,
+        "n_ties": 0,
+        "n_control_higher": 0,
+        "ci95_mean_diff": [
+          0.27252875,
+          0.36267
+        ]
+      },
+      "c1_minus_c2_food_minus_effort": {
+        "metric": "food_minus_effort_per_tick",
+        "treatment": "C1",
+        "control": "C2",
+        "n_seeds_paired": 50,
+        "n_pairs": 50,
+        "n_dropped_missing": 0,
+        "mean_treatment": 0.523825,
+        "mean_control": 0.377205,
+        "mean_diff": 0.14662,
+        "sd_diff": 0.08127619950432811,
+        "dz": 1.8039721455257292,
+        "n_treatment_higher": 50,
+        "n_ties": 0,
+        "n_control_higher": 0,
+        "ci95_mean_diff": [
+          0.12478249999999999,
+          0.16962625
+        ]
+      },
+      "c1_c2_ci_excludes_zero": true,
+      "gate_a": true,
+      "gate_a_cmp": {
+        "metric": "final_net_per_alive_tick",
+        "treatment": "C3",
+        "control": "C0",
+        "n_seeds_paired": 50,
+        "n_pairs": 50,
+        "n_dropped_missing": 0,
+        "mean_treatment": 0.439315,
+        "mean_control": -1.01933,
+        "mean_diff": 1.458645,
+        "sd_diff": 0.24339459386499135,
+        "dz": 5.992922754928141,
+        "n_treatment_higher": 50,
+        "n_ties": 0,
+        "n_control_higher": 0,
+        "ci95_mean_diff": [
+          1.3926775,
+          1.52633625
+        ]
+      },
+      "gate_a_components": {
+        "food_minus_effort_per_tick": {
+          "metric": "food_minus_effort_per_tick",
+          "treatment": "C3",
+          "control": "C0",
+          "n_seeds_paired": 50,
+          "n_pairs": 50,
+          "n_dropped_missing": 0,
+          "mean_treatment": 1.429895,
+          "mean_control": 0.213,
+          "mean_diff": 1.216895,
+          "sd_diff": 0.20177883460143245,
+          "dz": 6.0308357038719915,
+          "n_treatment_higher": 50,
+          "n_ties": 0,
+          "n_control_higher": 0,
+          "ci95_mean_diff": [
+            1.16271125,
+            1.2728725
+          ]
+        },
+        "craft_cost_per_tick": {
+          "metric": "craft_cost_per_tick",
+          "treatment": "C3",
+          "control": "C0",
+          "n_seeds_paired": 50,
+          "n_pairs": 50,
+          "n_dropped_missing": 0,
+          "mean_treatment": 0.62075,
+          "mean_control": 0.78984,
+          "mean_diff": -0.16909000000000002,
+          "sd_diff": 0.035581136082170825,
+          "dz": -4.752237241933613,
+          "n_treatment_higher": 0,
+          "n_ties": 0,
+          "n_control_higher": 50,
+          "ci95_mean_diff": [
+            -0.17884000000000003,
+            -0.1592
+          ]
+        },
+        "gather_cost_per_tick": {
+          "metric": "gather_cost_per_tick",
+          "treatment": "C3",
+          "control": "C0",
+          "n_seeds_paired": 50,
+          "n_pairs": 50,
+          "n_dropped_missing": 0,
+          "mean_treatment": 0.36983,
+          "mean_control": 0.44249,
+          "mean_diff": -0.07266,
+          "sd_diff": 0.025790302322337186,
+          "dz": -2.817338047916895,
+          "n_treatment_higher": 0,
+          "n_ties": 0,
+          "n_control_higher": 50,
+          "ci95_mean_diff": [
+            -0.07972499999999999,
+            -0.065705
+          ]
+        }
+      },
+      "gate_b1": true,
+      "gate_b1_c0_fraction_functional": 1.0,
+      "gate_b2": true,
+      "gate_b2_cmp": {
+        "metric": "functional_rate",
+        "treatment": "C3",
+        "control": "C0",
+        "n_seeds_paired": 50,
+        "n_pairs": 50,
+        "n_dropped_missing": 0,
+        "mean_treatment": 0.1405635327256565,
+        "mean_control": 0.028796716067652554,
+        "mean_diff": 0.11176681665800393,
+        "sd_diff": 0.02799912457231895,
+        "dz": 3.9917968281230145,
+        "n_treatment_higher": 50,
+        "n_ties": 0,
+        "n_control_higher": 0,
+        "ci95_mean_diff": [
+          0.1044278550665715,
+          0.11959127397618535
+        ]
+      },
+      "pass": true
+    },
+    {
+      "dir": "tool_discovery_pilot_s1_e010_q10_t1600",
+      "epsilon": 0.1,
+      "q_init": 10.0,
+      "ticks": 1600,
+      "c1_n": 50,
+      "c1_mean": -0.318485625,
+      "c1_sd": 0.1587108906522268,
+      "c1_se": 0.02244510940566924,
+      "c1_minus_c2": {
+        "metric": "final_net_per_alive_tick",
+        "treatment": "C1",
+        "control": "C2",
+        "n_seeds_paired": 50,
+        "n_pairs": 50,
+        "n_dropped_missing": 0,
+        "mean_treatment": -0.318485625,
+        "mean_control": -0.627446875,
+        "mean_diff": 0.30896125,
+        "sd_diff": 0.09530620537093393,
+        "dz": 3.24177474905769,
+        "n_treatment_higher": 50,
+        "n_ties": 0,
+        "n_control_higher": 0,
+        "ci95_mean_diff": [
+          0.28349,
+          0.336143125
+        ]
+      },
+      "c1_minus_c2_food_minus_effort": {
+        "metric": "food_minus_effort_per_tick",
+        "treatment": "C1",
+        "control": "C2",
+        "n_seeds_paired": 50,
+        "n_pairs": 50,
+        "n_dropped_missing": 0,
+        "mean_treatment": 0.555951875,
+        "mean_control": 0.250470625,
+        "mean_diff": 0.30548125,
+        "sd_diff": 0.09151337467245607,
+        "dz": 3.3381049610876663,
+        "n_treatment_higher": 50,
+        "n_ties": 0,
+        "n_control_higher": 0,
+        "ci95_mean_diff": [
+          0.281006875,
+          0.331274375
+        ]
+      },
+      "c1_c2_ci_excludes_zero": true,
+      "gate_a": true,
+      "gate_a_cmp": {
+        "metric": "final_net_per_alive_tick",
+        "treatment": "C3",
+        "control": "C0",
+        "n_seeds_paired": 50,
+        "n_pairs": 50,
+        "n_dropped_missing": 0,
+        "mean_treatment": 0.410905,
+        "mean_control": -1.024520625,
+        "mean_diff": 1.435425625,
+        "sd_diff": 0.2259652322553571,
+        "dz": 6.352418071899949,
+        "n_treatment_higher": 50,
+        "n_ties": 0,
+        "n_control_higher": 0,
+        "ci95_mean_diff": [
+          1.374858125,
+          1.498658125
+        ]
+      },
+      "gate_a_components": {
+        "food_minus_effort_per_tick": {
+          "metric": "food_minus_effort_per_tick",
+          "treatment": "C3",
+          "control": "C0",
+          "n_seeds_paired": 50,
+          "n_pairs": 50,
+          "n_dropped_missing": 0,
+          "mean_treatment": 1.4060525,
+          "mean_control": 0.211509375,
+          "mean_diff": 1.194543125,
+          "sd_diff": 0.18550059713055916,
+          "dz": 6.4395648503452305,
+          "n_treatment_higher": 50,
+          "n_ties": 0,
+          "n_control_higher": 0,
+          "ci95_mean_diff": [
+            1.144988125,
+            1.246189375
+          ]
+        },
+        "craft_cost_per_tick": {
+          "metric": "craft_cost_per_tick",
+          "treatment": "C3",
+          "control": "C0",
+          "n_seeds_paired": 50,
+          "n_pairs": 50,
+          "n_dropped_missing": 0,
+          "mean_treatment": 0.62322,
+          "mean_control": 0.793735,
+          "mean_diff": -0.170515,
+          "sd_diff": 0.02980354082853859,
+          "dz": -5.721300062330922,
+          "n_treatment_higher": 0,
+          "n_ties": 0,
+          "n_control_higher": 50,
+          "ci95_mean_diff": [
+            -0.178805,
+            -0.162435
+          ]
+        },
+        "gather_cost_per_tick": {
+          "metric": "gather_cost_per_tick",
+          "treatment": "C3",
+          "control": "C0",
+          "n_seeds_paired": 50,
+          "n_pairs": 50,
+          "n_dropped_missing": 0,
+          "mean_treatment": 0.3719275,
+          "mean_control": 0.442295,
+          "mean_diff": -0.0703675,
+          "sd_diff": 0.022555351558523118,
+          "dz": -3.1197695951411513,
+          "n_treatment_higher": 0,
+          "n_ties": 0,
+          "n_control_higher": 50,
+          "ci95_mean_diff": [
+            -0.076705,
+            -0.0643475
+          ]
+        }
+      },
+      "gate_b1": true,
+      "gate_b1_c0_fraction_functional": 1.0,
+      "gate_b2": true,
+      "gate_b2_cmp": {
+        "metric": "functional_rate",
+        "treatment": "C3",
+        "control": "C0",
+        "n_seeds_paired": 50,
+        "n_pairs": 50,
+        "n_dropped_missing": 0,
+        "mean_treatment": 0.13983783909419994,
+        "mean_control": 0.02919030735832688,
+        "mean_diff": 0.11064753173587305,
+        "sd_diff": 0.02648420179076537,
+        "dz": 4.177869229740355,
+        "n_treatment_higher": 50,
+        "n_ties": 0,
+        "n_control_higher": 0,
+        "ci95_mean_diff": [
+          0.10366013397591115,
+          0.11809068265969956
+        ]
+      },
+      "pass": true
+    },
+    {
+      "dir": "tool_discovery_pilot_s1_e010_q10_t800",
+      "epsilon": 0.1,
+      "q_init": 10.0,
+      "ticks": 800,
+      "c1_n": 50,
+      "c1_mean": -0.34588875,
+      "c1_sd": 0.1457121855645661,
+      "c1_se": 0.02060681490284345,
+      "c1_minus_c2": {
+        "metric": "final_net_per_alive_tick",
+        "treatment": "C1",
+        "control": "C2",
+        "n_seeds_paired": 50,
+        "n_pairs": 50,
+        "n_dropped_missing": 0,
+        "mean_treatment": -0.34588875,
+        "mean_control": -0.6126425,
+        "mean_diff": 0.26675375,
+        "sd_diff": 0.09534789733302504,
+        "dz": 2.7976888579755417,
+        "n_treatment_higher": 50,
+        "n_ties": 0,
+        "n_control_higher": 0,
+        "ci95_mean_diff": [
+          0.24159375,
+          0.293035
+        ]
+      },
+      "c1_minus_c2_food_minus_effort": {
+        "metric": "food_minus_effort_per_tick",
+        "treatment": "C1",
+        "control": "C2",
+        "n_seeds_paired": 50,
+        "n_pairs": 50,
+        "n_dropped_missing": 0,
+        "mean_treatment": 0.53066125,
+        "mean_control": 0.2625375,
+        "mean_diff": 0.26812375,
+        "sd_diff": 0.09075297920736684,
+        "dz": 2.954434690098142,
+        "n_treatment_higher": 50,
+        "n_ties": 0,
+        "n_control_higher": 0,
+        "ci95_mean_diff": [
+          0.24412875,
+          0.2930875
+        ]
+      },
+      "c1_c2_ci_excludes_zero": true,
+      "gate_a": true,
+      "gate_a_cmp": {
+        "metric": "final_net_per_alive_tick",
+        "treatment": "C3",
+        "control": "C0",
+        "n_seeds_paired": 50,
+        "n_pairs": 50,
+        "n_dropped_missing": 0,
+        "mean_treatment": 0.439315,
+        "mean_control": -1.01933,
+        "mean_diff": 1.458645,
+        "sd_diff": 0.24339459386499135,
+        "dz": 5.992922754928141,
+        "n_treatment_higher": 50,
+        "n_ties": 0,
+        "n_control_higher": 0,
+        "ci95_mean_diff": [
+          1.3926775,
+          1.52633625
+        ]
+      },
+      "gate_a_components": {
+        "food_minus_effort_per_tick": {
+          "metric": "food_minus_effort_per_tick",
+          "treatment": "C3",
+          "control": "C0",
+          "n_seeds_paired": 50,
+          "n_pairs": 50,
+          "n_dropped_missing": 0,
+          "mean_treatment": 1.429895,
+          "mean_control": 0.213,
+          "mean_diff": 1.216895,
+          "sd_diff": 0.20177883460143245,
+          "dz": 6.0308357038719915,
+          "n_treatment_higher": 50,
+          "n_ties": 0,
+          "n_control_higher": 0,
+          "ci95_mean_diff": [
+            1.16271125,
+            1.2728725
+          ]
+        },
+        "craft_cost_per_tick": {
+          "metric": "craft_cost_per_tick",
+          "treatment": "C3",
+          "control": "C0",
+          "n_seeds_paired": 50,
+          "n_pairs": 50,
+          "n_dropped_missing": 0,
+          "mean_treatment": 0.62075,
+          "mean_control": 0.78984,
+          "mean_diff": -0.16909000000000002,
+          "sd_diff": 0.035581136082170825,
+          "dz": -4.752237241933613,
+          "n_treatment_higher": 0,
+          "n_ties": 0,
+          "n_control_higher": 50,
+          "ci95_mean_diff": [
+            -0.17884000000000003,
+            -0.1592
+          ]
+        },
+        "gather_cost_per_tick": {
+          "metric": "gather_cost_per_tick",
+          "treatment": "C3",
+          "control": "C0",
+          "n_seeds_paired": 50,
+          "n_pairs": 50,
+          "n_dropped_missing": 0,
+          "mean_treatment": 0.36983,
+          "mean_control": 0.44249,
+          "mean_diff": -0.07266,
+          "sd_diff": 0.025790302322337186,
+          "dz": -2.817338047916895,
+          "n_treatment_higher": 0,
+          "n_ties": 0,
+          "n_control_higher": 50,
+          "ci95_mean_diff": [
+            -0.07972499999999999,
+            -0.065705
+          ]
+        }
+      },
+      "gate_b1": true,
+      "gate_b1_c0_fraction_functional": 1.0,
+      "gate_b2": true,
+      "gate_b2_cmp": {
+        "metric": "functional_rate",
+        "treatment": "C3",
+        "control": "C0",
+        "n_seeds_paired": 50,
+        "n_pairs": 50,
+        "n_dropped_missing": 0,
+        "mean_treatment": 0.1405635327256565,
+        "mean_control": 0.028796716067652554,
+        "mean_diff": 0.11176681665800393,
+        "sd_diff": 0.02799912457231895,
+        "dz": 3.9917968281230145,
+        "n_treatment_higher": 50,
+        "n_ties": 0,
+        "n_control_higher": 0,
+        "ci95_mean_diff": [
+          0.1044278550665715,
+          0.11959127397618535
+        ]
+      },
+      "pass": true
+    },
+    {
+      "dir": "tool_discovery_pilot_s1_e020_q0_t1600",
+      "epsilon": 0.2,
+      "q_init": 0.0,
+      "ticks": 1600,
+      "c1_n": 50,
+      "c1_mean": 0.31182,
+      "c1_sd": 0.04599527965951107,
+      "c1_se": 0.0065047148299623905,
+      "c1_minus_c2": {
+        "metric": "final_net_per_alive_tick",
+        "treatment": "C1",
+        "control": "C2",
+        "n_seeds_paired": 50,
+        "n_pairs": 50,
+        "n_dropped_missing": 0,
+        "mean_treatment": 0.31182,
+        "mean_control": -0.1831375,
+        "mean_diff": 0.4949575,
+        "sd_diff": 0.14737678096498796,
+        "dz": 3.358449660517325,
+        "n_treatment_higher": 50,
+        "n_ties": 0,
+        "n_control_higher": 0,
+        "ci95_mean_diff": [
+          0.45536875,
+          0.53655375
+        ]
+      },
+      "c1_minus_c2_food_minus_effort": {
+        "metric": "food_minus_effort_per_tick",
+        "treatment": "C1",
+        "control": "C2",
+        "n_seeds_paired": 50,
+        "n_pairs": 50,
+        "n_dropped_missing": 0,
+        "mean_treatment": 0.603495,
+        "mean_control": 0.3427825,
+        "mean_diff": 0.2607125,
+        "sd_diff": 0.07721497641590111,
+        "dz": 3.3764499077967822,
+        "n_treatment_higher": 50,
+        "n_ties": 0,
+        "n_control_higher": 0,
+        "ci95_mean_diff": [
+          0.23993687500000002,
+          0.28261625
+        ]
+      },
+      "c1_c2_ci_excludes_zero": true,
+      "gate_a": true,
+      "gate_a_cmp": {
+        "metric": "final_net_per_alive_tick",
+        "treatment": "C3",
+        "control": "C0",
+        "n_seeds_paired": 50,
+        "n_pairs": 50,
+        "n_dropped_missing": 0,
+        "mean_treatment": 0.410905,
+        "mean_control": -1.024520625,
+        "mean_diff": 1.435425625,
+        "sd_diff": 0.2259652322553571,
+        "dz": 6.352418071899949,
+        "n_treatment_higher": 50,
+        "n_ties": 0,
+        "n_control_higher": 0,
+        "ci95_mean_diff": [
+          1.374858125,
+          1.498658125
+        ]
+      },
+      "gate_a_components": {
+        "food_minus_effort_per_tick": {
+          "metric": "food_minus_effort_per_tick",
+          "treatment": "C3",
+          "control": "C0",
+          "n_seeds_paired": 50,
+          "n_pairs": 50,
+          "n_dropped_missing": 0,
+          "mean_treatment": 1.4060525,
+          "mean_control": 0.211509375,
+          "mean_diff": 1.194543125,
+          "sd_diff": 0.18550059713055916,
+          "dz": 6.4395648503452305,
+          "n_treatment_higher": 50,
+          "n_ties": 0,
+          "n_control_higher": 0,
+          "ci95_mean_diff": [
+            1.144988125,
+            1.246189375
+          ]
+        },
+        "craft_cost_per_tick": {
+          "metric": "craft_cost_per_tick",
+          "treatment": "C3",
+          "control": "C0",
+          "n_seeds_paired": 50,
+          "n_pairs": 50,
+          "n_dropped_missing": 0,
+          "mean_treatment": 0.62322,
+          "mean_control": 0.793735,
+          "mean_diff": -0.170515,
+          "sd_diff": 0.02980354082853859,
+          "dz": -5.721300062330922,
+          "n_treatment_higher": 0,
+          "n_ties": 0,
+          "n_control_higher": 50,
+          "ci95_mean_diff": [
+            -0.178805,
+            -0.162435
+          ]
+        },
+        "gather_cost_per_tick": {
+          "metric": "gather_cost_per_tick",
+          "treatment": "C3",
+          "control": "C0",
+          "n_seeds_paired": 50,
+          "n_pairs": 50,
+          "n_dropped_missing": 0,
+          "mean_treatment": 0.3719275,
+          "mean_control": 0.442295,
+          "mean_diff": -0.0703675,
+          "sd_diff": 0.022555351558523118,
+          "dz": -3.1197695951411513,
+          "n_treatment_higher": 0,
+          "n_ties": 0,
+          "n_control_higher": 50,
+          "ci95_mean_diff": [
+            -0.076705,
+            -0.0643475
+          ]
+        }
+      },
+      "gate_b1": true,
+      "gate_b1_c0_fraction_functional": 1.0,
+      "gate_b2": true,
+      "gate_b2_cmp": {
+        "metric": "functional_rate",
+        "treatment": "C3",
+        "control": "C0",
+        "n_seeds_paired": 50,
+        "n_pairs": 50,
+        "n_dropped_missing": 0,
+        "mean_treatment": 0.13983783909419994,
+        "mean_control": 0.02919030735832688,
+        "mean_diff": 0.11064753173587305,
+        "sd_diff": 0.02648420179076537,
+        "dz": 4.177869229740355,
+        "n_treatment_higher": 50,
+        "n_ties": 0,
+        "n_control_higher": 0,
+        "ci95_mean_diff": [
+          0.10366013397591115,
+          0.11809068265969956
+        ]
+      },
+      "pass": true
+    },
+    {
+      "dir": "tool_discovery_pilot_s1_e020_q0_t800",
+      "epsilon": 0.2,
+      "q_init": 0.0,
+      "ticks": 800,
+      "c1_n": 50,
+      "c1_mean": 0.26962625,
+      "c1_sd": 0.05524577577869919,
+      "c1_se": 0.007812932537005943,
+      "c1_minus_c2": {
+        "metric": "final_net_per_alive_tick",
+        "treatment": "C1",
+        "control": "C2",
+        "n_seeds_paired": 50,
+        "n_pairs": 50,
+        "n_dropped_missing": 0,
+        "mean_treatment": 0.26962625,
+        "mean_control": -0.16314,
+        "mean_diff": 0.43276625,
+        "sd_diff": 0.13434765491224965,
+        "dz": 3.2212415637821525,
+        "n_treatment_higher": 50,
+        "n_ties": 0,
+        "n_control_higher": 0,
+        "ci95_mean_diff": [
+          0.39768,
+          0.4704275
+        ]
+      },
+      "c1_minus_c2_food_minus_effort": {
+        "metric": "food_minus_effort_per_tick",
+        "treatment": "C1",
+        "control": "C2",
+        "n_seeds_paired": 50,
+        "n_pairs": 50,
+        "n_dropped_missing": 0,
+        "mean_treatment": 0.56991125,
+        "mean_control": 0.34832,
+        "mean_diff": 0.22159125,
+        "sd_diff": 0.07481389133746198,
+        "dz": 2.9618998028116383,
+        "n_treatment_higher": 50,
+        "n_ties": 0,
+        "n_control_higher": 0,
+        "ci95_mean_diff": [
+          0.20124125,
+          0.24187875
+        ]
+      },
+      "c1_c2_ci_excludes_zero": true,
+      "gate_a": true,
+      "gate_a_cmp": {
+        "metric": "final_net_per_alive_tick",
+        "treatment": "C3",
+        "control": "C0",
+        "n_seeds_paired": 50,
+        "n_pairs": 50,
+        "n_dropped_missing": 0,
+        "mean_treatment": 0.439315,
+        "mean_control": -1.01933,
+        "mean_diff": 1.458645,
+        "sd_diff": 0.24339459386499135,
+        "dz": 5.992922754928141,
+        "n_treatment_higher": 50,
+        "n_ties": 0,
+        "n_control_higher": 0,
+        "ci95_mean_diff": [
+          1.3926775,
+          1.52633625
+        ]
+      },
+      "gate_a_components": {
+        "food_minus_effort_per_tick": {
+          "metric": "food_minus_effort_per_tick",
+          "treatment": "C3",
+          "control": "C0",
+          "n_seeds_paired": 50,
+          "n_pairs": 50,
+          "n_dropped_missing": 0,
+          "mean_treatment": 1.429895,
+          "mean_control": 0.213,
+          "mean_diff": 1.216895,
+          "sd_diff": 0.20177883460143245,
+          "dz": 6.0308357038719915,
+          "n_treatment_higher": 50,
+          "n_ties": 0,
+          "n_control_higher": 0,
+          "ci95_mean_diff": [
+            1.16271125,
+            1.2728725
+          ]
+        },
+        "craft_cost_per_tick": {
+          "metric": "craft_cost_per_tick",
+          "treatment": "C3",
+          "control": "C0",
+          "n_seeds_paired": 50,
+          "n_pairs": 50,
+          "n_dropped_missing": 0,
+          "mean_treatment": 0.62075,
+          "mean_control": 0.78984,
+          "mean_diff": -0.16909000000000002,
+          "sd_diff": 0.035581136082170825,
+          "dz": -4.752237241933613,
+          "n_treatment_higher": 0,
+          "n_ties": 0,
+          "n_control_higher": 50,
+          "ci95_mean_diff": [
+            -0.17884000000000003,
+            -0.1592
+          ]
+        },
+        "gather_cost_per_tick": {
+          "metric": "gather_cost_per_tick",
+          "treatment": "C3",
+          "control": "C0",
+          "n_seeds_paired": 50,
+          "n_pairs": 50,
+          "n_dropped_missing": 0,
+          "mean_treatment": 0.36983,
+          "mean_control": 0.44249,
+          "mean_diff": -0.07266,
+          "sd_diff": 0.025790302322337186,
+          "dz": -2.817338047916895,
+          "n_treatment_higher": 0,
+          "n_ties": 0,
+          "n_control_higher": 50,
+          "ci95_mean_diff": [
+            -0.07972499999999999,
+            -0.065705
+          ]
+        }
+      },
+      "gate_b1": true,
+      "gate_b1_c0_fraction_functional": 1.0,
+      "gate_b2": true,
+      "gate_b2_cmp": {
+        "metric": "functional_rate",
+        "treatment": "C3",
+        "control": "C0",
+        "n_seeds_paired": 50,
+        "n_pairs": 50,
+        "n_dropped_missing": 0,
+        "mean_treatment": 0.1405635327256565,
+        "mean_control": 0.028796716067652554,
+        "mean_diff": 0.11176681665800393,
+        "sd_diff": 0.02799912457231895,
+        "dz": 3.9917968281230145,
+        "n_treatment_higher": 50,
+        "n_ties": 0,
+        "n_control_higher": 0,
+        "ci95_mean_diff": [
+          0.1044278550665715,
+          0.11959127397618535
+        ]
+      },
+      "pass": true
+    },
+    {
+      "dir": "tool_discovery_pilot_s1_e020_q10_t1600",
+      "epsilon": 0.2,
+      "q_init": 10.0,
+      "ticks": 1600,
+      "c1_n": 50,
+      "c1_mean": -0.345950625,
+      "c1_sd": 0.14292865900891735,
+      "c1_se": 0.02021316480222104,
+      "c1_minus_c2": {
+        "metric": "final_net_per_alive_tick",
+        "treatment": "C1",
+        "control": "C2",
+        "n_seeds_paired": 50,
+        "n_pairs": 50,
+        "n_dropped_missing": 0,
+        "mean_treatment": -0.345950625,
+        "mean_control": -0.61370625,
+        "mean_diff": 0.267755625,
+        "sd_diff": 0.07516529236992803,
+        "dz": 3.5622242202189995,
+        "n_treatment_higher": 50,
+        "n_ties": 0,
+        "n_control_higher": 0,
+        "ci95_mean_diff": [
+          0.24821625,
+          0.2891975
+        ]
+      },
+      "c1_minus_c2_food_minus_effort": {
+        "metric": "food_minus_effort_per_tick",
+        "treatment": "C1",
+        "control": "C2",
+        "n_seeds_paired": 50,
+        "n_pairs": 50,
+        "n_dropped_missing": 0,
+        "mean_treatment": 0.518896875,
+        "mean_control": 0.25188125,
+        "mean_diff": 0.26701562500000003,
+        "sd_diff": 0.07514918311582057,
+        "dz": 3.5531407518891225,
+        "n_treatment_higher": 50,
+        "n_ties": 0,
+        "n_control_higher": 0,
+        "ci95_mean_diff": [
+          0.24738625,
+          0.2881925
+        ]
+      },
+      "c1_c2_ci_excludes_zero": true,
+      "gate_a": true,
+      "gate_a_cmp": {
+        "metric": "final_net_per_alive_tick",
+        "treatment": "C3",
+        "control": "C0",
+        "n_seeds_paired": 50,
+        "n_pairs": 50,
+        "n_dropped_missing": 0,
+        "mean_treatment": 0.410905,
+        "mean_control": -1.024520625,
+        "mean_diff": 1.435425625,
+        "sd_diff": 0.2259652322553571,
+        "dz": 6.352418071899949,
+        "n_treatment_higher": 50,
+        "n_ties": 0,
+        "n_control_higher": 0,
+        "ci95_mean_diff": [
+          1.374858125,
+          1.498658125
+        ]
+      },
+      "gate_a_components": {
+        "food_minus_effort_per_tick": {
+          "metric": "food_minus_effort_per_tick",
+          "treatment": "C3",
+          "control": "C0",
+          "n_seeds_paired": 50,
+          "n_pairs": 50,
+          "n_dropped_missing": 0,
+          "mean_treatment": 1.4060525,
+          "mean_control": 0.211509375,
+          "mean_diff": 1.194543125,
+          "sd_diff": 0.18550059713055916,
+          "dz": 6.4395648503452305,
+          "n_treatment_higher": 50,
+          "n_ties": 0,
+          "n_control_higher": 0,
+          "ci95_mean_diff": [
+            1.144988125,
+            1.246189375
+          ]
+        },
+        "craft_cost_per_tick": {
+          "metric": "craft_cost_per_tick",
+          "treatment": "C3",
+          "control": "C0",
+          "n_seeds_paired": 50,
+          "n_pairs": 50,
+          "n_dropped_missing": 0,
+          "mean_treatment": 0.62322,
+          "mean_control": 0.793735,
+          "mean_diff": -0.170515,
+          "sd_diff": 0.02980354082853859,
+          "dz": -5.721300062330922,
+          "n_treatment_higher": 0,
+          "n_ties": 0,
+          "n_control_higher": 50,
+          "ci95_mean_diff": [
+            -0.178805,
+            -0.162435
+          ]
+        },
+        "gather_cost_per_tick": {
+          "metric": "gather_cost_per_tick",
+          "treatment": "C3",
+          "control": "C0",
+          "n_seeds_paired": 50,
+          "n_pairs": 50,
+          "n_dropped_missing": 0,
+          "mean_treatment": 0.3719275,
+          "mean_control": 0.442295,
+          "mean_diff": -0.0703675,
+          "sd_diff": 0.022555351558523118,
+          "dz": -3.1197695951411513,
+          "n_treatment_higher": 0,
+          "n_ties": 0,
+          "n_control_higher": 50,
+          "ci95_mean_diff": [
+            -0.076705,
+            -0.0643475
+          ]
+        }
+      },
+      "gate_b1": true,
+      "gate_b1_c0_fraction_functional": 1.0,
+      "gate_b2": true,
+      "gate_b2_cmp": {
+        "metric": "functional_rate",
+        "treatment": "C3",
+        "control": "C0",
+        "n_seeds_paired": 50,
+        "n_pairs": 50,
+        "n_dropped_missing": 0,
+        "mean_treatment": 0.13983783909419994,
+        "mean_control": 0.02919030735832688,
+        "mean_diff": 0.11064753173587305,
+        "sd_diff": 0.02648420179076537,
+        "dz": 4.177869229740355,
+        "n_treatment_higher": 50,
+        "n_ties": 0,
+        "n_control_higher": 0,
+        "ci95_mean_diff": [
+          0.10366013397591115,
+          0.11809068265969956
+        ]
+      },
+      "pass": true
+    },
+    {
+      "dir": "tool_discovery_pilot_s1_e020_q10_t800",
+      "epsilon": 0.2,
+      "q_init": 10.0,
+      "ticks": 800,
+      "c1_n": 50,
+      "c1_mean": -0.392205,
+      "c1_sd": 0.1337459546880135,
+      "c1_se": 0.018914534303232613,
+      "c1_minus_c2": {
+        "metric": "final_net_per_alive_tick",
+        "treatment": "C1",
+        "control": "C2",
+        "n_seeds_paired": 50,
+        "n_pairs": 50,
+        "n_dropped_missing": 0,
+        "mean_treatment": -0.392205,
+        "mean_control": -0.6144175,
+        "mean_diff": 0.22221249999999998,
+        "sd_diff": 0.08505985193961835,
+        "dz": 2.6124251915902996,
+        "n_treatment_higher": 50,
+        "n_ties": 0,
+        "n_control_higher": 0,
+        "ci95_mean_diff": [
+          0.1987025,
+          0.246025
+        ]
+      },
+      "c1_minus_c2_food_minus_effort": {
+        "metric": "food_minus_effort_per_tick",
+        "treatment": "C1",
+        "control": "C2",
+        "n_seeds_paired": 50,
+        "n_pairs": 50,
+        "n_dropped_missing": 0,
+        "mean_treatment": 0.48029,
+        "mean_control": 0.2530775,
+        "mean_diff": 0.2272125,
+        "sd_diff": 0.08153791902250393,
+        "dz": 2.7865869367758926,
+        "n_treatment_higher": 50,
+        "n_ties": 0,
+        "n_control_higher": 0,
+        "ci95_mean_diff": [
+          0.20451875,
+          0.2500325
+        ]
+      },
+      "c1_c2_ci_excludes_zero": true,
+      "gate_a": true,
+      "gate_a_cmp": {
+        "metric": "final_net_per_alive_tick",
+        "treatment": "C3",
+        "control": "C0",
+        "n_seeds_paired": 50,
+        "n_pairs": 50,
+        "n_dropped_missing": 0,
+        "mean_treatment": 0.439315,
+        "mean_control": -1.01933,
+        "mean_diff": 1.458645,
+        "sd_diff": 0.24339459386499135,
+        "dz": 5.992922754928141,
+        "n_treatment_higher": 50,
+        "n_ties": 0,
+        "n_control_higher": 0,
+        "ci95_mean_diff": [
+          1.3926775,
+          1.52633625
+        ]
+      },
+      "gate_a_components": {
+        "food_minus_effort_per_tick": {
+          "metric": "food_minus_effort_per_tick",
+          "treatment": "C3",
+          "control": "C0",
+          "n_seeds_paired": 50,
+          "n_pairs": 50,
+          "n_dropped_missing": 0,
+          "mean_treatment": 1.429895,
+          "mean_control": 0.213,
+          "mean_diff": 1.216895,
+          "sd_diff": 0.20177883460143245,
+          "dz": 6.0308357038719915,
+          "n_treatment_higher": 50,
+          "n_ties": 0,
+          "n_control_higher": 0,
+          "ci95_mean_diff": [
+            1.16271125,
+            1.2728725
+          ]
+        },
+        "craft_cost_per_tick": {
+          "metric": "craft_cost_per_tick",
+          "treatment": "C3",
+          "control": "C0",
+          "n_seeds_paired": 50,
+          "n_pairs": 50,
+          "n_dropped_missing": 0,
+          "mean_treatment": 0.62075,
+          "mean_control": 0.78984,
+          "mean_diff": -0.16909000000000002,
+          "sd_diff": 0.035581136082170825,
+          "dz": -4.752237241933613,
+          "n_treatment_higher": 0,
+          "n_ties": 0,
+          "n_control_higher": 50,
+          "ci95_mean_diff": [
+            -0.17884000000000003,
+            -0.1592
+          ]
+        },
+        "gather_cost_per_tick": {
+          "metric": "gather_cost_per_tick",
+          "treatment": "C3",
+          "control": "C0",
+          "n_seeds_paired": 50,
+          "n_pairs": 50,
+          "n_dropped_missing": 0,
+          "mean_treatment": 0.36983,
+          "mean_control": 0.44249,
+          "mean_diff": -0.07266,
+          "sd_diff": 0.025790302322337186,
+          "dz": -2.817338047916895,
+          "n_treatment_higher": 0,
+          "n_ties": 0,
+          "n_control_higher": 50,
+          "ci95_mean_diff": [
+            -0.07972499999999999,
+            -0.065705
+          ]
+        }
+      },
+      "gate_b1": true,
+      "gate_b1_c0_fraction_functional": 1.0,
+      "gate_b2": true,
+      "gate_b2_cmp": {
+        "metric": "functional_rate",
+        "treatment": "C3",
+        "control": "C0",
+        "n_seeds_paired": 50,
+        "n_pairs": 50,
+        "n_dropped_missing": 0,
+        "mean_treatment": 0.1405635327256565,
+        "mean_control": 0.028796716067652554,
+        "mean_diff": 0.11176681665800393,
+        "sd_diff": 0.02799912457231895,
+        "dz": 3.9917968281230145,
+        "n_treatment_higher": 50,
+        "n_ties": 0,
+        "n_control_higher": 0,
+        "ci95_mean_diff": [
+          0.1044278550665715,
+          0.11959127397618535
+        ]
+      },
+      "pass": true
+    },
+    {
+      "dir": "tool_discovery_pilot_s1_e030_q0_t1600",
+      "epsilon": 0.3,
+      "q_init": 0.0,
+      "ticks": 1600,
+      "c1_n": 50,
+      "c1_mean": 0.20988125,
+      "c1_sd": 0.0469238448743639,
+      "c1_se": 0.006636033782001667,
+      "c1_minus_c2": {
+        "metric": "final_net_per_alive_tick",
+        "treatment": "C1",
+        "control": "C2",
+        "n_seeds_paired": 50,
+        "n_pairs": 50,
+        "n_dropped_missing": 0,
+        "mean_treatment": 0.20988125,
+        "mean_control": -0.381170625,
+        "mean_diff": 0.591051875,
+        "sd_diff": 0.10976337835143621,
+        "dz": 5.384782100160881,
+        "n_treatment_higher": 50,
+        "n_ties": 0,
+        "n_control_higher": 0,
+        "ci95_mean_diff": [
+          0.56130375,
+          0.6212918749999999
+        ]
+      },
+      "c1_minus_c2_food_minus_effort": {
+        "metric": "food_minus_effort_per_tick",
+        "treatment": "C1",
+        "control": "C2",
+        "n_seeds_paired": 50,
+        "n_pairs": 50,
+        "n_dropped_missing": 0,
+        "mean_treatment": 0.62282375,
+        "mean_control": 0.300344375,
+        "mean_diff": 0.322479375,
+        "sd_diff": 0.07521398751435342,
+        "dz": 4.287492069722535,
+        "n_treatment_higher": 50,
+        "n_ties": 0,
+        "n_control_higher": 0,
+        "ci95_mean_diff": [
+          0.302394375,
+          0.34335125
+        ]
+      },
+      "c1_c2_ci_excludes_zero": true,
+      "gate_a": true,
+      "gate_a_cmp": {
+        "metric": "final_net_per_alive_tick",
+        "treatment": "C3",
+        "control": "C0",
+        "n_seeds_paired": 50,
+        "n_pairs": 50,
+        "n_dropped_missing": 0,
+        "mean_treatment": 0.410905,
+        "mean_control": -1.024520625,
+        "mean_diff": 1.435425625,
+        "sd_diff": 0.2259652322553571,
+        "dz": 6.352418071899949,
+        "n_treatment_higher": 50,
+        "n_ties": 0,
+        "n_control_higher": 0,
+        "ci95_mean_diff": [
+          1.374858125,
+          1.498658125
+        ]
+      },
+      "gate_a_components": {
+        "food_minus_effort_per_tick": {
+          "metric": "food_minus_effort_per_tick",
+          "treatment": "C3",
+          "control": "C0",
+          "n_seeds_paired": 50,
+          "n_pairs": 50,
+          "n_dropped_missing": 0,
+          "mean_treatment": 1.4060525,
+          "mean_control": 0.211509375,
+          "mean_diff": 1.194543125,
+          "sd_diff": 0.18550059713055916,
+          "dz": 6.4395648503452305,
+          "n_treatment_higher": 50,
+          "n_ties": 0,
+          "n_control_higher": 0,
+          "ci95_mean_diff": [
+            1.144988125,
+            1.246189375
+          ]
+        },
+        "craft_cost_per_tick": {
+          "metric": "craft_cost_per_tick",
+          "treatment": "C3",
+          "control": "C0",
+          "n_seeds_paired": 50,
+          "n_pairs": 50,
+          "n_dropped_missing": 0,
+          "mean_treatment": 0.62322,
+          "mean_control": 0.793735,
+          "mean_diff": -0.170515,
+          "sd_diff": 0.02980354082853859,
+          "dz": -5.721300062330922,
+          "n_treatment_higher": 0,
+          "n_ties": 0,
+          "n_control_higher": 50,
+          "ci95_mean_diff": [
+            -0.178805,
+            -0.162435
+          ]
+        },
+        "gather_cost_per_tick": {
+          "metric": "gather_cost_per_tick",
+          "treatment": "C3",
+          "control": "C0",
+          "n_seeds_paired": 50,
+          "n_pairs": 50,
+          "n_dropped_missing": 0,
+          "mean_treatment": 0.3719275,
+          "mean_control": 0.442295,
+          "mean_diff": -0.0703675,
+          "sd_diff": 0.022555351558523118,
+          "dz": -3.1197695951411513,
+          "n_treatment_higher": 0,
+          "n_ties": 0,
+          "n_control_higher": 50,
+          "ci95_mean_diff": [
+            -0.076705,
+            -0.0643475
+          ]
+        }
+      },
+      "gate_b1": true,
+      "gate_b1_c0_fraction_functional": 1.0,
+      "gate_b2": true,
+      "gate_b2_cmp": {
+        "metric": "functional_rate",
+        "treatment": "C3",
+        "control": "C0",
+        "n_seeds_paired": 50,
+        "n_pairs": 50,
+        "n_dropped_missing": 0,
+        "mean_treatment": 0.13983783909419994,
+        "mean_control": 0.02919030735832688,
+        "mean_diff": 0.11064753173587305,
+        "sd_diff": 0.02648420179076537,
+        "dz": 4.177869229740355,
+        "n_treatment_higher": 50,
+        "n_ties": 0,
+        "n_control_higher": 0,
+        "ci95_mean_diff": [
+          0.10366013397591115,
+          0.11809068265969956
+        ]
+      },
+      "pass": true
+    },
+    {
+      "dir": "tool_discovery_pilot_s1_e030_q0_t800",
+      "epsilon": 0.3,
+      "q_init": 0.0,
+      "ticks": 800,
+      "c1_n": 50,
+      "c1_mean": 0.17862625000000001,
+      "c1_sd": 0.053659407652858156,
+      "c1_se": 0.007588586205157865,
+      "c1_minus_c2": {
+        "metric": "final_net_per_alive_tick",
+        "treatment": "C1",
+        "control": "C2",
+        "n_seeds_paired": 50,
+        "n_pairs": 50,
+        "n_dropped_missing": 0,
+        "mean_treatment": 0.17862625000000001,
+        "mean_control": -0.33635375,
+        "mean_diff": 0.51498,
+        "sd_diff": 0.12616928203644434,
+        "dz": 4.08165911454776,
+        "n_treatment_higher": 50,
+        "n_ties": 0,
+        "n_control_higher": 0,
+        "ci95_mean_diff": [
+          0.48046125,
+          0.54955875
+        ]
+      },
+      "c1_minus_c2_food_minus_effort": {
+        "metric": "food_minus_effort_per_tick",
+        "treatment": "C1",
+        "control": "C2",
+        "n_seeds_paired": 50,
+        "n_pairs": 50,
+        "n_dropped_missing": 0,
+        "mean_treatment": 0.5931562499999999,
+        "mean_control": 0.30906625,
+        "mean_diff": 0.28409,
+        "sd_diff": 0.08745861280675353,
+        "dz": 3.248279281855505,
+        "n_treatment_higher": 50,
+        "n_ties": 0,
+        "n_control_higher": 0,
+        "ci95_mean_diff": [
+          0.26005875,
+          0.30790125
+        ]
+      },
+      "c1_c2_ci_excludes_zero": true,
+      "gate_a": true,
+      "gate_a_cmp": {
+        "metric": "final_net_per_alive_tick",
+        "treatment": "C3",
+        "control": "C0",
+        "n_seeds_paired": 50,
+        "n_pairs": 50,
+        "n_dropped_missing": 0,
+        "mean_treatment": 0.439315,
+        "mean_control": -1.01933,
+        "mean_diff": 1.458645,
+        "sd_diff": 0.24339459386499135,
+        "dz": 5.992922754928141,
+        "n_treatment_higher": 50,
+        "n_ties": 0,
+        "n_control_higher": 0,
+        "ci95_mean_diff": [
+          1.3926775,
+          1.52633625
+        ]
+      },
+      "gate_a_components": {
+        "food_minus_effort_per_tick": {
+          "metric": "food_minus_effort_per_tick",
+          "treatment": "C3",
+          "control": "C0",
+          "n_seeds_paired": 50,
+          "n_pairs": 50,
+          "n_dropped_missing": 0,
+          "mean_treatment": 1.429895,
+          "mean_control": 0.213,
+          "mean_diff": 1.216895,
+          "sd_diff": 0.20177883460143245,
+          "dz": 6.0308357038719915,
+          "n_treatment_higher": 50,
+          "n_ties": 0,
+          "n_control_higher": 0,
+          "ci95_mean_diff": [
+            1.16271125,
+            1.2728725
+          ]
+        },
+        "craft_cost_per_tick": {
+          "metric": "craft_cost_per_tick",
+          "treatment": "C3",
+          "control": "C0",
+          "n_seeds_paired": 50,
+          "n_pairs": 50,
+          "n_dropped_missing": 0,
+          "mean_treatment": 0.62075,
+          "mean_control": 0.78984,
+          "mean_diff": -0.16909000000000002,
+          "sd_diff": 0.035581136082170825,
+          "dz": -4.752237241933613,
+          "n_treatment_higher": 0,
+          "n_ties": 0,
+          "n_control_higher": 50,
+          "ci95_mean_diff": [
+            -0.17884000000000003,
+            -0.1592
+          ]
+        },
+        "gather_cost_per_tick": {
+          "metric": "gather_cost_per_tick",
+          "treatment": "C3",
+          "control": "C0",
+          "n_seeds_paired": 50,
+          "n_pairs": 50,
+          "n_dropped_missing": 0,
+          "mean_treatment": 0.36983,
+          "mean_control": 0.44249,
+          "mean_diff": -0.07266,
+          "sd_diff": 0.025790302322337186,
+          "dz": -2.817338047916895,
+          "n_treatment_higher": 0,
+          "n_ties": 0,
+          "n_control_higher": 50,
+          "ci95_mean_diff": [
+            -0.07972499999999999,
+            -0.065705
+          ]
+        }
+      },
+      "gate_b1": true,
+      "gate_b1_c0_fraction_functional": 1.0,
+      "gate_b2": true,
+      "gate_b2_cmp": {
+        "metric": "functional_rate",
+        "treatment": "C3",
+        "control": "C0",
+        "n_seeds_paired": 50,
+        "n_pairs": 50,
+        "n_dropped_missing": 0,
+        "mean_treatment": 0.1405635327256565,
+        "mean_control": 0.028796716067652554,
+        "mean_diff": 0.11176681665800393,
+        "sd_diff": 0.02799912457231895,
+        "dz": 3.9917968281230145,
+        "n_treatment_higher": 50,
+        "n_ties": 0,
+        "n_control_higher": 0,
+        "ci95_mean_diff": [
+          0.1044278550665715,
+          0.11959127397618535
+        ]
+      },
+      "pass": true
+    },
+    {
+      "dir": "tool_discovery_pilot_s1_e030_q10_t1600",
+      "epsilon": 0.3,
+      "q_init": 10.0,
+      "ticks": 1600,
+      "c1_n": 50,
+      "c1_mean": -0.3859575,
+      "c1_sd": 0.1229376129542554,
+      "c1_se": 0.017386003956568228,
+      "c1_minus_c2": {
+        "metric": "final_net_per_alive_tick",
+        "treatment": "C1",
+        "control": "C2",
+        "n_seeds_paired": 50,
+        "n_pairs": 50,
+        "n_dropped_missing": 0,
+        "mean_treatment": -0.3859575,
+        "mean_control": -0.6098125,
+        "mean_diff": 0.223855,
+        "sd_diff": 0.06902024972751823,
+        "dz": 3.2433235301776873,
+        "n_treatment_higher": 50,
+        "n_ties": 0,
+        "n_control_higher": 0,
+        "ci95_mean_diff": [
+          0.20522749999999998,
+          0.243349375
+        ]
+      },
+      "c1_minus_c2_food_minus_effort": {
+        "metric": "food_minus_effort_per_tick",
+        "treatment": "C1",
+        "control": "C2",
+        "n_seeds_paired": 50,
+        "n_pairs": 50,
+        "n_dropped_missing": 0,
+        "mean_treatment": 0.471865,
+        "mean_control": 0.2485575,
+        "mean_diff": 0.2233075,
+        "sd_diff": 0.06581305640112106,
+        "dz": 3.393057733696078,
+        "n_treatment_higher": 50,
+        "n_ties": 0,
+        "n_control_higher": 0,
+        "ci95_mean_diff": [
+          0.205514375,
+          0.24186312499999998
+        ]
+      },
+      "c1_c2_ci_excludes_zero": true,
+      "gate_a": true,
+      "gate_a_cmp": {
+        "metric": "final_net_per_alive_tick",
+        "treatment": "C3",
+        "control": "C0",
+        "n_seeds_paired": 50,
+        "n_pairs": 50,
+        "n_dropped_missing": 0,
+        "mean_treatment": 0.410905,
+        "mean_control": -1.024520625,
+        "mean_diff": 1.435425625,
+        "sd_diff": 0.2259652322553571,
+        "dz": 6.352418071899949,
+        "n_treatment_higher": 50,
+        "n_ties": 0,
+        "n_control_higher": 0,
+        "ci95_mean_diff": [
+          1.374858125,
+          1.498658125
+        ]
+      },
+      "gate_a_components": {
+        "food_minus_effort_per_tick": {
+          "metric": "food_minus_effort_per_tick",
+          "treatment": "C3",
+          "control": "C0",
+          "n_seeds_paired": 50,
+          "n_pairs": 50,
+          "n_dropped_missing": 0,
+          "mean_treatment": 1.4060525,
+          "mean_control": 0.211509375,
+          "mean_diff": 1.194543125,
+          "sd_diff": 0.18550059713055916,
+          "dz": 6.4395648503452305,
+          "n_treatment_higher": 50,
+          "n_ties": 0,
+          "n_control_higher": 0,
+          "ci95_mean_diff": [
+            1.144988125,
+            1.246189375
+          ]
+        },
+        "craft_cost_per_tick": {
+          "metric": "craft_cost_per_tick",
+          "treatment": "C3",
+          "control": "C0",
+          "n_seeds_paired": 50,
+          "n_pairs": 50,
+          "n_dropped_missing": 0,
+          "mean_treatment": 0.62322,
+          "mean_control": 0.793735,
+          "mean_diff": -0.170515,
+          "sd_diff": 0.02980354082853859,
+          "dz": -5.721300062330922,
+          "n_treatment_higher": 0,
+          "n_ties": 0,
+          "n_control_higher": 50,
+          "ci95_mean_diff": [
+            -0.178805,
+            -0.162435
+          ]
+        },
+        "gather_cost_per_tick": {
+          "metric": "gather_cost_per_tick",
+          "treatment": "C3",
+          "control": "C0",
+          "n_seeds_paired": 50,
+          "n_pairs": 50,
+          "n_dropped_missing": 0,
+          "mean_treatment": 0.3719275,
+          "mean_control": 0.442295,
+          "mean_diff": -0.0703675,
+          "sd_diff": 0.022555351558523118,
+          "dz": -3.1197695951411513,
+          "n_treatment_higher": 0,
+          "n_ties": 0,
+          "n_control_higher": 50,
+          "ci95_mean_diff": [
+            -0.076705,
+            -0.0643475
+          ]
+        }
+      },
+      "gate_b1": true,
+      "gate_b1_c0_fraction_functional": 1.0,
+      "gate_b2": true,
+      "gate_b2_cmp": {
+        "metric": "functional_rate",
+        "treatment": "C3",
+        "control": "C0",
+        "n_seeds_paired": 50,
+        "n_pairs": 50,
+        "n_dropped_missing": 0,
+        "mean_treatment": 0.13983783909419994,
+        "mean_control": 0.02919030735832688,
+        "mean_diff": 0.11064753173587305,
+        "sd_diff": 0.02648420179076537,
+        "dz": 4.177869229740355,
+        "n_treatment_higher": 50,
+        "n_ties": 0,
+        "n_control_higher": 0,
+        "ci95_mean_diff": [
+          0.10366013397591115,
+          0.11809068265969956
+        ]
+      },
+      "pass": true
+    },
+    {
+      "dir": "tool_discovery_pilot_s1_e030_q10_t800",
+      "epsilon": 0.3,
+      "q_init": 10.0,
+      "ticks": 800,
+      "c1_n": 50,
+      "c1_mean": -0.4145025,
+      "c1_sd": 0.11610770790168788,
+      "c1_se": 0.016420109521062078,
+      "c1_minus_c2": {
+        "metric": "final_net_per_alive_tick",
+        "treatment": "C1",
+        "control": "C2",
+        "n_seeds_paired": 50,
+        "n_pairs": 50,
+        "n_dropped_missing": 0,
+        "mean_treatment": -0.4145025,
+        "mean_control": -0.597175,
+        "mean_diff": 0.1826725,
+        "sd_diff": 0.0894606282756811,
+        "dz": 2.0419317807279196,
+        "n_treatment_higher": 50,
+        "n_ties": 0,
+        "n_control_higher": 0,
+        "ci95_mean_diff": [
+          0.15884500000000001,
+          0.20722625
+        ]
+      },
+      "c1_minus_c2_food_minus_effort": {
+        "metric": "food_minus_effort_per_tick",
+        "treatment": "C1",
+        "control": "C2",
+        "n_seeds_paired": 50,
+        "n_pairs": 50,
+        "n_dropped_missing": 0,
+        "mean_treatment": 0.4455275,
+        "mean_control": 0.258685,
+        "mean_diff": 0.1868425,
+        "sd_diff": 0.07779474813899846,
+        "dz": 2.4017366784986858,
+        "n_treatment_higher": 50,
+        "n_ties": 0,
+        "n_control_higher": 0,
+        "ci95_mean_diff": [
+          0.16621125,
+          0.208315
+        ]
+      },
+      "c1_c2_ci_excludes_zero": true,
+      "gate_a": true,
+      "gate_a_cmp": {
+        "metric": "final_net_per_alive_tick",
+        "treatment": "C3",
+        "control": "C0",
+        "n_seeds_paired": 50,
+        "n_pairs": 50,
+        "n_dropped_missing": 0,
+        "mean_treatment": 0.439315,
+        "mean_control": -1.01933,
+        "mean_diff": 1.458645,
+        "sd_diff": 0.24339459386499135,
+        "dz": 5.992922754928141,
+        "n_treatment_higher": 50,
+        "n_ties": 0,
+        "n_control_higher": 0,
+        "ci95_mean_diff": [
+          1.3926775,
+          1.52633625
+        ]
+      },
+      "gate_a_components": {
+        "food_minus_effort_per_tick": {
+          "metric": "food_minus_effort_per_tick",
+          "treatment": "C3",
+          "control": "C0",
+          "n_seeds_paired": 50,
+          "n_pairs": 50,
+          "n_dropped_missing": 0,
+          "mean_treatment": 1.429895,
+          "mean_control": 0.213,
+          "mean_diff": 1.216895,
+          "sd_diff": 0.20177883460143245,
+          "dz": 6.0308357038719915,
+          "n_treatment_higher": 50,
+          "n_ties": 0,
+          "n_control_higher": 0,
+          "ci95_mean_diff": [
+            1.16271125,
+            1.2728725
+          ]
+        },
+        "craft_cost_per_tick": {
+          "metric": "craft_cost_per_tick",
+          "treatment": "C3",
+          "control": "C0",
+          "n_seeds_paired": 50,
+          "n_pairs": 50,
+          "n_dropped_missing": 0,
+          "mean_treatment": 0.62075,
+          "mean_control": 0.78984,
+          "mean_diff": -0.16909000000000002,
+          "sd_diff": 0.035581136082170825,
+          "dz": -4.752237241933613,
+          "n_treatment_higher": 0,
+          "n_ties": 0,
+          "n_control_higher": 50,
+          "ci95_mean_diff": [
+            -0.17884000000000003,
+            -0.1592
+          ]
+        },
+        "gather_cost_per_tick": {
+          "metric": "gather_cost_per_tick",
+          "treatment": "C3",
+          "control": "C0",
+          "n_seeds_paired": 50,
+          "n_pairs": 50,
+          "n_dropped_missing": 0,
+          "mean_treatment": 0.36983,
+          "mean_control": 0.44249,
+          "mean_diff": -0.07266,
+          "sd_diff": 0.025790302322337186,
+          "dz": -2.817338047916895,
+          "n_treatment_higher": 0,
+          "n_ties": 0,
+          "n_control_higher": 50,
+          "ci95_mean_diff": [
+            -0.07972499999999999,
+            -0.065705
+          ]
+        }
+      },
+      "gate_b1": true,
+      "gate_b1_c0_fraction_functional": 1.0,
+      "gate_b2": true,
+      "gate_b2_cmp": {
+        "metric": "functional_rate",
+        "treatment": "C3",
+        "control": "C0",
+        "n_seeds_paired": 50,
+        "n_pairs": 50,
+        "n_dropped_missing": 0,
+        "mean_treatment": 0.1405635327256565,
+        "mean_control": 0.028796716067652554,
+        "mean_diff": 0.11176681665800393,
+        "sd_diff": 0.02799912457231895,
+        "dz": 3.9917968281230145,
+        "n_treatment_higher": 50,
+        "n_ties": 0,
+        "n_control_higher": 0,
+        "ci95_mean_diff": [
+          0.1044278550665715,
+          0.11959127397618535
+        ]
+      },
+      "pass": true
+    }
+  ],
+  "selection": {
+    "selected": "tool_discovery_pilot_s1_e005_q0_t1600",
+    "params": {
+      "epsilon": 0.05,
+      "q_init": 0.0,
+      "ticks": 1600
+    },
+    "best_by_c1_mean": "tool_discovery_pilot_s1_e005_q0_t1600",
+    "best_c1_mean": 0.398326875,
+    "best_c1_se": 0.004966524675757759,
+    "tied_within_1se": [
+      "tool_discovery_pilot_s1_e005_q0_t1600"
+    ],
+    "n_passing": 16
+  },
+  "stop_reasons": []
+}
