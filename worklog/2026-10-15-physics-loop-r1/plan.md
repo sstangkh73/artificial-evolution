@@ -17,7 +17,7 @@
   - assembly แบบ vectorized
   - เทสต์: แท่งรับแรงดึง, Kirsch, Hertz p_max, SEN K_I จาก J-integral หรือ displacement extrapolation
   - เขียน `docs/physics_world/02_physics_spec.md` ส่วน solver
-- [ ] **3. แบบจำลองการแตก** (ส่วน ก เสร็จรอบ 4: `phasefield.py` AT1 + staggered + active set, ℓ = 3G_cE/(8σ_t²), โปรไฟล์ 1D ตรงสูตร, เกณฑ์ยืดหยุ่น σ_t, SEN เริ่มวิ่ง ~K_IC; Codex รีวิวแล้ว เหลือส่วน ข: ร้าวโค้ง/ทิศไม่ติดกริด)
+- [x] **3. แบบจำลองการแตก** (เสร็จรอบ 5: ส่วน ก `phasefield.py` AT1 + staggered + active set, ℓ = 3G_cE/(8σ_t²), โปรไฟล์ 1D ตรงสูตร, เกณฑ์ σ_t, SEN เริ่มวิ่ง ~K_IC; ส่วน ข ร้าว 30° ไม่ติดกริดวิ่งตามแนวตัวเอง (คลาด < 3°) และร้าว 45° mixed mode หักใกล้มุม MTS −8.1° (วัดได้ −6.2°) แล้วหันตั้งฉากกับแรงดึง; Codex รีวิวทั้งสองส่วน)
   - รอยร้าววิ่งได้ทุกทิศ ไม่ติดกริด (แนะนำ phase-field AT1/AT2)
   - ความยาว ℓ คำนวณจากค่าวัสดุตามสูตรที่อ้างอิงได้
   - อัปเดต 02
