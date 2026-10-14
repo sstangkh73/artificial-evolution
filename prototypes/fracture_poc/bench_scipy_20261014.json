@@ -1,0 +1,278 @@
+[
+ {
+  "n": 24,
+  "angle_deg": -45,
+  "force_n": 15000,
+  "material": "chert_placeholder",
+  "seconds": 0.04,
+  "iterations": 12,
+  "failed_elements": 201,
+  "pieces": 20,
+  "core_min_edge_angle_deg": 63.43494882292202,
+  "flake_min_edge_angle_deg": [
+   26.6,
+   45.0,
+   45.0
+  ],
+  "flake_mass_g": [
+   4.7,
+   3.9,
+   3.9
+  ]
+ },
+ {
+  "n": 24,
+  "angle_deg": -90,
+  "force_n": 15000,
+  "material": "chert_placeholder",
+  "seconds": 0.021,
+  "iterations": 6,
+  "failed_elements": 63,
+  "pieces": 4,
+  "core_min_edge_angle_deg": 90.00000000000001,
+  "flake_min_edge_angle_deg": [
+   52.1
+  ],
+  "flake_mass_g": [
+   3.8
+  ]
+ },
+ {
+  "n": 24,
+  "angle_deg": -135,
+  "force_n": 15000,
+  "material": "chert_placeholder",
+  "seconds": 0.003,
+  "iterations": 1,
+  "failed_elements": 0,
+  "pieces": 1,
+  "core_min_edge_angle_deg": 116.56505117707789,
+  "flake_min_edge_angle_deg": [],
+  "flake_mass_g": []
+ },
+ {
+  "n": 32,
+  "angle_deg": -45,
+  "force_n": 15000,
+  "material": "chert_placeholder",
+  "seconds": 0.036,
+  "iterations": 9,
+  "failed_elements": 361,
+  "pieces": 18,
+  "core_min_edge_angle_deg": 58.3924977537511,
+  "flake_min_edge_angle_deg": [
+   63.4,
+   37.9,
+   29.7
+  ],
+  "flake_mass_g": [
+   5.4,
+   2.3,
+   2.3
+  ]
+ },
+ {
+  "n": 32,
+  "angle_deg": -90,
+  "force_n": 15000,
+  "material": "chert_placeholder",
+  "seconds": 0.078,
+  "iterations": 16,
+  "failed_elements": 253,
+  "pieces": 16,
+  "core_min_edge_angle_deg": 63.43494882292201,
+  "flake_min_edge_angle_deg": [
+   63.4,
+   45.0
+  ],
+  "flake_mass_g": [
+   17.4,
+   2.5,
+   2.3,
+   0.4
+  ]
+ },
+ {
+  "n": 32,
+  "angle_deg": -135,
+  "force_n": 15000,
+  "material": "chert_placeholder",
+  "seconds": 0.006,
+  "iterations": 1,
+  "failed_elements": 0,
+  "pieces": 1,
+  "core_min_edge_angle_deg": 134.99999999999997,
+  "flake_min_edge_angle_deg": [],
+  "flake_mass_g": []
+ },
+ {
+  "n": 48,
+  "angle_deg": -45,
+  "force_n": 15000,
+  "material": "chert_placeholder",
+  "seconds": 0.112,
+  "iterations": 11,
+  "failed_elements": 678,
+  "pieces": 25,
+  "core_min_edge_angle_deg": 45.0,
+  "flake_min_edge_angle_deg": [
+   52.1,
+   40.6
+  ],
+  "flake_mass_g": [
+   1.5,
+   0.9
+  ]
+ },
+ {
+  "n": 48,
+  "angle_deg": -90,
+  "force_n": 15000,
+  "material": "chert_placeholder",
+  "seconds": 0.195,
+  "iterations": 19,
+  "failed_elements": 748,
+  "pieces": 42,
+  "core_min_edge_angle_deg": 5.710593137499696,
+  "flake_min_edge_angle_deg": [
+   45.0,
+   38.7,
+   40.6
+  ],
+  "flake_mass_g": [
+   4.9,
+   3.7,
+   0.9,
+   0.3,
+   0.3
+  ]
+ },
+ {
+  "n": 48,
+  "angle_deg": -135,
+  "force_n": 15000,
+  "material": "chert_placeholder",
+  "seconds": 0.118,
+  "iterations": 9,
+  "failed_elements": 62,
+  "pieces": 4,
+  "core_min_edge_angle_deg": 101.30993247402021,
+  "flake_min_edge_angle_deg": [
+   40.6
+  ],
+  "flake_mass_g": [
+   0.9
+  ]
+ },
+ {
+  "n": 64,
+  "angle_deg": -45,
+  "force_n": 15000,
+  "material": "chert_placeholder",
+  "seconds": 0.107,
+  "iterations": 5,
+  "failed_elements": 825,
+  "pieces": 23,
+  "core_min_edge_angle_deg": 45.00000000000005,
+  "flake_min_edge_angle_deg": [
+   45.0
+  ],
+  "flake_mass_g": [
+   0.7
+  ]
+ },
+ {
+  "n": 64,
+  "angle_deg": -90,
+  "force_n": 15000,
+  "material": "chert_placeholder",
+  "seconds": 0.301,
+  "iterations": 15,
+  "failed_elements": 1552,
+  "pieces": 50,
+  "core_min_edge_angle_deg": 45.00000000000003,
+  "flake_min_edge_angle_deg": [
+   63.4,
+   45.0,
+   45.0
+  ],
+  "flake_mass_g": [
+   4.9,
+   2.1,
+   0.7,
+   0.1
+  ]
+ },
+ {
+  "n": 64,
+  "angle_deg": -135,
+  "force_n": 15000,
+  "material": "chert_placeholder",
+  "seconds": 0.228,
+  "iterations": 6,
+  "failed_elements": 96,
+  "pieces": 5,
+  "core_min_edge_angle_deg": 90.0,
+  "flake_min_edge_angle_deg": [
+   45.0
+  ],
+  "flake_mass_g": [
+   0.7
+  ]
+ },
+ {
+  "n": 96,
+  "angle_deg": -45,
+  "force_n": 15000,
+  "material": "chert_placeholder",
+  "seconds": 0.159,
+  "iterations": 2,
+  "failed_elements": 1260,
+  "pieces": 20,
+  "core_min_edge_angle_deg": 45.00000000000001,
+  "flake_min_edge_angle_deg": [
+   52.1
+  ],
+  "flake_mass_g": [
+   0.3
+  ]
+ },
+ {
+  "n": 96,
+  "angle_deg": -90,
+  "force_n": 15000,
+  "material": "chert_placeholder",
+  "seconds": 0.61,
+  "iterations": 12,
+  "failed_elements": 3388,
+  "pieces": 74,
+  "core_min_edge_angle_deg": 44.9999999999999,
+  "flake_min_edge_angle_deg": [
+   36.9,
+   52.1,
+   33.7
+  ],
+  "flake_mass_g": [
+   1.9,
+   0.3,
+   0.1
+  ]
+ },
+ {
+  "n": 96,
+  "angle_deg": -135,
+  "force_n": 15000,
+  "material": "chert_placeholder",
+  "seconds": 0.278,
+  "iterations": 4,
+  "failed_elements": 238,
+  "pieces": 8,
+  "core_min_edge_angle_deg": 71.56505117707799,
+  "flake_min_edge_angle_deg": [
+   63.4
+  ],
+  "flake_mass_g": [
+   0.3
+  ]
+ }
+]
