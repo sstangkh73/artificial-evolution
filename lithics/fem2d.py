@@ -14,8 +14,9 @@ axisymmetric case). Three modes:
 DOF ``2*n`` is the x (or r) displacement of node ``n``, ``2*n + 1`` the y (or z)
 displacement. Stresses are returned per element at the element centre as
 columns (s_xx, s_yy, s_zz, s_xy); s_zz is the out-of-plane (hoop in
-axisymmetric) stress. ``stiffness_scale`` multiplies the stiffness of each
-element (used later by the fracture model to degrade broken material).
+axisymmetric) stress. ``stiffness_scale`` multiplies the stiffness, either one
+value per element (n_el,) or one per Gauss point (n_el, 4) in the order of
+``GAUSS_POINTS`` (used by ``lithics.phasefield`` to degrade broken material).
 """
 from __future__ import annotations
 
@@ -32,6 +33,7 @@ MODES = ("plane_strain", "plane_stress", "axisymmetric")
 
 _G = 1.0 / math.sqrt(3.0)
 _GAUSS = ((-_G, -_G), (_G, -_G), (_G, _G), (-_G, _G))  # weights all 1
+GAUSS_POINTS = _GAUSS
 _XI = np.array([-1.0, 1.0, 1.0, -1.0])  # node natural coords, counter-clockwise
 _ETA = np.array([-1.0, -1.0, 1.0, 1.0])
 
@@ -156,17 +158,29 @@ def _element_dofs(mesh: Mesh2D) -> np.ndarray:
     return np.stack([2 * e, 2 * e + 1], axis=2).reshape(len(e), 8)
 
 
+def _gauss_scale(mesh: Mesh2D, stiffness_scale) -> np.ndarray:
+    """Stiffness multiplier as (n_el, 4): per-element values are repeated."""
+    ne = len(mesh.elements)
+    if stiffness_scale is None:
+        return np.ones((ne, 4))
+    s = np.asarray(stiffness_scale, dtype=float)
+    if s.shape == (ne,):
+        return np.repeat(s[:, None], 4, axis=1)
+    if s.shape == (ne, 4):
+        return s
+    raise ValueError("stiffness_scale must have shape (n_el,) or (n_el, 4)")
+
+
 def assemble(mesh: Mesh2D, mode: str, stiffness_scale: np.ndarray | None = None) -> sp.csr_matrix:
     _check_mode(mode)
     if mode == "axisymmetric" and mesh.nodes[:, 0].min() < -1e-12 * mesh.h:
         raise ValueError("axisymmetric mesh must have x = r >= 0")
     D = constitutive(mesh.youngs_pa, mesh.poisson, mode)
-    if stiffness_scale is not None:
-        D = D * np.asarray(stiffness_scale, dtype=float)[:, None, None]
+    scale = _gauss_scale(mesh, stiffness_scale)
     Ke = np.zeros((len(mesh.elements), 8, 8))
-    for xi, eta in _GAUSS:
+    for g, (xi, eta) in enumerate(_GAUSS):
         B, w = _b_matrices(mesh, mode, xi, eta)
-        Ke += np.einsum("eki,ekl,elj->eij", B, D, B) * w[:, None, None]
+        Ke += np.einsum("eki,ekl,elj->eij", B, D, B) * (w * scale[:, g])[:, None, None]
     dofs = _element_dofs(mesh)
     rows = np.repeat(dofs, 8, axis=1).ravel()
     cols = np.tile(dofs, (1, 8)).ravel()
@@ -206,14 +220,25 @@ def solve(
 
 def element_stress(mesh: Mesh2D, mode: str, u: np.ndarray,
                    stiffness_scale: np.ndarray | None = None) -> np.ndarray:
-    """Stress at element centres, columns (s_xx, s_yy, s_zz, s_xy) in Pa."""
+    """Stress per element, columns (s_xx, s_yy, s_zz, s_xy) in Pa: at the
+    element centre, or, when ``stiffness_scale`` is given per Gauss point
+    (n_el, 4), the mean of the four Gauss-point stresses (each with its own
+    scale, as in ``assemble``)."""
     _check_mode(mode)
-    B, _ = _b_matrices(mesh, mode, 0.0, 0.0)
     D = constitutive(mesh.youngs_pa, mesh.poisson, mode)
-    if stiffness_scale is not None:
-        D = D * np.asarray(stiffness_scale, dtype=float)[:, None, None]
-    strain = np.einsum("eki,ei->ek", B, u[_element_dofs(mesh)])
-    s = np.einsum("ekl,el->ek", D, strain)
+    ue = u[_element_dofs(mesh)]
+    s_arr = None if stiffness_scale is None else np.asarray(stiffness_scale, dtype=float)
+    if s_arr is not None and s_arr.ndim == 2:
+        scale = _gauss_scale(mesh, s_arr)
+        s = 0.0
+        for g, (xi, eta) in enumerate(_GAUSS):
+            B, _ = _b_matrices(mesh, mode, xi, eta)
+            s = s + scale[:, g, None] * np.einsum("ekl,el->ek", D, np.einsum("eki,ei->ek", B, ue)) / 4.0
+    else:
+        B, _ = _b_matrices(mesh, mode, 0.0, 0.0)
+        if s_arr is not None:
+            D = D * _gauss_scale(mesh, s_arr)[:, 0, None, None]
+        s = np.einsum("ekl,el->ek", D, np.einsum("eki,ei->ek", B, ue))
     out = np.zeros((len(mesh.elements), 4))
     if mode == "axisymmetric":
         out[:, 0], out[:, 1], out[:, 2], out[:, 3] = s[:, 0], s[:, 1], s[:, 2], s[:, 3]
