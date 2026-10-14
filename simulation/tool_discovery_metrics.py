@@ -92,6 +92,11 @@ def summarize_run(events: list[dict], ledger: list[dict], config: dict, bin_widt
                 reuse[outcome][0] += 1
     reuse_after_good = reuse["good"][0] / reuse["good"][1] if reuse["good"][1] else None
     reuse_after_bad = reuse["bad"][0] / reuse["bad"][1] if reuse["bad"][1] else None
+    reuse_delta = (
+        reuse_after_good - reuse_after_bad
+        if reuse_after_good is not None and reuse_after_bad is not None
+        else None
+    )
 
     # H3 part 2: rebuilds of a property group the agent has already used
     # successfully (a functional object it used itself).
@@ -114,7 +119,9 @@ def summarize_run(events: list[dict], ledger: list[dict], config: dict, bin_widt
     reuse_up = (
         reuse_after_good is not None and reuse_after_bad is not None and reuse_after_good > reuse_after_bad
     ) or (reuse_after_good is not None and reuse_after_bad is None and reuse_after_good > 0)
-    level_b = level_a and reuse_up and rebuilds >= 1
+    # Per-run screen only. Level B proper (proposal 3.5) compares C1 against
+    # C0/C2 over paired seeds: see scripts/analyze_tool_discovery_level_b.py.
+    level_b_run = level_a and reuse_up and rebuilds >= 1
 
     deaths = [e for e in events if e["type"] == "death"]
     agent_end = [e for e in events if e["type"] == "agent_end"]
@@ -143,14 +150,18 @@ def summarize_run(events: list[dict], ledger: list[dict], config: dict, bin_widt
         ),
         "survivors": config["n_agents"] - len(deaths),
         "level_a": level_a,
-        "level_b": level_b,
+        "level_b_run": level_b_run,
         "first_discovery_tick": first_discovery,
         "n_functional_objects": len(functional),
         "n_crafted": len(crafts),
+        # Level A as rates: "any functional object" passes almost always.
+        "functional_rate": len(functional) / len(crafts) if crafts else None,
+        "functional_per_agent": len(functional) / config["n_agents"],
         "n_feature_groups": len(set(craft_key.values())),
         "final_tool_use_rate": tool_use_rate,
         "reuse_after_good": reuse_after_good,
         "reuse_after_bad": reuse_after_bad,
+        "reuse_delta": reuse_delta,
         "reuse_pairs_good": reuse["good"][1],
         "reuse_pairs_bad": reuse["bad"][1],
         "rebuilds_of_functional_group": rebuilds,
