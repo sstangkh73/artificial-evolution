@@ -5,6 +5,7 @@
 ## Log
 - รอบ 0 (ตั้งค่า, Claude แบบ interactive 14 ต.ค.): ขั้น 1 โหมดอมตะเสร็จแล้ว (commit febc45b) งานถัดไปคือขั้น 2 แก้ตัวชี้วัด
 - รอบ 1 (14 ต.ค., LEAD=claude, Codex รีวิว): ขั้น 2 เสร็จ — ตัวชี้วัดระดับ A แบบอัตรา, `reuse_delta`, `level_b_run`, สคริปต์ระดับ B แบบจับคู่ seed + เทสต์ 6 ข้อ; pytest 204 passed; verify: เทสต์และ smoke ผ่าน ส่วนที่ล้มเป็นขั้น 3–7 ที่ยังไม่ทำ (ตามคาด) ปัญหา: `agents/.skills/engineering/SKILL.md` ไม่มีในเครื่อง (มีแค่ management-talk) จึงทำต่อโดยไม่มี skill นั้น งานถัดไป: ขั้น 3 ความเรียบร้อยของ runner
+- รอบ 2 (14 ต.ค., LEAD=claude, Codex รีวิว 2 รอบ): ขั้น 3 เสร็จ — runner ปฏิเสธโค้ด dirty, `--resume` ตรวจ protocol (รวม `code_tree`), กัน seeds ≥5000, ค่าเริ่มต้นรวม C4, เทสต์ใหม่ 13 ข้อใน `tests/test_tool_discovery_runner.py`; `pytest tests` 217 passed; verify: เทสต์+smoke ผ่าน ที่ล้มเป็นขั้น 4–7 (ตามคาด) ปัญหา: `pytest` จาก root (ไม่ระบุ `tests`) ชนชื่อ `test_toxin.py` กับใน `reports/` — มีมาก่อน ไม่เกี่ยวกับงานนี้ verify ใช้ `pytest tests` จึงไม่กระทบ; เทสต์ของ Codex ล้มเพราะ sandbox ไม่มีสิทธิ์ tmp (ไม่ใช่บั๊ก) งานถัดไป: ขั้น 4 เขียน `03_pilot_protocol.md` (ห้ามรัน pilot ในรอบเดียวกัน)
 
 ## Review log
 (ใครพบปัญหาอะไรในงานของใคร และแก้อย่างไร)
@@ -16,3 +17,11 @@
   - ไม่แก้: metric ใช้ `net` จริงและ baseline ทั้งรัน — เป็นการวัดฝั่งผู้วิเคราะห์ เอเจนต์ไม่ได้เห็น จึงไม่ใช่ oracle รั่วเข้าเอเจนต์ จะระบุใน protocol
   - ไม่แก้: ข้อมูล smoke เดิมใช้ key `level_b` — ห้ามแก้ `data/tool_discovery_smoke_20261014/`
   - ไม่ใช่บั๊ก: เทสต์ `tmp_path` error ในฝั่ง Codex เป็นเรื่องสิทธิ์ sandbox ฝั่งเครื่องจริงผ่านครบ
+- รอบ 2, Codex รีวิวงาน Claude (ขั้น 3):
+  - ยอมรับ/แก้: resume แบบ dirty ปน clean ได้ → ห้าม `--resume` เมื่อโค้ด dirty และ `code_dirty` อยู่ใน key ที่ต้องตรง + เทสต์ทั้งสองทิศ
+  - ยอมรับ/แก้: `--resume` บนโฟลเดอร์ที่ไม่มี protocol.json สร้าง protocol ใหม่แล้วใช้รันเก่า → ปฏิเสธ + เทสต์
+  - ยอมรับ/แก้: ถือว่ารันเสร็จเพราะมีแค่ summary และนับไฟล์เกินใน runs/ → ต้องมีครบ 3 ไฟล์, manifest/summary.csv นับเฉพาะรันที่ protocol ระบุ + เทสต์
+  - ยอมรับ/แก้ (รีวิวรอบสอง): summary เดิมที่ config ไม่ตรงยังถูกนับ → ตรวจ `summary["config"]` ก่อนข้าม + เทสต์
+  - ยอมรับ/แก้: git tree อ่านไม่ได้กลายเป็น "unknown" แล้วรันต่อ → หยุด (fail closed) + เทสต์
+  - ยอมรับ/แก้: runner ไม่กัน seeds ≥5000 → ปฏิเสธเว้นแต่ `--allow-confirmatory-seeds` + เทสต์
+  - ไม่แก้: ไฟล์ที่ถูก ignore ใต้โฟลเดอร์โค้ดไม่ถูกนับเป็น dirty — ใช้ `--ignored` จะเห็น `__pycache__` ทุกครั้งจนรันไม่ได้ ส่วนไฟล์ untracked แสดงใน porcelain อยู่แล้ว
