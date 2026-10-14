@@ -7,7 +7,7 @@
 แต่ละขั้นต้องมีเทสต์ใหม่ใน `tests/lithics/` (ตั้งชื่อไฟล์ `test_lithics_*.py` เพื่อไม่ให้ชื่อชนกับเทสต์เดิม; verify รัน `pytest tests`) และต้องรีวิวแล้วก่อนติ๊ก ขั้นที่ใหญ่ให้แบ่งทำหลายรอบ
 
 ## ขั้นตอน
-- [ ] **1. โครงแพ็กเกจและวัสดุ**
+- [x] **1. โครงแพ็กเกจและวัสดุ** (เสร็จ 2026-10-15 รอบ 1: Claude ทำ, Codex รีวิว, เทสต์ 15 ข้อผ่าน, verify ผ่านข้อวัสดุทั้ง 3)
   - `lithics/__init__.py`
   - `lithics/materials.py`: `load_material` และ `MATERIAL_NAMES` อ่านจาก `physics-loop/spec/materials.json`
   - `lithics/stone.py`: `Stone` รองรับ dim=2/3 และ `make_core` สร้างแกนหินที่กำหนด EPA และแท่นตีได้
