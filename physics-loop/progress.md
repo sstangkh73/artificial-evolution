@@ -21,6 +21,17 @@
   - `fem2d`: ปฏิเสธ quadrature point ที่ r ≤ 0 และปฏิเสธการกำหนด u_r ≠ 0 บนแกน axisymmetric (+ เทสต์)
   - เทสต์: Kirsch extrapolation ดีกรี 2 จาก 3 จุดไม่มีจุดตรวจ → เพิ่มเทสต์โปรไฟล์ σ_yy ที่ r = 1.1a–3a เทียบสูตร Kirsch (<3%); ลบ assertion 1% ที่ซ้ำ; convergence ต้องลดลงทุกระดับ; เพิ่ม patch test บน quad บิดเบี้ยว และแท่งสองวัสดุ (E ต่อ element)
   - ไม่แก้ข้อ 1 (V11 ยังไม่ครบ Hertz/SEN): เป็นขอบเขตที่ตั้งใจแบ่งไว้ ทำในส่วน ข รอบหน้า
+- **รอบ 3 (ขั้น 2 ข) Codex รีวิวงาน Claude** (log: `physics-loop/.loop/codex/20261015-013705.log`) ไม่พบเครื่องหมายผิดใน J หรือ active set พบ 10 ข้อ แก้ 8 ข้อ:
+  - Hertz oracle ใช้ P จาก FE เอง → เพิ่มเทสต์อิสระ a = √(Rδ) และ P(δ) เทียบ Hertz (1 < P/P_H < 1.03, ลดลงเมื่อวัตถุใหญ่ขึ้น)
+  - convergence ตรวจแค่ monotonic → เพิ่มขอบบนสัมบูรณ์ทุกระดับ (Hertz < 3%, < 2%; SEN < 2.5%, < 1%)
+  - ตัวเลขใน 02 ไม่ตรงกับที่เทสต์บังคับ → ปรับเทสต์ให้บังคับใกล้ค่าที่รายงาน และแก้ตาราง SEN n = 50 เป็น −1.6% (โดเมนเดียวกับตาราง)
+  - projection ไม่ใช่ pressure แบบจุด → เขียนใน docstring และ 02 ว่าเป็น L2 projection และแกว่ง −2.7% p₀ ที่ขอบ
+  - ไม่มีหลักฐาน complementarity → `ContactResult` คืน `surface_gap_m` และ `in_contact` พร้อมเทสต์เงื่อนไข Signorini
+  - ไม่ใช่ทรงกลม exact → เขียนข้อจำกัดเรื่องพาราโบลา/gap แนว z ใน docstring และ 02
+  - Tada ใช้กับแถบยาว → เพิ่มเทสต์ H = 2W เทียบ 3W ต่างกัน < 0.3%
+  - SEN ตรวจโดเมนเดียว → บังคับทุกโดเมนคลาด < 1%
+  - ไม่แก้: "j_integral ไม่ตรวจทิศรอยร้าว" เพราะ API ระบุไว้ใน docstring ว่ารอยร้าวต้องอยู่ตามแนว −x และไม่มีแรงบนผิวร้าว การตรวจทิศจาก mesh ทำไม่ได้ทั่วไป; ใช้เฉพาะตรวจ V11
+  - ไม่แก้: "V11 ยังไม่เชื่อมกับ validate" เพราะ `lithics/validate.py` เป็นงานขั้น 11
 
 ## Log
 
@@ -37,3 +48,10 @@
 - **ปัญหาที่เจอ:** รูวงกลมแบบขั้นบันไดบนกริดเซลล์ให้ SCF 2.55 (a = 16h) และ 2.64 (a = 24h) ต่ำไป 12–15% → V11 Kirsch วัดบน mesh แนบรูปทรง (ตรวจ solver) และบันทึกผลขั้นบันไดใน 02 §2.3 ให้รายงานใน 03 และพิจารณาใน V6
 - **verify -Quick:** pytest 258 ผ่าน, 02 มีแล้ว; ยังไม่ผ่าน plan เปิด, 03, results.json, uncommitted (ลูป commit)
 - **งานถัดไป:** ขั้น 2 ส่วน ข: Hertz p_max (axisymmetric, ทรงกลมแข็ง/ยืดหยุ่นกดผิวเรียบ, เทียบ Johnson 1985) และ SEN K_I (J-integral หรือ displacement extrapolation เทียบ Tada et al. สูตร SEN) แล้วติ๊กขั้น 2
+
+### รอบ 3 — 2026-10-15 (LEAD=claude, Codex รีวิว)
+- **ทำ:** ขั้น 2 ส่วน ข: `lithics/contact.py` (สูตร Hertz Johnson 1985 §4.2, `effective_modulus`, `tensor_mesh`, `rigid_sphere_indent` แบบ active set axisymmetric), `fem2d.j_integral` (EDI, Shih–Moran–Nakamura 1986), `tests/lithics/test_lithics_contact_sen.py` (14 เทสต์), 02 ส่วน 2.4–2.5 ติ๊กขั้น 2 แล้ว
+- **ผล:** Hertz p₀ คลาด −1.3% (n = 60), P(δ) สูง 1.2–2.3% เพราะวัตถุจำกัด; SEN K_I จาก J คลาด −0.6% (100 เซลล์บนกริด Stone), −0.2% (200)
+- **ปัญหาที่เจอ:** displacement extrapolation บน Q4 ธรรมดาคลาด 5–13% จึงใช้ J แทน (บันทึกใน 02 §2.5); projection ความดันแกว่งที่ขอบสัมผัส
+- **verify -Quick:** pytest 272 ผ่าน; ยังไม่ผ่าน plan เปิด, 03, results.json, uncommitted (ลูป commit)
+- **งานถัดไป:** ขั้น 3 แบบจำลองการแตก phase-field (AT1 หรือ AT2) บน `fem2d` ใช้ `stiffness_scale` เป็น degradation; ℓ จาก E, G_c, σ_t ตามสูตรที่อ้างอิงได้ (เช่น AT1: σ_c = √(3 G_c E′/(8ℓ)) — Tanné et al. 2018 JMPS 110:80) ควรแบ่ง: (ก) solver staggered + เทสต์ร้าวตรงใน SEN/แท่ง, (ข) ร้าวโค้ง/ทิศไม่ติดกริด

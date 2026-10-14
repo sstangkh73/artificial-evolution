@@ -224,6 +224,42 @@ def element_stress(mesh: Mesh2D, mode: str, u: np.ndarray,
     return out
 
 
+def j_integral(mesh: Mesh2D, mode: str, u: np.ndarray, tip_m, r_in_m: float, r_out_m: float) -> float:
+    """J (energy release rate, J/m^2) of a straight crack lying along -x from
+    ``tip_m``, by the equivalent domain integral (Shih, Moran & Nakamura 1986,
+    Int. J. Fract. 30:79; Anderson 2005, *Fracture Mechanics*, 3rd ed., sec. 7.4):
+
+        J = sum over Gauss points of (s_ij du_j/dx - W d_1i) dq/dx_i dA / t
+
+    q = 1 within ``r_in_m`` of the tip, 0 beyond ``r_out_m``, linear in the
+    distance between (nodal values, interpolated by the element shapes).
+    Planar modes only, no crack-face tractions. Integrates over the elements
+    given, so a half model (symmetry plane on the crack line) returns J/2."""
+    _check_mode(mode)
+    if mode == "axisymmetric":
+        raise ValueError("j_integral is for planar modes")
+    if not 0 < r_in_m < r_out_m:
+        raise ValueError("need 0 < r_in < r_out")
+    d = np.linalg.norm(mesh.nodes - np.asarray(tip_m, dtype=float)[None, :2], axis=1)
+    q = np.clip((r_out_m - d) / (r_out_m - r_in_m), 0.0, 1.0)[mesh.elements]  # (ne, 4)
+    sel = np.any(q > 0, axis=1) & np.any(q < 1, axis=1)
+    D = constitutive(mesh.youngs_pa, mesh.poisson, mode)
+    ue = u[_element_dofs(mesh)]
+    J = 0.0
+    for xi, eta in _GAUSS:
+        B, w = _b_matrices(mesh, mode, xi, eta)
+        dNdx, dNdy = B[:, 0, 0::2], B[:, 1, 1::2]
+        strain = np.einsum("eki,ei->ek", B, ue)
+        s = np.einsum("ekl,el->ek", D, strain)  # s_xx, s_yy, s_xy
+        W = 0.5 * np.einsum("ek,ek->e", s, strain)
+        dux_dx, duy_dx = (dNdx * ue[:, 0::2]).sum(1), (dNdx * ue[:, 1::2]).sum(1)
+        dq_dx, dq_dy = (dNdx * q).sum(1), (dNdy * q).sum(1)
+        integrand = ((s[:, 0] * dux_dx + s[:, 2] * duy_dx - W) * dq_dx
+                     + (s[:, 2] * dux_dx + s[:, 1] * duy_dx) * dq_dy)
+        J += float(np.sum((integrand * w)[sel]))
+    return J / mesh.thickness_m
+
+
 def boundary_edges(mesh: Mesh2D) -> tuple[np.ndarray, np.ndarray]:
     """Edges used by exactly one element: (n_edges, 2) node pairs ordered
     counter-clockwise around the solid, and (n_edges, 2) outward unit normals."""

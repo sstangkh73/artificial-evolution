@@ -12,7 +12,7 @@
   - `lithics/materials.py`: `load_material` และ `MATERIAL_NAMES` อ่านจาก `physics-loop/spec/materials.json`
   - `lithics/stone.py`: `Stone` รองรับ dim=2/3 และ `make_core` สร้างแกนหินที่กำหนด EPA และแท่นตีได้
   - เทสต์ว่าค่าวัสดุตรงกับ spec
-- [ ] **2. solver ยืดหยุ่น 2D และตรวจเชิงวิเคราะห์ V11** (ส่วน ก เสร็จรอบ 2: `lithics/fem2d.py` 3 โหมด + แท่ง, Lamé, patch, Kirsch SCF 3.005, Codex รีวิวแล้ว; เหลือส่วน ข: Hertz p_max และ SEN K_I)
+- [x] **2. solver ยืดหยุ่น 2D และตรวจเชิงวิเคราะห์ V11** (เสร็จรอบ 3: ส่วน ก `fem2d.py` + แท่ง/Lamé/patch/Kirsch SCF 3.005; ส่วน ข `contact.py` Hertz p₀ คลาด 1.3% และ `fem2d.j_integral` SEN K_I คลาด 0.6% เทียบ Tada; Codex รีวิวทั้งสองส่วน)
   - plane strain และ axisymmetric
   - assembly แบบ vectorized
   - เทสต์: แท่งรับแรงดึง, Kirsch, Hertz p_max, SEN K_I จาก J-integral หรือ displacement extrapolation
