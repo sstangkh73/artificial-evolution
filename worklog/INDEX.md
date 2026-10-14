@@ -1,3 +1,4 @@
+- 2026-10-15 — ตรวจเอกสารกะเทาะหิน (Dibble/PSIA/Snyder ฯลฯ) และเป้าตรวจความสมจริงของโลกฟิสิกส์ — Done — [plan](2026-10-15-lithic-literature/plan.md) · [report](2026-10-15-lithic-literature/report.md)
 - 2026-10-14 — ออกแบบโลกฟิสิกส์การแตก + ต้นแบบ 2D พิสูจน์ความเร็ว — Done — [plan](2026-10-14-physics-world-design/plan.md) · [report](2026-10-14-physics-world-design/report.md)
 - 2026-10-14 — YSC 2027 เล่มรายงานฉบับเต็ม (ร่าง .md, ผล pilot) — Done — [plan](2026-10-14-ysc-full-report-draft/plan.md) · [report](2026-10-14-ysc-full-report-draft/report.md)
 - 2026-10-14 — YSC 2027 เฟส 3: pilot + ตรึง protocol ยืนยัน (ysc-loop, ยังไม่รัน seeds 5000+) — Done — [plan](2026-10-14-ysc-phase3-loop/plan.md) · [report](2026-10-14-ysc-phase3-loop/report.md)
