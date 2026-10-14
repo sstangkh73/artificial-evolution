@@ -70,17 +70,21 @@ class ContactResult:
     surface_gap_m: np.ndarray  # indenter surface minus u_z (>= 0 means no overlap)
     in_contact: np.ndarray  # final active set (bool)
     iterations: int
+    u: np.ndarray | None = None  # displacements (n_dof,) of the final active set
 
 
 def rigid_sphere_indent(mesh: fem2d.Mesh2D, top_z_m: float, bottom_z_m: float,
-                        approach_m: float, radius_m: float, max_iter: int = 100) -> ContactResult:
+                        approach_m: float, radius_m: float, max_iter: int = 100,
+                        stiffness_scale: np.ndarray | None = None) -> ContactResult:
     """Push a rigid frictionless sphere (radius R) by ``approach_m`` into the
     top surface z = top_z of an axisymmetric body whose bottom z = bottom_z is
     held with u_z = 0. The indenter is the small-slope paraboloid of Hertz
     theory: the gap is measured along z at the undeformed radius and only z
     forces are exchanged (frictionless). Nodal pressures are the consistent
     (L2) projection of the nodal reactions (F = M p on the top surface), so
-    they ring slightly next to the contact edge where p(r) has infinite slope."""
+    they ring slightly next to the contact edge where p(r) has infinite slope.
+    ``stiffness_scale`` is passed to ``fem2d`` (degraded material of
+    ``lithics.indentation``)."""
     if approach_m <= 0 or radius_m <= 0:
         raise ValueError("approach and radius must be positive")
     tol = 1e-9 * mesh.h
@@ -89,12 +93,12 @@ def rigid_sphere_indent(mesh: fem2d.Mesh2D, top_z_m: float, bottom_z_m: float,
     bottom = np.nonzero(np.abs(mesh.nodes[:, 1] - bottom_z_m) <= tol)[0]
     r = mesh.nodes[top, 0]
     target = -approach_m + r * r / (2.0 * radius_m)  # indenter surface (u_z limit)
-    K = fem2d.assemble(mesh, "axisymmetric")
+    K = fem2d.assemble(mesh, "axisymmetric", stiffness_scale)
     active = target < 0  # first guess: the geometric overlap
     for it in range(1, max_iter + 1):
         idx = top[active]
         u = fem2d.solve(mesh, "axisymmetric", np.r_[2 * bottom + 1, 2 * idx + 1],
-                        np.r_[np.zeros(len(bottom)), target[active]])
+                        np.r_[np.zeros(len(bottom)), target[active]], stiffness_scale=stiffness_scale)
         reaction = (K @ u)[2 * top + 1]  # force the indenter puts on each node
         uz = u[2 * top + 1]
         release = active & (reaction > 0)  # indenter would have to pull
@@ -117,4 +121,4 @@ def rigid_sphere_indent(mesh: fem2d.Mesh2D, top_z_m: float, bottom_z_m: float,
     pressure = -spla.spsolve(M.tocsc(), reaction)
     force = -reaction.sum()
     a = float(r[active].max()) if active.any() else 0.0
-    return ContactResult(float(force), a, r, pressure, -reaction, target - uz, active, it)
+    return ContactResult(float(force), a, r, pressure, -reaction, target - uz, active, it, u)

@@ -101,7 +101,8 @@ def test_split_sums_to_total_energy(mode, split):
     for _ in range(5):
         u = _uniform_strain(m, mode, rng.normal(size=3) * 1e-4)
         pos, neg = pf.energy_split(m, mode, u, split)
-        assert np.all(pos >= 0) and np.all(neg >= 0)
+        # rankine is a driving force, not a split: its psi- = psi - psi+ may be negative
+        assert np.all(pos >= 0) and (split == "rankine" or np.all(neg >= 0))
         for g, (xi, eta) in enumerate(fem2d.GAUSS_POINTS):
             B, _ = fem2d._b_matrices(m, mode, xi, eta)
             e = np.einsum("eki,ei->ek", B, u[fem2d._element_dofs(m)])

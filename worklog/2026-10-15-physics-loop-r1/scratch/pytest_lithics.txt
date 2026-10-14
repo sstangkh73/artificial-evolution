@@ -1,0 +1,28 @@
+........................................................................ [ 79%]
+....F
+================================== FAILURES ===================================
+____________ test_split_sums_to_total_energy[rankine-axisymmetric] ____________
+
+mode = 'axisymmetric', split = 'rankine'
+
+    @pytest.mark.parametrize("mode", fem2d.MODES)
+    @pytest.mark.parametrize("split", pf.SPLITS)
+    def test_split_sums_to_total_energy(mode, split):
+        m = contact.tensor_mesh(np.linspace(1e-4, 1e-3, 4), np.linspace(0, 1e-3, 4), E, NU)
+        D = fem2d.constitutive(m.youngs_pa[:1], m.poisson[:1], mode)[0]
+        rng = np.random.default_rng(0)
+        for _ in range(5):
+            u = _uniform_strain(m, mode, rng.normal(size=3) * 1e-4)
+            pos, neg = pf.energy_split(m, mode, u, split)
+>           assert np.all(pos >= 0) and np.all(neg >= 0)
+E           assert (np.True_ and np.False_)
+E            +  where np.True_ = <function all at 0x000001BDE7295830>(array([[  46.83351485,   41.12048668,   64.73162795,  189.01274624],\n       [ 387.58457448,  119.43349102,  221.020798...99,   46.83351485,   52.4566998 ,   64.73162795],\n       [  86.80228585,   65.39691113,   90.29131861,  122.17401208]]) >= 0)
+E            +    where <function all at 0x000001BDE7295830> = np.all
+E            +  and   np.False_ = <function all at 0x000001BDE7295830>(array([[  50.3365385 ,   43.01005186,   61.32020441,   45.89659896],\n       [  21.25332592,   54.53156294,   41.924317...06,   50.3365385 ,   60.4402456 ,   61.32020441],\n       [  58.58117918,   61.23764106,   58.14818126,   54.19145725]]) >= 0)
+E            +    where <function all at 0x000001BDE7295830> = np.all
+
+tests\lithics\test_lithics_phasefield.py:104: AssertionError
+=========================== short test summary info ===========================
+FAILED tests/lithics/test_lithics_phasefield.py::test_split_sums_to_total_energy[rankine-axisymmetric]
+!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!
+1 failed, 76 passed in 18.35s

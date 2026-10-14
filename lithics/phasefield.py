@@ -29,6 +29,15 @@ not break the material):
 - ``"voldev"``: Amor, Marigo & Maurini 2009, J. Mech. Phys. Solids 57:1209,
   psi+ = K/2 <tr e>+^2 + mu e_dev:e_dev.
 - ``"none"``: psi+ = psi (no split).
+- ``"rankine"``: crack driving force from the largest principal stress,
+  psi+ = <sigma_1>^2 / (2E), sigma_1 of the undamaged stress including the
+  out-of-plane (hoop) component (Wu 2017, J. Mech. Phys. Solids 103:72,
+  eq. for the Rankine-type driving force; Miehe, Schaenzel & Ulmer 2015,
+  Comput. Methods Appl. Mech. Eng. 294:449, principal-stress criterion).
+  Not an energy split: psi- is reported as psi - psi+ (can be negative under
+  strong triaxial tension). With AT1 damage starts when sigma_1 reaches
+  sqrt(3 G_c E / (8 l)) = sigma_t in ANY stress state; material in
+  compression (sigma_1 <= 0) is never driven.
 The out-of-plane strain is 0 in plane strain, the hoop strain in
 axisymmetric, and -nu/(1-nu)(e_xx + e_yy) in plane stress (sigma_zz = 0).
 The displacement problem uses the "hybrid" isotropic degradation g(d) of the
@@ -53,11 +62,12 @@ import math
 import numpy as np
 import scipy.sparse as sp
 import scipy.sparse.linalg as spla
+from scipy.optimize import Bounds, minimize
 
 from . import fem2d
 from .materials import Material
 
-SPLITS = ("spectral", "voldev", "none")
+SPLITS = ("spectral", "voldev", "none", "rankine")
 RESIDUAL_STIFFNESS = 1e-6  # numerical, not a material property
 C_W = 8.0 / 3.0  # AT1 normalisation c_w = 4 int_0^1 sqrt(w(d)) dd with w(d) = d
 
@@ -124,9 +134,21 @@ def energy_split(mesh: fem2d.Mesh2D, mode: str, u: np.ndarray, split: str = "spe
     neg = np.zeros_like(pos)
     for g, (xi, eta) in enumerate(fem2d.GAUSS_POINTS):
         B, _ = fem2d._b_matrices(mesh, mode, xi, eta)
-        if split == "none":
+        if split in ("none", "rankine"):
             strain = np.einsum("eki,ei->ek", B, ue)
-            pos[:, g] = 0.5 * np.einsum("ek,ekl,el->e", strain, D, strain)
+            psi = 0.5 * np.einsum("ek,ekl,el->e", strain, D, strain)
+            if split == "none":
+                pos[:, g] = psi
+                continue
+            sig = np.einsum("ekl,el->ek", D, strain)
+            if mode == "axisymmetric":
+                sxx, syy, szz, sxy = sig[:, 0], sig[:, 1], sig[:, 2], sig[:, 3]
+            else:
+                sxx, syy, sxy = sig[:, 0], sig[:, 1], sig[:, 2]
+                szz = mesh.poisson * (sxx + syy) if mode == "plane_strain" else np.zeros(len(sxx))
+            s1 = np.maximum(0.5 * (sxx + syy) + np.sqrt((0.5 * (sxx - syy)) ** 2 + sxy ** 2), szz)
+            pos[:, g] = np.maximum(s1, 0.0) ** 2 / (2.0 * mesh.youngs_pa)
+            neg[:, g] = psi - pos[:, g]
             continue
         e1, e2, e3, g12 = _strain_3d(B, ue, mode, mesh.poisson)
         tr = e1 + e2 + e3
@@ -184,26 +206,16 @@ class BoundSolve:
     converged: bool
 
 
-def solve_bounded(A: sp.csr_matrix, b: np.ndarray, lower: np.ndarray, upper: np.ndarray,
-                  x0: np.ndarray | None = None, max_iter: int = 100) -> BoundSolve:
-    """min 1/2 x.A.x - b.x subject to lower <= x <= upper (A symmetric
-    positive definite), primal-dual active set (Hintermueller et al. 2002).
-    Stops when the active sets repeat; the result satisfies the bounds exactly."""
-    lower = np.asarray(lower, dtype=float)
-    upper = np.asarray(upper, dtype=float)
-    if np.any(lower > upper):
-        raise ValueError("lower bound above upper bound")
-    x = np.clip(lower if x0 is None else np.asarray(x0, dtype=float), lower, upper)
-    c = float(A.diagonal().mean())
+def _active_set(A, b, lower, upper, x, c, max_iter):
+    """Primal-dual active set iterations; (x, iterations, converged)."""
     prev = None
-    A = A.tocsr()
     for it in range(1, max_iter + 1):
         lam = A @ x - b  # gradient: >= 0 at the lower bound, <= 0 at the upper
         at_low = lam + c * (lower - x) > 0
         at_up = (lam + c * (upper - x) < 0) & ~at_low
         key = (at_low.tobytes(), at_up.tobytes())
         if key == prev:
-            return BoundSolve(x, it - 1, True)
+            return x, it - 1, True
         prev = key
         x = np.where(at_low, lower, np.where(at_up, upper, x))
         free = ~(at_low | at_up)
@@ -211,7 +223,62 @@ def solve_bounded(A: sp.csr_matrix, b: np.ndarray, lower: np.ndarray, upper: np.
             fixed = ~free
             rhs = b[free] - A[free][:, fixed] @ x[fixed]
             x[free] = spla.spsolve(A[free][:, free].tocsc(), rhs)
-    return BoundSolve(np.clip(x, lower, upper), max_iter, False)
+    return np.clip(x, lower, upper), max_iter, False
+
+
+def solve_bounded(A: sp.csr_matrix, b: np.ndarray, lower: np.ndarray, upper: np.ndarray,
+                  x0: np.ndarray | None = None, max_iter: int = 100,
+                  kkt_tol: float = 1e-5) -> BoundSolve:
+    """min 1/2 x.A.x - b.x subject to lower <= x <= upper (A symmetric
+    positive definite), primal-dual active set (Hintermueller et al. 2002)
+    with parameter c = mean(diag A). Stops when the active sets repeat; the
+    result satisfies the bounds exactly.
+
+    The active sets can cycle (the convergence proof needs an M-matrix, and
+    bilinear elements do not give one). Then: (1) restart with c = diag A per
+    variable; (2) if that also cycles, run the bounded quasi-Newton method
+    L-BFGS-B (Byrd, Lu, Nocedal & Zhu 1995, SIAM J. Sci. Comput. 16:1190) on
+    the Jacobi-scaled problem and restart the active set method from its
+    result; (3) if it still cycles, accept the iterate when ``kkt_residual``
+    <= ``kkt_tol`` (units of x; default 1e-5, 100 times below the staggered
+    tolerance 1e-3)."""
+    lower = np.asarray(lower, dtype=float)
+    upper = np.asarray(upper, dtype=float)
+    if np.any(lower > upper):
+        raise ValueError("lower bound above upper bound")
+    A = A.tocsr()
+    x = np.clip(lower if x0 is None else np.asarray(x0, dtype=float), lower, upper)
+    diag = A.diagonal()
+    x, it, ok = _active_set(A, b, lower, upper, x, float(diag.mean()), max_iter)
+    if ok:
+        return BoundSolve(x, it, True)
+    total = it
+    x, it, ok = _active_set(A, b, lower, upper, x, diag, max_iter)
+    total += it
+    if ok:
+        return BoundSolve(x, total, True)
+    sc = np.sqrt(diag)
+    As = sp.diags(1.0 / sc) @ A @ sp.diags(1.0 / sc)
+    bs = b / sc
+    res = minimize(lambda v: (0.5 * v @ (As @ v) - bs @ v, As @ v - bs), x * sc, jac=True,
+                   method="L-BFGS-B", bounds=Bounds(lower * sc, upper * sc),
+                   options={"maxiter": 20000, "maxcor": 30, "ftol": 0.0, "gtol": 0.01 * kkt_tol})
+    total += int(res.nit)
+    x_lb = np.clip(res.x / sc, lower, upper)
+    x, it, ok = _active_set(A, b, lower, upper, x_lb.copy(), diag, max_iter)
+    total += it
+    if ok:
+        return BoundSolve(x, total, True)
+    if kkt_residual(A, b, x_lb, lower, upper) < kkt_residual(A, b, x, lower, upper):
+        x = x_lb
+    return BoundSolve(x, total, kkt_residual(A, b, x, lower, upper) <= kkt_tol)
+
+
+def kkt_residual(A, b, x, lower, upper) -> float:
+    """max |x - clip(x - (A x - b) / diag(A))|: 0 exactly at the solution of
+    the bound-constrained quadratic problem; in units of x."""
+    g = A @ x - b
+    return float(np.max(np.abs(x - np.clip(x - g / A.diagonal(), lower, upper))))
 
 
 def solve_damage(mesh: fem2d.Mesh2D, mode: str, psi_plus: np.ndarray, g_c, length_m,
