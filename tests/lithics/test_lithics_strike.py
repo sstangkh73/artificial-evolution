@@ -306,6 +306,33 @@ def test_strike_on_anvil_balances_hammer_with_support(core):
     assert r.budget_j <= max(e1, e2) * 0.5 * 0.05 * 0.05 ** 2
 
 
+def test_crack_through_on_anvil_converges_with_monotone_fallback(core, monkeypatch):
+    # step 6 (a2): with the bound d >= d_prev the hybrid staggered iterates
+    # can oscillate on an anvil once the crack runs (300 iterations, not
+    # converged). After MONOTONE_AFTER iterations the bound becomes the
+    # previous iterate, so d only grows and the step converges.
+    orig = pf.solve_damage
+    kinds = []
+
+    def rec(mesh, mode, pos, g_c, ell, lower, x0=None):
+        kinds.append(x0 is not None and np.array_equal(lower, x0) and np.any(lower > 0))
+        res = orig(mesh, mode, pos, g_c, ell, lower, x0)
+        assert np.all(res.d >= lower)
+        return res
+
+    monkeypatch.setattr(s2.pf, "solve_damage", rec)
+    r = _strike(core, 0.5, impact.on_anvil(GRANITE, 0.05))
+    assert r.converged and bool(np.all(r.blow.indent.step_converged))
+    assert len(r.pieces) >= 2 and r.blow.monotone_steps >= 1 and any(kinds)
+    assert abs(r.work_j / r.budget_j - 1) <= 0.02 or r.released
+    _assert_partition(core, r.blow.piece_of_cell, r.pieces)
+
+
+def test_hand_strike_never_needs_the_fallback(split_runs):
+    # the hand-held split converges with the bound d >= d_prev alone
+    assert split_runs[0].blow.monotone_steps == 0
+
+
 def test_strike_needs_a_2d_stone():
     st = make_core(GLASS, height_m=2e-3, platform_m=3e-3, cell_size_m=1e-3, dim=3, depth_m=2e-3)
     with pytest.raises(ValueError):

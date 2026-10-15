@@ -66,6 +66,9 @@ D_BROKEN = 0.95
 RELEASE_FRACTION = 0.01
 # numerical choice: AT1 profile value (1 - x/2l)^2 at x = 0.59 l
 D_PROCESS = 0.5
+# numerical choice (step 6): staggered iterations with the bound d >= d_prev
+# before the fallback to monotone iterates d_k >= d_{k-1} (02 sec. 4.5)
+MONOTONE_AFTER = 50
 
 
 @dataclass(frozen=True)
@@ -368,6 +371,7 @@ class BlowResult:
     piece_of_cell: np.ndarray  # piece index per cell (-1 empty)
     pieces: list  # Stone per piece, heaviest first
     min_h_over_l: float  # mesh resolution of the phase field (cell size / l)
+    monotone_steps: int = 0  # accepted steps that needed the monotone fallback
 
 
 def fracture_blow(stone: Stone, contact_point_m, direction, rigid_radius_m: float, budget_j: float,
@@ -398,6 +402,7 @@ def fracture_blow(stone: Stone, contact_point_m, direction, rigid_radius_m: floa
         mphi = rigid_modes(mesh, masses, ("t", "rot"), tangent=(-n[1], n[0]))
     free = None if anvil_rigid_radius_m is None else n
     support = {"force": 0.0, "nodes": np.zeros(0, dtype=int)}
+    fallback = set()  # approaches at which a step tried used the fallback
 
     def solve_u(d, actives, delta):
         K = fem2d.assemble(mesh, MODE, pf.degradation(pf.at_gauss_points(mesh, d)))
@@ -406,15 +411,20 @@ def fracture_blow(stone: Stone, contact_point_m, direction, rigid_radius_m: floa
     def step(delta, d_prev, actives):
         d = d_prev.copy()
         inner_ok, change = True, math.inf
-        for _ in range(max_iter):
+        for it in range(max_iter):
             u, _, actives = solve_u(d, actives, delta)
             pos, _ = pf.energy_split(mesh, MODE, u, split)
-            res = pf.solve_damage(mesh, MODE, pos, g_c, ell, d_prev, d)
+            # bound d >= d_prev; after MONOTONE_AFTER iterations without
+            # convergence, d >= the previous iterate (fallback, 02 sec. 4.5)
+            monotone = it >= MONOTONE_AFTER
+            res = pf.solve_damage(mesh, MODE, pos, g_c, ell, d if monotone else d_prev, d)
             inner_ok = inner_ok and res.converged
             change = float(np.max(np.abs(res.d - d)))
             d = res.d
             if change < tol:
                 break
+        if monotone:
+            fallback.add(delta)
         u, forces, actives = solve_u(d, actives, delta)
         support["force"] = float(forces[1].sum()) if len(forces) > 1 else 0.0
         support["nodes"] = hammer.nodes[actives[0]]
@@ -433,7 +443,8 @@ def fracture_blow(stone: Stone, contact_point_m, direction, rigid_radius_m: floa
     return BlowResult(mesh=mesh, indent=indent, support_force_n=support["force"],
                       contact_nodes=support["nodes"],
                       cell_damage=cell_damage, piece_of_cell=piece_of_cell, pieces=pieces,
-                      min_h_over_l=float(mesh.h / np.max(ell)))
+                      min_h_over_l=float(mesh.h / np.max(ell)),
+                      monotone_steps=sum(float(a) in fallback for a in indent.approach_m[1:]))
 
 
 def split_pieces(stone: Stone, mesh: fem2d.Mesh2D, d: np.ndarray, length_m):
