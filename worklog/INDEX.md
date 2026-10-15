@@ -1,3 +1,4 @@
+- 2026-10-16 — รายงานสถานะฉบับเต็ม (PDF): เรื่องราว ทิศทาง งานค้าง — Done — [plan](2026-10-16-status-report-pdf/plan.md) · [report](2026-10-16-status-report-pdf/report.md)
 - 2026-10-15 — physics-loop รอบ 1: สร้างฟิสิกส์ lithics/ ให้ผ่าน V1–V11 + red team (รันโดยผู้ใช้) — Planned — [plan](2026-10-15-physics-loop-r1/plan.md)
 - 2026-10-15 — เตรียม physics-loop (ค่าวัสดุ, เกณฑ์ลงทะเบียนล่วงหน้า, verify, red team) — Done — [plan](2026-10-15-physics-loop-prep/plan.md) · [report](2026-10-15-physics-loop-prep/report.md)
 - 2026-10-15 — ตรวจเอกสารกะเทาะหิน (Dibble/PSIA/Snyder ฯลฯ) และเป้าตรวจความสมจริงของโลกฟิสิกส์ — Done — [plan](2026-10-15-lithic-literature/plan.md) · [report](2026-10-15-lithic-literature/report.md)
