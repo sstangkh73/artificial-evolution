@@ -13,6 +13,7 @@ import math
 
 import numpy as np
 import pytest
+from scipy.optimize import lsq_linear
 from scipy.stats import spearmanr
 
 from lithics import contact
@@ -64,6 +65,10 @@ def test_graded_axis():
     assert np.all(dx > 0)
     assert np.all(dx[1:-1] / dx[:-2] <= 1.2 + 1e-9)
     assert dx[-1] / dx[-2] <= 1.5 * 1.2  # last element may absorb a sliver
+    # fine region covering the whole extent: uniform, ends exactly at extent
+    assert np.allclose(ind.graded_axis(1e-3, 1e-3, 1e-3), [0.0, 1e-3])
+    x = ind.graded_axis(1e-3, 3e-4, 1e-3)
+    assert x[-1] == pytest.approx(1e-3, rel=1e-12) and x.max() <= 1e-3 and np.all(np.diff(x) > 0)
 
 
 @pytest.fixture(scope="module")
@@ -116,38 +121,71 @@ def test_cone_crack_starts_outside_contact_and_runs_down_and_out(cone_run):
     first_damage = int(np.argmax(r.fracture_energy_steps_j > 0))
     assert first_damage > 0
     assert surface_ring > r.contact_radius_m[first_damage]
+    # regression bounds (+-20 %) around the values of the single run reported
+    # in 02 sec. 4.4; they are not an independent reference
+    assert 0.98e-3 < surface_ring < 1.46e-3
+    assert 0.65e-3 < -zb.min() < 0.97e-3
+    assert 2.3e3 < r.force_n[-1] < 3.45e3
 
 
-def test_energy_budget_and_balance(cone_run):
+def test_energy_budget_and_work_inequality(cone_run):
     _, r = cone_run
     assert abs(r.work_j[-1] / r.budget_j - 1) <= 0.02
     assert np.all(np.diff(r.work_j) > 0)
     assert r.fracture_energy_j > 0
-    # quasi-static: work in >= stored + dissipated in the crack; the rest is
-    # released by unstable growth and the trapezoid error
-    stored = r.elastic_energy_j + r.fracture_energy_j
-    assert stored <= r.work_j[-1] * 1.005
-    assert stored >= 0.95 * r.work_j[-1]
+    # d never decreases, so K(d) never stiffens and the work of the indenter
+    # bounds the stored energy 1/2 u.K(d).u (up to the trapezoid error).
+    # W - stored is NOT required to equal the phase-field fracture energy:
+    # the hybrid scheme is not variational (02 sec. 4.4)
+    assert 0 < r.elastic_energy_j <= r.work_j[-1] * 1.005
 
 
-def test_rankine_threshold_any_mode():
-    """Damage driving force reaches the AT1 threshold 3 G_c / (16 l) exactly
-    when the largest principal stress equals sigma_t, in every mode, and
-    vanishes in compression."""
-    m = contact.tensor_mesh(np.linspace(1e-3, 2e-3, 3), np.linspace(0, 1e-3, 3), GLASS.youngs_modulus_pa,
-                            GLASS.poisson_ratio)
-    for mode in ("plane_strain", "plane_stress", "axisymmetric"):
-        gc, ell = pf.material_constants(GLASS, mode)
-        u = np.zeros(m.n_dof)
-        u[1::2] = 1e-4 * m.nodes[:, 1]
-        pos, _ = pf.energy_split(m, mode, u, "rankine")
-        s = pf.fem2d.element_stress(m, mode, u)
-        s1 = s[:, 1]  # sigma_zz along y is the largest principal stress here
-        assert np.allclose(pos, (s1 ** 2 / (2 * GLASS.youngs_modulus_pa))[:, None], rtol=1e-12)
-        sigma_at_threshold = math.sqrt(2 * GLASS.youngs_modulus_pa * 3 * gc / (16 * ell))
-        assert sigma_at_threshold == pytest.approx(GLASS.tensile_strength_pa, rel=1e-12)
-        neg_pos, _ = pf.energy_split(m, mode, -u, "rankine")
-        assert neg_pos.max() == 0.0
+def _homogeneous(mode, e1, e2):
+    """Block whose boundary nodes follow u_x = e1 x, u_y = e2 y (axisymmetric:
+    u_r = e1 r, so e_r = e_theta = e1); the interior solves to the same
+    homogeneous field. Returns mesh, fixed dofs and a scale -> values map."""
+    h = ELL / 2
+    x0 = 1e-3 if mode == "axisymmetric" else 0.0
+    m = contact.tensor_mesh(x0 + np.arange(0, 2 * ELL + h / 2, h), np.arange(0, 2 * ELL + h / 2, h),
+                            GLASS.youngs_modulus_pa, GLASS.poisson_ratio)
+    X, Y = m.nodes[:, 0], m.nodes[:, 1]
+    edge = np.nonzero((X < X.min() + 1e-15) | (X > X.max() - 1e-15) | (Y < 1e-15) | (Y > Y.max() - 1e-15))[0]
+    fixed = np.concatenate([2 * edge, 2 * edge + 1])
+    return m, fixed, lambda s: s * np.concatenate([e1 * X[edge], e2 * Y[edge]])
+
+
+@pytest.mark.parametrize("mode,e1,e2", [
+    ("plane_strain", 1.0, 0.5),    # biaxial tension, sigma_zz = lam tr e > 0 too
+    ("plane_stress", 1.0, -1.0),   # tension + compression
+    ("axisymmetric", 1.0, -2.0),   # equal radial and hoop tension, axial compression
+])
+def test_rankine_damage_starts_at_tensile_strength_in_multiaxial_states(mode, e1, e2):
+    """Rankine + AT1 on a homogeneous multiaxial state: no damage at
+    sigma_1 = 0.99 sigma_t, damage everywhere at 1.02 sigma_t. sigma_1 is
+    computed here by hand from Hooke's law, independent of the code."""
+    E, nu = GLASS.youngs_modulus_pa, GLASS.poisson_ratio
+    lam, mu = E * nu / ((1 + nu) * (1 - 2 * nu)), E / (2 * (1 + nu))
+    if mode == "plane_strain":
+        s = [lam * (e1 + e2) + 2 * mu * e1, lam * (e1 + e2) + 2 * mu * e2, lam * (e1 + e2)]
+    elif mode == "plane_stress":
+        s = [E / (1 - nu ** 2) * (e1 + nu * e2), E / (1 - nu ** 2) * (e2 + nu * e1), 0.0]
+    else:
+        tr = 2 * e1 + e2
+        s = [lam * tr + 2 * mu * e1, lam * tr + 2 * mu * e2, lam * tr + 2 * mu * e1]
+    s1_unit = max(s)
+    gc, ell = pf.material_constants(GLASS, mode)
+    m, fixed, vals = _homogeneous(mode, e1, e2)
+    d0 = np.zeros(len(m.nodes))
+    scale_t = GLASS.tensile_strength_pa / s1_unit
+    below = pf.staggered_step(m, mode, d0, gc, ell, fixed, vals(0.99 * scale_t), split="rankine")
+    assert below.converged and below.d.max() == 0.0
+    st = pf.fem2d.element_stress(m, mode, below.u)
+    assert st[:, 0].max() == pytest.approx(0.99 * scale_t * s[0], rel=1e-6)
+    above = pf.staggered_step(m, mode, d0, gc, ell, fixed, vals(1.02 * scale_t), split="rankine")
+    assert above.converged and above.d.min() > 0.005
+    if min(e1, e2) >= 0:  # reversed: every principal stress compressive, never driven
+        pos, _ = pf.energy_split(m, mode, -below.u, "rankine")
+        assert pos.max() == 0.0
 
 
 def test_solve_bounded_fallback_matches_active_set():
@@ -165,3 +203,9 @@ def test_solve_bounded_fallback_matches_active_set():
     fb = pf.solve_bounded(A, b, lo, up, max_iter=1)
     assert fb.converged
     assert np.allclose(fb.d, ref.d, atol=1e-5)
+    # independent reference: min 1/2 d.A.d - b.d = min |L^T d - L^-1 b|^2 / 2
+    # (A = L L^T) with bounds, solved by bounded-variable least squares
+    L = np.linalg.cholesky(A.toarray())
+    ind_ref = lsq_linear(L.T, np.linalg.solve(L, b), bounds=(lo, up), method="bvls", tol=1e-14).x
+    assert np.allclose(ref.d, ind_ref, atol=1e-8)
+    assert np.allclose(fb.d, ind_ref, atol=1e-5)

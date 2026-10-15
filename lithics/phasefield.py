@@ -31,13 +31,18 @@ not break the material):
 - ``"none"``: psi+ = psi (no split).
 - ``"rankine"``: crack driving force from the largest principal stress,
   psi+ = <sigma_1>^2 / (2E), sigma_1 of the undamaged stress including the
-  out-of-plane (hoop) component (Wu 2017, J. Mech. Phys. Solids 103:72,
-  eq. for the Rankine-type driving force; Miehe, Schaenzel & Ulmer 2015,
-  Comput. Methods Appl. Mech. Eng. 294:449, principal-stress criterion).
-  Not an energy split: psi- is reported as psi - psi+ (can be negative under
-  strong triaxial tension). With AT1 damage starts when sigma_1 reaches
-  sqrt(3 G_c E / (8 l)) = sigma_t in ANY stress state; material in
-  compression (sigma_1 <= 0) is never driven.
+  out-of-plane (hoop) component. The driving force <sigma_1>^2 / (2E) is the
+  one of Wu 2017, J. Mech. Phys. Solids 103:72, used there with Wu's own
+  crack geometric function, not AT1; Miehe, Schaenzel & Ulmer 2015, Comput.
+  Methods Appl. Mech. Eng. 294:449 use a related but different
+  principal-stress criterion with a threshold. Pairing it with AT1 is our
+  assumption. Not an energy split: psi- is only reported as psi - psi+
+  (can be negative under triaxial tension) and is not used by the solver
+  (the hybrid u-step uses the whole psi). Consequence of the definitions:
+  in a HOMOGENEOUS state (no damage gradient) the AT1 damage problem starts
+  at psi+ = 3 G_c / (16 l), i.e. at sigma_1 = sqrt(3 G_c E / (8 l)) =
+  sigma_t whatever the other principal stresses; in a non-uniform field the
+  gradient term also matters. Material with sigma_1 <= 0 is never driven.
 The out-of-plane strain is 0 in plane strain, the hoop strain in
 axisymmetric, and -nu/(1-nu)(e_xx + e_yy) in plane stress (sigma_zz = 0).
 The displacement problem uses the "hybrid" isotropic degradation g(d) of the

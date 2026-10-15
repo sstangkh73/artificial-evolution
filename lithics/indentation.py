@@ -65,17 +65,21 @@ def core_energy_share(e_star_pa: float, core: Material) -> float:
 
 
 def graded_axis(fine_m: float, h_m: float, extent_m: float, growth: float = 1.15) -> np.ndarray:
-    """0, h, 2h, ... up to ``fine_m``, then sizes growing by ``growth`` up to
-    ``extent_m`` (the last node is exactly ``extent_m``)."""
+    """0, h, 2h, ... up to the first multiple of h >= ``fine_m`` (capped at
+    ``extent_m``), then sizes growing by ``growth`` up to ``extent_m`` (the
+    last node is exactly ``extent_m``)."""
     if not (0 < h_m <= fine_m <= extent_m) or growth < 1:
         raise ValueError("need 0 < h <= fine <= extent and growth >= 1")
     n = int(math.ceil(fine_m / h_m - 1e-9))
-    x = list(np.arange(n + 1) * h_m)
+    end = extent_m * (1 - 1e-12)
+    x = [float(v) for v in np.arange(n + 1) * h_m if v < end]
+    if n * h_m >= end:  # the fine grid reaches the far side
+        x.append(extent_m)
     step = h_m
     while x[-1] < extent_m - 1e-12 * extent_m:
         step *= growth
         x.append(min(x[-1] + step, extent_m))
-    if x[-1] - x[-2] < 0.5 * (x[-2] - x[-3]):  # merge a sliver last element
+    if len(x) >= 3 and x[-1] - x[-2] < 0.5 * (x[-2] - x[-3]):  # merge a sliver last element
         x.pop(-2)
     return np.asarray(x)
 
@@ -100,7 +104,11 @@ class IndentResult:
     u: np.ndarray
     d: np.ndarray
     fracture_energy_j: float
-    elastic_energy_j: float  # 1/2 u.K(d).u at the final state (hybrid u-step energy)
+    # 1/2 u.K(d).u at the final state (hybrid u-step energy). With d never
+    # decreasing K(d) never stiffens, so W >= this up to the trapezoid error;
+    # W - elastic is NOT guaranteed to equal fracture_energy_j (the hybrid
+    # scheme is not variational, phasefield docstring)
+    elastic_energy_j: float
     budget_j: float
     converged: bool  # every staggered step converged
     step_converged: np.ndarray  # per accepted step
