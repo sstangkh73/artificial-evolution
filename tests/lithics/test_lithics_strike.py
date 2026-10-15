@@ -311,19 +311,27 @@ def test_crack_through_on_anvil_converges_with_monotone_fallback(core, monkeypat
     # can oscillate on an anvil once the crack runs (300 iterations, not
     # converged). After MONOTONE_AFTER iterations the bound becomes the
     # previous iterate, so d only grows and the step converges.
+    # The stop is "d can no longer decrease", not a fixed point of the
+    # original step; ``fallback_gap`` reports the distance (02 sec. 4.5).
     orig = pf.solve_damage
-    kinds = []
+    kinds, run = [], [0]  # run: consecutive calls with the usual bound
 
     def rec(mesh, mode, pos, g_c, ell, lower, x0=None):
-        kinds.append(x0 is not None and np.array_equal(lower, x0) and np.any(lower > 0))
+        mono = lower is x0  # fallback passes the iterate as its own bound
+        if mono:  # fallback only after MONOTONE_AFTER usual iterations
+            assert run[0] >= s2.MONOTONE_AFTER or kinds[-1]
+        run[0] = 0 if mono else run[0] + 1
+        kinds.append(mono)
         res = orig(mesh, mode, pos, g_c, ell, lower, x0)
-        assert np.all(res.d >= lower)
+        assert np.all(res.d >= lower)  # with mono: iterates never decrease
         return res
 
     monkeypatch.setattr(s2.pf, "solve_damage", rec)
     r = _strike(core, 0.5, impact.on_anvil(GRANITE, 0.05))
     assert r.converged and bool(np.all(r.blow.indent.step_converged))
     assert len(r.pieces) >= 2 and r.blow.monotone_steps >= 1 and any(kinds)
+    assert r.blow.monotone_steps <= r.blow.indent.steps
+    assert 0.0 <= r.blow.fallback_gap <= 1.0
     assert abs(r.work_j / r.budget_j - 1) <= 0.02 or r.released
     _assert_partition(core, r.blow.piece_of_cell, r.pieces)
 
@@ -331,6 +339,7 @@ def test_crack_through_on_anvil_converges_with_monotone_fallback(core, monkeypat
 def test_hand_strike_never_needs_the_fallback(split_runs):
     # the hand-held split converges with the bound d >= d_prev alone
     assert split_runs[0].blow.monotone_steps == 0
+    assert split_runs[0].blow.fallback_gap == 0.0
 
 
 def test_strike_needs_a_2d_stone():

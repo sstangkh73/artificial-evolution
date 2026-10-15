@@ -372,6 +372,10 @@ class BlowResult:
     pieces: list  # Stone per piece, heaviest first
     min_h_over_l: float  # mesh resolution of the phase field (cell size / l)
     monotone_steps: int = 0  # accepted steps that needed the monotone fallback
+    # largest max|d_hat - d| over those steps: d_hat is one more damage solve
+    # with the usual bound d >= d_prev at the final u (0 when no step used
+    # the fallback); 02 sec. 4.5
+    fallback_gap: float = 0.0
 
 
 def fracture_blow(stone: Stone, contact_point_m, direction, rigid_radius_m: float, budget_j: float,
@@ -402,7 +406,9 @@ def fracture_blow(stone: Stone, contact_point_m, direction, rigid_radius_m: floa
         mphi = rigid_modes(mesh, masses, ("t", "rot"), tangent=(-n[1], n[0]))
     free = None if anvil_rigid_radius_m is None else n
     support = {"force": 0.0, "nodes": np.zeros(0, dtype=int)}
-    fallback = set()  # approaches at which a step tried used the fallback
+    # fixed-point gap of the latest trial at each approach (None: no fallback);
+    # budget_loop accepts the trial it called last at that approach
+    fallback = {}
 
     def solve_u(d, actives, delta):
         K = fem2d.assemble(mesh, MODE, pf.degradation(pf.at_gauss_points(mesh, d)))
@@ -410,7 +416,7 @@ def fracture_blow(stone: Stone, contact_point_m, direction, rigid_radius_m: floa
 
     def step(delta, d_prev, actives):
         d = d_prev.copy()
-        inner_ok, change = True, math.inf
+        inner_ok, change, monotone = True, math.inf, False
         for it in range(max_iter):
             u, _, actives = solve_u(d, actives, delta)
             pos, _ = pf.energy_split(mesh, MODE, u, split)
@@ -423,9 +429,15 @@ def fracture_blow(stone: Stone, contact_point_m, direction, rigid_radius_m: floa
             d = res.d
             if change < tol:
                 break
-        if monotone:
-            fallback.add(delta)
         u, forces, actives = solve_u(d, actives, delta)
+        gap = None
+        if monotone:
+            # the fallback stops because d cannot decrease, not because (u, d)
+            # is a fixed point of the original step: measure how far one more
+            # damage solve with the bound d >= d_prev would move d
+            pos, _ = pf.energy_split(mesh, MODE, u, split)
+            gap = float(np.max(np.abs(pf.solve_damage(mesh, MODE, pos, g_c, ell, d_prev, d).d - d)))
+        fallback[float(delta)] = gap
         support["force"] = float(forces[1].sum()) if len(forces) > 1 else 0.0
         support["nodes"] = hammer.nodes[actives[0]]
         width = float(np.abs(hammer.s[actives[0]]).max()) if actives[0].any() else 0.0
@@ -440,11 +452,12 @@ def fracture_blow(stone: Stone, contact_point_m, direction, rigid_radius_m: floa
     indent = budget_loop(mesh, MODE, step, state0, delta_scale / n_steps, budget_j, g_c, ell,
                          n_steps, budget_rtol, None, progress, release_fraction=RELEASE_FRACTION)
     cell_damage, piece_of_cell, pieces = split_pieces(stone, mesh, indent.d, ell)
+    gaps = [fallback[float(a)] for a in indent.approach_m[1:] if fallback[float(a)] is not None]
     return BlowResult(mesh=mesh, indent=indent, support_force_n=support["force"],
                       contact_nodes=support["nodes"],
                       cell_damage=cell_damage, piece_of_cell=piece_of_cell, pieces=pieces,
                       min_h_over_l=float(mesh.h / np.max(ell)),
-                      monotone_steps=sum(float(a) in fallback for a in indent.approach_m[1:]))
+                      monotone_steps=len(gaps), fallback_gap=max(gaps, default=0.0))
 
 
 def split_pieces(stone: Stone, mesh: fem2d.Mesh2D, d: np.ndarray, length_m):
