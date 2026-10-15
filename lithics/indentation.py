@@ -113,6 +113,9 @@ class IndentResult:
     converged: bool  # every staggered step converged
     step_converged: np.ndarray  # per accepted step
     steps: int
+    # True if the loop stopped because the force fell below
+    # release_fraction * peak (crack through, budget not used up)
+    released: bool = False
 
 
 @dataclass(frozen=True)
@@ -192,20 +195,46 @@ def indent_with_budget(mesh: fem2d.Mesh2D, top_z_m: float, bottom_z_m: float, ri
     geo = _geometry(mesh, top_z_m, bottom_z_m)
     e_prime = float(np.max(mesh.youngs_pa / (1.0 - mesh.poisson ** 2)))
     delta_h = (15.0 * budget_j / (8.0 * e_prime * math.sqrt(rigid_radius_m))) ** 0.4
-    step = delta_h / n_steps
+
+    def step(delta, d_prev, active):
+        u, force, active, d, ok = _step(mesh, geo, rigid_radius_m, delta, d_prev, active,
+                                        g_c, length_m, split, tol, max_iter)
+        return u, force, active, d, ok, float(geo.r[active].max()) if active.any() else 0.0
+
+    return budget_loop(mesh, MODE, step, np.zeros(len(geo.top), dtype=bool), delta_h / n_steps,
+                       budget_j, g_c, length_m, n_steps, budget_rtol, d0, progress)
+
+
+def budget_loop(mesh: fem2d.Mesh2D, mode: str, step, state0, step_m: float, budget_j: float,
+                g_c, length_m, n_steps: int, budget_rtol: float = 0.02,
+                d0: np.ndarray | None = None, progress=None,
+                release_fraction: float | None = None) -> IndentResult:
+    """Increase the approach by ``step_m`` per step until the work
+    W = int P d(delta) (trapezoid rule) reaches ``budget_j``; the last step is
+    bisected on delta so that W ends in budget * (1 +- ``budget_rtol``).
+
+    ``step(delta, d_prev, state) -> (u, force, state, d, converged, contact_size)``
+    solves one staggered step at approach ``delta``; ``state`` is the contact
+    active set carried from the previous accepted step. Shared by the
+    axisymmetric indentation and the planar strike (``strike2d``).
+
+    ``release_fraction``: if given, also stop after a step whose force is
+    below this fraction of the largest force so far (the loaded part has
+    broken off and no longer resists the indenter)."""
     d = np.zeros(len(mesh.nodes)) if d0 is None else np.asarray(d0, dtype=float).copy()
-    active = np.zeros(len(geo.top), dtype=bool)
+    state = state0
     deltas, forces, works, radii, efrac = [0.0], [0.0], [0.0], [0.0], [0.0]
     oks = []
+    released = False
     u = np.zeros(mesh.n_dof)
     lo_w, hi_w = budget_j * (1.0 - budget_rtol), budget_j * (1.0 + budget_rtol)
     while works[-1] < lo_w:
         if len(deltas) > 50 * n_steps:
             raise RuntimeError("budget not reached within the step limit")
-        lo, hi = deltas[-1], deltas[-1] + step
+        lo, hi = deltas[-1], deltas[-1] + step_m
         a_lo, a_hi = lo, None  # bisection bracket on delta for the last step
         for _ in range(40):
-            res = _step(mesh, geo, rigid_radius_m, hi, d, active, g_c, length_m, split, tol, max_iter)
+            res = step(hi, d, state)
             w = works[-1] + 0.5 * (forces[-1] + res[1]) * (hi - lo)
             if w <= hi_w and (w >= lo_w or a_hi is None):
                 break
@@ -216,21 +245,24 @@ def indent_with_budget(mesh: fem2d.Mesh2D, top_z_m: float, bottom_z_m: float, ri
             hi = 0.5 * (a_lo + a_hi)
         else:
             raise RuntimeError("could not cut the last step onto the budget")
-        u, force, active, d, ok = res
+        u, force, state, d, ok, size = res
         oks.append(ok)
         deltas.append(hi)
         forces.append(force)
         works.append(w)
-        radii.append(float(geo.r[active].max()) if active.any() else 0.0)
-        efrac.append(pf.fracture_energy(mesh, MODE, d, g_c, length_m))
+        radii.append(size)
+        efrac.append(pf.fracture_energy(mesh, mode, d, g_c, length_m))
         if progress is not None:
             progress(len(deltas) - 1, hi, force, w, ok)
+        if release_fraction is not None and force < release_fraction * max(forces):
+            released = True
+            break
     scale = pf.degradation(pf.at_gauss_points(mesh, d))
     return IndentResult(
         approach_m=np.asarray(deltas), force_n=np.asarray(forces), work_j=np.asarray(works),
         fracture_energy_steps_j=np.asarray(efrac),
         contact_radius_m=np.asarray(radii), u=u, d=d,
         fracture_energy_j=efrac[-1],
-        elastic_energy_j=0.5 * float(u @ (fem2d.assemble(mesh, MODE, scale) @ u)),
+        elastic_energy_j=0.5 * float(u @ (fem2d.assemble(mesh, mode, scale) @ u)),
         budget_j=float(budget_j), converged=bool(all(oks)),
-        step_converged=np.asarray(oks), steps=len(deltas) - 1)
+        step_converged=np.asarray(oks), steps=len(deltas) - 1, released=released)

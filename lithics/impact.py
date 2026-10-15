@@ -150,6 +150,8 @@ class ImpactHistory:
     energy_error: float  # relative drift of total mechanical energy
     t_s: np.ndarray
     force_n: np.ndarray  # hammer-core force history
+    contact_energy_j: np.ndarray | None = None  # hammer-core contact energy history
+    support_energy_j: np.ndarray | None = None  # hand spring or core-anvil contact energy history
 
 
 def lumped_impact(hammer_mass_kg: float, hammer_speed_m_s: float, hammer_radius_m: float,
@@ -219,7 +221,9 @@ def lumped_impact(hammer_mass_kg: float, hammer_speed_m_s: float, hammer_radius_
     d1 = np.clip(Y[0] - Y[1], 0.0, None)
     f1 = k1 * d1 ** 1.5
     f2 = np.array([support_force(xc, xa) for xc, xa in zip(Y[1], Y[2])])
-    elastic = 0.4 * k1 * d1 ** 2.5 + np.array([support_energy(xc, xa) for xc, xa in zip(Y[1], Y[2])])
+    e_contact = 0.4 * k1 * d1 ** 2.5
+    e_support = np.array([support_energy(xc, xa) for xc, xa in zip(Y[1], Y[2])])
+    elastic = e_contact + e_support
     kin_a = 0.0 if fixed_anvil else 0.5 * ma * Y[5] ** 2
     total = 0.5 * mh * Y[3] ** 2 + 0.5 * mc * Y[4] ** 2 + kin_a + elastic
     e0 = 0.5 * mh * v0 ** 2
@@ -244,4 +248,91 @@ def lumped_impact(hammer_mass_kg: float, hammer_speed_m_s: float, hammer_radius_
         energy_error=energy_error,
         t_s=t,
         force_n=f1,
+        contact_energy_j=e_contact,
+        support_energy_j=e_support,
+    )
+
+
+# ASSUMPTION: hammerstone material when none is given (granite is in the spec
+# material list and is a common hammerstone rock); pass hammer_material= to change it
+DEFAULT_HAMMER_MATERIAL = "granite"
+
+
+@dataclass(frozen=True)
+class StrikeResult:
+    pieces: list  # Stone per piece, heaviest first; masses sum to the struck stone
+    fracture_energy_j: float  # phase-field crack energy of the section
+    seconds: float  # wall time of the strike
+    budget_j: float  # work allowed on the core (02 sec. 4.4-4.5)
+    impact: ImpactHistory  # elastic hammer-core-support collision (part a)
+    blow: object  # strike2d.BlowResult: mesh, force-approach history, u, d, cell damage
+    contact_modulus_pa: float  # E* hammer-core
+    rigid_radius_m: float  # equivalent rigid radius on the core
+    quasi_static_ratio: float  # contact time / (largest stone extent / P-wave speed); should be >> 1
+    converged: bool  # every staggered step converged
+    work_j: float  # work done on the section (= budget unless released)
+    released: bool  # force fell below strike2d.RELEASE_FRACTION of its peak before the budget was used
+
+
+def strike(stone, contact_point_m, direction, hammer_mass_kg: float, hammer_speed_m_s: float,
+           hammer_radius_m: float, support: Support, *, hammer_material: Material | None = None,
+           n_steps: int = 10, max_iter: int = 300, tol: float = 1e-3, split: str = "rankine",
+           progress=None) -> StrikeResult:
+    """Strike a 2D stone section with a hammerstone (api.md).
+
+    1. Elastic collision hammer -> core -> support (``lumped_impact``) with
+       the stone mass, giving the peak elastic energy of the contacts.
+    2. Budget: core share of that energy, max over time of
+       s1 E_contact(t) + s2 E_support(t), s = E*/E'_core of each contact
+       (``indentation.core_energy_share``; s2 = 0 for a hand).
+    3. The equivalent rigid indenter does at most this work on the section
+       (``strike2d.fracture_blow``); broken cells split the pieces.
+
+    ``hammer_radius_m`` is the radius of curvature of the hammer at the
+    contact; the stone surface is taken as flat (effective radius = hammer
+    radius). ``direction`` is the hammer velocity direction in the section
+    plane (x, y)."""
+    import time
+
+    from . import indentation as ind
+    from . import strike2d
+    from .materials import load_material
+
+    if stone.dim != 2:
+        raise ValueError("strike needs a 2D stone (3D is step 9)")
+    start = time.perf_counter()
+    core = load_material(stone.material_name)
+    hammer = load_material(DEFAULT_HAMMER_MATERIAL) if hammer_material is None else hammer_material
+    e_star = contact_modulus(hammer, core)
+    history = lumped_impact(hammer_mass_kg, hammer_speed_m_s, hammer_radius_m, e_star, stone.mass_kg,
+                            support, core_material=core)
+    energy = ind.core_energy_share(e_star, core) * history.contact_energy_j
+    anvil_radius = None
+    if support.kind == "anvil":
+        e_star_a = contact_modulus(core, support.anvil_material)
+        energy = energy + ind.core_energy_share(e_star_a, core) * history.support_energy_j
+        anvil_radius = ind.equivalent_rigid_radius(support.anvil_radius_m, e_star_a, core)
+    budget = float(energy.max())
+    radius = ind.equivalent_rigid_radius(hammer_radius_m, e_star, core)
+    blow = strike2d.fracture_blow(stone, contact_point_m, direction, radius, budget,
+                                  anvil_rigid_radius_m=anvil_radius, split=split, n_steps=n_steps,
+                                  tol=tol, max_iter=max_iter, progress=progress)
+    extent = float(np.max(np.array(stone.cells.shape) * stone.cell_size_m))
+    # fastest wave: longitudinal (P) wave c_L = sqrt((lam + 2 mu) / rho)
+    wave = max(math.sqrt(p.youngs_modulus_pa * (1 - p.poisson_ratio)
+                         / ((1 + p.poisson_ratio) * (1 - 2 * p.poisson_ratio) * p.density_kg_m3))
+               for p in stone.phases)
+    return StrikeResult(
+        pieces=blow.pieces,
+        fracture_energy_j=blow.indent.fracture_energy_j,
+        seconds=time.perf_counter() - start,
+        budget_j=budget,
+        impact=history,
+        blow=blow,
+        contact_modulus_pa=e_star,
+        rigid_radius_m=radius,
+        quasi_static_ratio=history.duration_s / (extent / wave),
+        converged=blow.indent.converged,
+        work_j=float(blow.indent.work_j[-1]),
+        released=blow.indent.released,
     )
