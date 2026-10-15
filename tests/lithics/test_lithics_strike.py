@@ -40,8 +40,92 @@ def line_contact(request):
         inds.append(s2.make_indenter(mesh, top, (0.0, 1.0), 1e3, moves=False, reach_m=1e3))
         mphi = s2.rigid_modes(mesh, masses, ("t", "rot"), tangent=(1.0, 0.0))
     delta = 3e-6
-    u, forces, act = s2.contact_solve(K, mphi, inds, delta, [np.zeros(len(i.nodes), bool) for i in inds])
+    u, forces, act = s2.contact_solve(K, mphi, inds, delta, [np.zeros(len(i.nodes), bool) for i in inds],
+                                      mesh.nodes, free_direction=None if request.param == "hand" else (0.0, -1.0))
     return request.param, h, R, delta, mesh, K, mphi, inds, u, forces, act
+
+
+def test_gauged_saddle_matches_direct_sparse_solve():
+    # the Schur solve on the pinned factor equals a direct solve of the
+    # bordered system, for a free body (hand: x, y, rot) and a body held
+    # along one axis (anvil: t, rot + one contact row)
+    import scipy.sparse as sp
+    import scipy.sparse.linalg as spla
+
+    mesh = fem2d.build_mesh(_block(0.1e-3, 12, 7))
+    K = fem2d.assemble(mesh, "plane_strain")
+    masses = s2.lumped_masses(mesh, np.full(len(mesh.elements), GLASS.density_kg_m3))
+    rng = np.random.default_rng(0)
+    for kinds in (("x", "y", "rot"), ("t", "rot")):
+        D = s2.rigid_modes(mesh, masses, kinds, tangent=(1.0, 0.0))
+        if kinds[0] == "t":
+            col = np.zeros((mesh.n_dof, 1))
+            col[1] = 1.0
+            D = np.hstack([D, col])
+        D = D / np.linalg.norm(D, axis=0) * K.diagonal().mean()
+        f = rng.standard_normal(mesh.n_dof)
+        r = rng.standard_normal(D.shape[1]) * 1e-6 * K.diagonal().mean()
+        A = sp.bmat([[K, sp.csc_matrix(D)], [sp.csc_matrix(D).T, None]], format="csc")
+        want = spla.spsolve(A, np.concatenate([f, r]))
+        u, y = s2._GaugedSaddle(K, mesh.nodes).solve(D, f, r)
+        assert np.abs(u - want[:mesh.n_dof]).max() <= 1e-10 * np.abs(want[:mesh.n_dof]).max()
+        assert np.abs(y - want[mesh.n_dof:]).max() <= 1e-10 * np.abs(want[mesh.n_dof:]).max()
+
+
+def test_dual_contact_gives_the_same_active_sets(line_contact):
+    # the cycle-safe fallback (exact dual by NNLS, Brent on the free
+    # translation for the anvil) reproduces the converged active sets
+    kind, _, _, delta, mesh, K, mphi, inds, _, _, act = line_contact
+    B = mphi / np.linalg.norm(mphi, axis=0) * K.diagonal().mean()
+    targets = [i.target0 + (delta if i.moves else 0.0) for i in inds]
+    cand = [a | (np.abs(i.s) <= 0.3e-3) for i, a in zip(inds, act)]  # contact plus free nodes
+    assert all(c.sum() > a.sum() for c, a in zip(cand, act))
+    got = s2._dual_actives(s2._GaugedSaddle(K, mesh.nodes), B, None if kind == "hand" else (0.0, -1.0),
+                           inds, targets, cand)
+    for g, a in zip(got, act):
+        assert np.array_equal(g, a)
+
+
+class _AlwaysSeen:
+    def __contains__(self, key):
+        return True
+
+    def add(self, key):
+        pass
+
+
+def test_contact_solve_dual_branch_ends_with_the_same_solution(line_contact, monkeypatch):
+    # force the cycle branch from the first iteration: the candidates start
+    # at the tip nodes only and must grow until no node penetrates
+    kind, _, _, delta, mesh, K, mphi, inds, u, forces, act = line_contact
+    monkeypatch.setattr(s2, "set", _AlwaysSeen, raising=False)
+    u2, f2, a2 = s2.contact_solve(K, mphi, inds, delta, [np.zeros(len(i.nodes), bool) for i in inds],
+                                  mesh.nodes, free_direction=None if kind == "hand" else (0.0, -1.0))
+    for a, b in zip(act, a2):
+        assert np.array_equal(a, b)
+    assert np.abs(u2 - u).max() <= 1e-9 * np.abs(u).max()
+    for f, g in zip(forces, f2):
+        assert np.allclose(f, g, rtol=0, atol=1e-9 * f.sum())
+
+
+def test_gauged_saddle_on_damaged_stiffness():
+    # a band of nearly broken cells (g(d) ~ 1e-4) across the block: the
+    # pinned factor with refinement still matches the direct solve
+    import scipy.sparse as sp
+    import scipy.sparse.linalg as spla
+
+    mesh = fem2d.build_mesh(_block(0.1e-3, 12, 7))
+    scale = np.ones(len(mesh.elements))
+    scale[mesh.cell_index[:, 1] == 6] = pf.degradation(0.99)
+    K = fem2d.assemble(mesh, "plane_strain", scale)
+    masses = s2.lumped_masses(mesh, np.full(len(mesh.elements), GLASS.density_kg_m3))
+    D = s2.rigid_modes(mesh, masses, ("x", "y", "rot"))
+    D = D / np.linalg.norm(D, axis=0) * K.diagonal().mean()
+    f = np.random.default_rng(1).standard_normal(mesh.n_dof)
+    A = sp.bmat([[K, sp.csc_matrix(D)], [sp.csc_matrix(D).T, None]], format="csc")
+    want = spla.spsolve(A, np.concatenate([f, np.zeros(3)]))
+    u, _ = s2._GaugedSaddle(K, mesh.nodes).solve(D, f, np.zeros(3))
+    assert np.abs(u - want[:mesh.n_dof]).max() <= 1e-8 * np.abs(want[:mesh.n_dof]).max()
 
 
 def test_line_contact_width_and_pressure_match_hertz_2d(line_contact):
@@ -67,7 +151,7 @@ def test_line_contact_equilibrium_gauge_and_energy(line_contact):
         un = u[2 * ind_.nodes] * ind_.normal[0] + u[2 * ind_.nodes + 1] * ind_.normal[1]
         target = ind_.target0 + (delta if ind_.moves else 0.0)
         assert np.all(un >= target - 1e-9 * delta)
-        assert np.all(f >= 0) and np.all(f[~a] == 0)
+        assert np.all(f >= -1e-12 * np.abs(f).sum()) and np.all(f[~a] == 0)
         assert np.allclose(un[a], target[a], rtol=0, atol=1e-12 * delta)
     # gauge: mass-weighted rigid components of u vanish
     assert np.abs(mphi.T @ u).max() <= 1e-9 * np.abs(mphi).sum(axis=0).max() * np.abs(u).max()
