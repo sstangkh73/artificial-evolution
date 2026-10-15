@@ -35,7 +35,7 @@
 | **V6** | mesh convergence ของกรณีอ้างอิง 1 กรณี | `rel_dev_area` (dict ความละเอียด → |A−A_ref|/A_ref เทียบกับความละเอียดสูงสุด ≥ 96), `cone_angle_dev_deg` (dict ความละเอียด → ส่วนต่างของมุม) | แต่ละ dict มีความละเอียดที่ต่ำกว่าค่าอ้างอิงอย่างน้อย 2 ค่า (ต้องรวมความละเอียดค่าเริ่มต้นด้วย) ทุกค่าของ `rel_dev_area` ≤ 0.10 และทุกค่าของ `cone_angle_dev_deg` ≤ 5 |
 | **V7** | 3D tet ด้วยกรณี PD ≥ 3 × EPA ≥ 2 เทียบทิศกับ 2D | `n_pairs_pd`, `frac_monotone_pd`, `n_pairs_epa`, `frac_monotone_epa`, `bar_rel_error_3d` | `frac_monotone_pd` ≥ 0.8, `frac_monotone_epa` ≥ 0.8, `bar_rel_error_3d` ≤ 0.02 |
 | **V8** | ฟิสิกส์การตัด ใช้แบบจำลองจากกลศาสตร์การแตกที่มีแหล่งอ้างอิง และวัสดุเป้าหมายต้องมีค่าคงที่พร้อมแหล่งอ้างอิง | `spearman_force_vs_tip_radius`, `p_value`, `n`, `force_ratio_obsidian_to_granite`, `target_material_sources` | rho > 0, p < 0.05, n ≥ 10, ratio < 1, และ `target_material_sources` ต้องไม่ว่าง |
-| **V9** | ความเร็ว | `median_strike_seconds_2d` (ที่ความละเอียดค่าเริ่มต้น), `suite_minutes` | median ≤ 2.0 และ suite ≤ 30 |
+| **V9** | ความเร็ว | `median_strike_seconds_2d` (ที่ความละเอียดค่าเริ่มต้น), `suite_minutes` | median ≤ 60 และ suite ≤ 240 (แก้ 2026-10-15 ดูหัวข้อการแก้เกณฑ์) |
 | **V10** | ความกำหนดแน่นอนและการอนุรักษ์ | `identical_rerun` (bool), `max_mass_conservation_rel_error`, `elements_in_multiple_pieces` | identical = true, error ≤ 1e-9, elements = 0 |
 | **V11** | ตรวจเชิงวิเคราะห์ | `bar_rel_error`, `kirsch_scf_rel_error`, `hertz_pmax_rel_error`, `sen_k_rel_error` | ≤ 0.02, ≤ 0.05, ≤ 0.10, ≤ 0.05 ตามลำดับ |
 
@@ -46,3 +46,11 @@
 - `results.json` ต้องมาจาก commit ที่ `lithics_tree` ตรงกับ `git rev-parse HEAD:lithics` ปัจจุบัน และ `code_dirty` ต้องเป็น false
 - verify จะรัน `python -m lithics.validate --only V10,V11 --out <tmp>` ซ้ำ แล้วเทียบผลกับ results.json ต้องได้ผลเท่าเดิม
 - red team ทั้ง Claude และ Codex ต้องให้ `VERDICT: PASS` กับ tree เดียวกัน (ดู `physics-loop/REDTEAM_PROMPT.md`)
+
+## การแก้เกณฑ์หลังลงทะเบียน
+### 2026-10-15: V9 (ผู้ใช้อนุมัติ)
+- **เดิม:** median ≤ 2.0 วินาทีต่อการตี และ suite ≤ 30 นาที
+- **ใหม่:** median ≤ 60 วินาทีต่อการตี 2D และ suite ≤ 240 นาที
+- **เหตุผล:** phase-field AT1 ต้องใช้ mesh h ≤ ℓ/4 (แก้ว ℓ = 0.119 มม.) การกดก้อนแก้ว 8 มม. แบบ axisymmetric ใช้ 28 วินาทีที่ h = ℓ/2 และ 129 วินาทีที่ h = ℓ/4 (02 §4.4) เกณฑ์เดิมจึงเป็นไปไม่ได้กับฟิสิกส์ที่ถูกต้อง ความเร็วที่ใช้ในโลกของเอเจนต์จะทำในรอบ 2 (เช่น surrogate ที่ calibrate จาก phase-field)
+- **ความซื่อตรง:** แก้ก่อนมีผลของ V1–V8 ใด ๆ และเกณฑ์ V9 ไม่เกี่ยวกับผลทางฟิสิกส์
+- **การรัน suite:** รัน `python -m lithics.validate --only <ข้อ>` แยกทีละเกณฑ์ได้ (แต่ละครั้งไม่เกิน 30 นาที เพราะ Bash tool มี timeout 30 นาที) หรือรันหลาย process พร้อมกัน แล้วรวมผลลง `results.json` ได้เฉพาะผลที่มาจาก `lithics_tree` เดียวกันและ `code_dirty: false` ส่วน `suite_minutes` คือผลรวมเวลา CPU-wall ของทุกส่วน

@@ -96,6 +96,33 @@ function Save-Commit([string]$Message) {
     git commit -qm $Message --allow-empty
 }
 
+function Get-ApiError($raw) {
+    # คืนข้อความ error ถ้า claude -p ล้มเพราะ API (เช่นชนลิมิต 429) ไม่งั้นคืน $null
+    try {
+        $res = ($raw | Out-String) | ConvertFrom-Json
+        if ($res.is_error -or $res.terminal_reason -eq 'api_error') { return [string]$res.result }
+    } catch { return 'อ่านผล JSON ของ Claude ไม่ได้' }
+    return $null
+}
+
+function Wait-ForLimit([string]$msg) {
+    # รอจนลิมิตรีเซ็ต: อ่านเวลาจาก "resets 5am" / "resets 5:30pm" ถ้าอ่านไม่ได้รอ 20 นาที
+    $until = (Get-Date).AddMinutes(20)
+    if ($msg -match 'resets\s+(\d{1,2})(?::(\d{2}))?\s*(am|pm)') {
+        $h = [int]$Matches[1] % 12; if ($Matches[3] -eq 'pm') { $h += 12 }
+        $m = if ($Matches[2]) { [int]$Matches[2] } else { 0 }
+        $t = (Get-Date).Date.AddHours($h).AddMinutes($m + 5)
+        if ($t -le (Get-Date)) { $t = $t.AddDays(1) }
+        $until = $t
+    }
+    if ($until -gt $deadline) { Write-Host "ลิมิตรีเซ็ต $until หลังเวลาที่กำหนด — หยุดลูป" -ForegroundColor Yellow; exit 2 }
+    Write-Host "Claude ล้ม: $msg`nรอถึง $until" -ForegroundColor Yellow
+    while ((Get-Date) -lt $until) {
+        if (Test-Path "$Loop/STOP") { Write-Host 'พบไฟล์ STOP — หยุดลูป'; exit 2 }
+        Start-Sleep -Seconds 60
+    }
+}
+
 function Add-ClaudeUsage($raw, [string]$label) {
     try {
         $res = ($raw | Out-String) | ConvertFrom-Json
@@ -127,7 +154,13 @@ function Invoke-RedTeam([string]$Key) {
     $cf = "$Loop/redteam/$Key-claude.md"
     if (-not (Test-Path $cf)) {
         Write-Host "--- red team: Claude (key $Key) ---" -ForegroundColor Magenta
-        $raw = $prompt | claude -p --output-format json --max-turns 80 --allowedTools @RedTeamTools
+        while ($true) {
+            $raw = $prompt | claude -p --output-format json --max-turns 80 --allowedTools @RedTeamTools
+            $err = Get-ApiError $raw
+            if (-not $err) { break }
+            Restore-KeyPaths
+            Wait-ForLimit $err
+        }
         $text = Add-ClaudeUsage $raw 'red team'
         ($header + $text) | Set-Content $cf -Encoding utf8
         Restore-KeyPaths
@@ -178,6 +211,15 @@ for ($i = 1; $i -le $MaxIterations; $i++) {
         claude -p --output-format json --permission-mode acceptEdits --max-turns $MaxTurnsPerIteration --allowedTools @AllowedTools
     $raw | Set-Content $log -Encoding utf8
     Write-Host (Add-ClaudeUsage $raw "รอบ $i")
+    $err = Get-ApiError $raw
+    if ($err) {
+        # รอบที่ล้มเพราะ API ไม่นับ: เก็บงานที่ทำไปแล้ว (ถ้ามี) แล้วรอลิมิตก่อนทำรอบเดิมซ้ำ
+        Assert-Untouched $rt
+        Save-Commit "physics-loop: iteration $i (interrupted: API error)"
+        Wait-ForLimit $err
+        $i--
+        continue
+    }
 
     Assert-Untouched $rt
     Save-Commit "physics-loop: iteration $i"

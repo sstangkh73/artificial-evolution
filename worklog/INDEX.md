@@ -8,3 +8,4 @@
 - 2026-10-14 — YSC 2027 แผนเร่ง + เฟส 0–2 สนามทดลองค้นพบเครื่องมือ — Done — [plan](2026-10-14-ysc-phase0-2-tool-arena/plan.md) · [report](2026-10-14-ysc-phase0-2-tool-arena/report.md)
 - 2026-10-14 — เช็คสถานะงาน YSC 2027 เทียบกับข้อเสนอ — Done — [plan](2026-10-14-ysc-status-check/plan.md) · [report](2026-10-14-ysc-status-check/report.md)
 - 2026-10-12 — วิเคราะห์ผลรอบข้อเสนอ YSC 2027 และโอกาสเข้ารอบประเทศ — Done — [plan](2026-10-12-ysc-proposal-round-analysis/plan.md) · [report](2026-10-12-ysc-proposal-round-analysis/report.md)
+- [2026-10-15 physics-loop fix](2026-10-15-physics-loop-fix/report.md) — กันลูปเผารอบเมื่อชนลิมิต, แก้ V9 เป็น ≤ 60 วินาที/การตี
